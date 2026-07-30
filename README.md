@@ -8,7 +8,7 @@ Monorepo for the RIVET public website and admin dashboard.
 
 ## Prerequisites
 
-- Node 20+
+- Node 22.13+ (required by pnpm 11)
 - pnpm 11+ (`npm install -g pnpm`)
 - A PostgreSQL database (local or managed) for the API
 
