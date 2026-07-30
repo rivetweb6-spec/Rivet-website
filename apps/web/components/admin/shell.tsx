@@ -1,0 +1,144 @@
+'use client';
+
+import * as React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import {
+  Bell,
+  Building2,
+  FileText,
+  Home,
+  LayoutDashboard,
+  LogOut,
+  Package,
+  Phone,
+  Tags,
+  User,
+  Wrench,
+  Inbox,
+  Menu,
+  X,
+} from 'lucide-react';
+import { Logo } from '@/components/site/logo';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { useAdminAuth } from './auth-provider';
+import { useDemoNotifications } from './notifications';
+import { cn } from '@/lib/utils';
+
+const nav = [
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+  { href: '/admin/home', label: 'Homepage', icon: Home },
+  { href: '/admin/products', label: 'Products', icon: Package },
+  { href: '/admin/categories', label: 'Categories', icon: Tags },
+  { href: '/admin/services', label: 'Services', icon: Wrench },
+  { href: '/admin/news', label: 'News', icon: FileText },
+  { href: '/admin/demo-requests', label: 'Demo Requests', icon: Inbox },
+  { href: '/admin/company', label: 'Company', icon: Building2 },
+  { href: '/admin/contact', label: 'Contact', icon: Phone },
+  { href: '/admin/profile', label: 'Profile', icon: User },
+];
+
+export function AdminShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const { user, logout } = useAdminAuth();
+  const { newCount, clear } = useDemoNotifications();
+  const [open, setOpen] = React.useState(false);
+
+  const Sidebar = (
+    <aside className="flex h-full w-64 flex-col bg-navy text-white">
+      <div className="flex h-16 items-center gap-2 border-b border-white/10 px-5">
+        <Logo light className="text-[1.25rem]" />
+        <span className="text-[0.6875rem] uppercase tracking-[0.18em] text-white/50">Admin</span>
+      </div>
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        {nav.map((item) => {
+          const active = item.exact
+            ? pathname === item.href
+            : pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const Icon = item.icon;
+          const isDemos = item.href === '/admin/demo-requests';
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => {
+                setOpen(false);
+                if (isDemos) clear();
+              }}
+              className={cn(
+                'relative flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-[0.875rem] transition-colors',
+                active
+                  ? 'bg-white/10 text-white'
+                  : 'text-white/65 hover:bg-white/5 hover:text-white',
+              )}
+            >
+              {active && (
+                <span className="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r bg-gold" />
+              )}
+              <Icon size={18} strokeWidth={1.75} />
+              <span className="flex-1">{item.label}</span>
+              {isDemos && newCount > 0 && (
+                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1.5 text-[0.6875rem] font-semibold text-navy">
+                  {newCount}
+                </span>
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+      <div className="border-t border-white/10 p-4">
+        <p className="truncate text-[0.8125rem] text-white/80">{user?.name}</p>
+        <p className="truncate text-[0.75rem] text-white/45">{user?.email}</p>
+        <button
+          type="button"
+          onClick={() => logout()}
+          className="mt-3 inline-flex items-center gap-2 text-[0.8125rem] text-white/60 transition-colors hover:text-gold"
+        >
+          <LogOut size={15} /> Sign out
+        </button>
+      </div>
+    </aside>
+  );
+
+  return (
+    <div className="flex min-h-screen bg-bg">
+      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64">{Sidebar}</div>
+
+      {open && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-navy/50" onClick={() => setOpen(false)} />
+          <div className="absolute inset-y-0 left-0 z-10">{Sidebar}</div>
+        </div>
+      )}
+
+      <div className="flex min-w-0 flex-1 flex-col lg:pl-64">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-surface/90 px-4 backdrop-blur md:px-8">
+          <button
+            type="button"
+            className="grid h-10 w-10 place-items-center rounded-[12px] text-navy lg:hidden"
+            onClick={() => setOpen(true)}
+            aria-label="Open menu"
+          >
+            {open ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <div className="hidden text-[0.875rem] text-muted lg:block">Control room</div>
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <Link
+            href="/admin/demo-requests"
+            onClick={() => clear()}
+            className="relative grid h-10 w-10 place-items-center rounded-full text-navy transition-colors hover:bg-bg"
+            aria-label="Notifications"
+          >
+            <Bell size={18} />
+            {newCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-gold ring-2 ring-surface" />
+            )}
+          </Link>
+          </div>
+        </header>
+        <main className="flex-1 p-4 md:p-8">{children}</main>
+      </div>
+    </div>
+  );
+}

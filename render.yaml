@@ -1,0 +1,61 @@
+# RIVET API — Render Blueprint (P7-5, P7-6)
+#
+# Provisions a managed PostgreSQL instance and the Express API service.
+# The DB migration runs on every deploy via `preDeployCommand`.
+#
+# Deploy: Render Dashboard → New → Blueprint → point at this repo.
+# Set the `sync: false` secrets (CORS_ORIGIN + Cloudinary + Sentry) in the
+# Render dashboard after the first apply.
+
+databases:
+  - name: rivet-db
+    databaseName: rivet
+    plan: free
+    postgresMajorVersion: "16"
+
+services:
+  - type: web
+    name: rivet-api
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: main
+    healthCheckPath: /api/health
+    buildCommand: corepack enable && pnpm install --frozen-lockfile --prod=false && pnpm db:generate && pnpm --filter @rivet/api build
+    preDeployCommand: pnpm --filter @rivet/api prisma:deploy
+    startCommand: pnpm --filter @rivet/api start
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: rivet-db
+          property: connectionString
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_ACCESS_TTL
+        value: "900"
+      - key: JWT_REFRESH_TTL
+        value: "604800"
+      # Comma-separated Vercel origins, e.g.
+      # https://rivet.vercel.app,https://rivet-git-main-you.vercel.app
+      - key: CORS_ORIGIN
+        sync: false
+      - key: SEED_ADMIN_EMAIL
+        sync: false
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+      - key: SENTRY_ENVIRONMENT
+        value: production

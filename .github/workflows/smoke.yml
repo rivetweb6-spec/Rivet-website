@@ -1,0 +1,32 @@
+name: Smoke & Uptime
+
+# Post-deploy smoke tests (P7-6) that double as a lightweight uptime check (P7-7).
+# Configure repository Variables PROD_API_URL and PROD_SITE_URL
+# (Settings → Secrets and variables → Actions → Variables).
+
+on:
+  workflow_dispatch:
+  deployment_status:
+  schedule:
+    # Every 30 minutes — basic uptime monitoring.
+    - cron: "*/30 * * * *"
+
+jobs:
+  smoke:
+    name: Smoke test
+    runs-on: ubuntu-latest
+    # Only run on successful deployments (or manual/scheduled triggers).
+    if: ${{ github.event_name != 'deployment_status' || github.event.deployment_status.state == 'success' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run smoke tests
+        run: node scripts/smoke-test.mjs
+        env:
+          API_URL: ${{ vars.PROD_API_URL }}
+          SITE_URL: ${{ vars.PROD_SITE_URL }}

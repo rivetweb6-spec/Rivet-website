@@ -1,0 +1,14 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "corepack enable && pnpm install --frozen-lockfile --prod=false && pnpm db:generate && pnpm --filter @rivet/api build"
+  },
+  "deploy": {
+    "startCommand": "pnpm --filter @rivet/api prisma:deploy && pnpm --filter @rivet/api start",
+    "healthcheckPath": "/api/health",
+    "healthcheckTimeout": 100,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 3
+  }
+}

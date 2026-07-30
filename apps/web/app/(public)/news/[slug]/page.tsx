@@ -1,0 +1,113 @@
+import Link from 'next/link';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { Container, Eyebrow, Section } from '@/components/ui/container';
+import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/seo/json-ld';
+import { RivetImage } from '@/components/ui/rivet-image';
+import { api } from '@/lib/api';
+import { assets } from '@/lib/assets';
+import { articleMetadata } from '@/lib/seo';
+
+type Params = Promise<{ slug: string }>;
+
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  try {
+    const { articles } = await api.news.list({ pageSize: 100 });
+    return articles.map((a) => ({ slug: a.slug }));
+  } catch {
+    return [];
+  }
+}
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  try {
+    const { article } = await api.news.bySlug((await params).slug);
+    return articleMetadata(article);
+  } catch {
+    return { title: 'News' };
+  }
+}
+
+function formatDate(iso: string | null) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+export default async function NewsArticlePage({ params }: { params: Params }) {
+  const { slug } = await params;
+  let article;
+  try {
+    ({ article } = await api.news.bySlug(slug));
+  } catch {
+    notFound();
+  }
+
+  const cover = article.coverImage ?? assets.news.n1;
+
+  return (
+    <>
+      <ArticleJsonLd
+        title={article.title}
+        description={article.excerpt}
+        slug={article.slug}
+        image={cover}
+        publishedAt={article.publishedAt}
+        category={article.category}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'News', path: '/news' },
+          { name: article.title, path: `/news/${article.slug}` },
+        ]}
+      />
+
+      <section className="bg-navy pt-32 pb-16 md:pt-40">
+        <Container className="max-w-3xl">
+          <Link
+            href="/news"
+            className="text-[0.875rem] text-white/70 transition-colors hover:text-gold"
+          >
+            ← Back to journal
+          </Link>
+          {article.category && <Eyebrow className="mt-8 block text-gold">{article.category}</Eyebrow>}
+          <h1 className="mt-4 text-[2.25rem] text-white sm:text-[3rem]">{article.title}</h1>
+          <time className="mt-5 block text-[0.875rem] text-white/70">
+            {formatDate(article.publishedAt)}
+          </time>
+        </Container>
+      </section>
+
+      <div className="relative mx-auto -mt-8 max-w-[860px] px-6">
+        <div className="relative aspect-[16/9] overflow-hidden rounded-[20px] shadow-[var(--shadow-lg)]">
+          <RivetImage
+            src={cover}
+            alt={article.title}
+            fill
+            priority
+            sizes="(max-width: 860px) 100vw, 860px"
+            className="object-cover"
+          />
+        </div>
+      </div>
+
+      <Section>
+        <Container className="max-w-3xl">
+          {article.excerpt && (
+            <p className="text-[1.25rem] leading-relaxed text-muted">{article.excerpt}</p>
+          )}
+          <div
+            className="prose prose-lg mt-8 max-w-none text-ink prose-headings:font-display prose-headings:text-navy prose-a:text-navy prose-a:underline prose-a:decoration-gold prose-a:underline-offset-4"
+            dangerouslySetInnerHTML={{ __html: article.body }}
+          />
+        </Container>
+      </Section>
+    </>
+  );
+}
