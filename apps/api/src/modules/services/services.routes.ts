@@ -6,7 +6,12 @@ import { requireAuth, requireRole } from '../../middleware/auth.js';
 import { asyncHandler, notFound, param } from '../../utils/http.js';
 import { slugify } from '../../utils/slug.js';
 import { assertSlugAvailable } from '../../utils/slug-conflict.js';
-import { faqItemSchema, normalizeSeoFields, seoFieldsSchema } from '../../utils/seo-fields.js';
+import {
+  faqItemSchema,
+  normalizeSeoFields,
+  seoFieldsSchema,
+  toPrismaFaqs,
+} from '../../utils/seo-fields.js';
 
 const router = Router();
 
@@ -91,7 +96,7 @@ router.post(
         ...data,
         slug,
         image: image || null,
-        faqs: faqs ?? undefined,
+        faqs: toPrismaFaqs(faqs),
         ...seo,
       },
     });
@@ -149,7 +154,7 @@ router.put(
         ...data,
         ...(slug !== undefined ? { slug } : {}),
         ...(image !== undefined ? { image: image || null } : {}),
-        ...(faqs !== undefined ? { faqs } : {}),
+        ...(faqs !== undefined ? { faqs: toPrismaFaqs(faqs) } : {}),
         ...seo,
       },
     });

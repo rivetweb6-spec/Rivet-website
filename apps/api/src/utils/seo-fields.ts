@@ -1,9 +1,12 @@
+import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 export const faqItemSchema = z.object({
   question: z.string().min(1),
   answer: z.string().min(1),
 });
+
+export type FaqItem = z.infer<typeof faqItemSchema>;
 
 /** Shared optional SEO override fields for content models. */
 export const seoFieldsSchema = z.object({
@@ -36,4 +39,13 @@ export function normalizeSeoFields<T extends Partial<SeoFields>>(data: T): T {
     }
   }
   return out;
+}
+
+/** Prisma Json? fields reject TS `null`; use DbNull to clear. */
+export function toPrismaFaqs(
+  faqs: FaqItem[] | null | undefined,
+): FaqItem[] | typeof Prisma.DbNull | undefined {
+  if (faqs === undefined) return undefined;
+  if (faqs === null) return Prisma.DbNull;
+  return faqs;
 }
