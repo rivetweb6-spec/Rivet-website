@@ -12,6 +12,7 @@ import {
   LogOut,
   Package,
   Phone,
+  Search,
   Tags,
   User,
   Wrench,
@@ -19,10 +20,10 @@ import {
   Menu,
   X,
 } from 'lucide-react';
-import { Logo } from '@/components/site/logo';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { AdminLogo } from './admin-logo';
 import { useAdminAuth } from './auth-provider';
-import { useDemoNotifications } from './notifications';
+import { useQuotationNotifications } from './notifications';
 import { cn } from '@/lib/utils';
 
 const nav = [
@@ -32,22 +33,29 @@ const nav = [
   { href: '/admin/categories', label: 'Categories', icon: Tags },
   { href: '/admin/services', label: 'Services', icon: Wrench },
   { href: '/admin/news', label: 'News', icon: FileText },
-  { href: '/admin/demo-requests', label: 'Demo Requests', icon: Inbox },
+  { href: '/admin/site-seo', label: 'Site SEO', icon: Search },
+  { href: '/admin/quotation-requests', label: 'Quotation Requests', icon: Inbox },
   { href: '/admin/company', label: 'Company', icon: Building2 },
   { href: '/admin/contact', label: 'Contact', icon: Phone },
   { href: '/admin/profile', label: 'Profile', icon: User },
 ];
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+function AdminSidebar({
+  newCount,
+  onClearQuotations,
+  onNavigate,
+}: {
+  newCount: number;
+  onClearQuotations: () => void;
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
   const { user, logout } = useAdminAuth();
-  const { newCount, clear } = useDemoNotifications();
-  const [open, setOpen] = React.useState(false);
 
-  const Sidebar = (
+  return (
     <aside className="flex h-full w-64 flex-col bg-navy text-white">
-      <div className="flex h-16 items-center gap-2 border-b border-white/10 px-5">
-        <Logo light className="text-[1.25rem]" />
+      <div className="flex h-16 items-center gap-3 border-b border-white/10 px-5">
+        <AdminLogo light className="h-7" />
         <span className="text-[0.6875rem] uppercase tracking-[0.18em] text-white/50">Admin</span>
       </div>
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
@@ -56,14 +64,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             ? pathname === item.href
             : pathname === item.href || pathname.startsWith(`${item.href}/`);
           const Icon = item.icon;
-          const isDemos = item.href === '/admin/demo-requests';
+          const isQuotations = item.href === '/admin/quotation-requests';
           return (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => {
-                setOpen(false);
-                if (isDemos) clear();
+                onNavigate?.();
+                if (isQuotations) onClearQuotations();
               }}
               className={cn(
                 'relative flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-[0.875rem] transition-colors',
@@ -77,7 +85,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               )}
               <Icon size={18} strokeWidth={1.75} />
               <span className="flex-1">{item.label}</span>
-              {isDemos && newCount > 0 && (
+              {isQuotations && newCount > 0 && (
                 <span className="grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1.5 text-[0.6875rem] font-semibold text-navy">
                   {newCount}
                 </span>
@@ -99,25 +107,54 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       </div>
     </aside>
   );
+}
+
+export function AdminShell({ children }: { children: React.ReactNode }) {
+  const { newCount, clear } = useQuotationNotifications();
+  const [open, setOpen] = React.useState(false);
+
+  const closeDrawer = React.useCallback(() => setOpen(false), []);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
 
   return (
     <div className="flex min-h-screen bg-bg">
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64">{Sidebar}</div>
+      <div className="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-64">
+        <AdminSidebar newCount={newCount} onClearQuotations={clear} />
+      </div>
 
       {open && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-navy/50" onClick={() => setOpen(false)} />
-          <div className="absolute inset-y-0 left-0 z-10">{Sidebar}</div>
+        <div className="fixed inset-0 z-[200] lg:hidden">
+          <button
+            type="button"
+            className="absolute inset-0 bg-navy/50"
+            aria-label="Close menu"
+            onClick={closeDrawer}
+          />
+          <div className="absolute inset-y-0 left-0 z-10 shadow-xl">
+            <AdminSidebar
+              newCount={newCount}
+              onClearQuotations={clear}
+              onNavigate={closeDrawer}
+            />
+          </div>
         </div>
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col lg:pl-64">
+      <div className="relative z-0 flex min-w-0 flex-1 flex-col lg:pl-64">
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-surface/90 px-4 backdrop-blur md:px-8">
           <button
             type="button"
             className="grid h-10 w-10 place-items-center rounded-[12px] text-navy lg:hidden"
-            onClick={() => setOpen(true)}
-            aria-label="Open menu"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? 'Close menu' : 'Open menu'}
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -125,16 +162,16 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-1">
             <ThemeToggle />
             <Link
-            href="/admin/demo-requests"
-            onClick={() => clear()}
-            className="relative grid h-10 w-10 place-items-center rounded-full text-navy transition-colors hover:bg-bg"
-            aria-label="Notifications"
-          >
-            <Bell size={18} />
-            {newCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-gold ring-2 ring-surface" />
-            )}
-          </Link>
+              href="/admin/quotation-requests"
+              onClick={() => clear()}
+              className="relative grid h-10 w-10 place-items-center rounded-full text-navy transition-colors hover:bg-bg"
+              aria-label="Notifications"
+            >
+              <Bell size={18} />
+              {newCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-gold ring-2 ring-surface" />
+              )}
+            </Link>
           </div>
         </header>
         <main className="flex-1 p-4 md:p-8">{children}</main>

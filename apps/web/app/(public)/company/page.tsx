@@ -4,13 +4,22 @@ import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
 import { api } from '@/lib/api';
 
-import { pageMetadata } from '@/lib/seo';
+import { resolveSeo } from '@/lib/seo';
 
-export const metadata: Metadata = pageMetadata({
-  title: 'Company',
-  description: 'History, vision, mission, values and the RIVET timeline of engineering excellence.',
-  path: '/company',
-});
+export async function generateMetadata(): Promise<Metadata> {
+  let page = null;
+  try {
+    ({ page } = await api.pageSeo.byKey('company'));
+  } catch {
+    /* defaults */
+  }
+  return resolveSeo(page, {
+    title: 'About Rivet — River Company in Ethiopia',
+    description:
+      'Learn about Rivet (River Company): history, vision, mission, and values as a premium construction and architectural products supplier in Ethiopia.',
+    path: '/company',
+  });
+}
 
 export default async function CompanyPage() {
   const { company } = await api.company();

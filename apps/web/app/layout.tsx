@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Cormorant_Garamond, Inter } from 'next/font/google';
-import { DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/seo';
+import { DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, SITE_KEYWORDS, SITE_NAME, SITE_TAGLINE, SITE_URL } from '@/lib/seo';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import './globals.css';
 
@@ -21,10 +21,11 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} | Premium Construction & Architectural Products`,
+    default: `${SITE_NAME} | ${SITE_TAGLINE}`,
     template: '%s | RIVET',
   },
   description: DEFAULT_DESCRIPTION,
+  keywords: SITE_KEYWORDS,
   alternates: { canonical: SITE_URL },
   openGraph: {
     title: SITE_NAME,

@@ -6,6 +6,7 @@ import {
   AdminButton,
   AdminCard,
   AdminInput,
+  AdminModal,
   AdminPageHeader,
   AdminSelect,
   AdminTextarea,
@@ -14,6 +15,12 @@ import {
 } from '@/components/admin/ui';
 import { RichTextEditor } from '@/components/admin/rich-text-editor';
 import { ImageUploadField } from '@/components/admin/image-upload-field';
+import {
+  emptySeoFields,
+  pickSeoFields,
+  seoPayload,
+  SeoFieldsPanel,
+} from '@/components/admin/seo-fields-panel';
 
 export default function AdminNewsPage() {
   const [articles, setArticles] = React.useState<AdminArticle[]>([]);
@@ -24,6 +31,7 @@ export default function AdminNewsPage() {
     coverImage: '',
     category: 'Company',
     status: 'DRAFT',
+    ...emptySeoFields(),
   });
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
@@ -45,6 +53,7 @@ export default function AdminNewsPage() {
         coverImage: form.coverImage || undefined,
         category: form.category || undefined,
         status: form.status,
+        ...seoPayload(pickSeoFields(form)),
       };
       if (editingId) await adminApi.news.update(editingId, payload);
       else await adminApi.news.create(payload);
@@ -77,6 +86,7 @@ export default function AdminNewsPage() {
                 coverImage: '',
                 category: 'Company',
                 status: 'DRAFT',
+                ...emptySeoFields(),
               });
               setOpen(true);
             }}
@@ -125,6 +135,7 @@ export default function AdminNewsPage() {
                         coverImage: a.coverImage ?? '',
                         category: a.category ?? '',
                         status: (a.status as 'DRAFT' | 'PUBLISHED') ?? 'DRAFT',
+                        ...pickSeoFields(a),
                       });
                       setOpen(true);
                     }}
@@ -141,68 +152,70 @@ export default function AdminNewsPage() {
         </table>
       </AdminCard>
 
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-navy/50" onClick={() => setOpen(false)} />
-          <form
-            onSubmit={save}
-            className="relative z-10 max-h-[90vh] w-full max-w-2xl space-y-4 overflow-y-auto rounded-[20px] bg-surface p-6 shadow-[var(--shadow-bloom)]"
-          >
-            <h2 className="text-[1.25rem] text-navy">
-              {editingId ? 'Edit article' : 'New article'}
-            </h2>
+      <AdminModal open={open} onClose={() => setOpen(false)} className="max-w-2xl">
+        <form onSubmit={save} className="space-y-4">
+          <h2 className="text-[1.25rem] text-navy">
+            {editingId ? 'Edit article' : 'New article'}
+          </h2>
+          <AdminInput
+            label="Title"
+            required
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+          />
+          <div className="grid gap-4 sm:grid-cols-2">
             <AdminInput
-              label="Title"
-              required
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              label="Category"
+              value={form.category ?? ''}
+              onChange={(e) => setForm({ ...form, category: e.target.value })}
             />
-            <div className="grid gap-4 sm:grid-cols-2">
-              <AdminInput
-                label="Category"
-                value={form.category ?? ''}
-                onChange={(e) => setForm({ ...form, category: e.target.value })}
-              />
-              <AdminSelect
-                label="Status"
-                value={form.status}
-                onChange={(e) =>
-                  setForm({ ...form, status: e.target.value as 'DRAFT' | 'PUBLISHED' })
-                }
-              >
-                <option value="DRAFT">Draft</option>
-                <option value="PUBLISHED">Published</option>
-              </AdminSelect>
-            </div>
-            <ImageUploadField
-              label="Cover image"
-              value={form.coverImage ?? ''}
-              onChange={(coverImage) => setForm({ ...form, coverImage })}
-              onError={(msg) => setError(msg)}
+            <AdminSelect
+              label="Status"
+              value={form.status}
+              onChange={(e) =>
+                setForm({ ...form, status: e.target.value as 'DRAFT' | 'PUBLISHED' })
+              }
+            >
+              <option value="DRAFT">Draft</option>
+              <option value="PUBLISHED">Published</option>
+            </AdminSelect>
+          </div>
+          <ImageUploadField
+            label="Cover image"
+            value={form.coverImage ?? ''}
+            onChange={(coverImage) => setForm({ ...form, coverImage })}
+            onError={(msg) => setError(msg)}
+          />
+          <AdminTextarea
+            label="Excerpt"
+            rows={2}
+            value={form.excerpt ?? ''}
+            onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
+          />
+          <label className="block">
+            <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">Body</span>
+            <RichTextEditor
+              key={editingId ?? 'new'}
+              value={form.body}
+              onChange={(body) => setForm({ ...form, body })}
             />
-            <AdminTextarea
-              label="Excerpt"
-              rows={2}
-              value={form.excerpt ?? ''}
-              onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
-            />
-            <label className="block">
-              <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">Body</span>
-              <RichTextEditor
-                key={editingId ?? 'new'}
-                value={form.body}
-                onChange={(body) => setForm({ ...form, body })}
-              />
-            </label>
-            <div className="flex justify-end gap-3">
-              <AdminButton type="button" variant="ghost" onClick={() => setOpen(false)}>
-                Cancel
-              </AdminButton>
-              <AdminButton type="submit">Save</AdminButton>
-            </div>
-          </form>
-        </div>
-      )}
+          </label>
+          <SeoFieldsPanel
+            value={form}
+            onChange={(seo) => setForm({ ...form, ...seo })}
+            fallbackTitle={form.title || 'News article'}
+            fallbackDescription={form.excerpt || 'RIVET news and insights.'}
+            fallbackImage={form.coverImage ?? undefined}
+            pathPreview={`/news/${form.slug || 'article-slug'}`}
+          />
+          <div className="flex justify-end gap-3">
+            <AdminButton type="button" variant="ghost" onClick={() => setOpen(false)}>
+              Cancel
+            </AdminButton>
+            <AdminButton type="submit">Save</AdminButton>
+          </div>
+        </form>
+      </AdminModal>
     </div>
   );
 }

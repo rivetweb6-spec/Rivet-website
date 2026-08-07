@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { DEFAULT_DESCRIPTION, SITE_NAME, pageMetadata } from './seo';
+import {
+  DEFAULT_DESCRIPTION,
+  SITE_NAME,
+  buildProductAltText,
+  pageMetadata,
+  parseFaqs,
+} from './seo';
 
 describe('pageMetadata', () => {
   it('builds a canonical URL from the path', () => {
@@ -29,5 +35,29 @@ describe('pageMetadata', () => {
   it('adds noindex robots when requested', () => {
     const meta = pageMetadata({ title: 'Hidden', noIndex: true });
     expect(meta.robots).toMatchObject({ index: false, follow: false });
+  });
+
+  it('honors a custom canonical URL override', () => {
+    const meta = pageMetadata({
+      title: 'Custom',
+      path: '/products/x',
+      canonicalUrl: 'https://example.com/preferred',
+    });
+    expect(meta.alternates?.canonical).toBe('https://example.com/preferred');
+  });
+});
+
+describe('buildProductAltText', () => {
+  it('includes product, category, and Rivet Ethiopia context', () => {
+    expect(buildProductAltText('Meridian Elevator', 'Elevators')).toContain('Elevators');
+    expect(buildProductAltText('Meridian Elevator', 'Elevators')).toContain('Rivet in Ethiopia');
+  });
+});
+
+describe('parseFaqs', () => {
+  it('filters invalid FAQ entries', () => {
+    expect(parseFaqs([{ question: 'Q?', answer: 'A.' }, { question: 'bad' }])).toEqual([
+      { question: 'Q?', answer: 'A.' },
+    ]);
   });
 });

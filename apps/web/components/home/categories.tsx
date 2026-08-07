@@ -25,12 +25,12 @@ export function Categories() {
           {categories.map((c) => (
             <StaggerItem key={c.slug}>
               <Link
-                href={`/products?category=${c.slug}`}
+                href={`/products/${c.slug}`}
                 className="group relative block aspect-[4/3] overflow-hidden rounded-[4px]"
               >
                 <RivetImage
                   src={c.image}
-                  alt={c.name}
+                  alt={`Premium ${c.name} supplied by Rivet in Ethiopia`}
                   fill
                   sizes="(max-width: 768px) 50vw, 33vw"
                   className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"

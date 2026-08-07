@@ -4,12 +4,11 @@ import * as React from 'react';
 import { adminApi, getStoredToken } from '@/lib/admin-api';
 
 /**
- * Live SSE notifications for new demo requests.
- * Falls back to a silent no-op if EventSource auth via query isn't available —
- * we pass the token as a query param since EventSource can't set headers.
- * If the API requires Bearer only, we poll analytics for demoNew as fallback.
+ * Live SSE notifications for new quotation requests.
+ * EventSource can't set headers, so we pass the token as a query param and
+ * also poll analytics for the reliable new-request count.
  */
-export function useDemoNotifications() {
+export function useQuotationNotifications() {
   const [newCount, setNewCount] = React.useState(0);
 
   const clear = React.useCallback(() => setNewCount(0), []);
@@ -18,13 +17,11 @@ export function useDemoNotifications() {
     const token = getStoredToken();
     if (!token) return;
 
-    // Prefer SSE with token query (middleware also accepts Authorization;
-    // EventSource can't set headers, so we poll as the reliable path).
     let cancelled = false;
     const poll = async () => {
       try {
         const data = await adminApi.analytics();
-        if (!cancelled) setNewCount(data.cards.demoNew);
+        if (!cancelled) setNewCount(data.cards.quotationNew);
       } catch {
         /* ignore */
       }
@@ -32,11 +29,11 @@ export function useDemoNotifications() {
     poll();
     const id = window.setInterval(poll, 15000);
 
-    // Also try SSE — if the server accepts cookie auth or we add token later
+    // Also try SSE for instant updates.
     let es: EventSource | null = null;
     try {
       es = new EventSource(`${adminApi.eventsUrl()}?token=${encodeURIComponent(token)}`);
-      es.addEventListener('demo-request', () => {
+      es.addEventListener('quotation-request', () => {
         setNewCount((c) => c + 1);
       });
     } catch {

@@ -2,7 +2,8 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
-import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/seo/json-ld';
+import { Breadcrumbs } from '@/components/seo/breadcrumbs';
+import { ArticleJsonLd } from '@/components/seo/json-ld';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { api } from '@/lib/api';
 import { assets } from '@/lib/assets';
@@ -60,22 +61,17 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
         publishedAt={article.publishedAt}
         category={article.category}
       />
-      <BreadcrumbJsonLd
-        items={[
-          { name: 'Home', path: '/' },
-          { name: 'News', path: '/news' },
-          { name: article.title, path: `/news/${article.slug}` },
-        ]}
-      />
-
       <section className="bg-navy pt-32 pb-16 md:pt-40">
         <Container className="max-w-3xl">
-          <Link
-            href="/news"
-            className="text-[0.875rem] text-white/70 transition-colors hover:text-gold"
-          >
-            ← Back to journal
-          </Link>
+          <div className="text-white/70 [&_a]:text-white/70 [&_a:hover]:text-gold [&_[aria-current]]:text-white">
+            <Breadcrumbs
+              items={[
+                { name: 'Home', path: '/' },
+                { name: 'News', path: '/news' },
+                { name: article.title, path: `/news/${article.slug}` },
+              ]}
+            />
+          </div>
           {article.category && <Eyebrow className="mt-8 block text-gold">{article.category}</Eyebrow>}
           <h1 className="mt-4 text-[2.25rem] text-white sm:text-[3rem]">{article.title}</h1>
           <time className="mt-5 block text-[0.875rem] text-white/70">
@@ -106,6 +102,11 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
             className="prose prose-lg mt-8 max-w-none text-ink prose-headings:font-display prose-headings:text-navy prose-a:text-navy prose-a:underline prose-a:decoration-gold prose-a:underline-offset-4"
             dangerouslySetInnerHTML={{ __html: article.body }}
           />
+          <p className="mt-12">
+            <Link href="/news" className="text-[0.9375rem] font-medium text-navy hover:text-gold">
+              ← Back to journal
+            </Link>
+          </p>
         </Container>
       </Section>
     </>

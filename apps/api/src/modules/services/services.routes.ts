@@ -5,18 +5,23 @@ import { validate } from '../../middleware/validate.js';
 import { requireAuth, requireRole } from '../../middleware/auth.js';
 import { asyncHandler, notFound, param } from '../../utils/http.js';
 import { slugify } from '../../utils/slug.js';
+import { assertSlugAvailable } from '../../utils/slug-conflict.js';
+import { faqItemSchema, normalizeSeoFields, seoFieldsSchema } from '../../utils/seo-fields.js';
 
 const router = Router();
 
-const upsertSchema = z.object({
-  title: z.string().min(1),
-  slug: z.string().optional(),
-  narrative: z.string().min(1),
-  icon: z.string().optional(),
-  image: z.string().url().optional(),
-  order: z.number().int().optional(),
-  status: z.enum(['DRAFT', 'PUBLISHED']).optional(),
-});
+const upsertSchema = z
+  .object({
+    title: z.string().min(1),
+    slug: z.string().optional(),
+    narrative: z.string().min(1),
+    icon: z.string().optional().nullable(),
+    image: z.string().url().optional().nullable().or(z.literal('')),
+    order: z.number().int().optional(),
+    status: z.enum(['DRAFT', 'PUBLISHED']).optional(),
+    faqs: z.array(faqItemSchema).optional().nullable(),
+  })
+  .merge(seoFieldsSchema);
 
 router.get(
   '/',
@@ -44,7 +49,7 @@ router.get(
   '/:slug',
   asyncHandler(async (req, res) => {
     const service = await prisma.service.findUnique({ where: { slug: param(req, 'slug') } });
-    if (!service) throw notFound('Service not found');
+    if (!service || service.status !== 'PUBLISHED') throw notFound('Service not found');
     res.json({ service });
   }),
 );
@@ -55,9 +60,40 @@ router.post(
   requireRole('ADMIN', 'EDITOR'),
   validate({ body: upsertSchema }),
   asyncHandler(async (req, res) => {
-    const data = req.body as z.infer<typeof upsertSchema>;
+    const body = req.body as z.infer<typeof upsertSchema>;
+    const {
+      seoTitle,
+      seoDescription,
+      primaryKeyword,
+      ogTitle,
+      ogDescription,
+      ogImage,
+      canonicalUrl,
+      noIndex,
+      faqs,
+      image,
+      ...data
+    } = body;
+    const slug = await assertSlugAvailable('service', data.slug ?? slugify(data.title));
+    const seo = normalizeSeoFields({
+      seoTitle,
+      seoDescription,
+      primaryKeyword,
+      ogTitle,
+      ogDescription,
+      ogImage,
+      canonicalUrl,
+      noIndex,
+    });
+
     const service = await prisma.service.create({
-      data: { ...data, slug: data.slug ?? slugify(data.title) },
+      data: {
+        ...data,
+        slug,
+        image: image || null,
+        faqs: faqs ?? undefined,
+        ...seo,
+      },
     });
     res.status(201).json({ service });
   }),
@@ -69,7 +105,54 @@ router.put(
   requireRole('ADMIN', 'EDITOR'),
   validate({ body: upsertSchema.partial() }),
   asyncHandler(async (req, res) => {
-    const service = await prisma.service.update({ where: { id: param(req, 'id') }, data: req.body });
+    const id = param(req, 'id');
+    const body = req.body as Partial<z.infer<typeof upsertSchema>>;
+    const {
+      seoTitle,
+      seoDescription,
+      primaryKeyword,
+      ogTitle,
+      ogDescription,
+      ogImage,
+      canonicalUrl,
+      noIndex,
+      faqs,
+      image,
+      ...data
+    } = body;
+
+    let slug = data.slug;
+    if (slug !== undefined || data.title) {
+      const existing = await prisma.service.findUnique({ where: { id } });
+      if (!existing) throw notFound('Service not found');
+      slug = await assertSlugAvailable(
+        'service',
+        slug ?? data.title ?? existing.slug,
+        id,
+      );
+    }
+
+    const seo = normalizeSeoFields({
+      seoTitle,
+      seoDescription,
+      primaryKeyword,
+      ogTitle,
+      ogDescription,
+      ogImage,
+      canonicalUrl,
+      noIndex,
+    });
+
+    const service = await prisma.service.update({
+      where: { id },
+      data: {
+        ...data,
+        ...(slug !== undefined ? { slug } : {}),
+        ...(image !== undefined ? { image: image || null } : {}),
+        ...(faqs !== undefined ? { faqs } : {}),
+        ...seo,
+      },
+    });
     res.json({ service });
   }),
 );

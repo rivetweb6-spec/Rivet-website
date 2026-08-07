@@ -118,16 +118,17 @@ export const adminApi = {
         categories: number;
         services: number;
         news: number;
-        demoTotal: number;
-        demoNew: number;
+        quotationTotal: number;
+        quotationNew: number;
         contactMessages: number;
       };
-      demoByStatus: { status: string; _count: number }[];
-      recentDemos: {
+      quotationsByStatus: { status: string; _count: number }[];
+      recentQuotations: {
         id: string;
         fullName: string;
         email: string;
         productInterest: string;
+        productName: string | null;
         status: string;
         createdAt: string;
       }[];
@@ -197,18 +198,18 @@ export const adminApi = {
       adminRequest<{ ok: boolean }>(`/news/${id}`, { method: 'DELETE' }),
   },
 
-  demos: {
+  quotations: {
     list: (status?: string) =>
       adminRequest<{
-        requests: DemoRequest[];
+        requests: QuotationRequest[];
         counts: { status: string; _count: number }[];
-      }>(`/demo-requests${status ? `?status=${status}` : ''}`),
+      }>(`/quotation-requests${status ? `?status=${status}` : ''}`),
     update: (id: string, data: { status?: string; adminNotes?: string }) =>
-      adminRequest<{ demo: DemoRequest }>(`/demo-requests/${id}`, {
+      adminRequest<{ quotation: QuotationRequest }>(`/quotation-requests/${id}`, {
         method: 'PATCH',
         body: JSON.stringify(data),
       }),
-    exportUrl: () => `${API_URL}/demo-requests/export`,
+    exportUrl: () => `${API_URL}/quotation-requests/export`,
   },
 
   company: {
@@ -242,6 +243,15 @@ export const adminApi = {
     list: () => adminRequest<{ messages: ContactMessage[] }>('/contact'),
   },
 
+  pageSeo: {
+    list: () => adminRequest<{ pages: PageSeoRecord[] }>('/page-seo'),
+    upsert: (pageKey: string, data: SeoFieldsPayload) =>
+      adminRequest<{ page: PageSeoRecord }>(`/page-seo/${pageKey}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+  },
+
   uploads: {
     upload: (files: File[]) => {
       const form = new FormData();
@@ -258,6 +268,38 @@ export const adminApi = {
 
 /* ── Types ─────────────────────────────────────────────────────────────── */
 
+export type SeoFieldsInput = {
+  slug?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  primaryKeyword?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  canonicalUrl?: string;
+  noIndex?: boolean;
+};
+
+/** Payload shape sent to the API (empty strings normalized to null). */
+export type SeoFieldsPayload = {
+  slug?: string;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  primaryKeyword?: string | null;
+  ogTitle?: string | null;
+  ogDescription?: string | null;
+  ogImage?: string | null;
+  canonicalUrl?: string | null;
+  noIndex?: boolean;
+};
+
+export type PageSeoRecord = {
+  id: string;
+  pageKey: string;
+} & SeoFieldsPayload;
+
+export type FaqItem = { question: string; answer: string };
+
 export type Category = {
   id: string;
   name: string;
@@ -265,7 +307,8 @@ export type Category = {
   description: string | null;
   image: string | null;
   order: number;
-};
+  faqs?: FaqItem[] | null;
+} & SeoFieldsPayload;
 
 export type AdminProduct = {
   id: string;
@@ -282,7 +325,7 @@ export type AdminProduct = {
   status: string;
   category?: Category;
   images: { id: string; url: string; alt: string | null; order: number }[];
-};
+} & SeoFieldsPayload;
 
 export type ProductInput = {
   name: string;
@@ -297,7 +340,7 @@ export type ProductInput = {
   featured?: boolean;
   status?: 'DRAFT' | 'PUBLISHED';
   images?: { url: string; alt?: string }[];
-};
+} & SeoFieldsPayload;
 
 export type AdminService = {
   id: string;
@@ -308,7 +351,8 @@ export type AdminService = {
   image: string | null;
   order: number;
   status: string;
-};
+  faqs?: FaqItem[] | null;
+} & SeoFieldsPayload;
 
 export type ServiceInput = {
   title: string;
@@ -318,7 +362,8 @@ export type ServiceInput = {
   image?: string;
   order?: number;
   status?: 'DRAFT' | 'PUBLISHED';
-};
+  faqs?: FaqItem[] | null;
+} & SeoFieldsPayload;
 
 export type AdminArticle = {
   id: string;
@@ -330,7 +375,7 @@ export type AdminArticle = {
   category: string | null;
   status: string;
   publishedAt: string | null;
-};
+} & SeoFieldsPayload;
 
 export type ArticleInput = {
   title: string;
@@ -340,19 +385,44 @@ export type ArticleInput = {
   coverImage?: string;
   category?: string;
   status?: 'DRAFT' | 'PUBLISHED';
-};
+} & SeoFieldsPayload;
 
-export type DemoRequest = {
+export type QuotationRequest = {
   id: string;
   fullName: string;
   company: string | null;
   email: string;
   phone: string;
   productInterest: string;
+  productId: string | null;
+  productName: string | null;
+  productSlug: string | null;
+  productImage: string | null;
+  quantity: string | null;
   message: string | null;
   status: string;
   adminNotes: string | null;
   createdAt: string;
+};
+
+export const QUOTATION_STATUSES = [
+  'NEW',
+  'UNDER_REVIEW',
+  'CONTACTED',
+  'QUOTATION_SENT',
+  'APPROVED',
+  'REJECTED',
+  'COMPLETED',
+] as const;
+
+export const QUOTATION_STATUS_LABELS: Record<string, string> = {
+  NEW: 'New',
+  UNDER_REVIEW: 'Under Review',
+  CONTACTED: 'Contacted',
+  QUOTATION_SENT: 'Quotation Sent',
+  APPROVED: 'Approved',
+  REJECTED: 'Rejected',
+  COMPLETED: 'Completed',
 };
 
 export type CompanyInfo = {

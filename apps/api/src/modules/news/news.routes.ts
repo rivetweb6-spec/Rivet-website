@@ -6,6 +6,8 @@ import { validate } from '../../middleware/validate.js';
 import { requireAuth, requireRole } from '../../middleware/auth.js';
 import { asyncHandler, notFound, param } from '../../utils/http.js';
 import { slugify } from '../../utils/slug.js';
+import { assertSlugAvailable } from '../../utils/slug-conflict.js';
+import { normalizeSeoFields, seoFieldsSchema } from '../../utils/seo-fields.js';
 
 const router = Router();
 
@@ -15,15 +17,17 @@ const listQuery = z.object({
   pageSize: z.coerce.number().int().min(1).max(24).default(9),
 });
 
-const upsertSchema = z.object({
-  title: z.string().min(1),
-  slug: z.string().optional(),
-  excerpt: z.string().optional(),
-  body: z.string().min(1),
-  coverImage: z.string().url().optional(),
-  category: z.string().optional(),
-  status: z.enum(['DRAFT', 'PUBLISHED']).optional(),
-});
+const upsertSchema = z
+  .object({
+    title: z.string().min(1),
+    slug: z.string().optional(),
+    excerpt: z.string().optional().nullable(),
+    body: z.string().min(1),
+    coverImage: z.string().url().optional().nullable().or(z.literal('')),
+    category: z.string().optional().nullable(),
+    status: z.enum(['DRAFT', 'PUBLISHED']).optional(),
+  })
+  .merge(seoFieldsSchema);
 
 // Public — published only
 router.get(
@@ -45,7 +49,12 @@ router.get(
     ]);
     res.json({
       articles,
-      pagination: { page: q.page, pageSize: q.pageSize, total, pages: Math.ceil(total / q.pageSize) },
+      pagination: {
+        page: q.page,
+        pageSize: q.pageSize,
+        total,
+        pages: Math.ceil(total / q.pageSize),
+      },
     });
   }),
 );
@@ -64,7 +73,9 @@ router.get(
 router.get(
   '/:slug',
   asyncHandler(async (req, res) => {
-    const article = await prisma.newsArticle.findUnique({ where: { slug: param(req, 'slug') } });
+    const article = await prisma.newsArticle.findUnique({
+      where: { slug: param(req, 'slug') },
+    });
     if (!article || article.status !== 'PUBLISHED') throw notFound('Article not found');
     res.json({ article });
   }),
@@ -76,11 +87,37 @@ router.post(
   requireRole('ADMIN', 'EDITOR'),
   validate({ body: upsertSchema }),
   asyncHandler(async (req, res) => {
-    const data = req.body as z.infer<typeof upsertSchema>;
+    const body = req.body as z.infer<typeof upsertSchema>;
+    const {
+      seoTitle,
+      seoDescription,
+      primaryKeyword,
+      ogTitle,
+      ogDescription,
+      ogImage,
+      canonicalUrl,
+      noIndex,
+      coverImage,
+      ...data
+    } = body;
+    const slug = await assertSlugAvailable('news', data.slug ?? slugify(data.title));
+    const seo = normalizeSeoFields({
+      seoTitle,
+      seoDescription,
+      primaryKeyword,
+      ogTitle,
+      ogDescription,
+      ogImage,
+      canonicalUrl,
+      noIndex,
+    });
+
     const article = await prisma.newsArticle.create({
       data: {
         ...data,
-        slug: data.slug ?? slugify(data.title),
+        slug,
+        coverImage: coverImage || null,
+        ...seo,
         publishedAt: data.status === 'PUBLISHED' ? new Date() : null,
       },
     });
@@ -94,15 +131,55 @@ router.put(
   requireRole('ADMIN', 'EDITOR'),
   validate({ body: upsertSchema.partial() }),
   asyncHandler(async (req, res) => {
-    const data = req.body as Partial<z.infer<typeof upsertSchema>>;
-    const existing = await prisma.newsArticle.findUnique({ where: { id: param(req, 'id') } });
+    const id = param(req, 'id');
+    const body = req.body as Partial<z.infer<typeof upsertSchema>>;
+    const existing = await prisma.newsArticle.findUnique({ where: { id } });
     if (!existing) throw notFound('Article not found');
+
+    const {
+      seoTitle,
+      seoDescription,
+      primaryKeyword,
+      ogTitle,
+      ogDescription,
+      ogImage,
+      canonicalUrl,
+      noIndex,
+      coverImage,
+      ...data
+    } = body;
+
+    let slug = data.slug;
+    if (slug !== undefined || data.title) {
+      slug = await assertSlugAvailable(
+        'news',
+        slug ?? data.title ?? existing.slug,
+        id,
+      );
+    }
+
+    const seo = normalizeSeoFields({
+      seoTitle,
+      seoDescription,
+      primaryKeyword,
+      ogTitle,
+      ogDescription,
+      ogImage,
+      canonicalUrl,
+      noIndex,
+    });
+
     const article = await prisma.newsArticle.update({
-      where: { id: param(req, 'id') },
+      where: { id },
       data: {
         ...data,
+        ...(slug !== undefined ? { slug } : {}),
+        ...(coverImage !== undefined ? { coverImage: coverImage || null } : {}),
+        ...seo,
         publishedAt:
-          data.status === 'PUBLISHED' && !existing.publishedAt ? new Date() : existing.publishedAt,
+          data.status === 'PUBLISHED' && !existing.publishedAt
+            ? new Date()
+            : existing.publishedAt,
       },
     });
     res.json({ article });

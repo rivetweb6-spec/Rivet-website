@@ -6,7 +6,7 @@ import { ChevronDown } from 'lucide-react';
 import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { RivetImage } from '@/components/ui/rivet-image';
-import { useDemoModal } from '@/components/demo/demo-modal-provider';
+import { useQuotationModal } from '@/components/quotation/quotation-modal-provider';
 import { assets } from '@/lib/assets';
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -30,7 +30,7 @@ const defaults = {
 
 export function Hero({ content }: { content?: HeroContent | null }) {
   const ref = useRef<HTMLElement>(null);
-  const { open } = useDemoModal();
+  const { open } = useQuotationModal();
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   const y = useTransform(scrollYProgress, [0, 1], reduceMotion ? ['0%', '0%'] : ['0%', '22%']);
@@ -113,8 +113,8 @@ export function Hero({ content }: { content?: HeroContent | null }) {
                 Explore Products
               </Button>
             </Link>
-            <Button variant="secondary" size="lg" onClick={open}>
-              Request a Demo
+            <Button variant="secondary" size="lg" onClick={() => open()}>
+              Request a Quotation
             </Button>
             <Link href="/contact">
               <Button variant="ghost" size="lg">

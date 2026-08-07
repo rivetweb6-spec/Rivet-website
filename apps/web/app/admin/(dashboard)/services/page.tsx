@@ -6,6 +6,7 @@ import {
   AdminButton,
   AdminCard,
   AdminInput,
+  AdminModal,
   AdminPageHeader,
   AdminSelect,
   AdminTextarea,
@@ -13,14 +14,43 @@ import {
   StatusBadge,
 } from '@/components/admin/ui';
 
+import {
+  emptySeoFields,
+  pickSeoFields,
+  seoPayload,
+  SeoFieldsPanel,
+} from '@/components/admin/seo-fields-panel';
+import type { FaqItem } from '@/lib/admin-api';
+
+function faqsToText(faqs?: FaqItem[] | null) {
+  if (!faqs?.length) return '';
+  return faqs.map((f) => `${f.question}\n${f.answer}`).join('\n\n');
+}
+
+function textToFaqs(text: string): FaqItem[] {
+  return text
+    .split(/\n\s*\n/)
+    .map((block) => {
+      const lines = block.trim().split('\n');
+      const question = lines[0]?.trim() ?? '';
+      const answer = lines.slice(1).join('\n').trim();
+      return { question, answer };
+    })
+    .filter((f) => f.question && f.answer);
+}
+
+type ServiceForm = ServiceInput & { faqsText: string };
+
 export default function AdminServicesPage() {
   const [services, setServices] = React.useState<AdminService[]>([]);
-  const [form, setForm] = React.useState<ServiceInput>({
+  const [form, setForm] = React.useState<ServiceForm>({
     title: '',
     narrative: '',
     icon: 'Wrench',
     order: 0,
     status: 'PUBLISHED',
+    faqsText: '',
+    ...emptySeoFields(),
   });
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
@@ -35,8 +65,18 @@ export default function AdminServicesPage() {
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      if (editingId) await adminApi.services.update(editingId, form);
-      else await adminApi.services.create(form);
+      const faqs = textToFaqs(form.faqsText);
+      const payload: ServiceInput = {
+        title: form.title,
+        narrative: form.narrative,
+        icon: form.icon,
+        order: form.order,
+        status: form.status,
+        faqs: faqs.length ? faqs : null,
+        ...seoPayload(pickSeoFields(form)),
+      };
+      if (editingId) await adminApi.services.update(editingId, payload);
+      else await adminApi.services.create(payload);
       setOpen(false);
       await load();
     } catch (err) {
@@ -65,6 +105,8 @@ export default function AdminServicesPage() {
                 icon: 'Wrench',
                 order: services.length + 1,
                 status: 'PUBLISHED',
+                faqsText: '',
+                ...emptySeoFields(),
               });
               setOpen(true);
             }}
@@ -99,6 +141,8 @@ export default function AdminServicesPage() {
                       icon: s.icon ?? 'Wrench',
                       order: s.order,
                       status: (s.status as 'DRAFT' | 'PUBLISHED') ?? 'PUBLISHED',
+                      faqsText: faqsToText(s.faqs),
+                      ...pickSeoFields(s),
                     });
                     setOpen(true);
                   }}
@@ -114,61 +158,70 @@ export default function AdminServicesPage() {
         ))}
       </div>
 
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-navy/50" onClick={() => setOpen(false)} />
-          <form
-            onSubmit={save}
-            className="relative z-10 w-full max-w-lg space-y-4 rounded-[20px] bg-surface p-6 shadow-[var(--shadow-bloom)]"
-          >
-            <h2 className="text-[1.25rem] text-navy">
-              {editingId ? 'Edit service' : 'New service'}
-            </h2>
+      <AdminModal open={open} onClose={() => setOpen(false)} className="max-w-2xl">
+        <form onSubmit={save} className="space-y-4">
+          <h2 className="text-[1.25rem] text-navy">
+            {editingId ? 'Edit service' : 'New service'}
+          </h2>
+          <AdminInput
+            label="Title"
+            required
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+          />
+          <AdminTextarea
+            label="Narrative"
+            required
+            rows={4}
+            value={form.narrative}
+            onChange={(e) => setForm({ ...form, narrative: e.target.value })}
+          />
+          <AdminInput
+            label="Lucide icon name"
+            value={form.icon ?? ''}
+            onChange={(e) => setForm({ ...form, icon: e.target.value })}
+          />
+          <div className="grid grid-cols-2 gap-4">
             <AdminInput
-              label="Title"
-              required
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              label="Order"
+              type="number"
+              value={form.order ?? 0}
+              onChange={(e) => setForm({ ...form, order: Number(e.target.value) })}
             />
-            <AdminTextarea
-              label="Narrative"
-              required
-              rows={4}
-              value={form.narrative}
-              onChange={(e) => setForm({ ...form, narrative: e.target.value })}
-            />
-            <AdminInput
-              label="Lucide icon name"
-              value={form.icon ?? ''}
-              onChange={(e) => setForm({ ...form, icon: e.target.value })}
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <AdminInput
-                label="Order"
-                type="number"
-                value={form.order ?? 0}
-                onChange={(e) => setForm({ ...form, order: Number(e.target.value) })}
-              />
-              <AdminSelect
-                label="Status"
-                value={form.status}
-                onChange={(e) =>
-                  setForm({ ...form, status: e.target.value as 'DRAFT' | 'PUBLISHED' })
-                }
-              >
-                <option value="PUBLISHED">Published</option>
-                <option value="DRAFT">Draft</option>
-              </AdminSelect>
-            </div>
-            <div className="flex justify-end gap-3">
-              <AdminButton type="button" variant="ghost" onClick={() => setOpen(false)}>
-                Cancel
-              </AdminButton>
-              <AdminButton type="submit">Save</AdminButton>
-            </div>
-          </form>
-        </div>
-      )}
+            <AdminSelect
+              label="Status"
+              value={form.status}
+              onChange={(e) =>
+                setForm({ ...form, status: e.target.value as 'DRAFT' | 'PUBLISHED' })
+              }
+            >
+              <option value="PUBLISHED">Published</option>
+              <option value="DRAFT">Draft</option>
+            </AdminSelect>
+          </div>
+          <AdminTextarea
+            label="FAQs (question on first line, answer below; blank line between items)"
+            rows={5}
+            value={form.faqsText}
+            onChange={(e) => setForm({ ...form, faqsText: e.target.value })}
+          />
+          <SeoFieldsPanel
+            value={form}
+            onChange={(seo) => setForm({ ...form, ...seo })}
+            fallbackTitle={`${form.title || 'Service'} in Ethiopia | Rivet`}
+            fallbackDescription={
+              (form.narrative ?? '').slice(0, 160) || 'Rivet services in Ethiopia.'
+            }
+            pathPreview={`/services/${form.slug || 'service-slug'}`}
+          />
+          <div className="flex justify-end gap-3">
+            <AdminButton type="button" variant="ghost" onClick={() => setOpen(false)}>
+              Cancel
+            </AdminButton>
+            <AdminButton type="submit">Save</AdminButton>
+          </div>
+        </form>
+      </AdminModal>
     </div>
   );
 }

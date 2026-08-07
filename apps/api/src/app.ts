@@ -41,7 +41,7 @@ export function createApp() {
         'GET  /api/news',
         'GET  /api/company',
         'GET  /api/contact-info',
-        'POST /api/demo-requests',
+        'POST /api/quotation-requests',
         'POST /api/contact',
       ],
     });

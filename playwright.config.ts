@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * RIVET end-to-end tests (P7-2).
  *
- * Flows covered: public demo-request, admin authentication, admin CRUD.
+ * Flows covered: public quotation-request, admin authentication, admin CRUD.
  *
  * These specs exercise the full stack, so they expect a running web app on
  * `E2E_BASE_URL` (default http://localhost:3000) backed by the Express API and a

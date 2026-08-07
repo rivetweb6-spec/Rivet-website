@@ -1,3 +1,7 @@
+'use client';
+
+import * as React from 'react';
+import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
 
 export function AdminPageHeader({
@@ -43,12 +47,14 @@ export function AdminButton({
   children,
   variant = 'primary',
   className,
+  type = 'button',
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
 }) {
   return (
     <button
+      type={type}
       className={cn(
         'inline-flex h-10 items-center justify-center gap-2 rounded-[12px] px-4 text-[0.875rem] font-medium transition-colors disabled:opacity-50',
         variant === 'primary' && 'bg-gold text-navy hover:brightness-105',
@@ -61,6 +67,72 @@ export function AdminButton({
     >
       {children}
     </button>
+  );
+}
+
+/**
+ * Portal-based modal so drawers sit above the sticky admin header/sidebar
+ * and remain interactive (not trapped in a stacking context).
+ */
+export function AdminModal({
+  open,
+  onClose,
+  children,
+  className,
+  labelledBy,
+}: {
+  open: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+  className?: string;
+  labelledBy?: string;
+}) {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [open, onClose]);
+
+  if (!mounted || !open) return null;
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={labelledBy}
+    >
+      <button
+        type="button"
+        className="absolute inset-0 bg-navy/50 backdrop-blur-sm"
+        aria-label="Close dialog"
+        onClick={onClose}
+      />
+      <div
+        className={cn(
+          'relative z-10 max-h-[90dvh] w-full overflow-y-auto rounded-[20px] bg-surface p-6 shadow-[var(--shadow-bloom)]',
+          className,
+        )}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -129,19 +201,25 @@ export function StatusBadge({ status }: { status: string }) {
     PUBLISHED: 'bg-success/10 text-success',
     DRAFT: 'bg-muted/15 text-muted',
     NEW: 'bg-gold/15 text-navy',
+    UNDER_REVIEW: 'bg-warning/15 text-warning',
     CONTACTED: 'bg-navy/10 text-navy',
-    SCHEDULED: 'bg-warning/15 text-warning',
+    QUOTATION_SENT: 'bg-navy/10 text-navy',
+    APPROVED: 'bg-success/10 text-success',
+    REJECTED: 'bg-error/10 text-error',
     COMPLETED: 'bg-success/10 text-success',
-    CLOSED: 'bg-muted/15 text-muted',
+  };
+  const labels: Record<string, string> = {
+    UNDER_REVIEW: 'Under Review',
+    QUOTATION_SENT: 'Quotation Sent',
   };
   return (
     <span
       className={cn(
-        'inline-flex rounded-full px-2.5 py-0.5 text-[0.75rem] font-medium',
+        'inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-[0.75rem] font-medium',
         map[status] ?? 'bg-bg text-ink',
       )}
     >
-      {status}
+      {labels[status] ?? status}
     </span>
   );
 }

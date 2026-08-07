@@ -43,11 +43,11 @@ export default function AdminDashboardPage() {
     { label: 'Categories', value: data.cards.categories, href: '/admin/categories' },
     { label: 'Services', value: data.cards.services, href: '/admin/services' },
     { label: 'News', value: data.cards.news, href: '/admin/news' },
-    { label: 'Demo requests', value: data.cards.demoTotal, href: '/admin/demo-requests' },
-    { label: 'New demos', value: data.cards.demoNew, href: '/admin/demo-requests' },
+    { label: 'Quotation requests', value: data.cards.quotationTotal, href: '/admin/quotation-requests' },
+    { label: 'New quotations', value: data.cards.quotationNew, href: '/admin/quotation-requests' },
   ];
 
-  const chartData = data.demoByStatus.map((row) => ({
+  const chartData = data.quotationsByStatus.map((row) => ({
     status: row.status,
     count: row._count,
   }));
@@ -72,10 +72,10 @@ export default function AdminDashboardPage() {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-5">
         <AdminCard className="lg:col-span-3">
-          <h2 className="text-[1.125rem] text-navy">Demo requests by status</h2>
+          <h2 className="text-[1.125rem] text-navy">Quotation requests by status</h2>
           <div className="mt-4 h-64">
             {chartData.length === 0 ? (
-              <p className="text-[0.875rem] text-muted">No demo requests yet.</p>
+              <p className="text-[0.875rem] text-muted">No quotation requests yet.</p>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData}>
@@ -89,7 +89,7 @@ export default function AdminDashboardPage() {
             )}
           </div>
           <ul className="mt-2 flex flex-wrap gap-3">
-            {data.demoByStatus.map((row) => (
+            {data.quotationsByStatus.map((row) => (
               <li key={row.status} className="flex items-center gap-2 text-[0.8125rem]">
                 <StatusBadge status={row.status} />
                 <span className="font-medium text-ink">{row._count}</span>
@@ -100,21 +100,21 @@ export default function AdminDashboardPage() {
 
         <AdminCard className="lg:col-span-2">
           <div className="flex items-center justify-between">
-            <h2 className="text-[1.125rem] text-navy">Recent demo requests</h2>
-            <Link href="/admin/demo-requests" className="text-[0.8125rem] text-gold hover:underline">
+            <h2 className="text-[1.125rem] text-navy">Recent quotation requests</h2>
+            <Link href="/admin/quotation-requests" className="text-[0.8125rem] text-gold hover:underline">
               View all
             </Link>
           </div>
           <ul className="mt-4 divide-y divide-divider">
-            {data.recentDemos.length === 0 && (
+            {data.recentQuotations.length === 0 && (
               <li className="py-4 text-[0.875rem] text-muted">No recent requests.</li>
             )}
-            {data.recentDemos.map((d) => (
+            {data.recentQuotations.map((d) => (
               <li key={d.id} className="flex items-start justify-between gap-3 py-3">
                 <div>
                   <p className="text-[0.875rem] font-medium text-ink">{d.fullName}</p>
                   <p className="text-[0.75rem] text-muted">
-                    {d.productInterest} · {new Date(d.createdAt).toLocaleDateString()}
+                    {d.productName ?? d.productInterest} · {new Date(d.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 <StatusBadge status={d.status} />

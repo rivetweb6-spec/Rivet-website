@@ -15,6 +15,12 @@ const u = (id: string, w = 1600) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
 
 export const assets = {
+  logo: {
+    primary: '/logo.png',
+    light: '/logo-light.png',
+    admin: '/logo-admin.png',
+    adminLight: '/logo-admin-light.png',
+  },
   hero: {
     // Replace with client hero video/image sequence of flagship installations.
     image: u('photo-1487958449943-2429e8be8625', 2400),

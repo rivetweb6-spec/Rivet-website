@@ -4,19 +4,54 @@ import { PageHero } from '@/components/site/page-hero';
 import { Container, Section } from '@/components/ui/container';
 import { ProductsCatalog } from '@/components/products/catalog';
 import { api } from '@/lib/api';
-import { pageMetadata } from '@/lib/seo';
-
-export const metadata: Metadata = pageMetadata({
-  title: 'Products',
-  description: 'Browse RIVET’s premium elevators, granite, doors, furniture and building materials.',
-  path: '/products',
-});
+import { pageMetadata, resolveSeo } from '@/lib/seo';
 
 type SearchParams = Promise<{
-  category?: string;
   search?: string;
   page?: string;
 }>;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}): Promise<Metadata> {
+  const sp = await searchParams;
+  const page = Number(sp.page ?? 1) || 1;
+
+  if (sp.search) {
+    return pageMetadata({
+      title: `Search results for “${sp.search}”`,
+      description: `Products matching “${sp.search}” at RIVET — premium construction and architectural products in Ethiopia.`,
+      path: '/products',
+      noIndex: true,
+    });
+  }
+
+  if (page > 1) {
+    return pageMetadata({
+      title: `Products — Page ${page}`,
+      description:
+        'Browse RIVET’s premium elevators, granite, doors, furniture and building materials in Ethiopia.',
+      path: '/products',
+      noIndex: true,
+    });
+  }
+
+  let pageSeo = null;
+  try {
+    ({ page: pageSeo } = await api.pageSeo.byKey('products'));
+  } catch {
+    /* defaults */
+  }
+
+  return resolveSeo(pageSeo, {
+    title: 'Products — Elevators, Granite, Doors & Materials',
+    description:
+      'Search and browse RIVET’s premium elevators, granite, doors, furniture and building materials in Ethiopia. Filter by category or keyword and request a quotation.',
+    path: '/products',
+  });
+}
 
 export default async function ProductsPage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
@@ -24,7 +59,6 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
 
   const [{ products, pagination }, { categories }] = await Promise.all([
     api.products.list({
-      category: sp.category,
       search: sp.search,
       page,
       pageSize: 12,
@@ -37,7 +71,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
       <PageHero
         eyebrow="Catalog"
         title="Products"
-        description="A curated portfolio of imported elevators, natural stone, doors, furniture and fine building materials."
+        description="A curated portfolio of imported elevators, natural stone, doors, furniture and fine building materials for projects in Ethiopia."
       />
       <Section>
         <Container>
@@ -46,7 +80,6 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
               products={products}
               categories={categories}
               pagination={pagination}
-              activeCategory={sp.category}
               search={sp.search}
             />
           </Suspense>

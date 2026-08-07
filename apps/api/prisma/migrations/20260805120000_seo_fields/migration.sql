@@ -1,0 +1,61 @@
+-- AlterTable Category
+ALTER TABLE "Category" ADD COLUMN IF NOT EXISTS "faqs" JSONB,
+ADD COLUMN IF NOT EXISTS "seoTitle" TEXT,
+ADD COLUMN IF NOT EXISTS "seoDescription" TEXT,
+ADD COLUMN IF NOT EXISTS "primaryKeyword" TEXT,
+ADD COLUMN IF NOT EXISTS "ogTitle" TEXT,
+ADD COLUMN IF NOT EXISTS "ogDescription" TEXT,
+ADD COLUMN IF NOT EXISTS "ogImage" TEXT,
+ADD COLUMN IF NOT EXISTS "canonicalUrl" TEXT,
+ADD COLUMN IF NOT EXISTS "noIndex" BOOLEAN NOT NULL DEFAULT false;
+
+-- AlterTable Product
+ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "seoTitle" TEXT,
+ADD COLUMN IF NOT EXISTS "seoDescription" TEXT,
+ADD COLUMN IF NOT EXISTS "primaryKeyword" TEXT,
+ADD COLUMN IF NOT EXISTS "ogTitle" TEXT,
+ADD COLUMN IF NOT EXISTS "ogDescription" TEXT,
+ADD COLUMN IF NOT EXISTS "ogImage" TEXT,
+ADD COLUMN IF NOT EXISTS "canonicalUrl" TEXT,
+ADD COLUMN IF NOT EXISTS "noIndex" BOOLEAN NOT NULL DEFAULT false;
+
+-- AlterTable Service
+ALTER TABLE "Service" ADD COLUMN IF NOT EXISTS "faqs" JSONB,
+ADD COLUMN IF NOT EXISTS "seoTitle" TEXT,
+ADD COLUMN IF NOT EXISTS "seoDescription" TEXT,
+ADD COLUMN IF NOT EXISTS "primaryKeyword" TEXT,
+ADD COLUMN IF NOT EXISTS "ogTitle" TEXT,
+ADD COLUMN IF NOT EXISTS "ogDescription" TEXT,
+ADD COLUMN IF NOT EXISTS "ogImage" TEXT,
+ADD COLUMN IF NOT EXISTS "canonicalUrl" TEXT,
+ADD COLUMN IF NOT EXISTS "noIndex" BOOLEAN NOT NULL DEFAULT false;
+
+-- AlterTable NewsArticle
+ALTER TABLE "NewsArticle" ADD COLUMN IF NOT EXISTS "seoTitle" TEXT,
+ADD COLUMN IF NOT EXISTS "seoDescription" TEXT,
+ADD COLUMN IF NOT EXISTS "primaryKeyword" TEXT,
+ADD COLUMN IF NOT EXISTS "ogTitle" TEXT,
+ADD COLUMN IF NOT EXISTS "ogDescription" TEXT,
+ADD COLUMN IF NOT EXISTS "ogImage" TEXT,
+ADD COLUMN IF NOT EXISTS "canonicalUrl" TEXT,
+ADD COLUMN IF NOT EXISTS "noIndex" BOOLEAN NOT NULL DEFAULT false;
+
+-- CreateTable PageSeo
+CREATE TABLE IF NOT EXISTS "PageSeo" (
+    "id" TEXT NOT NULL,
+    "pageKey" TEXT NOT NULL,
+    "seoTitle" TEXT,
+    "seoDescription" TEXT,
+    "primaryKeyword" TEXT,
+    "ogTitle" TEXT,
+    "ogDescription" TEXT,
+    "ogImage" TEXT,
+    "canonicalUrl" TEXT,
+    "noIndex" BOOLEAN NOT NULL DEFAULT false,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "PageSeo_pkey" PRIMARY KEY ("id")
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS "PageSeo_pageKey_key" ON "PageSeo"("pageKey");

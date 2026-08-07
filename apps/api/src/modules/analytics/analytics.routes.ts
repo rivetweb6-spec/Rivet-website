@@ -10,27 +10,35 @@ router.get(
   requireAuth,
   requireRole('ADMIN', 'EDITOR'),
   asyncHandler(async (_req, res) => {
-    const [products, categories, services, news, demoTotal, demoNew, contactMessages, demoByStatus] =
-      await Promise.all([
-        prisma.product.count(),
-        prisma.category.count(),
-        prisma.service.count(),
-        prisma.newsArticle.count(),
-        prisma.demoRequest.count(),
-        prisma.demoRequest.count({ where: { status: 'NEW' } }),
-        prisma.contactMessage.count(),
-        prisma.demoRequest.groupBy({ by: ['status'], _count: true }),
-      ]);
+    const [
+      products,
+      categories,
+      services,
+      news,
+      quotationTotal,
+      quotationNew,
+      contactMessages,
+      quotationsByStatus,
+    ] = await Promise.all([
+      prisma.product.count(),
+      prisma.category.count(),
+      prisma.service.count(),
+      prisma.newsArticle.count(),
+      prisma.quotationRequest.count(),
+      prisma.quotationRequest.count({ where: { status: 'NEW' } }),
+      prisma.contactMessage.count(),
+      prisma.quotationRequest.groupBy({ by: ['status'], _count: true }),
+    ]);
 
-    const recentDemos = await prisma.demoRequest.findMany({
+    const recentQuotations = await prisma.quotationRequest.findMany({
       orderBy: { createdAt: 'desc' },
       take: 5,
     });
 
     res.json({
-      cards: { products, categories, services, news, demoTotal, demoNew, contactMessages },
-      demoByStatus,
-      recentDemos,
+      cards: { products, categories, services, news, quotationTotal, quotationNew, contactMessages },
+      quotationsByStatus,
+      recentQuotations,
     });
   }),
 );

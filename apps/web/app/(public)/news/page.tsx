@@ -6,13 +6,22 @@ import { RivetImage } from '@/components/ui/rivet-image';
 import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
 import { api } from '@/lib/api';
 import { assets } from '@/lib/assets';
-import { pageMetadata } from '@/lib/seo';
+import { resolveSeo } from '@/lib/seo';
 
-export const metadata: Metadata = pageMetadata({
-  title: 'News',
-  description: 'Journal of RIVET projects, product launches and company updates.',
-  path: '/news',
-});
+export async function generateMetadata(): Promise<Metadata> {
+  let page = null;
+  try {
+    ({ page } = await api.pageSeo.byKey('news'));
+  } catch {
+    /* defaults */
+  }
+  return resolveSeo(page, {
+    title: 'News & Insights | Rivet',
+    description:
+      'Journal of RIVET projects, product launches and company updates across Ethiopia and East Africa.',
+    path: '/news',
+  });
+}
 
 function formatDate(iso: string | null) {
   if (!iso) return '';

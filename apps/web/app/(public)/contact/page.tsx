@@ -5,13 +5,22 @@ import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { ContactForm } from '@/components/contact/contact-form';
 import { api } from '@/lib/api';
 
-import { pageMetadata } from '@/lib/seo';
+import { resolveSeo } from '@/lib/seo';
 
-export const metadata: Metadata = pageMetadata({
-  title: 'Contact',
-  description: 'Contact River Company (RIVET) — office, phone, email and social channels.',
-  path: '/contact',
-});
+export async function generateMetadata(): Promise<Metadata> {
+  let page = null;
+  try {
+    ({ page } = await api.pageSeo.byKey('contact'));
+  } catch {
+    /* defaults */
+  }
+  return resolveSeo(page, {
+    title: 'Contact Rivet in Addis Ababa, Ethiopia',
+    description:
+      'Contact River Company (RIVET) in Addis Ababa — office, phone, email and social channels. Request a quotation for elevators, granite, doors and more.',
+    path: '/contact',
+  });
+}
 
 export default async function ContactPage() {
   const { info } = await api.contactInfo();
@@ -32,7 +41,7 @@ export default async function ContactPage() {
       <PageHero
         eyebrow="Get in touch"
         title="Contact"
-        description="Speak with a RIVET specialist about products, installation, or a private demonstration."
+        description="Speak with a RIVET specialist about products, installation, or request a quotation."
       />
       <Section>
         <Container>

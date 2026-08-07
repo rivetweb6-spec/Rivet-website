@@ -33,18 +33,37 @@ export function ProductsCatalog({
 
   const update = useCallback(
     (patch: Record<string, string | undefined>) => {
+      // Category chips navigate to path-based category pages
+      if (patch.category) {
+        startTransition(() => {
+          router.push(`/products/${patch.category}`);
+        });
+        return;
+      }
       const next = new URLSearchParams(params.toString());
       Object.entries(patch).forEach(([k, v]) => {
         if (!v) next.delete(k);
         else next.set(k, v);
       });
+      next.delete('category');
       if (!('page' in patch)) next.delete('page');
+      const qs = next.toString();
       startTransition(() => {
-        router.push(`/products?${next.toString()}`);
+        router.push(qs ? `/products?${qs}` : '/products');
       });
     },
     [params, router],
   );
+
+  // Search as you type (debounced) — Enter still submits immediately.
+  useEffect(() => {
+    const trimmed = searchValue.trim();
+    if (trimmed === (search ?? '')) return;
+    const timer = window.setTimeout(() => {
+      update({ search: trimmed || undefined });
+    }, 450);
+    return () => window.clearTimeout(timer);
+  }, [searchValue, search, update]);
 
   return (
     <div className={cn('transition-opacity', pending && 'opacity-60')}>
@@ -52,14 +71,14 @@ export function ProductsCatalog({
         <div className="flex flex-wrap gap-2">
           <FilterChip
             active={!activeCategory}
-            onClick={() => update({ category: undefined })}
+            onClick={() => router.push('/products')}
             label="All"
           />
           {categories.map((c) => (
             <FilterChip
               key={c.slug}
               active={activeCategory === c.slug}
-              onClick={() => update({ category: c.slug })}
+              onClick={() => router.push(`/products/${c.slug}`)}
               label={c.name}
             />
           ))}
@@ -77,14 +96,41 @@ export function ProductsCatalog({
             name="search"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            placeholder="Search products…"
+            placeholder="Search by name, brand, category…"
             className="h-12 w-full rounded-[12px] border border-border bg-surface pl-11 pr-4 text-[0.9375rem] outline-none transition-colors focus:border-navy focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
           />
         </form>
       </div>
 
       {products.length === 0 ? (
-        <p className="py-20 text-center text-muted">No products match your filters.</p>
+        <div className="py-20 text-center">
+          <p className="text-[1.125rem] text-ink">
+            {search ? <>No products found for &ldquo;{search}&rdquo;.</> : 'No products match your filters.'}
+          </p>
+          <p className="mt-2 text-[0.9375rem] text-muted">
+            Check the spelling, try a shorter keyword, or explore a category below.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-2">
+            {categories.map((c) => (
+              <FilterChip
+                key={c.slug}
+                active={false}
+                onClick={() => router.push(`/products/${c.slug}`)}
+                label={c.name}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setSearchValue('');
+              update({ search: undefined });
+            }}
+            className="mt-8 text-[0.875rem] font-medium text-gold hover:underline"
+          >
+            View all products
+          </button>
+        </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((p) => {
@@ -98,7 +144,10 @@ export function ProductsCatalog({
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <RivetImage
                     src={image}
-                    alt={p.name}
+                    alt={
+                      p.images[0]?.alt ||
+                      `${p.name}${p.category?.name ? ` — ${p.category.name}` : ''} supplied by Rivet in Ethiopia`
+                    }
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"

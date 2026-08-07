@@ -7,16 +7,125 @@ const prisma = new PrismaClient();
 const u = (id: string, w = 1600) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
 
+type FaqItem = { question: string; answer: string };
+
+const categoryFaqs: Record<string, FaqItem[]> = {
+  elevators: [
+    {
+      question: 'Do you supply elevators for commercial buildings in Ethiopia?',
+      answer:
+        'Yes. RIVET imports and supplies passenger and commercial elevators for projects across Ethiopia, with guidance from specification through quotation.',
+    },
+    {
+      question: 'Can I request a quotation for a specific elevator model?',
+      answer:
+        'Absolutely. Use Request a Quotation on any product page or contact our team with building type, capacity, and floor count for a tailored quote.',
+    },
+  ],
+  granite: [
+    {
+      question: 'Is your granite suitable for residential and commercial interiors?',
+      answer:
+        'Yes. We supply premium granite slabs for cladding, flooring, and counters in homes and commercial spaces across Ethiopia.',
+    },
+    {
+      question: 'Can granite be cut to project specifications?',
+      answer:
+        'We offer cut-to-size options based on architectural drawings. Share dimensions and finish preferences when requesting a quotation.',
+    },
+  ],
+  doors: [
+    {
+      question: 'What types of doors does RIVET supply in Ethiopia?',
+      answer:
+        'We supply architectural and automatic door systems for lobbies, offices, and residential entries — request a quotation for the right specification.',
+    },
+  ],
+  'office-furniture': [
+    {
+      question: 'Do you supply office furniture in Addis Ababa?',
+      answer:
+        'Yes. RIVET supplies desks, seating, and office systems for commercial fit-outs in Addis Ababa and across Ethiopia.',
+    },
+  ],
+  chairs: [
+    {
+      question: 'Are your office chairs suitable for executive and open-plan spaces?',
+      answer:
+        'Our seating range covers executive lounge chairs and workplace seating. Request a quotation with quantity and preferred finishes.',
+    },
+  ],
+};
+
 const categories = [
-  { name: 'Elevators', slug: 'elevators', order: 1, image: u('photo-1486406146926-c627a92ad1ab') },
-  { name: 'Passenger Lifts', slug: 'passenger-lifts', order: 2, image: u('photo-1621905251189-08b45d6a269e') },
-  { name: 'Escalators', slug: 'escalators', order: 3, image: u('photo-1520333789090-1afc82db536a') },
-  { name: 'Granite', slug: 'granite', order: 4, image: u('photo-1615529182904-14819c35db37') },
-  { name: 'Doors', slug: 'doors', order: 5, image: u('photo-1600585154340-be6161a56a0c') },
-  { name: 'Chairs', slug: 'chairs', order: 6, image: u('photo-1567016432779-094069958ea5') },
-  { name: 'Office Furniture', slug: 'office-furniture', order: 7, image: u('photo-1524758631624-e2822e304c36') },
-  { name: 'Sanitary Goods', slug: 'sanitary-goods', order: 8, image: u('photo-1584622650111-993a426fbf0a') },
-  { name: 'Building Materials', slug: 'building-materials', order: 9, image: u('photo-1541888946425-d81bb19240f5') },
+  {
+    name: 'Elevators',
+    slug: 'elevators',
+    order: 1,
+    image: u('photo-1486406146926-c627a92ad1ab'),
+    description: 'Premium passenger and commercial elevators for projects in Ethiopia.',
+    faqs: categoryFaqs.elevators,
+  },
+  {
+    name: 'Passenger Lifts',
+    slug: 'passenger-lifts',
+    order: 2,
+    image: u('photo-1621905251189-08b45d6a269e'),
+    description: 'Passenger lift systems engineered for comfort, safety, and efficiency.',
+  },
+  {
+    name: 'Escalators',
+    slug: 'escalators',
+    order: 3,
+    image: u('photo-1520333789090-1afc82db536a'),
+    description: 'Commercial escalators for retail, transit, and public buildings.',
+  },
+  {
+    name: 'Granite',
+    slug: 'granite',
+    order: 4,
+    image: u('photo-1615529182904-14819c35db37'),
+    description: 'Premium granite and stone finishes for architectural interiors in Ethiopia.',
+    faqs: categoryFaqs.granite,
+  },
+  {
+    name: 'Doors',
+    slug: 'doors',
+    order: 5,
+    image: u('photo-1600585154340-be6161a56a0c'),
+    description: 'Architectural and automatic door systems for commercial and residential projects.',
+    faqs: categoryFaqs.doors,
+  },
+  {
+    name: 'Chairs',
+    slug: 'chairs',
+    order: 6,
+    image: u('photo-1567016432779-094069958ea5'),
+    description: 'Ergonomic and executive seating for modern workplaces.',
+    faqs: categoryFaqs.chairs,
+  },
+  {
+    name: 'Office Furniture',
+    slug: 'office-furniture',
+    order: 7,
+    image: u('photo-1524758631624-e2822e304c36'),
+    description: 'Office furniture supplier solutions for commercial fit-outs in Addis Ababa.',
+    faqs: categoryFaqs['office-furniture'],
+  },
+  {
+    name: 'Sanitary Goods',
+    slug: 'sanitary-goods',
+    order: 8,
+    image: u('photo-1584622650111-993a426fbf0a'),
+    description: 'Premium sanitary ware and bathroom fittings for residential and hospitality projects.',
+  },
+  {
+    name: 'Building Materials',
+    slug: 'building-materials',
+    order: 9,
+    image: u('photo-1541888946425-d81bb19240f5'),
+    description: 'Fine building materials including structural glass and architectural finishes.',
+  },
 ];
 
 type SeedProduct = {
@@ -187,7 +296,13 @@ async function main() {
   for (const c of categories) {
     await prisma.category.upsert({
       where: { slug: c.slug },
-      update: { name: c.name, order: c.order, image: c.image },
+      update: {
+        name: c.name,
+        order: c.order,
+        image: c.image,
+        description: c.description,
+        faqs: c.faqs ?? undefined,
+      },
       create: c,
     });
   }
@@ -240,17 +355,98 @@ async function main() {
   }
 
   const services = [
-    { title: 'Product Import', slug: 'product-import', icon: 'Ship', narrative: 'Sourcing certified premium products from world-class manufacturers. We manage logistics, customs, and quality verification end to end.', order: 1 },
-    { title: 'Elevator Installation', slug: 'elevator-installation', icon: 'Wrench', narrative: 'Precision installation engineered to international safety standards — from shaft preparation through commissioning and handover.', order: 2 },
-    { title: 'Elevator Maintenance', slug: 'elevator-maintenance', icon: 'ShieldCheck', narrative: 'Preventive maintenance programs that keep vertical transportation systems flawless and compliant.', order: 3 },
-    { title: 'Granite Supply', slug: 'granite-supply', icon: 'Layers', narrative: 'Full-slab granite supply cut to architectural specification, with finishing options for cladding, flooring and counters.', order: 4 },
-    { title: 'Building Material Supply', slug: 'building-material-supply', icon: 'Package', narrative: 'Reliable supply of fine building materials at project scale — glass, stone, fittings and structural finishes.', order: 5 },
-    { title: 'Construction Consultation', slug: 'construction-consultation', icon: 'Compass', narrative: 'Engineering guidance from concept through commissioning, ensuring the right product for every detail.', order: 6 },
+    {
+      title: 'Product Import',
+      slug: 'product-import',
+      icon: 'Ship',
+      narrative:
+        'Sourcing certified premium products from world-class manufacturers. We manage logistics, customs, and quality verification end to end.',
+      order: 1,
+      faqs: [
+        {
+          question: 'Which product categories can RIVET import to Ethiopia?',
+          answer:
+            'We import elevators, granite, doors, sanitary ware, office furniture, and fine building materials — with end-to-end logistics and quality checks.',
+        },
+        {
+          question: 'How do I start an import quotation?',
+          answer:
+            'Share product interest, quantities, and destination site details via Request a Quotation. Our team responds with sourcing options and timelines.',
+        },
+      ],
+    },
+    {
+      title: 'Elevator Installation',
+      slug: 'elevator-installation',
+      icon: 'Wrench',
+      narrative:
+        'Precision installation engineered to international safety standards — from shaft preparation through commissioning and handover.',
+      order: 2,
+      faqs: [
+        {
+          question: 'Do you install elevators for new builds and renovations?',
+          answer:
+            'Yes. Our installation teams support new construction and retrofit projects across Ethiopia, following manufacturer and safety standards.',
+        },
+      ],
+    },
+    {
+      title: 'Elevator Maintenance',
+      slug: 'elevator-maintenance',
+      icon: 'ShieldCheck',
+      narrative:
+        'Preventive maintenance programs that keep vertical transportation systems flawless and compliant.',
+      order: 3,
+      faqs: [
+        {
+          question: 'Can RIVET maintain elevators installed by other suppliers?',
+          answer:
+            'In many cases yes. Contact us with equipment details so we can confirm compatibility and propose a maintenance plan.',
+        },
+      ],
+    },
+    {
+      title: 'Granite Supply',
+      slug: 'granite-supply',
+      icon: 'Layers',
+      narrative:
+        'Full-slab granite supply cut to architectural specification, with finishing options for cladding, flooring and counters.',
+      order: 4,
+      faqs: [
+        {
+          question: 'Do you supply granite for projects in Addis Ababa?',
+          answer:
+            'Yes. We supply premium granite and interior finishing stone for residential and commercial projects in Addis Ababa and nationwide.',
+        },
+      ],
+    },
+    {
+      title: 'Building Material Supply',
+      slug: 'building-material-supply',
+      icon: 'Package',
+      narrative:
+        'Reliable supply of fine building materials at project scale — glass, stone, fittings and structural finishes.',
+      order: 5,
+    },
+    {
+      title: 'Construction Consultation',
+      slug: 'construction-consultation',
+      icon: 'Compass',
+      narrative:
+        'Engineering guidance from concept through commissioning, ensuring the right product for every detail.',
+      order: 6,
+    },
   ];
   for (const s of services) {
     await prisma.service.upsert({
       where: { slug: s.slug },
-      update: { title: s.title, narrative: s.narrative, icon: s.icon, order: s.order },
+      update: {
+        title: s.title,
+        narrative: s.narrative,
+        icon: s.icon,
+        order: s.order,
+        faqs: s.faqs ?? undefined,
+      },
       create: s,
     });
   }

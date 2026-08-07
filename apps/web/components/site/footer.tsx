@@ -7,10 +7,10 @@ const columns = [
   {
     title: 'Products',
     links: [
-      { label: 'Elevators', href: '/products?category=elevators' },
-      { label: 'Passenger Lifts', href: '/products?category=passenger-lifts' },
-      { label: 'Granite', href: '/products?category=granite' },
-      { label: 'Doors', href: '/products?category=doors' },
+      { label: 'Elevators', href: '/products/elevators' },
+      { label: 'Passenger Lifts', href: '/products/passenger-lifts' },
+      { label: 'Granite', href: '/products/granite' },
+      { label: 'Doors', href: '/products/doors' },
       { label: 'All products', href: '/products' },
     ],
   },
@@ -18,9 +18,9 @@ const columns = [
     title: 'Services',
     links: [
       { label: 'All services', href: '/services' },
-      { label: 'Installation', href: '/services' },
-      { label: 'Maintenance', href: '/services' },
-      { label: 'Consultation', href: '/services' },
+      { label: 'Elevator Installation', href: '/services/elevator-installation' },
+      { label: 'Elevator Maintenance', href: '/services/elevator-maintenance' },
+      { label: 'Granite Supply', href: '/services/granite-supply' },
     ],
   },
   {
@@ -29,6 +29,7 @@ const columns = [
       { label: 'About', href: '/company' },
       { label: 'News', href: '/news' },
       { label: 'Contact', href: '/contact' },
+      { label: 'Request a Quotation', href: '/request-quotation' },
     ],
   },
 ];

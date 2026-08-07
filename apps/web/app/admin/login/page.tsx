@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AdminApiError, useAdminAuth } from '@/components/admin/auth-provider';
 import { AdminBackdrop } from '@/components/admin/backdrop';
 import { AdminButton, AdminCard, AdminInput } from '@/components/admin/ui';
-import { Logo } from '@/components/site/logo';
+import { AdminLogo } from '@/components/admin/admin-logo';
 
 export default function AdminLoginPage() {
   const { login, user, ready } = useAdminAuth();
@@ -38,8 +38,8 @@ export default function AdminLoginPage() {
       <div className="absolute inset-x-0 bottom-0 gold-rule opacity-25" aria-hidden="true" />
       <AdminCard className="relative z-10 w-full max-w-md p-8">
         <div className="mb-8 text-center">
-          <Logo className="text-[1.75rem]" />
-          <p className="mt-2 text-[0.875rem] text-muted">Sign in to the control room</p>
+          <AdminLogo className="mx-auto h-10 sm:h-12" />
+          <p className="mt-3 text-[0.875rem] text-muted">Sign in to the control room</p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
           <AdminInput

@@ -11,6 +11,7 @@ import {
   AdminButton,
   AdminCard,
   AdminInput,
+  AdminModal,
   AdminPageHeader,
   AdminSelect,
   AdminTextarea,
@@ -18,6 +19,12 @@ import {
   StatusBadge,
 } from '@/components/admin/ui';
 import { ImageUploadField } from '@/components/admin/image-upload-field';
+import {
+  emptySeoFields,
+  pickSeoFields,
+  seoPayload,
+  SeoFieldsPanel,
+} from '@/components/admin/seo-fields-panel';
 
 const emptyForm = (): ProductInput & { imageUrls: string } => ({
   name: '',
@@ -30,6 +37,7 @@ const emptyForm = (): ProductInput & { imageUrls: string } => ({
   featured: false,
   status: 'PUBLISHED',
   imageUrls: '',
+  ...emptySeoFields(),
 });
 
 export default function AdminProductsPage() {
@@ -74,6 +82,7 @@ export default function AdminProductsPage() {
       status: (p.status as 'DRAFT' | 'PUBLISHED') ?? 'PUBLISHED',
       imageUrls: p.images.map((i) => i.url).join('\n'),
       specs: p.specs ?? [],
+      ...pickSeoFields(p),
     });
     setOpen(true);
   };
@@ -100,6 +109,7 @@ export default function AdminProductsPage() {
         status: form.status,
         images: images.length ? images : undefined,
         specs: form.specs,
+        ...seoPayload(pickSeoFields(form)),
       };
       if (editingId) await adminApi.products.update(editingId, payload);
       else await adminApi.products.create(payload);
@@ -176,108 +186,113 @@ export default function AdminProductsPage() {
         </table>
       </AdminCard>
 
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-navy/50 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <form
-            onSubmit={save}
-            className="relative z-10 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[20px] bg-surface p-6 shadow-[var(--shadow-bloom)]"
-          >
-            <h2 className="text-[1.25rem] text-navy">
-              {editingId ? 'Edit product' : 'New product'}
-            </h2>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <AdminInput
-                label="Name"
-                required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
+      <AdminModal open={open} onClose={() => setOpen(false)} className="max-w-2xl">
+        <form onSubmit={save}>
+          <h2 className="text-[1.25rem] text-navy">
+            {editingId ? 'Edit product' : 'New product'}
+          </h2>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <AdminInput
+              label="Name"
+              required
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
+            <AdminSelect
+              label="Category"
+              required
+              value={form.categoryId}
+              onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
+            >
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </AdminSelect>
+            <AdminInput
+              label="Brand"
+              value={form.brand ?? ''}
+              onChange={(e) => setForm({ ...form, brand: e.target.value })}
+            />
+            <AdminInput
+              label="Country of origin"
+              value={form.countryOfOrigin ?? ''}
+              onChange={(e) => setForm({ ...form, countryOfOrigin: e.target.value })}
+            />
+            <AdminSelect
+              label="Status"
+              value={form.status}
+              onChange={(e) =>
+                setForm({ ...form, status: e.target.value as 'DRAFT' | 'PUBLISHED' })
+              }
+            >
+              <option value="PUBLISHED">Published</option>
+              <option value="DRAFT">Draft</option>
+            </AdminSelect>
+            <label className="flex items-end gap-2 pb-3 text-[0.875rem]">
+              <input
+                type="checkbox"
+                checked={!!form.featured}
+                onChange={(e) => setForm({ ...form, featured: e.target.checked })}
               />
-              <AdminSelect
-                label="Category"
-                required
-                value={form.categoryId}
-                onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
-              >
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </AdminSelect>
-              <AdminInput
-                label="Brand"
-                value={form.brand ?? ''}
-                onChange={(e) => setForm({ ...form, brand: e.target.value })}
-              />
-              <AdminInput
-                label="Country of origin"
-                value={form.countryOfOrigin ?? ''}
-                onChange={(e) => setForm({ ...form, countryOfOrigin: e.target.value })}
-              />
-              <AdminSelect
-                label="Status"
-                value={form.status}
-                onChange={(e) =>
-                  setForm({ ...form, status: e.target.value as 'DRAFT' | 'PUBLISHED' })
-                }
-              >
-                <option value="PUBLISHED">Published</option>
-                <option value="DRAFT">Draft</option>
-              </AdminSelect>
-              <label className="flex items-end gap-2 pb-3 text-[0.875rem]">
-                <input
-                  type="checkbox"
-                  checked={!!form.featured}
-                  onChange={(e) => setForm({ ...form, featured: e.target.checked })}
-                />
-                Featured
-              </label>
-            </div>
-            <div className="mt-4 space-y-4">
-              <AdminInput
-                label="Short description"
-                value={form.shortDescription ?? ''}
-                onChange={(e) => setForm({ ...form, shortDescription: e.target.value })}
-              />
-              <AdminTextarea
-                label="Full description"
-                rows={4}
-                value={form.description ?? ''}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-              />
-              <AdminInput
-                label="Features (comma-separated)"
-                value={(form.features ?? []).join(', ')}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    features: e.target.value
-                      .split(',')
-                      .map((s) => s.trim())
-                      .filter(Boolean),
-                  })
-                }
-              />
-              <ImageUploadField
-                label="Product images"
-                multiple
-                value={form.imageUrls}
-                onChange={(imageUrls) => setForm({ ...form, imageUrls })}
-                onError={(msg) => setError(msg)}
-              />
-            </div>
-            <div className="mt-6 flex justify-end gap-3">
-              <AdminButton type="button" variant="ghost" onClick={() => setOpen(false)}>
-                Cancel
-              </AdminButton>
-              <AdminButton type="submit" disabled={saving}>
-                {saving ? 'Saving…' : 'Save'}
-              </AdminButton>
-            </div>
-          </form>
-        </div>
-      )}
+              Featured
+            </label>
+          </div>
+          <div className="mt-4 space-y-4">
+            <AdminInput
+              label="Short description"
+              value={form.shortDescription ?? ''}
+              onChange={(e) => setForm({ ...form, shortDescription: e.target.value })}
+            />
+            <AdminTextarea
+              label="Full description"
+              rows={4}
+              value={form.description ?? ''}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+            />
+            <AdminInput
+              label="Features (comma-separated)"
+              value={(form.features ?? []).join(', ')}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  features: e.target.value
+                    .split(',')
+                    .map((s) => s.trim())
+                    .filter(Boolean),
+                })
+              }
+            />
+            <ImageUploadField
+              label="Product images"
+              multiple
+              value={form.imageUrls}
+              onChange={(imageUrls) => setForm({ ...form, imageUrls })}
+              onError={(msg) => setError(msg)}
+            />
+          </div>
+          <SeoFieldsPanel
+            value={form}
+            onChange={(seo) => setForm({ ...form, ...seo })}
+            fallbackTitle={`${form.name || 'Product'} in Ethiopia | Rivet`}
+            fallbackDescription={
+              form.shortDescription ||
+              `Explore ${form.name || 'this product'} from Rivet. Request a quotation for premium products in Ethiopia.`
+            }
+            fallbackImage={form.imageUrls.split('\n').map((s) => s.trim()).find(Boolean)}
+            pathPreview={`/products/${form.slug || 'product-slug'}`}
+          />
+          <div className="mt-6 flex justify-end gap-3">
+            <AdminButton type="button" variant="ghost" onClick={() => setOpen(false)}>
+              Cancel
+            </AdminButton>
+            <AdminButton type="submit" disabled={saving}>
+              {saving ? 'Saving…' : 'Save'}
+            </AdminButton>
+          </div>
+        </form>
+      </AdminModal>
     </div>
   );
 }

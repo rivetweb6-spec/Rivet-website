@@ -16,19 +16,35 @@ const createSchema = z.object({
   email: z.string().email(),
   phone: z.string().min(1),
   productInterest: z.string().min(1),
+  productId: z.string().optional(),
+  productName: z.string().optional(),
+  productSlug: z.string().optional(),
+  productImage: z.string().url().optional(),
+  quantity: z.string().max(60).optional(),
   message: z.string().optional(),
 });
 
-const STATUSES = ['NEW', 'CONTACTED', 'SCHEDULED', 'COMPLETED', 'CLOSED'] as const;
+export const QUOTATION_STATUSES = [
+  'NEW',
+  'UNDER_REVIEW',
+  'CONTACTED',
+  'QUOTATION_SENT',
+  'APPROVED',
+  'REJECTED',
+  'COMPLETED',
+] as const;
 
-// Public — submit a demo request
+// Public — submit a quotation request
 router.post(
   '/',
   validate({ body: createSchema }),
   asyncHandler(async (req, res) => {
-    const demo = await prisma.demoRequest.create({ data: req.body });
-    emitEvent({ type: 'demo-request', data: { id: demo.id, fullName: demo.fullName } });
-    res.status(201).json({ ok: true, id: demo.id });
+    const quotation = await prisma.quotationRequest.create({ data: req.body });
+    emitEvent({
+      type: 'quotation-request',
+      data: { id: quotation.id, fullName: quotation.fullName, productName: quotation.productName },
+    });
+    res.status(201).json({ ok: true, id: quotation.id });
   }),
 );
 
@@ -37,15 +53,15 @@ router.get(
   '/',
   requireAuth,
   requireRole('ADMIN', 'EDITOR'),
-  validate({ query: z.object({ status: z.enum(STATUSES).optional() }) }),
+  validate({ query: z.object({ status: z.enum(QUOTATION_STATUSES).optional() }) }),
   asyncHandler(async (req, res) => {
-    const where: Prisma.DemoRequestWhereInput = {};
-    if (req.query.status) where.status = req.query.status as (typeof STATUSES)[number];
-    const requests = await prisma.demoRequest.findMany({
+    const where: Prisma.QuotationRequestWhereInput = {};
+    if (req.query.status) where.status = req.query.status as (typeof QUOTATION_STATUSES)[number];
+    const requests = await prisma.quotationRequest.findMany({
       where,
       orderBy: { createdAt: 'desc' },
     });
-    const counts = await prisma.demoRequest.groupBy({ by: ['status'], _count: true });
+    const counts = await prisma.quotationRequest.groupBy({ by: ['status'], _count: true });
     res.json({ requests, counts });
   }),
 );
@@ -56,7 +72,7 @@ router.get(
   requireAuth,
   requireRole('ADMIN', 'EDITOR'),
   asyncHandler(async (_req, res) => {
-    const requests = await prisma.demoRequest.findMany({ orderBy: { createdAt: 'desc' } });
+    const requests = await prisma.quotationRequest.findMany({ orderBy: { createdAt: 'desc' } });
     const csv = toCsv(
       requests.map((r) => ({
         FullName: r.fullName,
@@ -64,6 +80,8 @@ router.get(
         Email: r.email,
         Phone: r.phone,
         ProductInterest: r.productInterest,
+        ProductName: r.productName ?? '',
+        Quantity: r.quantity ?? '',
         Message: r.message ?? '',
         Status: r.status,
         Date: r.createdAt.toISOString(),
@@ -71,7 +89,7 @@ router.get(
       })),
     );
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename="demo-requests.csv"');
+    res.setHeader('Content-Disposition', 'attachment; filename="quotation-requests.csv"');
     res.send(csv);
   }),
 );
@@ -82,11 +100,17 @@ router.patch(
   requireAuth,
   requireRole('ADMIN', 'EDITOR'),
   validate({
-    body: z.object({ status: z.enum(STATUSES).optional(), adminNotes: z.string().optional() }),
+    body: z.object({
+      status: z.enum(QUOTATION_STATUSES).optional(),
+      adminNotes: z.string().optional(),
+    }),
   }),
   asyncHandler(async (req, res) => {
-    const demo = await prisma.demoRequest.update({ where: { id: param(req, 'id') }, data: req.body });
-    res.json({ demo });
+    const quotation = await prisma.quotationRequest.update({
+      where: { id: param(req, 'id') },
+      data: req.body,
+    });
+    res.json({ quotation });
   }),
 );
 

@@ -2,10 +2,17 @@
 
 import * as React from 'react';
 import { Download } from 'lucide-react';
-import { adminApi, getStoredToken, type DemoRequest } from '@/lib/admin-api';
+import {
+  adminApi,
+  getStoredToken,
+  QUOTATION_STATUSES,
+  QUOTATION_STATUS_LABELS,
+  type QuotationRequest,
+} from '@/lib/admin-api';
 import {
   AdminButton,
   AdminCard,
+  AdminModal,
   AdminPageHeader,
   AdminSelect,
   AdminTextarea,
@@ -13,19 +20,17 @@ import {
   StatusBadge,
 } from '@/components/admin/ui';
 
-const STATUSES = ['NEW', 'CONTACTED', 'SCHEDULED', 'COMPLETED', 'CLOSED'] as const;
-
-export default function AdminDemoRequestsPage() {
-  const [requests, setRequests] = React.useState<DemoRequest[]>([]);
+export default function AdminQuotationRequestsPage() {
+  const [requests, setRequests] = React.useState<QuotationRequest[]>([]);
   const [filter, setFilter] = React.useState('');
-  const [selected, setSelected] = React.useState<DemoRequest | null>(null);
+  const [selected, setSelected] = React.useState<QuotationRequest | null>(null);
   const [notes, setNotes] = React.useState('');
   const [status, setStatus] = React.useState('NEW');
   const [error, setError] = React.useState<string | null>(null);
   const [saving, setSaving] = React.useState(false);
 
   const load = React.useCallback(async () => {
-    const data = await adminApi.demos.list(filter || undefined);
+    const data = await adminApi.quotations.list(filter || undefined);
     setRequests(data.requests);
   }, [filter]);
 
@@ -33,7 +38,7 @@ export default function AdminDemoRequestsPage() {
     load().catch((e: Error) => setError(e.message));
   }, [load]);
 
-  const open = (r: DemoRequest) => {
+  const open = (r: QuotationRequest) => {
     setSelected(r);
     setNotes(r.adminNotes ?? '');
     setStatus(r.status);
@@ -43,7 +48,7 @@ export default function AdminDemoRequestsPage() {
     if (!selected) return;
     setSaving(true);
     try {
-      await adminApi.demos.update(selected.id, { status, adminNotes: notes });
+      await adminApi.quotations.update(selected.id, { status, adminNotes: notes });
       setSelected(null);
       await load();
     } catch (err) {
@@ -55,7 +60,7 @@ export default function AdminDemoRequestsPage() {
 
   const exportCsv = async () => {
     const token = getStoredToken();
-    const res = await fetch(adminApi.demos.exportUrl(), {
+    const res = await fetch(adminApi.quotations.exportUrl(), {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     if (!res.ok) {
@@ -66,7 +71,7 @@ export default function AdminDemoRequestsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'demo-requests.csv';
+    a.download = 'quotation-requests.csv';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -74,8 +79,8 @@ export default function AdminDemoRequestsPage() {
   return (
     <div>
       <AdminPageHeader
-        title="Demo requests"
-        description="Inbound private-demo leads — update status and notes."
+        title="Quotation requests"
+        description="Inbound quotation leads — review customer details, requested products and status."
         actions={
           <AdminButton variant="secondary" onClick={exportCsv}>
             <Download size={16} /> Export CSV
@@ -91,20 +96,21 @@ export default function AdminDemoRequestsPage() {
           onChange={(e) => setFilter(e.target.value)}
         >
           <option value="">All</option>
-          {STATUSES.map((s) => (
+          {QUOTATION_STATUSES.map((s) => (
             <option key={s} value={s}>
-              {s}
+              {QUOTATION_STATUS_LABELS[s]}
             </option>
           ))}
         </AdminSelect>
       </div>
 
       <AdminCard className="overflow-x-auto p-0">
-        <table className="w-full min-w-[800px] text-left text-[0.875rem]">
+        <table className="w-full min-w-[900px] text-left text-[0.875rem]">
           <thead className="border-b border-divider bg-bg/80 text-[0.75rem] uppercase tracking-wider text-muted">
             <tr>
               <th className="px-5 py-3 font-medium">Name</th>
-              <th className="px-5 py-3 font-medium">Interest</th>
+              <th className="px-5 py-3 font-medium">Product</th>
+              <th className="px-5 py-3 font-medium">Qty</th>
               <th className="px-5 py-3 font-medium">Contact</th>
               <th className="px-5 py-3 font-medium">Date</th>
               <th className="px-5 py-3 font-medium">Status</th>
@@ -114,8 +120,8 @@ export default function AdminDemoRequestsPage() {
           <tbody>
             {requests.length === 0 && (
               <tr>
-                <td colSpan={6}>
-                  <EmptyState message="No demo requests yet." />
+                <td colSpan={7}>
+                  <EmptyState message="No quotation requests yet." />
                 </td>
               </tr>
             )}
@@ -125,7 +131,11 @@ export default function AdminDemoRequestsPage() {
                   <p className="font-medium">{r.fullName}</p>
                   {r.company && <p className="text-[0.75rem] text-muted">{r.company}</p>}
                 </td>
-                <td className="px-5 py-3 text-muted">{r.productInterest}</td>
+                <td className="px-5 py-3">
+                  <p className="text-ink">{r.productName ?? '—'}</p>
+                  <p className="text-[0.75rem] text-muted">{r.productInterest}</p>
+                </td>
+                <td className="px-5 py-3 text-muted">{r.quantity ?? '—'}</td>
                 <td className="px-5 py-3 text-muted">
                   <div>{r.email}</div>
                   <div>{r.phone}</div>
@@ -151,23 +161,53 @@ export default function AdminDemoRequestsPage() {
         </table>
       </AdminCard>
 
-      {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-navy/50" onClick={() => setSelected(null)} />
-          <div className="relative z-10 w-full max-w-lg space-y-4 rounded-[20px] bg-surface p-6 shadow-[var(--shadow-bloom)]">
-            <h2 className="text-[1.25rem] text-navy">{selected.fullName}</h2>
-            <p className="text-[0.875rem] text-muted">
-              {selected.productInterest}
-              {selected.message ? ` — ${selected.message}` : ''}
-            </p>
+      <AdminModal
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        className="max-w-lg space-y-4"
+      >
+        {selected && (
+          <>
+            <div>
+              <h2 className="text-[1.25rem] text-navy">{selected.fullName}</h2>
+              <p className="text-[0.8125rem] text-muted">
+                {selected.company ? `${selected.company} · ` : ''}
+                {selected.email} · {selected.phone}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4 rounded-[12px] border border-border bg-bg p-3">
+              {selected.productImage && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={selected.productImage}
+                  alt={selected.productName ?? 'Requested product'}
+                  className="h-14 w-14 shrink-0 rounded-[8px] object-cover"
+                />
+              )}
+              <div className="min-w-0 text-[0.875rem]">
+                <p className="font-medium text-ink">{selected.productName ?? selected.productInterest}</p>
+                <p className="text-muted">
+                  {selected.productInterest}
+                  {selected.quantity ? ` · Qty: ${selected.quantity}` : ''}
+                </p>
+              </div>
+            </div>
+
+            {selected.message && (
+              <p className="rounded-[12px] bg-bg p-3 text-[0.875rem] text-muted">
+                {selected.message}
+              </p>
+            )}
+
             <AdminSelect
               label="Status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             >
-              {STATUSES.map((s) => (
+              {QUOTATION_STATUSES.map((s) => (
                 <option key={s} value={s}>
-                  {s}
+                  {QUOTATION_STATUS_LABELS[s]}
                 </option>
               ))}
             </AdminSelect>
@@ -185,9 +225,9 @@ export default function AdminDemoRequestsPage() {
                 {saving ? 'Saving…' : 'Update'}
               </AdminButton>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </AdminModal>
     </div>
   );
 }

@@ -5,8 +5,8 @@ import { Button } from './button';
 
 describe('Button', () => {
   it('renders its children', () => {
-    render(<Button>Request Demo</Button>);
-    expect(screen.getByRole('button', { name: 'Request Demo' })).toBeInTheDocument();
+    render(<Button>Request a Quotation</Button>);
+    expect(screen.getByRole('button', { name: 'Request a Quotation' })).toBeInTheDocument();
   });
 
   it('fires onClick when pressed', async () => {

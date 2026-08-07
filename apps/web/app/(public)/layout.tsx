@@ -1,8 +1,8 @@
 import { SmoothScroll } from '@/components/providers/smooth-scroll';
-import { DemoModalProvider } from '@/components/demo/demo-modal-provider';
+import { QuotationModalProvider } from '@/components/quotation/quotation-modal-provider';
 import { Navbar } from '@/components/site/navbar';
 import { Footer } from '@/components/site/footer';
-import { OrganizationJsonLd } from '@/components/seo/json-ld';
+import { LocalBusinessJsonLd, OrganizationJsonLd, WebSiteJsonLd } from '@/components/seo/json-ld';
 import { api } from '@/lib/api';
 
 /** Default ISR window for public marketing pages (overridable per route). */
@@ -16,14 +16,25 @@ export default async function PublicLayout({ children }: { children: React.React
     /* optional for JSON-LD */
   }
 
+  const sameAs = [contact?.facebook, contact?.linkedin, contact?.telegram, contact?.whatsapp];
+
   return (
     <SmoothScroll>
-      <DemoModalProvider>
+      <QuotationModalProvider>
+        <WebSiteJsonLd />
         <OrganizationJsonLd
           phone={contact?.phone}
           email={contact?.email}
           address={contact?.address}
-          sameAs={[contact?.facebook, contact?.linkedin, contact?.telegram, contact?.whatsapp]}
+          sameAs={sameAs}
+        />
+        <LocalBusinessJsonLd
+          phone={contact?.phone}
+          email={contact?.email}
+          address={contact?.address}
+          latitude={contact?.mapLat}
+          longitude={contact?.mapLng}
+          sameAs={sameAs}
         />
         <a href="#main-content" className="skip-link">
           Skip to main content
@@ -33,7 +44,7 @@ export default async function PublicLayout({ children }: { children: React.React
           {children}
         </main>
         <Footer />
-      </DemoModalProvider>
+      </QuotationModalProvider>
     </SmoothScroll>
   );
 }

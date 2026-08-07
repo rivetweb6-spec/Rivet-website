@@ -1,4 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="RIVET">
-  <rect width="64" height="64" rx="12" fill="#002F54"/>
-  <text x="32" y="40" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="22" font-weight="700" fill="#D69A2E">R</text>
+  <rect width="64" height="64" rx="14" fill="#002955"/>
+  <!-- Stylized E bars from the wordmark -->
+  <g fill="#DE8F03">
+    <path d="M14 18h36l-4 8H10z"/>
+    <path d="M12 30h32l-4 8H8z"/>
+    <path d="M10 42h28l-4 8H6z"/>
+  </g>
 </svg>

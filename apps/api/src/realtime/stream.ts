@@ -10,7 +10,7 @@ export function emitEvent(event: StreamEvent) {
   bus.emit('event', event);
 }
 
-/** SSE endpoint handler — pushes live events (e.g. new demo requests) to admins. */
+/** SSE endpoint handler — pushes live events (e.g. new quotation requests) to admins. */
 export function sseHandler(req: Request, res: Response) {
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',

@@ -51,6 +51,19 @@ async function request<T>(path: string, init?: RequestOptions): Promise<T> {
 
 /* ── Types mirroring API responses ─────────────────────────────────────── */
 
+export type SeoFields = {
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  primaryKeyword?: string | null;
+  ogTitle?: string | null;
+  ogDescription?: string | null;
+  ogImage?: string | null;
+  canonicalUrl?: string | null;
+  noIndex?: boolean;
+};
+
+export type FaqItem = { question: string; answer: string };
+
 export type Category = {
   id: string;
   name: string;
@@ -58,8 +71,9 @@ export type Category = {
   description: string | null;
   image: string | null;
   order: number;
+  faqs?: FaqItem[] | null;
   _count?: { products: number };
-};
+} & SeoFields;
 
 export type ProductImage = {
   id: string;
@@ -84,7 +98,7 @@ export type Product = {
   status: string;
   category?: Category;
   images: ProductImage[];
-};
+} & SeoFields;
 
 export type Service = {
   id: string;
@@ -94,7 +108,8 @@ export type Service = {
   icon: string | null;
   image: string | null;
   order: number;
-};
+  faqs?: FaqItem[] | null;
+} & SeoFields;
 
 export type NewsArticle = {
   id: string;
@@ -105,7 +120,12 @@ export type NewsArticle = {
   coverImage: string | null;
   category: string | null;
   publishedAt: string | null;
-};
+} & SeoFields;
+
+export type PageSeo = {
+  id: string;
+  pageKey: string;
+} & SeoFields;
 
 export type CompanyInfo = {
   id: string;
@@ -152,6 +172,14 @@ export type Pagination = {
   pages: number;
 };
 
+export type SearchSuggestion = {
+  id: string;
+  name: string;
+  slug: string;
+  category: string | null;
+  image: string | null;
+};
+
 /* ── Public endpoints ──────────────────────────────────────────────────── */
 
 export const api = {
@@ -181,6 +209,11 @@ export const api = {
     },
     bySlug: (slug: string) =>
       request<{ product: Product; related: Product[] }>(`/products/${slug}`),
+    suggest: (q: string) =>
+      request<{
+        products: SearchSuggestion[];
+        categories: { name: string; slug: string }[];
+      }>(`/products/suggest?q=${encodeURIComponent(q)}`),
   },
 
   services: {
@@ -206,17 +239,27 @@ export const api = {
 
   home: () => request<{ home: HomePageContent | null }>('/home'),
 
+  pageSeo: {
+    list: () => request<{ pages: PageSeo[] }>('/page-seo'),
+    byKey: (pageKey: string) => request<{ page: PageSeo | null }>(`/page-seo/${pageKey}`),
+  },
+
   contactInfo: () => request<{ info: ContactInfo | null }>('/contact-info'),
 
-  demoRequest: (data: {
+  quotationRequest: (data: {
     fullName: string;
     company?: string;
     email: string;
     phone: string;
     productInterest: string;
+    productId?: string;
+    productName?: string;
+    productSlug?: string;
+    productImage?: string;
+    quantity?: string;
     message?: string;
   }) =>
-    request<{ ok: boolean; id: string }>('/demo-requests', {
+    request<{ ok: boolean; id: string }>('/quotation-requests', {
       method: 'POST',
       body: JSON.stringify(data),
       revalidate: false,
