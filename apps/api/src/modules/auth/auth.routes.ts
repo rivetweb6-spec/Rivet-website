@@ -14,10 +14,15 @@ import {
 
 const router = Router();
 
+/**
+ * Production web (Vercel) and API (Render) are different sites.
+ * `sameSite: 'none'` + `secure` is required for cross-origin cookie auth.
+ * Same-origin Next proxy still works with these flags.
+ */
 const cookieOpts = {
   httpOnly: true,
   secure: isProd,
-  sameSite: 'lax' as const,
+  sameSite: (isProd ? 'none' : 'lax') as 'none' | 'lax',
   path: '/',
 };
 

@@ -6,6 +6,13 @@ const analyze = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
+/** Express API base including `/api` — used for same-origin browser proxy rewrites. */
+const apiProxyTarget = (
+  process.env.API_PROXY_TARGET ??
+  process.env.NEXT_PUBLIC_API_URL ??
+  'http://localhost:4000/api'
+).replace(/\/$/, '');
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
@@ -19,6 +26,18 @@ const nextConfig: NextConfig = {
   // Prefer static generation where possible; data revalidated via fetch + route segment.
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
+  },
+  /**
+   * Browser calls `/api/*` on the web origin; Next proxies to the Express API.
+   * Avoids production CORS failures when the API is on a different host (e.g. Render).
+   */
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${apiProxyTarget}/:path*`,
+      },
+    ];
   },
 };
 

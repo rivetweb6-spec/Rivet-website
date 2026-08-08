@@ -26,7 +26,11 @@ export default function AdminLoginPage() {
     try {
       await login(email, password);
     } catch (err) {
-      setError(err instanceof AdminApiError ? err.message : 'Login failed');
+      if (err instanceof AdminApiError && err.status === 401) {
+        setError('Invalid email or password');
+      } else {
+        setError(err instanceof AdminApiError ? err.message : 'Login failed');
+      }
     } finally {
       setLoading(false);
     }

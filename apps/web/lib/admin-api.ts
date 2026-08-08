@@ -1,8 +1,15 @@
 /**
  * Authenticated admin API client — Bearer JWT from localStorage.
+ *
+ * In the browser we always hit same-origin `/api` (proxied by Next.js to the
+ * Express backend). That keeps login working when the API is hosted separately.
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
+function getApiUrl(): string {
+  if (typeof window !== 'undefined') return '/api';
+  return process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
+}
+
 const TOKEN_KEY = 'rivet_admin_token';
 const USER_KEY = 'rivet_admin_user';
 
@@ -51,16 +58,24 @@ export function clearSession() {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const token = getStoredToken();
   const isForm = typeof FormData !== 'undefined' && init?.body instanceof FormData;
-  const res = await fetch(`${API_URL}${path}`, {
-    ...init,
-    credentials: 'include',
-    headers: {
-      ...(isForm ? {} : { 'Content-Type': 'application/json' }),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(init?.headers ?? {}),
-    },
-    cache: 'no-store',
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${getApiUrl()}${path}`, {
+      ...init,
+      credentials: 'include',
+      headers: {
+        ...(isForm ? {} : { 'Content-Type': 'application/json' }),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(init?.headers ?? {}),
+      },
+      cache: 'no-store',
+    });
+  } catch {
+    throw new AdminApiError(
+      0,
+      'Cannot reach the API. Confirm NEXT_PUBLIC_API_URL points at your hosted API (including /api) and redeploy the web app.',
+    );
+  }
 
   if (!res.ok) {
     let message = res.statusText;
@@ -209,7 +224,7 @@ export const adminApi = {
         method: 'PATCH',
         body: JSON.stringify(data),
       }),
-    exportUrl: () => `${API_URL}/quotation-requests/export`,
+    exportUrl: () => `${getApiUrl()}/quotation-requests/export`,
   },
 
   company: {
@@ -263,7 +278,7 @@ export const adminApi = {
     },
   },
 
-  eventsUrl: () => `${API_URL}/events`,
+  eventsUrl: () => `${getApiUrl()}/events`,
 };
 
 /* ── Types ─────────────────────────────────────────────────────────────── */
