@@ -41,12 +41,21 @@ const nextConfig: NextConfig = {
   },
 };
 
+const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN;
+
 export default withSentryConfig(analyze(nextConfig), {
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-  // Quiet build logs; source maps upload only when SENTRY_AUTH_TOKEN is present.
-  silent: !process.env.CI,
+  authToken: sentryAuthToken,
+  // Quiet when not uploading; CI still logs if a token is configured.
+  silent: !sentryAuthToken || !process.env.CI,
+  // Skip release/source-map upload unless a token is set (avoids Vercel noise).
+  sourcemaps: {
+    disable: !sentryAuthToken,
+  },
+  release: {
+    create: Boolean(sentryAuthToken),
+  },
   widenClientFileUpload: true,
   // Route browser Sentry calls through Next to bypass ad-blockers.
   tunnelRoute: '/monitoring',

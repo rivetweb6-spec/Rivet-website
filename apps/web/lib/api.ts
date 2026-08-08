@@ -1,15 +1,22 @@
 /**
  * Typed API client for the RIVET Express backend.
  * Works in Server Components and browser forms.
+ *
+ * In the browser we always hit same-origin `/api` (proxied by Next.js to the
+ * Express backend) so public forms work when the API is on a different host.
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
+function getApiUrl(): string {
+  if (typeof window !== 'undefined') return '/api';
+  return process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
+}
 
 export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) {
     super(message);
     this.status = status;
+    this.name = 'ApiError';
   }
 }
 
@@ -22,18 +29,26 @@ async function request<T>(path: string, init?: RequestOptions): Promise<T> {
   const { revalidate, ...rest } = init ?? {};
   const isServer = typeof window === 'undefined';
 
-  const res = await fetch(`${API_URL}${path}`, {
-    ...rest,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(rest.headers ?? {}),
-    },
-    ...(isServer && revalidate !== undefined
-      ? { next: { revalidate: revalidate === false ? 0 : revalidate } }
-      : isServer
-        ? { next: { revalidate: 60 } }
-        : { cache: 'no-store' }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${getApiUrl()}${path}`, {
+      ...rest,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(rest.headers ?? {}),
+      },
+      ...(isServer && revalidate !== undefined
+        ? { next: { revalidate: revalidate === false ? 0 : revalidate } }
+        : isServer
+          ? { next: { revalidate: 60 } }
+          : { cache: 'no-store' }),
+    });
+  } catch {
+    throw new ApiError(
+      0,
+      'Cannot reach the server. Please check your connection and try again.',
+    );
+  }
 
   if (!res.ok) {
     let message = res.statusText;

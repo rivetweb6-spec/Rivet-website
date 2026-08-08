@@ -4,7 +4,7 @@
   "private": true,
   "description": "RIVET — River Company luxury digital flagship (web + api monorepo)",
   "engines": {
-    "node": ">=22.13"
+    "node": "24.x"
   },
   "packageManager": "pnpm@11.15.1",
   "scripts": {

@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "installCommand": "cd ../.. && corepack enable && pnpm install --frozen-lockfile",
+  "installCommand": "cd ../.. && corepack enable && PRISMA_SKIP_POSTINSTALL_GENERATE=1 pnpm install --frozen-lockfile",
   "buildCommand": "cd ../.. && pnpm --filter @rivet/web build",
   "headers": [
     {

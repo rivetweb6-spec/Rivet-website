@@ -10,18 +10,28 @@ import { emitEvent } from '../../realtime/stream.js';
 
 const router = Router();
 
+/** Treat empty strings as omitted optional fields. */
+const optionalString = z
+  .union([z.string(), z.literal('')])
+  .optional()
+  .transform((v) => (v ? v : undefined));
+
 const createSchema = z.object({
   fullName: z.string().min(1),
-  company: z.string().optional(),
+  company: optionalString,
   email: z.string().email(),
   phone: z.string().min(1),
   productInterest: z.string().min(1),
-  productId: z.string().optional(),
-  productName: z.string().optional(),
-  productSlug: z.string().optional(),
-  productImage: z.string().url().optional(),
-  quantity: z.string().max(60).optional(),
-  message: z.string().optional(),
+  productId: optionalString,
+  productName: optionalString,
+  productSlug: optionalString,
+  // Accept any non-empty image URL/path (Cloudinary absolute or relative).
+  productImage: optionalString,
+  quantity: z
+    .union([z.string().max(60), z.literal('')])
+    .optional()
+    .transform((v) => (v ? v : undefined)),
+  message: optionalString,
 });
 
 export const QUOTATION_STATUSES = [
