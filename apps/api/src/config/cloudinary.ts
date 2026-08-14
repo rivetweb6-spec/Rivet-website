@@ -31,3 +31,29 @@ export function uploadBuffer(
     stream.end(buffer);
   });
 }
+
+/** `https://res.cloudinary.com/{cloud}/image/upload/v123/rivet/id.jpg` → `rivet/id` */
+export function cloudinaryPublicIdFromUrl(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (!parsed.hostname.endsWith('cloudinary.com')) return null;
+    const marker = '/upload/';
+    const idx = parsed.pathname.indexOf(marker);
+    if (idx === -1) return null;
+    let rest = parsed.pathname.slice(idx + marker.length);
+    rest = rest.replace(/^v\d+\//, '');
+    rest = rest.replace(/\.[a-z0-9]+$/i, '');
+    return rest || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function destroyCloudinaryImage(publicId: string): Promise<void> {
+  if (!cloudinaryEnabled || !publicId) return;
+  try {
+    await cloudinary.uploader.destroy(publicId);
+  } catch {
+    /* already gone or remote error — deletion is best-effort */
+  }
+}

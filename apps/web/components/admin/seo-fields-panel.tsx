@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { AdminInput, AdminTextarea } from '@/components/admin/ui';
 import { SeoPreview } from '@/components/admin/seo-preview';
+import { ImageUploadField } from '@/components/admin/image-upload-field';
 import type { SeoFieldsInput, SeoFieldsPayload } from '@/lib/admin-api';
 
 export const emptySeoFields = (): SeoFieldsInput => ({
@@ -125,11 +126,11 @@ export function SeoFieldsPanel({
         onChange={(e) => set('ogDescription', e.target.value)}
         placeholder={fields.seoDescription || fallbackDescription}
       />
-      <AdminInput
-        label="Social image URL"
+      <ImageUploadField
+        label="Social image"
         value={fields.ogImage ?? ''}
-        onChange={(e) => set('ogImage', e.target.value)}
-        placeholder={fallbackImage || 'https://…'}
+        onChange={(ogImage) => set('ogImage', ogImage)}
+        urlPlaceholder={fallbackImage || 'https://…'}
       />
       <AdminInput
         label="Canonical URL"

@@ -14,18 +14,22 @@ router.get(
       products,
       categories,
       services,
+      certificates,
       news,
       quotationTotal,
       quotationNew,
+      quotationUnread,
       contactMessages,
       quotationsByStatus,
     ] = await Promise.all([
       prisma.product.count(),
       prisma.category.count(),
       prisma.service.count(),
+      prisma.certificate.count(),
       prisma.newsArticle.count(),
       prisma.quotationRequest.count(),
       prisma.quotationRequest.count({ where: { status: 'NEW' } }),
+      prisma.quotationRequest.count({ where: { readAt: null } }),
       prisma.contactMessage.count(),
       prisma.quotationRequest.groupBy({ by: ['status'], _count: true }),
     ]);
@@ -36,7 +40,17 @@ router.get(
     });
 
     res.json({
-      cards: { products, categories, services, news, quotationTotal, quotationNew, contactMessages },
+      cards: {
+        products,
+        categories,
+        services,
+        certificates,
+        news,
+        quotationTotal,
+        quotationNew,
+        quotationUnread,
+        contactMessages,
+      },
       quotationsByStatus,
       recentQuotations,
     });

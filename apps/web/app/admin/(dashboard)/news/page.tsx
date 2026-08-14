@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { adminApi, type AdminArticle, type ArticleInput } from '@/lib/admin-api';
+import { adminApi, revalidatePublicCache, type AdminArticle, type ArticleInput } from '@/lib/admin-api';
 import {
   AdminButton,
   AdminCard,
@@ -50,13 +50,18 @@ export default function AdminNewsPage() {
         title: form.title,
         excerpt: form.excerpt || undefined,
         body: form.body,
-        coverImage: form.coverImage || undefined,
+        coverImage: form.coverImage || null,
         category: form.category || undefined,
         status: form.status,
         ...seoPayload(pickSeoFields(form)),
       };
       if (editingId) await adminApi.news.update(editingId, payload);
       else await adminApi.news.create(payload);
+      try {
+        await revalidatePublicCache('news');
+      } catch {
+        /* public cache will refresh on the next ISR window */
+      }
       setOpen(false);
       await load();
     } catch (err) {
@@ -67,6 +72,11 @@ export default function AdminNewsPage() {
   const remove = async (id: string) => {
     if (!confirm('Delete this article?')) return;
     await adminApi.news.remove(id);
+    try {
+      await revalidatePublicCache('news');
+    } catch {
+      /* public cache will refresh on the next ISR window */
+    }
     await load();
   };
 

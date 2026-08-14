@@ -4,6 +4,7 @@ import {
   ApiError,
   asyncHandler,
   badRequest,
+  conflict,
   forbidden,
   notFound,
   param,
@@ -36,6 +37,11 @@ describe('ApiError factories', () => {
       status: 400,
       message: 'bad',
       details: { field: 'email' },
+    });
+    expect(conflict('in use', { productCount: 3 })).toMatchObject({
+      status: 409,
+      message: 'in use',
+      details: { productCount: 3 },
     });
   });
 

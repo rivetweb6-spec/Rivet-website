@@ -21,6 +21,9 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'res.cloudinary.com' },
+      { protocol: 'http', hostname: 'localhost', port: '4000', pathname: '/api/uploads/**' },
+      { protocol: 'https', hostname: '*.onrender.com', pathname: '/api/uploads/**' },
+      { protocol: 'https', hostname: '*.up.railway.app', pathname: '/api/uploads/**' },
     ],
   },
   // Prefer static generation where possible; data revalidated via fetch + route segment.

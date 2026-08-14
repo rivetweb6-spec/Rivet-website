@@ -3,6 +3,7 @@ import authRoutes from './modules/auth/auth.routes.js';
 import categoryRoutes from './modules/categories/categories.routes.js';
 import productRoutes from './modules/products/products.routes.js';
 import serviceRoutes from './modules/services/services.routes.js';
+import certificateRoutes from './modules/certificates/certificates.routes.js';
 import newsRoutes from './modules/news/news.routes.js';
 import quotationRoutes from './modules/quotations/quotations.routes.js';
 import contactRoutes from './modules/contact/contact.routes.js';
@@ -23,6 +24,7 @@ router.use('/auth', authRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/products', productRoutes);
 router.use('/services', serviceRoutes);
+router.use('/certificates', certificateRoutes);
 router.use('/news', newsRoutes);
 router.use('/quotation-requests', quotationRoutes);
 // Legacy alias — older clients posted demo requests here.

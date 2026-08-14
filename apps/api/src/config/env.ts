@@ -15,6 +15,14 @@ const schema = z.object({
   CLOUDINARY_CLOUD_NAME: z.string().optional(),
   CLOUDINARY_API_KEY: z.string().optional(),
   CLOUDINARY_API_SECRET: z.string().optional(),
+  /** Directory for locally stored uploads. Defaults to `<cwd>/uploads`. */
+  UPLOAD_DIR: z.string().optional(),
+  /**
+   * Public origin of this API (no `/api` suffix), used in stored image URLs.
+   * Example: http://localhost:4000 or https://rivet-api.onrender.com
+   * When empty, derived from the incoming request.
+   */
+  PUBLIC_API_URL: z.string().optional(),
   SENTRY_DSN: z.string().optional(),
   SENTRY_ENVIRONMENT: z.string().optional(),
   SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0.1),

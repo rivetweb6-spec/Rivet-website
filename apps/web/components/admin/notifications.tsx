@@ -3,15 +3,35 @@
 import * as React from 'react';
 import { adminApi, getStoredToken } from '@/lib/admin-api';
 
-/**
- * Live SSE notifications for new quotation requests.
- * EventSource can't set headers, so we pass the token as a query param and
- * also poll analytics for the reliable new-request count.
- */
-export function useQuotationNotifications() {
-  const [newCount, setNewCount] = React.useState(0);
+type QuotationNotificationsValue = {
+  unreadCount: number;
+  applyUnreadCount: (count: number) => void;
+  refresh: () => Promise<void>;
+};
 
-  const clear = React.useCallback(() => setNewCount(0), []);
+const QuotationNotificationsContext = React.createContext<QuotationNotificationsValue | null>(
+  null,
+);
+
+/**
+ * Live unread quotation count for the admin badge.
+ * Count comes from persisted `readAt` on the server — not a local hide.
+ */
+export function QuotationNotificationsProvider({ children }: { children: React.ReactNode }) {
+  const [unreadCount, setUnreadCount] = React.useState(0);
+
+  const applyUnreadCount = React.useCallback((count: number) => {
+    setUnreadCount(Math.max(0, count));
+  }, []);
+
+  const refresh = React.useCallback(async () => {
+    try {
+      const data = await adminApi.analytics();
+      setUnreadCount(data.cards.quotationUnread);
+    } catch {
+      /* ignore transient poll errors */
+    }
+  }, []);
 
   React.useEffect(() => {
     const token = getStoredToken();
@@ -21,7 +41,7 @@ export function useQuotationNotifications() {
     const poll = async () => {
       try {
         const data = await adminApi.analytics();
-        if (!cancelled) setNewCount(data.cards.quotationNew);
+        if (!cancelled) setUnreadCount(data.cards.quotationUnread);
       } catch {
         /* ignore */
       }
@@ -29,12 +49,14 @@ export function useQuotationNotifications() {
     poll();
     const id = window.setInterval(poll, 15000);
 
-    // Also try SSE for instant updates.
     let es: EventSource | null = null;
     try {
       es = new EventSource(`${adminApi.eventsUrl()}?token=${encodeURIComponent(token)}`);
       es.addEventListener('quotation-request', () => {
-        setNewCount((c) => c + 1);
+        setUnreadCount((c) => c + 1);
+      });
+      es.addEventListener('quotation-read', () => {
+        void poll();
       });
     } catch {
       /* EventSource unavailable */
@@ -47,5 +69,22 @@ export function useQuotationNotifications() {
     };
   }, []);
 
-  return { newCount, clear, bump: () => setNewCount((c) => c + 1) };
+  const value = React.useMemo(
+    () => ({ unreadCount, applyUnreadCount, refresh }),
+    [unreadCount, applyUnreadCount, refresh],
+  );
+
+  return (
+    <QuotationNotificationsContext.Provider value={value}>
+      {children}
+    </QuotationNotificationsContext.Provider>
+  );
+}
+
+export function useQuotationNotifications() {
+  const ctx = React.useContext(QuotationNotificationsContext);
+  if (!ctx) {
+    throw new Error('useQuotationNotifications must be used within QuotationNotificationsProvider');
+  }
+  return ctx;
 }

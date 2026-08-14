@@ -10,6 +10,7 @@ import { News } from '@/components/home/news';
 import { QuotationCta } from '@/components/home/quotation-cta';
 import { resolveSeo } from '@/lib/seo';
 import { api } from '@/lib/api';
+import { sortNewsNewestFirst } from '@/lib/news';
 
 export async function generateMetadata(): Promise<Metadata> {
   let page = null;
@@ -27,13 +28,16 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  let home = null;
-  try {
-    const res = await api.home();
-    home = res.home;
-  } catch {
-    /* fall back to hardcoded defaults in Hero / Intro */
-  }
+  const [homeResult, newsResult] = await Promise.allSettled([
+    api.home(),
+    api.news.list({ pageSize: 3 }),
+  ]);
+
+  const home = homeResult.status === 'fulfilled' ? homeResult.value.home : null;
+  const articles =
+    newsResult.status === 'fulfilled'
+      ? sortNewsNewestFirst(newsResult.value.articles).slice(0, 3)
+      : [];
 
   return (
     <>
@@ -44,7 +48,7 @@ export default async function HomePage() {
       <Services />
       <WhyChoose />
       <Stats />
-      <News />
+      <News articles={articles} />
       <QuotationCta />
     </>
   );

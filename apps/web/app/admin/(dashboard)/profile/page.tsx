@@ -9,11 +9,13 @@ import {
   AdminInput,
   AdminPageHeader,
 } from '@/components/admin/ui';
+import { ImageUploadField } from '@/components/admin/image-upload-field';
 
 export default function AdminProfilePage() {
   const { user, setUser } = useAdminAuth();
   const [name, setName] = React.useState(user?.name ?? '');
   const [email, setEmail] = React.useState(user?.email ?? '');
+  const [avatarUrl, setAvatarUrl] = React.useState(user?.avatarUrl ?? '');
   const [currentPassword, setCurrentPassword] = React.useState('');
   const [newPassword, setNewPassword] = React.useState('');
   const [message, setMessage] = React.useState<string | null>(null);
@@ -23,6 +25,7 @@ export default function AdminProfilePage() {
     if (user) {
       setName(user.name);
       setEmail(user.email);
+      setAvatarUrl(user.avatarUrl ?? '');
     }
   }, [user]);
 
@@ -31,7 +34,11 @@ export default function AdminProfilePage() {
     setMessage(null);
     setError(null);
     try {
-      const { user: u } = await adminApi.updateProfile({ name, email });
+      const { user: u } = await adminApi.updateProfile({
+        name,
+        email,
+        avatarUrl: avatarUrl || null,
+      });
       setUser(u);
       setMessage('Profile updated.');
     } catch (err) {
@@ -67,6 +74,12 @@ export default function AdminProfilePage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+            />
+            <ImageUploadField
+              label="Avatar"
+              value={avatarUrl}
+              onChange={setAvatarUrl}
+              onError={setError}
             />
             <p className="text-[0.8125rem] text-muted">Role: {user?.role}</p>
             <AdminButton type="submit">Save profile</AdminButton>

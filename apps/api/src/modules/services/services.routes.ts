@@ -12,6 +12,7 @@ import {
   seoFieldsSchema,
   toPrismaFaqs,
 } from '../../utils/seo-fields.js';
+import { imageRefSchema } from '../../utils/image-ref.js';
 
 const router = Router();
 
@@ -21,7 +22,7 @@ const upsertSchema = z
     slug: z.string().optional(),
     narrative: z.string().min(1),
     icon: z.string().optional().nullable(),
-    image: z.string().url().optional().nullable().or(z.literal('')),
+    image: imageRefSchema.optional().nullable().or(z.literal('')),
     order: z.number().int().optional(),
     status: z.enum(['DRAFT', 'PUBLISHED']).optional(),
     faqs: z.array(faqItemSchema).optional().nullable(),

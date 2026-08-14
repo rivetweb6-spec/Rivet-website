@@ -9,6 +9,7 @@ import {
   QUOTATION_STATUS_LABELS,
   type QuotationRequest,
 } from '@/lib/admin-api';
+import { useQuotationNotifications } from '@/components/admin/notifications';
 import {
   AdminButton,
   AdminCard,
@@ -19,6 +20,7 @@ import {
   EmptyState,
   StatusBadge,
 } from '@/components/admin/ui';
+import { cn } from '@/lib/utils';
 
 export default function AdminQuotationRequestsPage() {
   const [requests, setRequests] = React.useState<QuotationRequest[]>([]);
@@ -28,6 +30,7 @@ export default function AdminQuotationRequestsPage() {
   const [status, setStatus] = React.useState('NEW');
   const [error, setError] = React.useState<string | null>(null);
   const [saving, setSaving] = React.useState(false);
+  const { applyUnreadCount } = useQuotationNotifications();
 
   const load = React.useCallback(async () => {
     const data = await adminApi.quotations.list(filter || undefined);
@@ -38,10 +41,39 @@ export default function AdminQuotationRequestsPage() {
     load().catch((e: Error) => setError(e.message));
   }, [load]);
 
-  const open = (r: QuotationRequest) => {
+  React.useEffect(() => {
+    applyUnreadCount(0);
+    let cancelled = false;
+    adminApi.quotations
+      .markAllRead()
+      .then(({ unread }) => {
+        if (cancelled) return;
+        applyUnreadCount(unread);
+        setRequests((prev) =>
+          prev.map((item) => (item.readAt ? item : { ...item, readAt: new Date().toISOString() })),
+        );
+      })
+      .catch(() => {
+        /* Badge still hides locally while viewing this page */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [applyUnreadCount]);
+
+  const open = async (r: QuotationRequest) => {
     setSelected(r);
     setNotes(r.adminNotes ?? '');
     setStatus(r.status);
+    if (r.readAt) return;
+    try {
+      const { quotation, unread } = await adminApi.quotations.markRead(r.id);
+      applyUnreadCount(unread);
+      setSelected((current) => (current?.id === quotation.id ? { ...current, ...quotation } : current));
+      setRequests((prev) => prev.map((item) => (item.id === quotation.id ? quotation : item)));
+    } catch {
+      /* Review still works if mark-read fails */
+    }
   };
 
   const save = async () => {
@@ -126,9 +158,23 @@ export default function AdminQuotationRequestsPage() {
               </tr>
             )}
             {requests.map((r) => (
-              <tr key={r.id} className="border-b border-divider last:border-0">
+              <tr
+                key={r.id}
+                className={cn(
+                  'border-b border-divider last:border-0',
+                  !r.readAt && 'bg-gold/[0.06]',
+                )}
+              >
                 <td className="px-5 py-3">
-                  <p className="font-medium">{r.fullName}</p>
+                  <p className="flex items-center gap-2 font-medium">
+                    {!r.readAt && (
+                      <span
+                        className="h-2 w-2 shrink-0 rounded-full bg-gold"
+                        aria-label="Unread"
+                      />
+                    )}
+                    {r.fullName}
+                  </p>
                   {r.company && <p className="text-[0.75rem] text-muted">{r.company}</p>}
                 </td>
                 <td className="px-5 py-3">

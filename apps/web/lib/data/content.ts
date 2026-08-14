@@ -38,15 +38,6 @@ export type Stat = {
   suffix?: string;
 };
 
-export type NewsItem = {
-  slug: string;
-  title: string;
-  caption: string;
-  date: string;
-  image: string;
-  category: string;
-};
-
 export const categories: Category[] = [
   { slug: 'elevators', name: 'Elevators', image: assets.categories.elevators },
   { slug: 'passenger-lifts', name: 'Passenger Lifts', image: assets.categories.lifts },
@@ -122,33 +113,6 @@ export const stats: Stat[] = [
   { label: 'Projects Completed', value: 640, suffix: '+' },
   { label: 'Products Imported', value: 1200, suffix: '+' },
   { label: 'Happy Clients', value: 380, suffix: '+' },
-];
-
-export const latestNews: NewsItem[] = [
-  {
-    slug: 'rivet-flagship-showroom-opening',
-    title: 'RIVET Opens Its Flagship Architectural Showroom',
-    caption: 'A marble-floored gallery bringing imported engineering to the city center.',
-    date: '2026-06-18',
-    image: assets.news.n1,
-    category: 'Company',
-  },
-  {
-    slug: 'new-generation-traction-elevators',
-    title: 'Introducing Next-Generation Traction Elevators',
-    caption: 'Energy-efficient drive systems now available across our portfolio.',
-    date: '2026-05-02',
-    image: assets.news.n2,
-    category: 'Products',
-  },
-  {
-    slug: 'granite-partnership-expansion',
-    title: 'Expanding Our Premium Granite Partnerships',
-    caption: 'New quarry partnerships widen our selection of fine natural stone.',
-    date: '2026-04-11',
-    image: assets.news.n3,
-    category: 'Supply',
-  },
 ];
 
 export const productInterests = [

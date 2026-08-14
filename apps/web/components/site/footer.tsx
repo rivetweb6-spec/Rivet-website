@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { Facebook, Linkedin, Send, MessageCircle, MapPin, Phone, Mail } from 'lucide-react';
 import { Logo } from './logo';
 import { Container } from '@/components/ui/container';
+import type { ContactInfo } from '@/lib/api';
+import { contactSocials, mailtoHref, telHref } from '@/lib/contact';
 
 const columns = [
   {
@@ -27,6 +29,7 @@ const columns = [
     title: 'Company',
     links: [
       { label: 'About', href: '/company' },
+      { label: 'Certificates', href: '/company#certificates' },
       { label: 'News', href: '/news' },
       { label: 'Contact', href: '/contact' },
       { label: 'Request a Quotation', href: '/request-quotation' },
@@ -34,14 +37,17 @@ const columns = [
   },
 ];
 
-const socials = [
-  { icon: Facebook, label: 'Facebook', href: '#' },
-  { icon: Linkedin, label: 'LinkedIn', href: '#' },
-  { icon: Send, label: 'Telegram', href: '#' },
-  { icon: MessageCircle, label: 'WhatsApp', href: '#' },
-];
+const socialIcons = {
+  Facebook,
+  LinkedIn: Linkedin,
+  Telegram: Send,
+  WhatsApp: MessageCircle,
+};
 
-export function Footer() {
+export function Footer({ contact }: { contact?: ContactInfo | null }) {
+  const socials = contactSocials(contact ?? null);
+  const hasContact = Boolean(contact?.address || contact?.phone || contact?.email);
+
   return (
     <footer className="relative bg-navy-deep text-white/60 luxury-grain">
       <div className="gold-rule opacity-30" aria-hidden="true" />
@@ -53,18 +59,25 @@ export function Footer() {
               River Company (RIVET) imports and supplies premium construction and architectural
               products — engineered precision for landmark spaces.
             </p>
-            <div className="mt-8 flex gap-3">
-              {socials.map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  aria-label={s.label}
-                  className="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-white/50 transition-all duration-500 hover:border-gold hover:text-gold"
-                >
-                  <s.icon size={16} strokeWidth={1.5} />
-                </a>
-              ))}
-            </div>
+            {socials.length > 0 && (
+              <div className="mt-8 flex gap-3">
+                {socials.map((s) => {
+                  const Icon = socialIcons[s.label];
+                  return (
+                    <a
+                      key={s.label}
+                      href={s.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={s.label}
+                      className="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-white/50 transition-all duration-500 hover:border-gold hover:text-gold"
+                    >
+                      <Icon size={16} strokeWidth={1.5} />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {columns.map((col) => (
@@ -88,23 +101,31 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-16 grid gap-5 border-t border-white/8 pt-10 text-[0.875rem] font-light sm:grid-cols-3">
-          <span className="inline-flex items-center gap-2.5">
-            <MapPin size={15} className="text-gold" strokeWidth={1.5} /> Addis Ababa, Ethiopia
-          </span>
-          <a
-            href="tel:+251000000000"
-            className="inline-flex items-center gap-2.5 transition-colors hover:text-gold"
-          >
-            <Phone size={15} className="text-gold" strokeWidth={1.5} /> +251 00 000 0000
-          </a>
-          <a
-            href="mailto:info@rivet.com"
-            className="inline-flex items-center gap-2.5 transition-colors hover:text-gold"
-          >
-            <Mail size={15} className="text-gold" strokeWidth={1.5} /> info@rivet.com
-          </a>
-        </div>
+        {hasContact && (
+          <div className="mt-16 grid gap-5 border-t border-white/8 pt-10 text-[0.875rem] font-light sm:grid-cols-3">
+            {contact?.address && (
+              <span className="inline-flex items-center gap-2.5">
+                <MapPin size={15} className="text-gold" strokeWidth={1.5} /> {contact.address}
+              </span>
+            )}
+            {contact?.phone && (
+              <a
+                href={telHref(contact.phone)}
+                className="inline-flex items-center gap-2.5 transition-colors hover:text-gold"
+              >
+                <Phone size={15} className="text-gold" strokeWidth={1.5} /> {contact.phone}
+              </a>
+            )}
+            {contact?.email && (
+              <a
+                href={mailtoHref(contact.email)}
+                className="inline-flex items-center gap-2.5 transition-colors hover:text-gold"
+              >
+                <Mail size={15} className="text-gold" strokeWidth={1.5} /> {contact.email}
+              </a>
+            )}
+          </div>
+        )}
 
         <div className="mt-10 flex flex-col justify-between gap-4 border-t border-white/8 pt-8 text-[0.75rem] text-white/35 sm:flex-row">
           <span>© {new Date().getFullYear()} River Company (RIVET). All rights reserved.</span>

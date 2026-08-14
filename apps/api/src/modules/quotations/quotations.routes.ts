@@ -4,7 +4,7 @@ import type { Prisma } from '@prisma/client';
 import { prisma } from '../../config/prisma.js';
 import { validate } from '../../middleware/validate.js';
 import { requireAuth, requireRole } from '../../middleware/auth.js';
-import { asyncHandler, param } from '../../utils/http.js';
+import { asyncHandler, notFound, param } from '../../utils/http.js';
 import { toCsv } from '../../utils/csv.js';
 import { emitEvent } from '../../realtime/stream.js';
 
@@ -67,12 +67,15 @@ router.get(
   asyncHandler(async (req, res) => {
     const where: Prisma.QuotationRequestWhereInput = {};
     if (req.query.status) where.status = req.query.status as (typeof QUOTATION_STATUSES)[number];
-    const requests = await prisma.quotationRequest.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-    });
-    const counts = await prisma.quotationRequest.groupBy({ by: ['status'], _count: true });
-    res.json({ requests, counts });
+    const [requests, counts, unread] = await Promise.all([
+      prisma.quotationRequest.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.quotationRequest.groupBy({ by: ['status'], _count: true }),
+      prisma.quotationRequest.count({ where: { readAt: null } }),
+    ]);
+    res.json({ requests, counts, unread });
   }),
 );
 
@@ -101,6 +104,48 @@ router.get(
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename="quotation-requests.csv"');
     res.send(csv);
+  }),
+);
+
+// Admin — mark every unread quotation as seen when the inbox is opened
+router.patch(
+  '/read-all',
+  requireAuth,
+  requireRole('ADMIN', 'EDITOR'),
+  asyncHandler(async (_req, res) => {
+    const result = await prisma.quotationRequest.updateMany({
+      where: { readAt: null },
+      data: { readAt: new Date() },
+    });
+    if (result.count > 0) {
+      emitEvent({ type: 'quotation-read', data: { unread: 0 } });
+    }
+    res.json({ unread: 0 });
+  }),
+);
+
+// Admin — mark a quotation as read when it is opened/viewed
+router.patch(
+  '/:id/read',
+  requireAuth,
+  requireRole('ADMIN', 'EDITOR'),
+  asyncHandler(async (req, res) => {
+    const id = param(req, 'id');
+    const existing = await prisma.quotationRequest.findUnique({ where: { id } });
+    if (!existing) throw notFound('Quotation request not found');
+
+    const quotation = existing.readAt
+      ? existing
+      : await prisma.quotationRequest.update({
+          where: { id },
+          data: { readAt: new Date() },
+        });
+
+    const unread = await prisma.quotationRequest.count({ where: { readAt: null } });
+    if (!existing.readAt) {
+      emitEvent({ type: 'quotation-read', data: { id: quotation.id, unread } });
+    }
+    res.json({ quotation, unread });
   }),
 );
 

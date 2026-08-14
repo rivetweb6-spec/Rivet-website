@@ -9,6 +9,7 @@ import { slugify } from '../../utils/slug.js';
 import { assertSlugAvailable } from '../../utils/slug-conflict.js';
 import { rankProducts, rankByName } from '../../utils/product-search.js';
 import { normalizeSeoFields, seoFieldsSchema } from '../../utils/seo-fields.js';
+import { imageRefSchema } from '../../utils/image-ref.js';
 
 const router = Router();
 
@@ -36,7 +37,7 @@ const upsertSchema = z
     images: z
       .array(
         z.object({
-          url: z.string().url(),
+          url: imageRefSchema,
           publicId: z.string().optional(),
           alt: z.string().optional().nullable(),
         }),

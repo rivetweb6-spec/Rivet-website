@@ -55,6 +55,12 @@ services:
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
+      # Public origin of this API (no /api suffix), e.g. https://rivet-api.onrender.com
+      - key: PUBLIC_API_URL
+        sync: false
+      # Optional persistent disk mount for local uploads
+      - key: UPLOAD_DIR
+        sync: false
       - key: SENTRY_DSN
         sync: false
       - key: SENTRY_ENVIRONMENT

@@ -23,10 +23,12 @@ export class ApiError extends Error {
 type RequestOptions = RequestInit & {
   /** Next.js ISR revalidate (server only). */
   revalidate?: number | false;
+  /** Next.js cache tags (server only). */
+  tags?: string[];
 };
 
 async function request<T>(path: string, init?: RequestOptions): Promise<T> {
-  const { revalidate, ...rest } = init ?? {};
+  const { revalidate, tags, ...rest } = init ?? {};
   const isServer = typeof window === 'undefined';
 
   let res: Response;
@@ -37,11 +39,14 @@ async function request<T>(path: string, init?: RequestOptions): Promise<T> {
         'Content-Type': 'application/json',
         ...(rest.headers ?? {}),
       },
-      ...(isServer && revalidate !== undefined
-        ? { next: { revalidate: revalidate === false ? 0 : revalidate } }
-        : isServer
-          ? { next: { revalidate: 60 } }
-          : { cache: 'no-store' }),
+      ...(isServer
+        ? {
+            next: {
+              revalidate: revalidate === false ? 0 : (revalidate ?? 60),
+              ...(tags ? { tags } : {}),
+            },
+          }
+        : { cache: 'no-store' }),
     });
   } catch {
     throw new ApiError(
@@ -125,6 +130,14 @@ export type Service = {
   order: number;
   faqs?: FaqItem[] | null;
 } & SeoFields;
+
+export type Certificate = {
+  id: string;
+  title: string;
+  description: string | null;
+  image: string | null;
+  order: number;
+};
 
 export type NewsArticle = {
   id: string;
@@ -236,6 +249,11 @@ export const api = {
     bySlug: (slug: string) => request<{ service: Service }>(`/services/${slug}`),
   },
 
+  certificates: {
+    list: () =>
+      request<{ certificates: Certificate[] }>('/certificates', { tags: ['certificates'] }),
+  },
+
   news: {
     list: (params?: { category?: string; page?: number; pageSize?: number }) => {
       const q = new URLSearchParams();
@@ -245,9 +263,11 @@ export const api = {
       const qs = q.toString();
       return request<{ articles: NewsArticle[]; pagination: Pagination }>(
         `/news${qs ? `?${qs}` : ''}`,
+        { tags: ['news'] },
       );
     },
-    bySlug: (slug: string) => request<{ article: NewsArticle }>(`/news/${slug}`),
+    bySlug: (slug: string) =>
+      request<{ article: NewsArticle }>(`/news/${slug}`, { tags: ['news'] }),
   },
 
   company: () => request<{ company: CompanyInfo | null }>('/company'),
@@ -259,7 +279,8 @@ export const api = {
     byKey: (pageKey: string) => request<{ page: PageSeo | null }>(`/page-seo/${pageKey}`),
   },
 
-  contactInfo: () => request<{ info: ContactInfo | null }>('/contact-info'),
+  contactInfo: () =>
+    request<{ info: ContactInfo | null }>('/contact-info', { tags: ['contact-info'] }),
 
   quotationRequest: (data: {
     fullName: string;

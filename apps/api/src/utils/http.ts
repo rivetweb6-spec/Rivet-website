@@ -21,6 +21,7 @@ export const unauthorized = (msg = 'Unauthorized') => new ApiError(401, msg);
 export const forbidden = (msg = 'Forbidden') => new ApiError(403, msg);
 export const badRequest = (msg = 'Bad request', details?: unknown) =>
   new ApiError(400, msg, details);
+export const conflict = (msg: string, details?: unknown) => new ApiError(409, msg, details);
 
 type AsyncHandler = (req: Request, res: Response, next: NextFunction) => Promise<unknown>;
 

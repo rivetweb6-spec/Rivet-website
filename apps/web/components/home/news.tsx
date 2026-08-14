@@ -2,9 +2,11 @@ import Link from 'next/link';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
-import { latestNews } from '@/lib/data/content';
+import { assets } from '@/lib/assets';
+import type { NewsArticle } from '@/lib/api';
 
-function formatDate(iso: string) {
+function formatDate(iso: string | null) {
+  if (!iso) return '';
   return new Date(iso).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -12,7 +14,7 @@ function formatDate(iso: string) {
   });
 }
 
-export function News() {
+export function News({ articles }: { articles: NewsArticle[] }) {
   return (
     <Section className="bg-pearl">
       <Container>
@@ -33,40 +35,48 @@ export function News() {
           </div>
         </FadeUp>
 
-        <Stagger className="grid gap-6 md:grid-cols-3">
-          {latestNews.map((n) => (
-            <StaggerItem key={n.slug}>
-              <Link
-                href={`/news/${n.slug}`}
-                className="luxury-card group block overflow-hidden rounded-[4px] bg-canvas shadow-[var(--shadow-sm)]"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden">
-                  <RivetImage
-                    src={n.image}
-                    alt={n.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-[1.1s] ease-out group-hover:scale-[1.05]"
-                  />
-                  <span className="absolute left-5 top-5 border border-gold/30 bg-navy-deep/80 px-3 py-1 text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-gold backdrop-blur-sm">
-                    {n.category}
-                  </span>
-                </div>
-                <div className="p-7">
-                  <time className="text-[0.75rem] uppercase tracking-[0.18em] text-muted">
-                    {formatDate(n.date)}
-                  </time>
-                  <h3 className="headline-display mt-3 text-[1.25rem] leading-snug transition-colors duration-300 group-hover:text-navy-600">
-                    {n.title}
-                  </h3>
-                  <p className="mt-3 text-[0.9375rem] font-light leading-relaxed text-muted">
-                    {n.caption}
-                  </p>
-                </div>
-              </Link>
-            </StaggerItem>
-          ))}
-        </Stagger>
+        {articles.length === 0 ? (
+          <p className="text-center text-muted">No articles published yet.</p>
+        ) : (
+          <Stagger className="grid gap-6 md:grid-cols-3">
+            {articles.map((n) => (
+              <StaggerItem key={n.id}>
+                <Link
+                  href={`/news/${n.slug}`}
+                  className="luxury-card group block overflow-hidden rounded-[4px] bg-canvas shadow-[var(--shadow-sm)]"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <RivetImage
+                      src={n.coverImage ?? assets.news.n1}
+                      alt={n.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-[1.1s] ease-out group-hover:scale-[1.05]"
+                    />
+                    {n.category && (
+                      <span className="absolute left-5 top-5 border border-gold/30 bg-navy-deep/80 px-3 py-1 text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-gold backdrop-blur-sm">
+                        {n.category}
+                      </span>
+                    )}
+                  </div>
+                  <div className="p-7">
+                    <time className="text-[0.75rem] uppercase tracking-[0.18em] text-muted">
+                      {formatDate(n.publishedAt)}
+                    </time>
+                    <h3 className="headline-display mt-3 text-[1.25rem] leading-snug transition-colors duration-300 group-hover:text-navy-600">
+                      {n.title}
+                    </h3>
+                    {n.excerpt && (
+                      <p className="mt-3 text-[0.9375rem] font-light leading-relaxed text-muted">
+                        {n.excerpt}
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              </StaggerItem>
+            ))}
+          </Stagger>
+        )}
       </Container>
     </Section>
   );

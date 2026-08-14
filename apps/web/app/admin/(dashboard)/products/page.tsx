@@ -107,7 +107,7 @@ export default function AdminProductsPage() {
         features: form.features,
         featured: form.featured,
         status: form.status,
-        images: images.length ? images : undefined,
+        images,
         specs: form.specs,
         ...seoPayload(pickSeoFields(form)),
       };

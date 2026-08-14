@@ -19,8 +19,10 @@ test.describe('Admin CRUD — Categories', () => {
     const row = page.getByRole('row', { name: new RegExp(name) });
     await expect(row).toBeVisible({ timeout: 15_000 });
 
-    page.once('dialog', (dialog) => dialog.accept());
     await row.getByRole('button', { name: /delete/i }).click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByRole('heading', { name: /delete category/i })).toBeVisible();
+    await dialog.getByRole('button', { name: /^delete category$/i }).click();
 
     await expect(page.getByRole('row', { name: new RegExp(name) })).toHaveCount(0, {
       timeout: 15_000,

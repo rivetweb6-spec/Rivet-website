@@ -6,6 +6,7 @@ import { RivetImage } from '@/components/ui/rivet-image';
 import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
 import { api } from '@/lib/api';
 import { assets } from '@/lib/assets';
+import { sortNewsNewestFirst } from '@/lib/news';
 import { resolveSeo } from '@/lib/seo';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -33,7 +34,8 @@ function formatDate(iso: string | null) {
 }
 
 export default async function NewsPage() {
-  const { articles } = await api.news.list({ pageSize: 12 });
+  const { articles: raw } = await api.news.list({ pageSize: 12 });
+  const articles = sortNewsNewestFirst(raw);
 
   return (
     <>

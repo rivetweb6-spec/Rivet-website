@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { prisma } from '../../config/prisma.js';
 import { validate } from '../../middleware/validate.js';
 import { requireAuth, requireRole } from '../../middleware/auth.js';
-import { asyncHandler, notFound, param } from '../../utils/http.js';
+import { asyncHandler, badRequest, conflict, notFound, param } from '../../utils/http.js';
 import { slugify } from '../../utils/slug.js';
 import { assertSlugAvailable } from '../../utils/slug-conflict.js';
 import {
@@ -12,6 +12,7 @@ import {
   seoFieldsSchema,
   toPrismaFaqs,
 } from '../../utils/seo-fields.js';
+import { imageRefSchema } from '../../utils/image-ref.js';
 
 const router = Router();
 
@@ -20,11 +21,19 @@ const upsertSchema = z
     name: z.string().min(1),
     slug: z.string().optional(),
     description: z.string().optional().nullable(),
-    image: z.string().url().optional().nullable().or(z.literal('')),
+    image: imageRefSchema.optional().nullable().or(z.literal('')),
     order: z.number().int().optional(),
     faqs: z.array(faqItemSchema).optional().nullable(),
   })
   .merge(seoFieldsSchema);
+
+function readReassignToCategoryId(req: { query: unknown; body: unknown }): string | undefined {
+  const fromQuery = (req.query as { reassignToCategoryId?: unknown }).reassignToCategoryId;
+  const fromBody = (req.body as { reassignToCategoryId?: unknown } | undefined)?.reassignToCategoryId;
+  const raw = typeof fromQuery === 'string' ? fromQuery : typeof fromBody === 'string' ? fromBody : '';
+  const id = raw.trim();
+  return id || undefined;
+}
 
 // Public
 router.get(
@@ -158,7 +167,43 @@ router.delete(
   requireAuth,
   requireRole('ADMIN'),
   asyncHandler(async (req, res) => {
-    await prisma.category.delete({ where: { id: param(req, 'id') } });
+    const id = param(req, 'id');
+    const category = await prisma.category.findUnique({
+      where: { id },
+      include: { _count: { select: { products: true } } },
+    });
+    if (!category) throw notFound('Category not found');
+
+    const productCount = category._count.products;
+    const reassignToCategoryId = readReassignToCategoryId(req);
+
+    if (productCount > 0) {
+      if (!reassignToCategoryId) {
+        throw conflict(
+          `This category has ${productCount} product${productCount === 1 ? '' : 's'}. Reassign ${productCount === 1 ? 'it' : 'them'} to another category before deleting.`,
+          { productCount },
+        );
+      }
+      if (reassignToCategoryId === id) {
+        throw badRequest('Choose a different category to reassign products to.');
+      }
+      const target = await prisma.category.findUnique({
+        where: { id: reassignToCategoryId },
+        select: { id: true },
+      });
+      if (!target) throw badRequest('Target category not found.');
+
+      await prisma.$transaction([
+        prisma.product.updateMany({
+          where: { categoryId: id },
+          data: { categoryId: reassignToCategoryId },
+        }),
+        prisma.category.delete({ where: { id } }),
+      ]);
+    } else {
+      await prisma.category.delete({ where: { id } });
+    }
+
     res.json({ ok: true });
   }),
 );

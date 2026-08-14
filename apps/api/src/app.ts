@@ -13,7 +13,12 @@ export function createApp() {
   const app = express();
 
   app.set('trust proxy', 1);
-  app.use(helmet());
+  app.use(
+    helmet({
+      // Uploaded images are loaded by the Next.js origin (Vercel / localhost:3000).
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
 
   const allowedOrigins = env.CORS_ORIGIN.split(',')
     .map((s) => s.trim())
@@ -64,7 +69,13 @@ export function createApp() {
 
   app.use(
     '/api',
-    rateLimit({ windowMs: 60_000, max: 300, standardHeaders: true, legacyHeaders: false }),
+    rateLimit({
+      windowMs: 60_000,
+      max: 300,
+      standardHeaders: true,
+      legacyHeaders: false,
+      skip: (req) => req.method === 'GET' && req.path.includes('/uploads/files/'),
+    }),
   );
 
   app.use('/api', routes);

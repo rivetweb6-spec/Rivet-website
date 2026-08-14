@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { adminApi, type ContactMessage } from '@/lib/admin-api';
+import { adminApi, getStoredToken, type ContactMessage } from '@/lib/admin-api';
 import {
   AdminButton,
   AdminCard,
@@ -56,16 +56,29 @@ export default function AdminContactPage() {
     setError(null);
     try {
       await adminApi.contactInfo.update({
-        address: form.address || undefined,
-        phone: form.phone || undefined,
-        email: form.email || undefined,
-        whatsapp: form.whatsapp || undefined,
-        facebook: form.facebook || undefined,
-        linkedin: form.linkedin || undefined,
-        telegram: form.telegram || undefined,
-        mapLat: form.mapLat ? Number(form.mapLat) : undefined,
-        mapLng: form.mapLng ? Number(form.mapLng) : undefined,
+        address: form.address.trim() || null,
+        phone: form.phone.trim() || null,
+        email: form.email.trim() || null,
+        whatsapp: form.whatsapp.trim() || null,
+        facebook: form.facebook.trim() || null,
+        linkedin: form.linkedin.trim() || null,
+        telegram: form.telegram.trim() || null,
+        mapLat: form.mapLat ? Number(form.mapLat) : null,
+        mapLng: form.mapLng ? Number(form.mapLng) : null,
       });
+      try {
+        const token = getStoredToken();
+        await fetch('/admin/revalidate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({ tag: 'contact-info' }),
+        });
+      } catch {
+        /* public cache will refresh on the next ISR window */
+      }
       setMessage('Contact information saved.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Save failed');

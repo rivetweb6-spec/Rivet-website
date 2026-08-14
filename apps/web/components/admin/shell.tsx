@@ -16,6 +16,7 @@ import {
   Tags,
   User,
   Wrench,
+  Award,
   Inbox,
   Menu,
   X,
@@ -32,6 +33,7 @@ const nav = [
   { href: '/admin/products', label: 'Products', icon: Package },
   { href: '/admin/categories', label: 'Categories', icon: Tags },
   { href: '/admin/services', label: 'Services', icon: Wrench },
+  { href: '/admin/certificates', label: 'Certificates', icon: Award },
   { href: '/admin/news', label: 'News', icon: FileText },
   { href: '/admin/site-seo', label: 'Site SEO', icon: Search },
   { href: '/admin/quotation-requests', label: 'Quotation Requests', icon: Inbox },
@@ -41,12 +43,10 @@ const nav = [
 ];
 
 function AdminSidebar({
-  newCount,
-  onClearQuotations,
+  unreadCount,
   onNavigate,
 }: {
-  newCount: number;
-  onClearQuotations: () => void;
+  unreadCount: number;
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
@@ -69,10 +69,7 @@ function AdminSidebar({
             <Link
               key={item.href}
               href={item.href}
-              onClick={() => {
-                onNavigate?.();
-                if (isQuotations) onClearQuotations();
-              }}
+              onClick={onNavigate}
               className={cn(
                 'relative flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-[0.875rem] transition-colors',
                 active
@@ -85,9 +82,9 @@ function AdminSidebar({
               )}
               <Icon size={18} strokeWidth={1.75} />
               <span className="flex-1">{item.label}</span>
-              {isQuotations && newCount > 0 && (
+              {isQuotations && unreadCount > 0 && !active && (
                 <span className="grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1.5 text-[0.6875rem] font-semibold text-navy">
-                  {newCount}
+                  {unreadCount}
                 </span>
               )}
             </Link>
@@ -110,7 +107,9 @@ function AdminSidebar({
 }
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
-  const { newCount, clear } = useQuotationNotifications();
+  const { unreadCount } = useQuotationNotifications();
+  const pathname = usePathname();
+  const viewingQuotations = pathname === '/admin/quotation-requests';
   const [open, setOpen] = React.useState(false);
 
   const closeDrawer = React.useCallback(() => setOpen(false), []);
@@ -127,7 +126,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-bg">
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-64">
-        <AdminSidebar newCount={newCount} onClearQuotations={clear} />
+        <AdminSidebar unreadCount={unreadCount} />
       </div>
 
       {open && (
@@ -139,11 +138,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             onClick={closeDrawer}
           />
           <div className="absolute inset-y-0 left-0 z-10 shadow-xl">
-            <AdminSidebar
-              newCount={newCount}
-              onClearQuotations={clear}
-              onNavigate={closeDrawer}
-            />
+            <AdminSidebar unreadCount={unreadCount} onNavigate={closeDrawer} />
           </div>
         </div>
       )}
@@ -163,12 +158,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <ThemeToggle />
             <Link
               href="/admin/quotation-requests"
-              onClick={() => clear()}
               className="relative grid h-10 w-10 place-items-center rounded-full text-navy transition-colors hover:bg-bg"
               aria-label="Notifications"
             >
               <Bell size={18} />
-              {newCount > 0 && (
+              {unreadCount > 0 && !viewingQuotations && (
                 <span className="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-gold ring-2 ring-surface" />
               )}
             </Link>

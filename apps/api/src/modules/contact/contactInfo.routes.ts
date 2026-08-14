@@ -7,16 +7,22 @@ import { asyncHandler } from '../../utils/http.js';
 
 const router = Router();
 
+const emptyToNull = (schema: z.ZodType<string>) =>
+  z
+    .union([schema, z.literal(''), z.null()])
+    .optional()
+    .transform((v) => (v ? v : null));
+
 const schema = z.object({
-  address: z.string().optional(),
-  phone: z.string().optional(),
-  email: z.string().email().optional(),
-  whatsapp: z.string().optional(),
-  facebook: z.string().optional(),
-  linkedin: z.string().optional(),
-  telegram: z.string().optional(),
-  mapLat: z.number().optional(),
-  mapLng: z.number().optional(),
+  address: emptyToNull(z.string()),
+  phone: emptyToNull(z.string()),
+  email: emptyToNull(z.string().email()),
+  whatsapp: emptyToNull(z.string()),
+  facebook: emptyToNull(z.string()),
+  linkedin: emptyToNull(z.string()),
+  telegram: emptyToNull(z.string()),
+  mapLat: z.number().nullable().optional(),
+  mapLng: z.number().nullable().optional(),
 });
 
 router.get(

@@ -11,6 +11,7 @@ import {
   signRefreshToken,
   verifyRefreshToken,
 } from '../../utils/jwt.js';
+import { imageRefSchema } from '../../utils/image-ref.js';
 
 const router = Router();
 
@@ -97,13 +98,18 @@ router.put(
     body: z.object({
       name: z.string().min(1).optional(),
       email: z.string().email().optional(),
-      avatarUrl: z.string().url().nullable().optional(),
+      avatarUrl: imageRefSchema.nullable().optional().or(z.literal('')),
     }),
   }),
   asyncHandler(async (req, res) => {
+    const data = req.body as { name?: string; email?: string; avatarUrl?: string | null };
     const user = await prisma.user.update({
       where: { id: req.user!.sub },
-      data: req.body,
+      data: {
+        ...(data.name !== undefined ? { name: data.name } : {}),
+        ...(data.email !== undefined ? { email: data.email } : {}),
+        ...(data.avatarUrl !== undefined ? { avatarUrl: data.avatarUrl || null } : {}),
+      },
       select: { id: true, name: true, email: true, role: true, avatarUrl: true },
     });
     res.json({ user });

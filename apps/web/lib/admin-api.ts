@@ -10,6 +10,14 @@ function getApiUrl(): string {
   return process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
 }
 
+/** Direct API origin so multipart uploads bypass the Next.js/Vercel proxy size cap. */
+function getDirectApiUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '');
+  if (explicit) return explicit;
+  if (typeof window !== 'undefined') return '/api';
+  return 'http://localhost:4000/api';
+}
+
 const TOKEN_KEY = 'rivet_admin_token';
 const USER_KEY = 'rivet_admin_user';
 
@@ -34,6 +42,19 @@ export function getStoredToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
 
+/** Bust public ISR so homepage / news pages pick up admin changes immediately. */
+export async function revalidatePublicCache(tag: string) {
+  const token = getStoredToken();
+  await fetch('/admin/revalidate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ tag }),
+  });
+}
+
 export function getStoredUser(): AdminUser | null {
   if (typeof window === 'undefined') return null;
   const raw = localStorage.getItem(USER_KEY);
@@ -55,18 +76,22 @@ export function clearSession() {
   localStorage.removeItem(USER_KEY);
 }
 
-async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
+async function adminRequest<T>(
+  path: string,
+  init?: RequestInit & { apiBase?: string },
+): Promise<T> {
   const token = getStoredToken();
   const isForm = typeof FormData !== 'undefined' && init?.body instanceof FormData;
+  const { apiBase, headers: initHeaders, ...rest } = init ?? {};
   let res: Response;
   try {
-    res = await fetch(`${getApiUrl()}${path}`, {
-      ...init,
+    res = await fetch(`${apiBase ?? getApiUrl()}${path}`, {
+      ...rest,
       credentials: 'include',
       headers: {
         ...(isForm ? {} : { 'Content-Type': 'application/json' }),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...(init?.headers ?? {}),
+        ...(initHeaders ?? {}),
       },
       cache: 'no-store',
     });
@@ -114,7 +139,7 @@ export const adminApi = {
 
   me: () => adminRequest<{ user: AdminUser }>('/auth/me'),
 
-  updateProfile: (data: { name?: string; email?: string }) =>
+  updateProfile: (data: { name?: string; email?: string; avatarUrl?: string | null }) =>
     adminRequest<{ user: AdminUser }>('/auth/me', {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -132,9 +157,11 @@ export const adminApi = {
         products: number;
         categories: number;
         services: number;
+        certificates: number;
         news: number;
         quotationTotal: number;
         quotationNew: number;
+        quotationUnread: number;
         contactMessages: number;
       };
       quotationsByStatus: { status: string; _count: number }[];
@@ -161,8 +188,12 @@ export const adminApi = {
         method: 'PUT',
         body: JSON.stringify(data),
       }),
-    remove: (id: string) =>
-      adminRequest<{ ok: boolean }>(`/categories/${id}`, { method: 'DELETE' }),
+    remove: (id: string, reassignToCategoryId?: string) => {
+      const query = reassignToCategoryId
+        ? `?reassignToCategoryId=${encodeURIComponent(reassignToCategoryId)}`
+        : '';
+      return adminRequest<{ ok: boolean }>(`/categories/${id}${query}`, { method: 'DELETE' });
+    },
   },
 
   products: {
@@ -197,6 +228,27 @@ export const adminApi = {
       adminRequest<{ ok: boolean }>(`/services/${id}`, { method: 'DELETE' }),
   },
 
+  certificates: {
+    list: () => adminRequest<{ certificates: AdminCertificate[] }>('/certificates/admin/all'),
+    create: (data: CertificateInput) =>
+      adminRequest<{ certificate: AdminCertificate }>('/certificates', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    update: (id: string, data: Partial<CertificateInput>) =>
+      adminRequest<{ certificate: AdminCertificate }>(`/certificates/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+    reorder: (ids: string[]) =>
+      adminRequest<{ certificates: AdminCertificate[] }>('/certificates/reorder', {
+        method: 'PUT',
+        body: JSON.stringify({ ids }),
+      }),
+    remove: (id: string) =>
+      adminRequest<{ ok: boolean }>(`/certificates/${id}`, { method: 'DELETE' }),
+  },
+
   news: {
     list: () => adminRequest<{ articles: AdminArticle[] }>('/news/admin/all'),
     create: (data: ArticleInput) =>
@@ -218,11 +270,21 @@ export const adminApi = {
       adminRequest<{
         requests: QuotationRequest[];
         counts: { status: string; _count: number }[];
+        unread: number;
       }>(`/quotation-requests${status ? `?status=${status}` : ''}`),
     update: (id: string, data: { status?: string; adminNotes?: string }) =>
       adminRequest<{ quotation: QuotationRequest }>(`/quotation-requests/${id}`, {
         method: 'PATCH',
         body: JSON.stringify(data),
+      }),
+    markRead: (id: string) =>
+      adminRequest<{ quotation: QuotationRequest; unread: number }>(
+        `/quotation-requests/${id}/read`,
+        { method: 'PATCH' },
+      ),
+    markAllRead: () =>
+      adminRequest<{ unread: number }>('/quotation-requests/read-all', {
+        method: 'PATCH',
       }),
     exportUrl: () => `${getApiUrl()}/quotation-requests/export`,
   },
@@ -268,14 +330,35 @@ export const adminApi = {
   },
 
   uploads: {
-    upload: (files: File[]) => {
-      const form = new FormData();
-      files.forEach((f) => form.append('files', f));
-      return adminRequest<{ images: { url: string; publicId: string }[] }>('/uploads', {
-        method: 'POST',
-        body: form,
-      });
+    upload: async (files: File[]) => {
+      const buildForm = () => {
+        const form = new FormData();
+        files.forEach((f) => form.append('files', f));
+        return form;
+      };
+      try {
+        return await adminRequest<{ images: { url: string; publicId: string }[] }>('/uploads', {
+          method: 'POST',
+          body: buildForm(),
+          apiBase: getDirectApiUrl(),
+        });
+      } catch (err) {
+        // CORS / network to the API origin — retry through the Next.js proxy.
+        if (err instanceof AdminApiError && err.status === 0 && getDirectApiUrl() !== getApiUrl()) {
+          return adminRequest<{ images: { url: string; publicId: string }[] }>('/uploads', {
+            method: 'POST',
+            body: buildForm(),
+          });
+        }
+        throw err;
+      }
     },
+    remove: (url: string) =>
+      adminRequest<{ ok: boolean }>('/uploads', {
+        method: 'DELETE',
+        body: JSON.stringify({ url }),
+        apiBase: getDirectApiUrl(),
+      }),
   },
 
   eventsUrl: () => `${getApiUrl()}/events`,
@@ -323,6 +406,7 @@ export type Category = {
   image: string | null;
   order: number;
   faqs?: FaqItem[] | null;
+  _count?: { products: number };
 } & SeoFieldsPayload;
 
 export type AdminProduct = {
@@ -369,12 +453,29 @@ export type AdminService = {
   faqs?: FaqItem[] | null;
 } & SeoFieldsPayload;
 
+export type AdminCertificate = {
+  id: string;
+  title: string;
+  description: string | null;
+  image: string | null;
+  order: number;
+  status: string;
+};
+
+export type CertificateInput = {
+  title: string;
+  description?: string | null;
+  image?: string | null;
+  order?: number;
+  status?: 'DRAFT' | 'PUBLISHED';
+};
+
 export type ServiceInput = {
   title: string;
   slug?: string;
   narrative: string;
   icon?: string;
-  image?: string;
+  image?: string | null;
   order?: number;
   status?: 'DRAFT' | 'PUBLISHED';
   faqs?: FaqItem[] | null;
@@ -397,7 +498,7 @@ export type ArticleInput = {
   slug?: string;
   excerpt?: string;
   body: string;
-  coverImage?: string;
+  coverImage?: string | null;
   category?: string;
   status?: 'DRAFT' | 'PUBLISHED';
 } & SeoFieldsPayload;
@@ -417,6 +518,7 @@ export type QuotationRequest = {
   message: string | null;
   status: string;
   adminNotes: string | null;
+  readAt: string | null;
   createdAt: string;
 };
 

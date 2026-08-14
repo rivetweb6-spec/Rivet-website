@@ -4,6 +4,7 @@ import { PageHero } from '@/components/site/page-hero';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { ContactForm } from '@/components/contact/contact-form';
 import { api } from '@/lib/api';
+import { contactSocials, mailtoHref, telHref } from '@/lib/contact';
 
 import { resolveSeo } from '@/lib/seo';
 
@@ -29,12 +30,13 @@ export default async function ContactPage() {
       ? `https://www.google.com/maps?q=${info.mapLat},${info.mapLng}&z=14&output=embed`
       : 'https://www.google.com/maps?q=Addis+Ababa&z=12&output=embed';
 
-  const socials = [
-    { href: info?.whatsapp ? `https://wa.me/${info.whatsapp.replace(/\D/g, '')}` : '#', icon: MessageCircle, label: 'WhatsApp' },
-    { href: info?.facebook ?? '#', icon: Facebook, label: 'Facebook' },
-    { href: info?.linkedin ?? '#', icon: Linkedin, label: 'LinkedIn' },
-    { href: info?.telegram ?? '#', icon: Send, label: 'Telegram' },
-  ];
+  const socialIcons = {
+    Facebook,
+    LinkedIn: Linkedin,
+    Telegram: Send,
+    WhatsApp: MessageCircle,
+  };
+  const socials = contactSocials(info);
 
   return (
     <>
@@ -59,7 +61,7 @@ export default async function ContactPage() {
                 {info?.phone && (
                   <li className="flex items-start gap-3">
                     <Phone size={18} className="mt-0.5 text-gold" />
-                    <a href={`tel:${info.phone}`} className="transition-colors hover:text-gold">
+                    <a href={telHref(info.phone)} className="transition-colors hover:text-gold">
                       {info.phone}
                     </a>
                   </li>
@@ -67,27 +69,32 @@ export default async function ContactPage() {
                 {info?.email && (
                   <li className="flex items-start gap-3">
                     <Mail size={18} className="mt-0.5 text-gold" />
-                    <a href={`mailto:${info.email}`} className="transition-colors hover:text-gold">
+                    <a href={mailtoHref(info.email)} className="transition-colors hover:text-gold">
                       {info.email}
                     </a>
                   </li>
                 )}
               </ul>
 
-              <div className="mt-8 flex gap-3">
-                {socials.map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={s.label}
-                    className="grid h-11 w-11 place-items-center rounded-full border border-border text-navy transition-all hover:border-gold hover:text-gold"
-                  >
-                    <s.icon size={18} />
-                  </a>
-                ))}
-              </div>
+              {socials.length > 0 && (
+                <div className="mt-8 flex gap-3">
+                  {socials.map((s) => {
+                    const Icon = socialIcons[s.label];
+                    return (
+                      <a
+                        key={s.label}
+                        href={s.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={s.label}
+                        className="grid h-11 w-11 place-items-center rounded-full border border-border text-navy transition-all hover:border-gold hover:text-gold"
+                      >
+                        <Icon size={18} />
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
 
               <div className="mt-10 overflow-hidden rounded-[16px] border border-border shadow-[var(--shadow-sm)]">
                 <iframe

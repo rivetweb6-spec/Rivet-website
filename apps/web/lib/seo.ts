@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { Category, NewsArticle, PageSeo, Product, Service, SeoFields } from '@/lib/api';
 import { assets } from '@/lib/assets';
+import { toAbsoluteMediaUrl } from '@/lib/media';
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ?? 'https://rivet.example.com';
@@ -89,7 +90,7 @@ export function pageMetadata({
 }: PageSeoInput): Metadata {
   const pathUrl = `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`;
   const url = canonicalUrl?.trim() || pathUrl;
-  const ogImage = image || DEFAULT_OG_IMAGE;
+  const ogImage = toAbsoluteMediaUrl(image || DEFAULT_OG_IMAGE, SITE_URL);
   const fullTitle = withBrand(title);
   const socialTitle = ogTitle?.trim() || fullTitle;
   const socialDescription = ogDescription?.trim() || description;

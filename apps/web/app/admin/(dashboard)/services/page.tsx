@@ -20,6 +20,7 @@ import {
   seoPayload,
   SeoFieldsPanel,
 } from '@/components/admin/seo-fields-panel';
+import { ImageUploadField } from '@/components/admin/image-upload-field';
 import type { FaqItem } from '@/lib/admin-api';
 
 function faqsToText(faqs?: FaqItem[] | null) {
@@ -47,6 +48,7 @@ export default function AdminServicesPage() {
     title: '',
     narrative: '',
     icon: 'Wrench',
+    image: '',
     order: 0,
     status: 'PUBLISHED',
     faqsText: '',
@@ -70,6 +72,7 @@ export default function AdminServicesPage() {
         title: form.title,
         narrative: form.narrative,
         icon: form.icon,
+        image: form.image || null,
         order: form.order,
         status: form.status,
         faqs: faqs.length ? faqs : null,
@@ -103,6 +106,7 @@ export default function AdminServicesPage() {
                 title: '',
                 narrative: '',
                 icon: 'Wrench',
+                image: '',
                 order: services.length + 1,
                 status: 'PUBLISHED',
                 faqsText: '',
@@ -139,6 +143,7 @@ export default function AdminServicesPage() {
                       title: s.title,
                       narrative: s.narrative,
                       icon: s.icon ?? 'Wrench',
+                      image: s.image ?? '',
                       order: s.order,
                       status: (s.status as 'DRAFT' | 'PUBLISHED') ?? 'PUBLISHED',
                       faqsText: faqsToText(s.faqs),
@@ -181,6 +186,12 @@ export default function AdminServicesPage() {
             value={form.icon ?? ''}
             onChange={(e) => setForm({ ...form, icon: e.target.value })}
           />
+          <ImageUploadField
+            label="Service image"
+            value={form.image ?? ''}
+            onChange={(image) => setForm({ ...form, image })}
+            onError={setError}
+          />
           <div className="grid grid-cols-2 gap-4">
             <AdminInput
               label="Order"
@@ -212,6 +223,7 @@ export default function AdminServicesPage() {
             fallbackDescription={
               (form.narrative ?? '').slice(0, 160) || 'Rivet services in Ethiopia.'
             }
+            fallbackImage={form.image ?? undefined}
             pathPreview={`/services/${form.slug || 'service-slug'}`}
           />
           <div className="flex justify-end gap-3">

@@ -8,6 +8,7 @@ import {
   AdminInput,
   AdminModal,
   AdminPageHeader,
+  AdminSelect,
   AdminTextarea,
   EmptyState,
 } from '@/components/admin/ui';
@@ -18,6 +19,7 @@ import {
   seoPayload,
   SeoFieldsPanel,
 } from '@/components/admin/seo-fields-panel';
+import { ImageUploadField } from '@/components/admin/image-upload-field';
 import type { FaqItem, SeoFieldsInput } from '@/lib/admin-api';
 
 type CategoryForm = {
@@ -45,6 +47,14 @@ function textToFaqs(text: string): FaqItem[] {
     .filter((f) => f.question && f.answer);
 }
 
+function productCountOf(category: Category) {
+  return category._count?.products ?? 0;
+}
+
+function productLabel(count: number) {
+  return `${count} product${count === 1 ? '' : 's'}`;
+}
+
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = React.useState<Category[]>([]);
   const [form, setForm] = React.useState<CategoryForm>({
@@ -58,6 +68,10 @@ export default function AdminCategoriesPage() {
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [deleting, setDeleting] = React.useState<Category | null>(null);
+  const [reassignTo, setReassignTo] = React.useState('');
+  const [deletingBusy, setDeletingBusy] = React.useState(false);
+  const [deleteError, setDeleteError] = React.useState<string | null>(null);
 
   const load = () =>
     adminApi.categories.list().then((r) => setCategories(r.categories));
@@ -74,7 +88,7 @@ export default function AdminCategoriesPage() {
       const payload = {
         name: form.name,
         description: form.description || undefined,
-        image: form.image || undefined,
+        image: form.image || null,
         order: Number(form.order) || 0,
         faqs: faqs.length ? faqs : null,
         ...seoPayload(pickSeoFields(form)),
@@ -88,13 +102,44 @@ export default function AdminCategoriesPage() {
     }
   };
 
-  const remove = async (id: string) => {
-    if (!confirm('Delete this category?')) return;
+  const deletingProductCount = deleting ? productCountOf(deleting) : 0;
+  const otherCategories = deleting
+    ? categories.filter((c) => c.id !== deleting.id)
+    : [];
+  const canConfirmDelete =
+    !!deleting &&
+    !deletingBusy &&
+    (deletingProductCount === 0 || Boolean(reassignTo));
+
+  const openDelete = (category: Category) => {
+    setDeleteError(null);
+    setDeleting(category);
+    setReassignTo('');
+  };
+
+  const closeDelete = () => {
+    if (deletingBusy) return;
+    setDeleting(null);
+    setReassignTo('');
+    setDeleteError(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleting || !canConfirmDelete) return;
+    setDeletingBusy(true);
+    setDeleteError(null);
     try {
-      await adminApi.categories.remove(id);
+      await adminApi.categories.remove(
+        deleting.id,
+        deletingProductCount > 0 ? reassignTo : undefined,
+      );
+      setDeleting(null);
+      setReassignTo('');
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Delete failed');
+      setDeleteError(err instanceof Error ? err.message : 'Delete failed');
+    } finally {
+      setDeletingBusy(false);
     }
   };
 
@@ -130,6 +175,7 @@ export default function AdminCategoriesPage() {
             <tr>
               <th className="px-5 py-3 font-medium">Name</th>
               <th className="px-5 py-3 font-medium">Slug</th>
+              <th className="px-5 py-3 font-medium">Products</th>
               <th className="px-5 py-3 font-medium">Order</th>
               <th className="px-5 py-3 font-medium" />
             </tr>
@@ -137,7 +183,7 @@ export default function AdminCategoriesPage() {
           <tbody>
             {categories.length === 0 && (
               <tr>
-                <td colSpan={4}>
+                <td colSpan={5}>
                   <EmptyState message="No categories yet." />
                 </td>
               </tr>
@@ -146,6 +192,7 @@ export default function AdminCategoriesPage() {
               <tr key={c.id} className="border-b border-divider last:border-0">
                 <td className="px-5 py-3 font-medium">{c.name}</td>
                 <td className="px-5 py-3 text-muted">{c.slug}</td>
+                <td className="px-5 py-3 text-muted">{productCountOf(c)}</td>
                 <td className="px-5 py-3 text-muted">{c.order}</td>
                 <td className="px-5 py-3 text-right">
                   <button
@@ -169,7 +216,7 @@ export default function AdminCategoriesPage() {
                   <button
                     type="button"
                     className="text-error"
-                    onClick={() => remove(c.id)}
+                    onClick={() => openDelete(c)}
                   >
                     Delete
                   </button>
@@ -197,10 +244,11 @@ export default function AdminCategoriesPage() {
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
-          <AdminInput
-            label="Image URL"
+          <ImageUploadField
+            label="Category image"
             value={form.image}
-            onChange={(e) => setForm({ ...form, image: e.target.value })}
+            onChange={(image) => setForm({ ...form, image })}
+            onError={setError}
           />
           <AdminInput
             label="Order"
@@ -232,6 +280,69 @@ export default function AdminCategoriesPage() {
             <AdminButton type="submit">Save</AdminButton>
           </div>
         </form>
+      </AdminModal>
+
+      <AdminModal
+        open={!!deleting}
+        onClose={closeDelete}
+        className="max-w-md"
+        labelledBy="delete-category-title"
+      >
+        <div className="space-y-4">
+          <h2 id="delete-category-title" className="text-[1.25rem] text-navy">
+            Delete category
+          </h2>
+          {deleteError && <p className="text-[0.875rem] text-error">{deleteError}</p>}
+          {deleting && deletingProductCount === 0 && (
+            <p className="text-[0.9375rem] text-muted">
+              Delete <span className="font-medium text-ink">{deleting.name}</span>? This cannot be
+              undone.
+            </p>
+          )}
+          {deleting && deletingProductCount > 0 && (
+            <>
+              <p className="rounded-[12px] border border-warning/30 bg-warning/10 p-3 text-[0.875rem] text-ink">
+                <span className="font-medium">{deleting.name}</span> is used by{' '}
+                {productLabel(deletingProductCount)}. Reassign{' '}
+                {deletingProductCount === 1 ? 'it' : 'them'} to another category before deleting.
+                Products will not be removed.
+              </p>
+              {otherCategories.length === 0 ? (
+                <p className="text-[0.875rem] text-muted">
+                  Create another category first, then reassign these products to it. A category
+                  that still has products cannot be deleted.
+                </p>
+              ) : (
+                <AdminSelect
+                  label="Move products to"
+                  required
+                  value={reassignTo}
+                  onChange={(e) => setReassignTo(e.target.value)}
+                >
+                  <option value="">Select a category</option>
+                  {otherCategories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </AdminSelect>
+              )}
+            </>
+          )}
+          <div className="flex justify-end gap-3">
+            <AdminButton type="button" variant="ghost" onClick={closeDelete} disabled={deletingBusy}>
+              Cancel
+            </AdminButton>
+            <AdminButton
+              type="button"
+              variant="danger"
+              onClick={() => void confirmDelete()}
+              disabled={!canConfirmDelete}
+            >
+              {deletingBusy ? 'Deleting…' : 'Delete category'}
+            </AdminButton>
+          </div>
+        </div>
       </AdminModal>
     </div>
   );

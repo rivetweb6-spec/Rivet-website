@@ -8,6 +8,7 @@ import { asyncHandler, notFound, param } from '../../utils/http.js';
 import { slugify } from '../../utils/slug.js';
 import { assertSlugAvailable } from '../../utils/slug-conflict.js';
 import { normalizeSeoFields, seoFieldsSchema } from '../../utils/seo-fields.js';
+import { imageRefSchema } from '../../utils/image-ref.js';
 
 const router = Router();
 
@@ -23,7 +24,7 @@ const upsertSchema = z
     slug: z.string().optional(),
     excerpt: z.string().optional().nullable(),
     body: z.string().min(1),
-    coverImage: z.string().url().optional().nullable().or(z.literal('')),
+    coverImage: imageRefSchema.optional().nullable().or(z.literal('')),
     category: z.string().optional().nullable(),
     status: z.enum(['DRAFT', 'PUBLISHED']).optional(),
   })
@@ -42,7 +43,10 @@ router.get(
       prisma.newsArticle.count({ where }),
       prisma.newsArticle.findMany({
         where,
-        orderBy: { publishedAt: 'desc' },
+        orderBy: [
+          { publishedAt: { sort: 'desc', nulls: 'last' } },
+          { createdAt: 'desc' },
+        ],
         skip: (q.page - 1) * q.pageSize,
         take: q.pageSize,
       }),

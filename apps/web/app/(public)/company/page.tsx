@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import { PageHero } from '@/components/site/page-hero';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
-import { api } from '@/lib/api';
-
+import { CertificateGallery } from '@/components/company/certificate-gallery';
+import { api, type Certificate } from '@/lib/api';
+import { isMediaUrl } from '@/lib/media';
 import { resolveSeo } from '@/lib/seo';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -23,10 +24,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CompanyPage() {
   const { company } = await api.company();
+  let certificates: Certificate[] = [];
+  try {
+    ({ certificates } = await api.certificates.list());
+  } catch {
+    /* gallery is optional if the API is unavailable */
+  }
   const timeline = company?.timeline ?? [];
   const values = company?.coreValues ?? [];
   const achievements = company?.achievements ?? [];
-  const certifications = company?.certifications ?? [];
+  const certLabels = (company?.certifications ?? []).filter((c) => c && !isMediaUrl(c));
 
   return (
     <>
@@ -115,7 +122,7 @@ export default async function CompanyPage() {
         </Section>
       )}
 
-      {(achievements.length > 0 || certifications.length > 0) && (
+      {(achievements.length > 0 || certLabels.length > 0) && (
         <Section className="bg-navy">
           <Container>
             <div className="grid gap-12 lg:grid-cols-2">
@@ -133,12 +140,12 @@ export default async function CompanyPage() {
                   </ul>
                 </FadeUp>
               )}
-              {certifications.length > 0 && (
+              {certLabels.length > 0 && (
                 <FadeUp delay={0.1}>
                   <Eyebrow className="text-gold">Credentials</Eyebrow>
                   <h2 className="mt-3 text-[2rem] text-white">Certifications</h2>
                   <ul className="mt-6 space-y-3">
-                    {certifications.map((c) => (
+                    {certLabels.map((c) => (
                       <li key={c} className="flex items-center gap-3 text-white/80">
                         <span className="h-1.5 w-1.5 rounded-full bg-gold" />
                         {c}
@@ -151,6 +158,8 @@ export default async function CompanyPage() {
           </Container>
         </Section>
       )}
+
+      <CertificateGallery certificates={certificates} />
     </>
   );
 }

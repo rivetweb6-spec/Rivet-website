@@ -9,6 +9,8 @@ import {
   AdminPageHeader,
   AdminTextarea,
 } from '@/components/admin/ui';
+import Link from 'next/link';
+import { isMediaUrl } from '@/lib/media';
 
 export default function AdminCompanyPage() {
   const [form, setForm] = React.useState({
@@ -35,7 +37,7 @@ export default function AdminCompanyPage() {
           mission: company.mission ?? '',
           coreValues: (company.coreValues ?? []).join(', '),
           achievements: (company.achievements ?? []).join('\n'),
-          certifications: (company.certifications ?? []).join('\n'),
+          certifications: (company.certifications ?? []).filter((c) => !isMediaUrl(c)).join('\n'),
           timelineJson: JSON.stringify(company.timeline ?? [], null, 2),
         });
       })
@@ -87,7 +89,7 @@ export default function AdminCompanyPage() {
         description="History, vision, mission, values and timeline."
       />
       <AdminCard>
-        <form onSubmit={save} className="space-y-4">
+        <form onSubmit={(e) => void save(e)} className="space-y-4">
           <AdminTextarea
             label="History"
             rows={4}
@@ -120,11 +122,18 @@ export default function AdminCompanyPage() {
             onChange={(e) => setForm({ ...form, achievements: e.target.value })}
           />
           <AdminTextarea
-            label="Certifications (one per line)"
+            label="Certification names (one per line)"
             rows={3}
             value={form.certifications}
             onChange={(e) => setForm({ ...form, certifications: e.target.value })}
           />
+          <p className="text-[0.8125rem] text-muted">
+            Certificate images, titles, and gallery order are managed in{' '}
+            <Link href="/admin/certificates" className="text-gold hover:underline">
+              Certificates
+            </Link>
+            .
+          </p>
           <AdminTextarea
             label='Timeline JSON — [{ "year", "title", "description" }]'
             rows={8}
