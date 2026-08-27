@@ -27,7 +27,7 @@ export function FadeUp({
   return (
     <MotionTag
       className={className}
-      initial={{ opacity: 0, y: 28 }}
+      initial={{ opacity: 1, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.7, ease, delay }}
@@ -43,7 +43,7 @@ const staggerParent: Variants = {
 };
 
 const staggerChild: Variants = {
-  hidden: { opacity: 0, y: 26 },
+  hidden: { opacity: 1, y: 18 },
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
 };
 

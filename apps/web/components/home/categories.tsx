@@ -2,9 +2,33 @@ import Link from 'next/link';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
-import { categories } from '@/lib/data/content';
+import { categories as fallbackCategories } from '@/lib/data/content';
+import { assets } from '@/lib/assets';
 
-export function Categories() {
+export type CategoryCard = {
+  slug: string;
+  name: string;
+  image: string | null;
+};
+
+const FALLBACK_IMAGES: Record<string, string> = {
+  elevators: assets.categories.elevators,
+  'passenger-lifts': assets.categories.lifts,
+  escalators: assets.categories.escalators,
+  granite: assets.categories.granite,
+  doors: assets.categories.doors,
+  chairs: assets.categories.chairs,
+  'office-furniture': assets.categories.furniture,
+  'sanitary-goods': assets.categories.sanitary,
+  'building-materials': assets.categories.materials,
+};
+
+export function Categories({ items }: { items?: CategoryCard[] }) {
+  const list =
+    items && items.length > 0
+      ? items
+      : fallbackCategories.map((c) => ({ slug: c.slug, name: c.name, image: c.image }));
+
   return (
     <Section className="bg-pearl">
       <Container>
@@ -22,14 +46,14 @@ export function Categories() {
         </FadeUp>
 
         <Stagger className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
-          {categories.map((c) => (
+          {list.map((c) => (
             <StaggerItem key={c.slug}>
               <Link
                 href={`/products/${c.slug}`}
                 className="group relative block aspect-[4/3] overflow-hidden rounded-[4px]"
               >
                 <RivetImage
-                  src={c.image}
+                  src={c.image || FALLBACK_IMAGES[c.slug] || assets.categories.materials}
                   alt={`Premium ${c.name} supplied by Rivet in Ethiopia`}
                   fill
                   sizes="(max-width: 768px) 50vw, 33vw"

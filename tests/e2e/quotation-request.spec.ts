@@ -37,7 +37,7 @@ test.describe('Request a Quotation', () => {
     await dialog.getByLabel(/phone number/i).fill('+251900000000');
     await dialog.getByLabel(/product name/i).fill('Passenger Elevator');
     await dialog.getByLabel(/requested quantity/i).fill('2 units');
-    await dialog.getByLabel(/product category/i).selectOption({ index: 1 });
+    await dialog.getByRole('checkbox', { name: 'Elevators' }).check();
 
     await dialog.getByRole('button', { name: /submit quotation request/i }).click();
 
@@ -46,14 +46,25 @@ test.describe('Request a Quotation', () => {
 
   test('prefills product details from a product page', async ({ page }) => {
     await page.goto('/products');
-    const firstCard = page.locator('a[href^="/products/"]').first();
+    const firstCard = page.locator('a.luxury-card[href^="/products/"]').first();
+    await expect(firstCard).toBeVisible();
     await firstCard.click();
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
-    await page.getByRole('button', { name: 'Request a Quotation' }).first().click();
+    const heading = page.getByRole('heading', { level: 1 });
+    await expect(heading).toBeVisible();
+    const productName = (await heading.textContent())?.trim() ?? '';
+    expect(productName.length).toBeGreaterThan(0);
+
     const dialog = page.getByRole('dialog', { name: /request a quotation/i });
-    await expect(dialog).toBeVisible();
+    const cta = page.locator('#main-content').getByRole('button', { name: 'Request a Quotation' });
+    await expect(async () => {
+      await cta.click();
+      await expect(dialog).toBeVisible();
+    }).toPass();
 
     // Product is preselected — the manual product-name field is replaced by a summary card.
+    await expect(dialog.getByText(productName)).toBeVisible();
     await expect(dialog.getByLabel(/product name/i)).toHaveCount(0);
     await expect(dialog.getByLabel(/requested quantity/i)).toBeVisible();
   });

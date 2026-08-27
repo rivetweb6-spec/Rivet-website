@@ -3,6 +3,7 @@
 import * as React from 'react';
 import {
   adminApi,
+  revalidatePublicCache,
   type AdminProduct,
   type Category,
   type ProductInput,
@@ -113,6 +114,7 @@ export default function AdminProductsPage() {
       };
       if (editingId) await adminApi.products.update(editingId, payload);
       else await adminApi.products.create(payload);
+      await revalidatePublicCache('products');
       setOpen(false);
       await load();
     } catch (err) {
@@ -125,6 +127,7 @@ export default function AdminProductsPage() {
   const remove = async (id: string) => {
     if (!confirm('Delete this product?')) return;
     await adminApi.products.remove(id);
+    await revalidatePublicCache('products');
     await load();
   };
 

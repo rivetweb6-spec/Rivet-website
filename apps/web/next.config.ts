@@ -15,6 +15,8 @@ const apiProxyTarget = (
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // The default bottom-left badge sits on top of the admin "Sign out" control.
+  devIndicators: false,
   images: {
     loader: 'custom',
     loaderFile: './lib/cloudinary-loader.ts',

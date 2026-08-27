@@ -7,7 +7,16 @@ import { Search } from 'lucide-react';
 import type { Category, Product, Pagination } from '@/lib/api';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { assets } from '@/lib/assets';
+import { buildProductAltText } from '@/lib/seo';
 import { cn } from '@/lib/utils';
+
+function productsHref({ search, page }: { search?: string; page?: number }) {
+  const sp = new URLSearchParams();
+  if (search) sp.set('search', search);
+  if (page && page > 1) sp.set('page', String(page));
+  const qs = sp.toString();
+  return qs ? `/products?${qs}` : '/products';
+}
 
 export function ProductsCatalog({
   products,
@@ -69,16 +78,12 @@ export function ProductsCatalog({
     <div className={cn('transition-opacity', pending && 'opacity-60')}>
       <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-wrap gap-2">
-          <FilterChip
-            active={!activeCategory}
-            onClick={() => router.push('/products')}
-            label="All"
-          />
+          <FilterChip active={!activeCategory} href="/products" label="All" />
           {categories.map((c) => (
             <FilterChip
               key={c.slug}
               active={activeCategory === c.slug}
-              onClick={() => router.push(`/products/${c.slug}`)}
+              href={`/products/${c.slug}`}
               label={c.name}
             />
           ))}
@@ -115,7 +120,7 @@ export function ProductsCatalog({
               <FilterChip
                 key={c.slug}
                 active={false}
-                onClick={() => router.push(`/products/${c.slug}`)}
+                href={`/products/${c.slug}`}
                 label={c.name}
               />
             ))}
@@ -133,6 +138,10 @@ export function ProductsCatalog({
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Names the results region so the card headings do not jump from h1 to h3. */}
+          <h2 className="sr-only">
+            {search ? `Search results for ${search}` : 'Product catalog'}
+          </h2>
           {products.map((p) => {
             const image = p.images[0]?.url ?? assets.products.p1;
             return (
@@ -146,7 +155,7 @@ export function ProductsCatalog({
                     src={image}
                     alt={
                       p.images[0]?.alt ||
-                      `${p.name}${p.category?.name ? ` — ${p.category.name}` : ''} supplied by Rivet in Ethiopia`
+                      buildProductAltText(p.name, p.category?.name, p.shortDescription)
                     }
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -168,17 +177,17 @@ export function ProductsCatalog({
 
       {pagination.pages > 1 && (
         <div className="mt-14 flex items-center justify-center gap-3">
-          <PagerButton
+          <PagerLink
+            href={productsHref({ search, page: pagination.page - 1 })}
             disabled={pagination.page <= 1}
-            onClick={() => update({ page: String(pagination.page - 1) })}
             label="Previous"
           />
           <span className="text-[0.875rem] text-muted">
             Page {pagination.page} of {pagination.pages}
           </span>
-          <PagerButton
+          <PagerLink
+            href={productsHref({ search, page: pagination.page + 1 })}
             disabled={pagination.page >= pagination.pages}
-            onClick={() => update({ page: String(pagination.page + 1) })}
             label="Next"
           />
         </div>
@@ -190,17 +199,16 @@ export function ProductsCatalog({
 function FilterChip({
   label,
   active,
-  onClick,
+  href,
 }: {
   label: string;
   active: boolean;
-  onClick: () => void;
+  href: string;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
+    <Link
+      href={href}
+      aria-current={active ? 'page' : undefined}
       className={cn(
         'rounded-full border px-4 py-2 text-[0.8125rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2',
         active
@@ -209,27 +217,31 @@ function FilterChip({
       )}
     >
       {label}
-    </button>
+    </Link>
   );
 }
 
-function PagerButton({
+function PagerLink({
   label,
+  href,
   disabled,
-  onClick,
 }: {
   label: string;
+  href: string;
   disabled: boolean;
-  onClick: () => void;
 }) {
+  const className =
+    'rounded-[12px] border border-border px-4 py-2 text-[0.875rem] transition-colors hover:border-gold hover:text-gold';
+  if (disabled) {
+    return (
+      <span className={cn(className, 'pointer-events-none opacity-40')} aria-disabled="true">
+        {label}
+      </span>
+    );
+  }
   return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      className="rounded-[12px] border border-border px-4 py-2 text-[0.875rem] transition-colors hover:border-gold hover:text-gold disabled:opacity-40"
-    >
+    <Link href={href} className={className}>
       {label}
-    </button>
+    </Link>
   );
 }

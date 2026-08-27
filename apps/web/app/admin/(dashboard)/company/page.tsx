@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { adminApi, type CompanyInfo } from '@/lib/admin-api';
+import { adminApi, revalidatePublicCache, type CompanyInfo } from '@/lib/admin-api';
 import {
   AdminButton,
   AdminCard,
@@ -74,6 +74,7 @@ export default function AdminCompanyPage() {
           .filter(Boolean),
         timeline: timeline ?? [],
       });
+      await revalidatePublicCache('company');
       setMessage('Company information saved.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Save failed');
@@ -128,9 +129,17 @@ export default function AdminCompanyPage() {
             onChange={(e) => setForm({ ...form, certifications: e.target.value })}
           />
           <p className="text-[0.8125rem] text-muted">
-            Certificate images, titles, and gallery order are managed in{' '}
+            Certificate images, titles, and portfolio projects are managed in{' '}
             <Link href="/admin/certificates" className="text-gold hover:underline">
-              Certificates
+              Certificate & Portfolio
+            </Link>
+            . Team profiles are in{' '}
+            <Link href="/admin/team" className="text-gold hover:underline">
+              Team
+            </Link>
+            . Company photos are in{' '}
+            <Link href="/admin/gallery" className="text-gold hover:underline">
+              Gallery
             </Link>
             .
           </p>

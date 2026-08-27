@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, Menu, Search, X } from 'lucide-react';
 import { Logo } from './logo';
+import { CompanyMenu } from './company-menu';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useQuotationModal } from '@/components/quotation/quotation-modal-provider';
@@ -16,8 +17,9 @@ const links = [
   { href: '/', label: 'Home' },
   { href: '/products', label: 'Products' },
   { href: '/services', label: 'Services' },
-  { href: '/company', label: 'Company' },
+  { href: '/company', label: 'Company', menu: true },
   { href: '/news', label: 'News' },
+  { href: '/careers', label: 'Careers' },
   { href: '/contact', label: 'Contact' },
 ];
 
@@ -52,15 +54,19 @@ export function Navbar() {
           </Link>
 
           <nav className="hidden items-center gap-10 lg:flex" aria-label="Primary">
-            {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="gold-underline text-[0.8125rem] font-medium tracking-[0.06em] text-white/75 transition-colors hover:text-white"
-              >
-                {l.label}
-              </Link>
-            ))}
+            {links.map((l) =>
+              'menu' in l && l.menu ? (
+                <CompanyMenu key={l.href} variant="desktop" />
+              ) : (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="gold-underline text-[0.8125rem] font-medium tracking-[0.06em] text-white/75 transition-colors hover:text-white"
+                >
+                  {l.label}
+                </Link>
+              ),
+            )}
           </nav>
 
           <div className="flex items-center gap-2">
@@ -103,16 +109,24 @@ export function Navbar() {
               aria-label="Mobile"
             >
               <div className="flex flex-col px-6 py-6">
-                {links.map((l) => (
-                  <Link
-                    key={l.href}
-                    href={l.href}
-                    onClick={() => setMenuOpen(false)}
-                    className="border-b border-white/5 py-4 text-[0.9375rem] tracking-wide text-white/80 transition-colors hover:text-gold"
-                  >
-                    {l.label}
-                  </Link>
-                ))}
+                {links.map((l) =>
+                  'menu' in l && l.menu ? (
+                    <CompanyMenu
+                      key={l.href}
+                      variant="mobile"
+                      onNavigate={() => setMenuOpen(false)}
+                    />
+                  ) : (
+                    <Link
+                      key={l.href}
+                      href={l.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="border-b border-white/5 py-4 text-[0.9375rem] tracking-wide text-white/80 transition-colors hover:text-gold"
+                    >
+                      {l.label}
+                    </Link>
+                  ),
+                )}
                 <Button variant="primary" className="mt-6" onClick={() => open()}>
                   Request a Quotation
                 </Button>

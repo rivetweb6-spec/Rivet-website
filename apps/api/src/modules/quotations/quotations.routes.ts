@@ -169,4 +169,28 @@ router.patch(
   }),
 );
 
+// Admin — remove a processed request or spam submission
+router.delete(
+  '/:id',
+  requireAuth,
+  requireRole('ADMIN'),
+  asyncHandler(async (req, res) => {
+    const id = param(req, 'id');
+    const existing = await prisma.quotationRequest.findUnique({
+      where: { id },
+      select: { id: true, readAt: true },
+    });
+    if (!existing) throw notFound('Quotation request not found');
+
+    await prisma.quotationRequest.delete({ where: { id } });
+
+    const unread = await prisma.quotationRequest.count({ where: { readAt: null } });
+    // Deleting an unread request lowers the badge count, so tell the dashboard.
+    if (!existing.readAt) {
+      emitEvent({ type: 'quotation-read', data: { id, unread } });
+    }
+    res.json({ ok: true, unread });
+  }),
+);
+
 export default router;

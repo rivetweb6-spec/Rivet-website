@@ -43,7 +43,10 @@ export function ImageUploadField({
   const inputRef = React.useRef<HTMLInputElement>(null);
   const sessionUploads = React.useRef(new Set<string>());
   const pendingRef = React.useRef<string[]>([]);
-  pendingRef.current = pending;
+
+  React.useEffect(() => {
+    pendingRef.current = pending;
+  }, [pending]);
 
   React.useEffect(
     () => () => {

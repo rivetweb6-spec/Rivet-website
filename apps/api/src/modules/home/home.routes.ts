@@ -18,6 +18,14 @@ const homeSchema = z.object({
   introBody: z.string().optional().nullable(),
   introBodySecondary: z.string().optional().nullable(),
   introImage: z.string().optional().nullable(),
+  gmName: z.string().optional().nullable(),
+  gmPosition: z.string().optional().nullable(),
+  gmPhoto: z.string().optional().nullable(),
+  gmMessage: z.string().optional().nullable(),
+  engName: z.string().optional().nullable(),
+  engPosition: z.string().optional().nullable(),
+  engPhoto: z.string().optional().nullable(),
+  engMessage: z.string().optional().nullable(),
 });
 
 router.get(

@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { requireAuth, requireRole } from '../../middleware/auth.js';
 import { asyncHandler, badRequest, notFound, param } from '../../utils/http.js';
 import { validate } from '../../middleware/validate.js';
+import { matchesDeclaredMime } from '../../utils/image-signature.js';
 import {
   cloudinaryEnabled,
   cloudinaryPublicIdFromUrl,
@@ -43,7 +44,7 @@ function handleMultipart(req: Request, res: Response, next: NextFunction) {
     if (!err) return next();
     if (err instanceof multer.MulterError) {
       if (err.code === 'LIMIT_FILE_SIZE') {
-        return next(badRequest('Image is too large. Maximum size is 8 MB.'));
+        return next(badRequest('File is too large. Maximum size is 8 MB.'));
       }
       if (err.code === 'LIMIT_FILE_COUNT') {
         return next(badRequest('Too many files. Maximum is 10.'));
@@ -84,6 +85,16 @@ router.post(
   asyncHandler(async (req, res) => {
     const files = (req.files as Express.Multer.File[]) ?? [];
     if (files.length === 0) throw badRequest('No files uploaded');
+
+    // fileFilter only sees the client-declared Content-Type, so confirm the
+    // bytes really are the image type they claim to be.
+    for (const file of files) {
+      if (!matchesDeclaredMime(file.buffer, file.mimetype)) {
+        throw badRequest(
+          `"${file.originalname}" is not a valid ${file.mimetype} image. Please re-export it and try again.`,
+        );
+      }
+    }
 
     const base = publicApiBase(req);
     const results = await Promise.all(

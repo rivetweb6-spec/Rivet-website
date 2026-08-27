@@ -10,9 +10,9 @@ import { Breadcrumbs } from '@/components/seo/breadcrumbs';
 import { ProductJsonLd } from '@/components/seo/json-ld';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { productInterests } from '@/lib/data/content';
-import { ApiError, api } from '@/lib/api';
+import { api } from '@/lib/api';
 import { assets } from '@/lib/assets';
-import { buildProductAltText, categoryMetadata, productMetadata } from '@/lib/seo';
+import { buildProductAltText, categoryMetadata, notFoundMetadata, productMetadata } from '@/lib/seo';
 
 type Params = Promise<{ slug: string }>;
 
@@ -20,10 +20,15 @@ export const revalidate = 60;
 
 export async function generateStaticParams() {
   try {
-    const [{ products }, { categories }] = await Promise.all([
-      api.products.list({ pageSize: 100 }),
+    const [{ categories }, first] = await Promise.all([
       api.categories.list(),
+      api.products.list({ pageSize: 100, page: 1 }),
     ]);
+    const products = [...first.products];
+    for (let page = 2; page <= first.pagination.pages; page += 1) {
+      const next = await api.products.list({ pageSize: 100, page });
+      products.push(...next.products);
+    }
     const slugs = new Set([
       ...products.map((p) => p.slug),
       ...categories.map((c) => c.slug),
@@ -46,25 +51,39 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     const { product } = await api.products.bySlug(slug);
     return productMetadata(product);
   } catch {
-    return { title: 'Products' };
+    return notFoundMetadata('Product');
   }
 }
 
 export default async function ProductOrCategoryPage({ params }: { params: Params }) {
   const { slug } = await params;
 
-  // Category-first resolver (shared /products/[slug] namespace)
+  // Category-first resolver (shared /products/[slug] namespace). Fetch data
+  // first so JSX is not returned from inside try/catch.
+  let categoryPage: {
+    category: Awaited<ReturnType<typeof api.categories.bySlug>>['category'];
+    products: Awaited<ReturnType<typeof api.products.list>>['products'];
+    services: Awaited<ReturnType<typeof api.services.list>>['services'];
+  } | null = null;
   try {
     const { category } = await api.categories.bySlug(slug);
     const [{ products }, { services }] = await Promise.all([
       api.products.list({ category: category.slug, pageSize: 48 }),
       api.services.list(),
     ]);
-    return <CategoryPageView category={category} products={products} services={services} />;
-  } catch (err) {
-    if (!(err instanceof ApiError) || err.status !== 404) {
-      /* fall through to product if category lookup failed for other reasons */
-    }
+    categoryPage = { category, products, services };
+  } catch {
+    /* Not a category slug — resolve as a product instead. */
+  }
+
+  if (categoryPage) {
+    return (
+      <CategoryPageView
+        category={categoryPage.category}
+        products={categoryPage.products}
+        services={categoryPage.services}
+      />
+    );
   }
 
   let data;

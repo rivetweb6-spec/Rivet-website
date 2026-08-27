@@ -48,8 +48,14 @@ describe('rivetImageLoader', () => {
     expect(rivetImageLoader({ src: data, width: 10 })).toBe(data);
   });
 
-  it('passes unknown remote hosts through unchanged', () => {
+  it('embeds width on unknown remote hosts so Next.js accepts the loader', () => {
     const src = 'https://example.com/pic.jpg';
-    expect(rivetImageLoader({ src, width: 500 })).toBe(src);
+    expect(rivetImageLoader({ src, width: 500 })).toBe('https://example.com/pic.jpg?w=500');
+  });
+
+  it('embeds width on relative upload paths', () => {
+    expect(rivetImageLoader({ src: '/api/uploads/files/hero.jpg', width: 1200 })).toBe(
+      '/api/uploads/files/hero.jpg?w=1200',
+    );
   });
 });

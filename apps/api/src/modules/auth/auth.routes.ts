@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
+import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
 import { prisma } from '../../config/prisma.js';
 import { env, isProd } from '../../config/env.js';
@@ -27,12 +28,33 @@ const cookieOpts = {
   path: '/',
 };
 
+/**
+ * The global limiter allows 300 requests/minute, which is far too generous for
+ * password guessing. Successful logins are not counted so a working admin is
+ * never locked out by their own activity.
+ */
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+  message: { error: 'Too many sign-in attempts. Please try again in a few minutes.' },
+});
+
 router.post(
   '/login',
-  validate({ body: z.object({ email: z.string().email(), password: z.string().min(1) }) }),
+  loginLimiter,
+  validate({
+    body: z.object({ email: z.string().trim().email(), password: z.string().min(1) }),
+  }),
   asyncHandler(async (req, res) => {
     const { email, password } = req.body as { email: string; password: string };
-    const user = await prisma.user.findUnique({ where: { email } });
+    // Email is a case-insensitive identifier: "Admin@rivet.com" must reach the
+    // account stored as "admin@rivet.com".
+    const user = await prisma.user.findFirst({
+      where: { email: { equals: email, mode: 'insensitive' } },
+    });
     if (!user) throw unauthorized('Invalid credentials');
 
     const ok = await bcrypt.compare(password, user.passwordHash);
@@ -97,7 +119,12 @@ router.put(
   validate({
     body: z.object({
       name: z.string().min(1).optional(),
-      email: z.string().email().optional(),
+      email: z
+        .string()
+        .trim()
+        .email()
+        .transform((v) => v.toLowerCase())
+        .optional(),
       avatarUrl: imageRefSchema.nullable().optional().or(z.literal('')),
     }),
   }),

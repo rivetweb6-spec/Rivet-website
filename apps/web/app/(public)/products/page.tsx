@@ -4,7 +4,8 @@ import { PageHero } from '@/components/site/page-hero';
 import { Container, Section } from '@/components/ui/container';
 import { ProductsCatalog } from '@/components/products/catalog';
 import { api } from '@/lib/api';
-import { pageMetadata, resolveSeo } from '@/lib/seo';
+import { pageMetadata } from '@/lib/seo';
+import { metadataForStaticPage } from '@/lib/page-seo';
 
 type SearchParams = Promise<{
   search?: string;
@@ -31,26 +32,12 @@ export async function generateMetadata({
   if (page > 1) {
     return pageMetadata({
       title: `Products — Page ${page}`,
-      description:
-        'Browse RIVET’s premium elevators, granite, doors, furniture and building materials in Ethiopia.',
-      path: '/products',
-      noIndex: true,
+      description: `Browse page ${page} of RIVET’s premium elevators, granite, doors, furniture and building materials in Ethiopia.`,
+      path: `/products?page=${page}`,
     });
   }
 
-  let pageSeo = null;
-  try {
-    ({ page: pageSeo } = await api.pageSeo.byKey('products'));
-  } catch {
-    /* defaults */
-  }
-
-  return resolveSeo(pageSeo, {
-    title: 'Products — Elevators, Granite, Doors & Materials',
-    description:
-      'Search and browse RIVET’s premium elevators, granite, doors, furniture and building materials in Ethiopia. Filter by category or keyword and request a quotation.',
-    path: '/products',
-  });
+  return metadataForStaticPage('products');
 }
 
 export default async function ProductsPage({ searchParams }: { searchParams: SearchParams }) {
@@ -70,7 +57,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
     <>
       <PageHero
         eyebrow="Catalog"
-        title="Products"
+        title="Elevators, granite, doors & materials"
         description="A curated portfolio of imported elevators, natural stone, doors, furniture and fine building materials for projects in Ethiopia."
       />
       <Section>

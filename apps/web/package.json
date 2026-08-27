@@ -32,6 +32,7 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "recharts": "^3.10.0",
+    "sanitize-html": "^2.17.7",
     "tailwind-merge": "^3.0.0"
   },
   "devDependencies": {
@@ -45,6 +46,7 @@
     "@types/node": "^22.10.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "@types/sanitize-html": "^2.16.1",
     "@vitejs/plugin-react": "^6.0.3",
     "cross-env": "^7.0.3",
     "eslint": "^9.17.0",

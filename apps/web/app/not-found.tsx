@@ -1,7 +1,17 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Container } from '@/components/ui/container';
 import { buttonVariants } from '@/components/ui/button-variants';
 import { cn } from '@/lib/utils';
+import { pageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = pageMetadata({
+  title: 'Page not found',
+  description:
+    'The page you are looking for may have moved or no longer exists. Browse RIVET products, services, or request a quotation for your project in Ethiopia.',
+  path: '/',
+  noIndex: true,
+});
 
 export default function NotFound() {
   return (

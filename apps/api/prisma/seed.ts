@@ -519,6 +519,38 @@ async function main() {
     },
   });
 
+  const team = [
+    {
+      id: 'team-general-manager',
+      fullName: 'General Manager',
+      position: 'General Manager',
+      section: 'LEADERSHIP' as const,
+      order: 1,
+      bio: 'Leads River Company’s operations, client relationships, and long-term strategy — ensuring every import, installation, and partnership meets the standard our projects demand.',
+      photo: u('photo-1560250097-0b93528c311a', 900),
+    },
+    {
+      id: 'team-engineering-manager',
+      fullName: 'Engineering Manager',
+      position: 'Engineering Manager',
+      section: 'ENGINEERING' as const,
+      order: 1,
+      bio: 'Directs technical specification, installation quality, and engineering support across elevators, stone, and architectural systems — from site survey through commissioning.',
+      photo: u('photo-1507003211169-0a1dd7228f2d', 900),
+    },
+  ];
+
+  for (const member of team) {
+    await prisma.teamMember.upsert({
+      where: { id: member.id },
+      update: {},
+      create: {
+        ...member,
+        status: ContentStatus.PUBLISHED,
+      },
+    });
+  }
+
   await prisma.contactInfo.upsert({
     where: { id: 'contact' },
     update: {},
@@ -554,8 +586,77 @@ async function main() {
       introBodySecondary:
         'We operate the way we build: with restraint, precision, and an obsession for the details that others overlook.',
       introImage: u('photo-1503387762-592deb58ef4e', 1400),
+      gmName: 'General Manager',
+      gmPosition: 'General Manager',
+      gmPhoto: u('photo-1560250097-0b93528c311a', 900),
+      gmMessage:
+        'Every project we take on is a commitment — to specification, to craft, and to the people who will live and work in the spaces we help build.',
+      engName: 'Engineering Manager',
+      engPosition: 'Engineering Manager',
+      engPhoto: u('photo-1507003211169-0a1dd7228f2d', 900),
+      engMessage:
+        'Engineering is the quiet work behind a confident installation. We specify with care so that what arrives on site performs as promised.',
     },
   });
+
+  await prisma.homePageContent.updateMany({
+    where: { id: 'home', gmName: null },
+    data: {
+      gmName: 'General Manager',
+      gmPosition: 'General Manager',
+      gmPhoto: u('photo-1560250097-0b93528c311a', 900),
+      gmMessage:
+        'Every project we take on is a commitment — to specification, to craft, and to the people who will live and work in the spaces we help build.',
+      engName: 'Engineering Manager',
+      engPosition: 'Engineering Manager',
+      engPhoto: u('photo-1507003211169-0a1dd7228f2d', 900),
+      engMessage:
+        'Engineering is the quiet work behind a confident installation. We specify with care so that what arrives on site performs as promised.',
+    },
+  });
+
+  const deadline = (days: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    return d;
+  };
+
+  const vacancies = [
+    {
+      title: 'Elevator Installation Technician',
+      slug: 'elevator-installation-technician',
+      department: 'Engineering',
+      location: 'Addis Ababa',
+      employmentType: 'Full-time',
+      deadline: deadline(45),
+      status: 'OPEN' as const,
+      description:
+        '<p>RIVET is hiring an Elevator Installation Technician to work on passenger and commercial lift installations across Ethiopia. You will read specifications, coordinate site work, and help deliver installations that match the drawings — not approximations.</p><p>The role sits between our engineering team and the project site. Precision, safety, and clear communication matter more than volume.</p>',
+      requirements:
+        '<ul><li>Hands-on experience with elevator or vertical-transport installation</li><li>Ability to read installation drawings and method statements</li><li>Willingness to travel to project sites in Ethiopia</li><li>Strong safety discipline on live construction sites</li></ul>',
+    },
+    {
+      title: 'Sales Engineer — Elevators & Materials',
+      slug: 'sales-engineer-elevators-materials',
+      department: 'Commercial',
+      location: 'Addis Ababa',
+      employmentType: 'Full-time',
+      deadline: deadline(30),
+      status: 'OPEN' as const,
+      description:
+        '<p>A Sales Engineer at RIVET translates project requirements into the right imported specification — elevators, granite, doors, and building materials — then prepares quotations the site team can actually execute.</p><p>You will work with architects, contractors, and developers, and you will be expected to know the catalog well enough to recommend rather than simply list.</p>',
+      requirements:
+        '<ul><li>Background in construction products, MEP, or technical sales</li><li>Comfort discussing specifications, lead times, and project constraints</li><li>Clear written English for quotations and follow-up</li><li>Based in Addis Ababa, with client visits as needed</li></ul>',
+    },
+  ];
+
+  for (const v of vacancies) {
+    await prisma.vacancy.upsert({
+      where: { slug: v.slug },
+      update: {},
+      create: v,
+    });
+  }
 
   console.log('Seed complete. Admin:', email);
 }

@@ -7,6 +7,7 @@ import {
   revalidatePublicCache,
   type AdminCertificate,
   type CertificateInput,
+  type CertificateKind,
 } from '@/lib/admin-api';
 import {
   AdminButton,
@@ -20,18 +21,27 @@ import {
   StatusBadge,
 } from '@/components/admin/ui';
 import { ImageUploadField } from '@/components/admin/image-upload-field';
+import { extraImages } from '@/components/company/image-lightbox';
 
-const emptyForm = (order = 1): CertificateInput => ({
+const TABS: { id: CertificateKind; label: string }[] = [
+  { id: 'CERTIFICATE', label: 'Certificates' },
+  { id: 'PORTFOLIO', label: 'Portfolio' },
+];
+
+const emptyForm = (kind: CertificateKind, order = 1): CertificateInput => ({
   title: '',
   description: '',
   image: '',
+  images: [],
+  kind,
   order,
   status: 'PUBLISHED',
 });
 
 export default function AdminCertificatesPage() {
+  const [kind, setKind] = React.useState<CertificateKind>('CERTIFICATE');
   const [certificates, setCertificates] = React.useState<AdminCertificate[]>([]);
-  const [form, setForm] = React.useState<CertificateInput>(emptyForm());
+  const [form, setForm] = React.useState<CertificateInput>(emptyForm('CERTIFICATE'));
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -42,6 +52,10 @@ export default function AdminCertificatesPage() {
   React.useEffect(() => {
     load().catch((e: Error) => setError(e.message));
   }, []);
+
+  const items = certificates.filter((c) => (c.kind ?? 'CERTIFICATE') === kind);
+  const isPortfolio = kind === 'PORTFOLIO';
+  const noun = isPortfolio ? 'portfolio item' : 'certificate';
 
   const bustCache = async () => {
     try {
@@ -56,10 +70,13 @@ export default function AdminCertificatesPage() {
     setSaving(true);
     setError(null);
     try {
+      const extras = extraImages(form.images);
       const payload: CertificateInput = {
         title: form.title.trim(),
         description: form.description?.trim() || null,
         image: form.image || null,
+        images: extras,
+        kind,
         order: form.order,
         status: form.status,
       };
@@ -76,7 +93,7 @@ export default function AdminCertificatesPage() {
   };
 
   const remove = async (id: string) => {
-    if (!confirm('Delete this certificate?')) return;
+    if (!confirm(`Delete this ${noun}?`)) return;
     try {
       await adminApi.certificates.remove(id);
       await bustCache();
@@ -88,14 +105,13 @@ export default function AdminCertificatesPage() {
 
   const move = async (index: number, direction: -1 | 1) => {
     const nextIndex = index + direction;
-    if (nextIndex < 0 || nextIndex >= certificates.length) return;
-    const next = [...certificates];
+    if (nextIndex < 0 || nextIndex >= items.length) return;
+    const next = [...items];
     const item = next[index];
     const swapWith = next[nextIndex];
     if (!item || !swapWith) return;
     next[index] = swapWith;
     next[nextIndex] = item;
-    setCertificates(next);
     try {
       const { certificates: updated } = await adminApi.certificates.reorder(next.map((c) => c.id));
       setCertificates(updated);
@@ -109,27 +125,49 @@ export default function AdminCertificatesPage() {
   return (
     <div>
       <AdminPageHeader
-        title="Certificates"
-        description="Upload, caption, and order the credentials shown on the public company page."
+        title="Certificate & Portfolio"
+        description="Manage credentials and project work shown on the public Certificate & Portfolio page."
         actions={
           <AdminButton
             onClick={() => {
               setEditingId(null);
-              setForm(emptyForm(certificates.length + 1));
+              setForm(emptyForm(kind, items.length + 1));
               setOpen(true);
             }}
           >
-            Add certificate
+            Add {noun}
           </AdminButton>
         }
       />
+
+      <div className="mb-6 flex gap-2">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setKind(tab.id)}
+            className={`rounded-full px-4 py-2 text-[0.875rem] transition-colors ${
+              kind === tab.id ? 'bg-navy text-white' : 'bg-surface text-ink hover:bg-bg'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       {error && <p className="mb-4 text-[0.875rem] text-error">{error}</p>}
 
-      {certificates.length === 0 ? (
-        <EmptyState message="No certificates yet. Add a title and upload an image to get started." />
+      {items.length === 0 ? (
+        <EmptyState
+          message={
+            isPortfolio
+              ? 'No portfolio items yet. Add a project title, description, and images.'
+              : 'No certificates yet. Add a title and upload an image to get started.'
+          }
+        />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {certificates.map((c, index) => (
+          {items.map((c, index) => (
             <AdminCard key={c.id} className="flex flex-col">
               <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-[12px] border border-border bg-bg">
                 {c.image ? (
@@ -166,7 +204,7 @@ export default function AdminCertificatesPage() {
                       type="button"
                       className="grid h-8 w-8 place-items-center rounded-[8px] text-navy hover:bg-bg disabled:opacity-30"
                       aria-label="Move down"
-                      disabled={index === certificates.length - 1}
+                      disabled={index === items.length - 1}
                       onClick={() => void move(index, 1)}
                     >
                       <ChevronDown size={16} />
@@ -182,6 +220,8 @@ export default function AdminCertificatesPage() {
                           title: c.title,
                           description: c.description ?? '',
                           image: c.image ?? '',
+                          images: extraImages(c.images),
+                          kind: (c.kind as CertificateKind) ?? kind,
                           order: c.order,
                           status: (c.status as 'DRAFT' | 'PUBLISHED') ?? 'PUBLISHED',
                         });
@@ -204,7 +244,7 @@ export default function AdminCertificatesPage() {
       <AdminModal open={open} onClose={() => setOpen(false)} className="max-w-2xl">
         <form onSubmit={(e) => void save(e)} className="space-y-4">
           <h2 className="text-[1.25rem] text-navy">
-            {editingId ? 'Edit certificate' : 'New certificate'}
+            {editingId ? `Edit ${noun}` : `New ${noun}`}
           </h2>
           <AdminInput
             label="Title"
@@ -213,17 +253,34 @@ export default function AdminCertificatesPage() {
             onChange={(e) => setForm({ ...form, title: e.target.value })}
           />
           <AdminTextarea
-            label="Short description (optional)"
-            rows={3}
+            label={isPortfolio ? 'Description' : 'Short description (optional)'}
+            rows={isPortfolio ? 5 : 3}
             value={form.description ?? ''}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
           <ImageUploadField
-            label="Certificate image"
+            label={isPortfolio ? 'Cover image' : 'Certificate image'}
             value={form.image ?? ''}
             onChange={(image) => setForm({ ...form, image })}
             onError={setError}
           />
+          {isPortfolio && (
+            <ImageUploadField
+              label="Additional portfolio images"
+              multiple
+              value={(form.images ?? []).join('\n')}
+              onChange={(value) =>
+                setForm({
+                  ...form,
+                  images: value
+                    .split('\n')
+                    .map((s) => s.trim())
+                    .filter(Boolean),
+                })
+              }
+              onError={setError}
+            />
+          )}
           <div className="grid grid-cols-2 gap-4">
             <AdminInput
               label="Order"

@@ -15,7 +15,8 @@ const router = Router();
 const listQuery = z.object({
   category: z.string().optional(),
   page: z.coerce.number().int().min(1).default(1),
-  pageSize: z.coerce.number().int().min(1).max(24).default(9),
+  // Allow larger pages for sitemap / SSG; journal UI still defaults to 9.
+  pageSize: z.coerce.number().int().min(1).max(200).default(9),
 });
 
 const upsertSchema = z

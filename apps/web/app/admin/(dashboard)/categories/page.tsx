@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { adminApi, type Category } from '@/lib/admin-api';
+import { adminApi, revalidatePublicCache, type Category } from '@/lib/admin-api';
 import {
   AdminButton,
   AdminCard,
@@ -95,6 +95,7 @@ export default function AdminCategoriesPage() {
       };
       if (editingId) await adminApi.categories.update(editingId, payload);
       else await adminApi.categories.create(payload);
+      await revalidatePublicCache('categories');
       setOpen(false);
       await load();
     } catch (err) {
@@ -133,6 +134,7 @@ export default function AdminCategoriesPage() {
         deleting.id,
         deletingProductCount > 0 ? reassignTo : undefined,
       );
+      await revalidatePublicCache('categories');
       setDeleting(null);
       setReassignTo('');
       await load();

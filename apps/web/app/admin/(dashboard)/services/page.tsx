@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { adminApi, type AdminService, type ServiceInput } from '@/lib/admin-api';
+import { adminApi, revalidatePublicCache, type AdminService, type ServiceInput } from '@/lib/admin-api';
 import {
   AdminButton,
   AdminCard,
@@ -80,6 +80,7 @@ export default function AdminServicesPage() {
       };
       if (editingId) await adminApi.services.update(editingId, payload);
       else await adminApi.services.create(payload);
+      await revalidatePublicCache('services');
       setOpen(false);
       await load();
     } catch (err) {
@@ -90,6 +91,7 @@ export default function AdminServicesPage() {
   const remove = async (id: string) => {
     if (!confirm('Delete this service?')) return;
     await adminApi.services.remove(id);
+    await revalidatePublicCache('services');
     await load();
   };
 

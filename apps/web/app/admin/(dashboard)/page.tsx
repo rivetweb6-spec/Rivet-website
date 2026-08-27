@@ -42,8 +42,12 @@ export default function AdminDashboardPage() {
     { label: 'Products', value: data.cards.products, href: '/admin/products' },
     { label: 'Categories', value: data.cards.categories, href: '/admin/categories' },
     { label: 'Services', value: data.cards.services, href: '/admin/services' },
-    { label: 'Certificates', value: data.cards.certificates, href: '/admin/certificates' },
+    { label: 'Certificate & Portfolio', value: data.cards.certificates, href: '/admin/certificates' },
+    { label: 'Team', value: data.cards.team ?? 0, href: '/admin/team' },
+    { label: 'Gallery', value: data.cards.gallery ?? 0, href: '/admin/gallery' },
     { label: 'News', value: data.cards.news, href: '/admin/news' },
+    { label: 'Open vacancies', value: data.cards.vacanciesOpen ?? 0, href: '/admin/vacancies' },
+    { label: 'Job applications', value: data.cards.applicationsTotal ?? 0, href: '/admin/vacancies' },
     { label: 'Quotation requests', value: data.cards.quotationTotal, href: '/admin/quotation-requests' },
     { label: 'New quotations', value: data.cards.quotationNew, href: '/admin/quotation-requests' },
   ];

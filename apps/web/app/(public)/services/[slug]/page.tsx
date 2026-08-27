@@ -5,10 +5,11 @@ import { notFound } from 'next/navigation';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { Breadcrumbs } from '@/components/seo/breadcrumbs';
 import { FaqSection } from '@/components/seo/faq-section';
+import { ServiceJsonLd } from '@/components/seo/json-ld';
 import { RequestQuotationButton } from '@/components/quotation/request-quotation-button';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { api } from '@/lib/api';
-import { parseFaqs, serviceMetadata } from '@/lib/seo';
+import { notFoundMetadata, parseFaqs, serviceMetadata } from '@/lib/seo';
 
 type Params = Promise<{ slug: string }>;
 
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     const { service } = await api.services.bySlug((await params).slug);
     return serviceMetadata(service);
   } catch {
-    return { title: 'Service' };
+    return notFoundMetadata('Service');
   }
 }
 
@@ -46,6 +47,12 @@ export default async function ServiceDetailPage({ params }: { params: Params }) 
 
   return (
     <>
+      <ServiceJsonLd
+        title={service.title}
+        description={service.narrative}
+        slug={service.slug}
+        image={service.image}
+      />
       <section className="bg-bg pt-28 pb-6 md:pt-32">
         <Container>
           <Breadcrumbs

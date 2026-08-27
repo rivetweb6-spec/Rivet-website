@@ -1,35 +1,31 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
+import { Award, Images, Users } from 'lucide-react';
 import { PageHero } from '@/components/site/page-hero';
+import { CompanySubnav } from '@/components/company/company-subnav';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
-import { CertificateGallery } from '@/components/company/certificate-gallery';
-import { api, type Certificate } from '@/lib/api';
+import { api } from '@/lib/api';
 import { isMediaUrl } from '@/lib/media';
-import { resolveSeo } from '@/lib/seo';
+import { metadataForStaticPage } from '@/lib/page-seo';
+import { AboutPageJsonLd } from '@/components/seo/json-ld';
+import { truncateMetaDescription } from '@/lib/seo';
 
 export async function generateMetadata(): Promise<Metadata> {
-  let page = null;
+  let history: string | null = null;
   try {
-    ({ page } = await api.pageSeo.byKey('company'));
+    const { company } = await api.company();
+    history = company?.history ?? null;
   } catch {
     /* defaults */
   }
-  return resolveSeo(page, {
-    title: 'About Rivet — River Company in Ethiopia',
-    description:
-      'Learn about Rivet (River Company): history, vision, mission, and values as a premium construction and architectural products supplier in Ethiopia.',
-    path: '/company',
+  return metadataForStaticPage('company', {
+    description: history ? truncateMetaDescription(history) : undefined,
   });
 }
 
 export default async function CompanyPage() {
   const { company } = await api.company();
-  let certificates: Certificate[] = [];
-  try {
-    ({ certificates } = await api.certificates.list());
-  } catch {
-    /* gallery is optional if the API is unavailable */
-  }
   const timeline = company?.timeline ?? [];
   const values = company?.coreValues ?? [];
   const achievements = company?.achievements ?? [];
@@ -37,14 +33,16 @@ export default async function CompanyPage() {
 
   return (
     <>
+      <AboutPageJsonLd description={company?.history ?? company?.mission} />
       <PageHero
-        eyebrow="About River Company"
-        title="Engineered for landmark spaces."
+        eyebrow="Our story"
+        title="About River Company"
         description={
           company?.history ??
           'RIVET imports and supplies premium construction and architectural products with precision and care.'
         }
       />
+      <CompanySubnav />
 
       <Section>
         <Container>
@@ -152,6 +150,12 @@ export default async function CompanyPage() {
                       </li>
                     ))}
                   </ul>
+                  <Link
+                    href="/company/certificate-portfolio"
+                    className="mt-6 inline-block text-[0.875rem] text-gold hover:underline"
+                  >
+                    View certificate & portfolio →
+                  </Link>
                 </FadeUp>
               )}
             </div>
@@ -159,7 +163,50 @@ export default async function CompanyPage() {
         </Section>
       )}
 
-      <CertificateGallery certificates={certificates} />
+      <Section className="bg-bg">
+        <Container>
+          <FadeUp>
+            <Eyebrow>Company</Eyebrow>
+            <h2 className="mt-3 text-[2rem]">Explore River Company</h2>
+          </FadeUp>
+          <Stagger className="mt-10 grid gap-5 md:grid-cols-3">
+            {[
+              {
+                href: '/company/certificate-portfolio',
+                icon: Award,
+                title: 'Certificate & Portfolio',
+                body: 'Credentials, partner certifications, and selected project work.',
+              },
+              {
+                href: '/company/team',
+                icon: Users,
+                title: 'Meet Our Team',
+                body: 'Leadership, engineering, and the people behind every installation.',
+              },
+              {
+                href: '/company/gallery',
+                icon: Images,
+                title: 'Gallery',
+                body: 'Photos from the showroom, sites, events, and company life.',
+              },
+            ].map((card) => (
+              <StaggerItem key={card.href}>
+                <Link
+                  href={card.href}
+                  className="group flex h-full flex-col rounded-[16px] border border-border bg-surface p-7 transition-all duration-500 hover:-translate-y-1 hover:border-gold/40 hover:shadow-[var(--shadow-md)]"
+                >
+                  <span className="grid h-12 w-12 place-items-center rounded-[12px] bg-navy/5 text-navy transition-colors group-hover:bg-gold">
+                    <card.icon size={22} strokeWidth={1.5} />
+                  </span>
+                  <h3 className="mt-5 text-[1.25rem]">{card.title}</h3>
+                  <p className="mt-2 text-[0.9375rem] leading-relaxed text-muted">{card.body}</p>
+                  <span className="mt-5 text-[0.8125rem] font-medium text-gold">Open →</span>
+                </Link>
+              </StaggerItem>
+            ))}
+          </Stagger>
+        </Container>
+      </Section>
     </>
   );
 }

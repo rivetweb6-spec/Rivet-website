@@ -2,7 +2,9 @@ import { prisma } from '../config/prisma.js';
 import { badRequest } from './http.js';
 import { slugify } from './slug.js';
 
-type SlugEntity = 'product' | 'category' | 'service' | 'news';
+type SlugEntity = 'product' | 'category' | 'service' | 'news' | 'vacancy';
+
+const RESERVED_VACANCY_SLUGS = new Set(['applications', 'admin', 'export']);
 
 /**
  * Ensure slug is unique within its table, and for products/categories
@@ -14,7 +16,11 @@ export async function assertSlugAvailable(
   excludeId?: string,
 ): Promise<string> {
   const slug = slugify(rawSlug);
-  if (!slug) throw badRequest('Slug cannot be empty');
+  if (!slug) {
+    throw badRequest(
+      'Could not build a URL from this name. Please enter a slug manually.',
+    );
+  }
 
   if (entity === 'product' || entity === 'category') {
     const [product, category] = await Promise.all([
@@ -41,6 +47,17 @@ export async function assertSlugAvailable(
     });
     if (existing && existing.id !== excludeId) {
       throw badRequest(`Slug "${slug}" is already used by another service`);
+    }
+  } else if (entity === 'vacancy') {
+    if (RESERVED_VACANCY_SLUGS.has(slug)) {
+      throw badRequest(`Slug "${slug}" is reserved`);
+    }
+    const existing = await prisma.vacancy.findUnique({
+      where: { slug },
+      select: { id: true },
+    });
+    if (existing && existing.id !== excludeId) {
+      throw badRequest(`Slug "${slug}" is already used by another vacancy`);
     }
   } else {
     const existing = await prisma.newsArticle.findUnique({

@@ -11,11 +11,15 @@ const router = Router();
 export const PAGE_SEO_KEYS = [
   'home',
   'company',
+  'certificate-portfolio',
+  'team',
+  'gallery',
   'services',
   'news',
   'contact',
   'request-quotation',
   'products',
+  'careers',
 ] as const;
 
 const pageKeySchema = z.enum(PAGE_SEO_KEYS);

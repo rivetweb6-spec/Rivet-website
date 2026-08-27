@@ -29,6 +29,10 @@ export const assets = {
   intro: {
     image: u('photo-1503387762-592deb58ef4e', 1400),
   },
+  management: {
+    generalManager: u('photo-1560250097-0b93528c311a', 900),
+    engineeringManager: u('photo-1507003211169-0a1dd7228f2d', 900),
+  },
   categories: {
     elevators: u('photo-1486406146926-c627a92ad1ab'),
     lifts: u('photo-1621905251189-08b45d6a269e'),

@@ -29,6 +29,22 @@ function withCloudinaryTransforms(src: string, width: number, quality: number): 
   return `${before}${transforms}/${rest}`;
 }
 
+/**
+ * Next.js requires custom loaders to embed `width` in the returned URL so it
+ * can tell the image was actually resized. Hosts we do not transform still get
+ * a query hint; they ignore it, and the warning goes away.
+ */
+function withWidthHint(src: string, width: number): string {
+  try {
+    const absolute = /^https?:\/\//i.test(src);
+    const url = absolute ? new URL(src) : new URL(src, 'http://rivet.local');
+    url.searchParams.set('w', String(width));
+    return absolute ? url.toString() : `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return src;
+  }
+}
+
 export default function rivetImageLoader({ src, width, quality }: LoaderProps): string {
   const q = quality ?? 75;
 
@@ -53,5 +69,5 @@ export default function rivetImageLoader({ src, width, quality }: LoaderProps): 
     }
   }
 
-  return src;
+  return withWidthHint(src, width);
 }

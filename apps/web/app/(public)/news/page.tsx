@@ -7,21 +7,10 @@ import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
 import { api } from '@/lib/api';
 import { assets } from '@/lib/assets';
 import { sortNewsNewestFirst } from '@/lib/news';
-import { resolveSeo } from '@/lib/seo';
+import { metadataForStaticPage } from '@/lib/page-seo';
 
 export async function generateMetadata(): Promise<Metadata> {
-  let page = null;
-  try {
-    ({ page } = await api.pageSeo.byKey('news'));
-  } catch {
-    /* defaults */
-  }
-  return resolveSeo(page, {
-    title: 'News & Insights | Rivet',
-    description:
-      'Journal of RIVET projects, product launches and company updates across Ethiopia and East Africa.',
-    path: '/news',
-  });
+  return metadataForStaticPage('news');
 }
 
 function formatDate(iso: string | null) {
@@ -41,7 +30,7 @@ export default async function NewsPage() {
     <>
       <PageHero
         eyebrow="Journal"
-        title="Latest news"
+        title="News & insights"
         description="Stories from the showroom, the factory floor, and the projects we supply."
       />
       <Section>
@@ -59,7 +48,7 @@ export default async function NewsPage() {
                     <div className="relative aspect-[16/10] overflow-hidden">
                       <RivetImage
                         src={n.coverImage ?? assets.news.n1}
-                        alt={n.title}
+                        alt={`${n.title} — RIVET news`}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"

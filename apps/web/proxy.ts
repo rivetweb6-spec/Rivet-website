@@ -23,9 +23,15 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(url, 308);
   }
 
+  if (pathname === '/vacancies') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/careers';
+    return NextResponse.redirect(url, 308);
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/products', '/about'],
+  matcher: ['/products', '/about', '/vacancies'],
 };

@@ -11,6 +11,14 @@ function getApiUrl(): string {
   return process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
 }
 
+/** Direct API origin so CV uploads can bypass the Next.js/Vercel proxy size cap. */
+function getDirectApiUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '');
+  if (explicit) return explicit;
+  if (typeof window !== 'undefined') return '/api';
+  return 'http://localhost:4000/api';
+}
+
 export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) {
@@ -69,6 +77,48 @@ async function request<T>(path: string, init?: RequestOptions): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+async function parseError(res: Response): Promise<string> {
+  let message = res.statusText;
+  try {
+    const body = (await res.json()) as { error?: string };
+    if (body.error) message = body.error;
+  } catch {
+    /* ignore */
+  }
+  return message;
+}
+
+async function requestForm<T>(path: string, form: FormData): Promise<T> {
+  const bases =
+    typeof window !== 'undefined' && getDirectApiUrl() !== getApiUrl()
+      ? [getDirectApiUrl(), getApiUrl()]
+      : [getApiUrl()];
+
+  let lastError: ApiError | null = null;
+  for (const base of bases) {
+    let res: Response;
+    try {
+      res = await fetch(`${base}${path}`, {
+        method: 'POST',
+        body: form,
+        credentials: 'include',
+        cache: 'no-store',
+      });
+    } catch {
+      lastError = new ApiError(
+        0,
+        'Cannot reach the server. Please check your connection and try again.',
+      );
+      continue;
+    }
+    if (!res.ok) {
+      throw new ApiError(res.status, await parseError(res));
+    }
+    return res.json() as Promise<T>;
+  }
+  throw lastError ?? new ApiError(0, 'Cannot reach the server. Please check your connection and try again.');
+}
+
 /* ── Types mirroring API responses ─────────────────────────────────────── */
 
 export type SeoFields = {
@@ -92,6 +142,7 @@ export type Category = {
   image: string | null;
   order: number;
   faqs?: FaqItem[] | null;
+  updatedAt?: string;
   _count?: { products: number };
 } & SeoFields;
 
@@ -118,6 +169,7 @@ export type Product = {
   status: string;
   category?: Category;
   images: ProductImage[];
+  updatedAt?: string;
 } & SeoFields;
 
 export type Service = {
@@ -129,13 +181,44 @@ export type Service = {
   image: string | null;
   order: number;
   faqs?: FaqItem[] | null;
+  updatedAt?: string;
 } & SeoFields;
+
+export type CertificateKind = 'CERTIFICATE' | 'PORTFOLIO';
 
 export type Certificate = {
   id: string;
   title: string;
   description: string | null;
   image: string | null;
+  images: string[] | null;
+  kind: CertificateKind;
+  order: number;
+};
+
+export type TeamSection = 'LEADERSHIP' | 'ENGINEERING' | 'TEAM';
+
+export type TeamMember = {
+  id: string;
+  fullName: string;
+  position: string;
+  bio: string | null;
+  photo: string | null;
+  email: string | null;
+  phone: string | null;
+  linkedin: string | null;
+  section: TeamSection;
+  order: number;
+};
+
+export type GalleryCategory = 'PHOTOS' | 'ACTIVITIES' | 'PROJECTS' | 'EVENTS' | 'OTHER';
+
+export type GalleryImage = {
+  id: string;
+  title: string;
+  description: string | null;
+  image: string;
+  category: GalleryCategory;
   order: number;
 };
 
@@ -148,6 +231,7 @@ export type NewsArticle = {
   coverImage: string | null;
   category: string | null;
   publishedAt: string | null;
+  updatedAt?: string;
 } & SeoFields;
 
 export type PageSeo = {
@@ -191,7 +275,31 @@ export type HomePageContent = {
   introBody: string | null;
   introBodySecondary: string | null;
   introImage: string | null;
+  gmName: string | null;
+  gmPosition: string | null;
+  gmPhoto: string | null;
+  gmMessage: string | null;
+  engName: string | null;
+  engPosition: string | null;
+  engPhoto: string | null;
+  engMessage: string | null;
 };
+
+export type Vacancy = {
+  id: string;
+  title: string;
+  slug: string;
+  department: string | null;
+  location: string | null;
+  employmentType: string | null;
+  description: string;
+  requirements: string;
+  deadline: string;
+  status: string;
+  createdAt?: string;
+  updatedAt?: string;
+  acceptingApplications?: boolean;
+} & SeoFields;
 
 export type Pagination = {
   page: number;
@@ -212,8 +320,9 @@ export type SearchSuggestion = {
 
 export const api = {
   categories: {
-    list: () => request<{ categories: Category[] }>('/categories'),
-    bySlug: (slug: string) => request<{ category: Category }>(`/categories/${slug}`),
+    list: () => request<{ categories: Category[] }>('/categories', { tags: ['categories'] }),
+    bySlug: (slug: string) =>
+      request<{ category: Category }>(`/categories/${slug}`, { tags: ['categories'] }),
   },
 
   products: {
@@ -233,10 +342,13 @@ export const api = {
       const qs = q.toString();
       return request<{ products: Product[]; pagination: Pagination }>(
         `/products${qs ? `?${qs}` : ''}`,
+        { tags: ['products'] },
       );
     },
     bySlug: (slug: string) =>
-      request<{ product: Product; related: Product[] }>(`/products/${slug}`),
+      request<{ product: Product; related: Product[] }>(`/products/${slug}`, {
+        tags: ['products'],
+      }),
     suggest: (q: string) =>
       request<{
         products: SearchSuggestion[];
@@ -245,13 +357,29 @@ export const api = {
   },
 
   services: {
-    list: () => request<{ services: Service[] }>('/services'),
-    bySlug: (slug: string) => request<{ service: Service }>(`/services/${slug}`),
+    list: () => request<{ services: Service[] }>('/services', { tags: ['services'] }),
+    bySlug: (slug: string) =>
+      request<{ service: Service }>(`/services/${slug}`, { tags: ['services'] }),
   },
 
   certificates: {
-    list: () =>
-      request<{ certificates: Certificate[] }>('/certificates', { tags: ['certificates'] }),
+    list: (kind?: CertificateKind) =>
+      request<{ certificates: Certificate[] }>(
+        `/certificates${kind ? `?kind=${kind}` : ''}`,
+        { tags: ['certificates'] },
+      ),
+  },
+
+  team: {
+    list: () => request<{ members: TeamMember[] }>('/team', { tags: ['team'] }),
+  },
+
+  gallery: {
+    list: (category?: GalleryCategory) =>
+      request<{ images: GalleryImage[] }>(
+        `/gallery${category ? `?category=${category}` : ''}`,
+        { tags: ['gallery'] },
+      ),
   },
 
   news: {
@@ -270,13 +398,24 @@ export const api = {
       request<{ article: NewsArticle }>(`/news/${slug}`, { tags: ['news'] }),
   },
 
-  company: () => request<{ company: CompanyInfo | null }>('/company'),
+  company: () => request<{ company: CompanyInfo | null }>('/company', { tags: ['company'] }),
 
-  home: () => request<{ home: HomePageContent | null }>('/home'),
+  home: () => request<{ home: HomePageContent | null }>('/home', { tags: ['home'] }),
+
+  vacancies: {
+    list: () => request<{ vacancies: Vacancy[] }>('/vacancies', { tags: ['vacancies'] }),
+    bySlug: (slug: string) =>
+      request<{ vacancy: Vacancy }>(`/vacancies/${slug}`, { tags: ['vacancies'] }),
+    apply: (slug: string, form: FormData) =>
+      requestForm<{ ok: boolean; id: string }>(`/vacancies/${slug}/apply`, form),
+  },
 
   pageSeo: {
-    list: () => request<{ pages: PageSeo[] }>('/page-seo'),
-    byKey: (pageKey: string) => request<{ page: PageSeo | null }>(`/page-seo/${pageKey}`),
+    list: () => request<{ pages: PageSeo[] }>('/page-seo', { tags: ['page-seo'] }),
+    byKey: (pageKey: string) =>
+      request<{ page: PageSeo | null }>(`/page-seo/${pageKey}`, {
+        tags: ['page-seo', `page-seo-${pageKey}`],
+      }),
   },
 
   contactInfo: () =>

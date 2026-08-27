@@ -158,7 +158,13 @@ export const adminApi = {
         categories: number;
         services: number;
         certificates: number;
+        team: number;
+        gallery: number;
         news: number;
+        vacanciesOpen: number;
+        applicationsTotal: number;
+        applicationsNew: number;
+        applicationsUnread: number;
         quotationTotal: number;
         quotationNew: number;
         quotationUnread: number;
@@ -249,6 +255,46 @@ export const adminApi = {
       adminRequest<{ ok: boolean }>(`/certificates/${id}`, { method: 'DELETE' }),
   },
 
+  team: {
+    list: () => adminRequest<{ members: AdminTeamMember[] }>('/team/admin/all'),
+    create: (data: TeamMemberInput) =>
+      adminRequest<{ member: AdminTeamMember }>('/team', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    update: (id: string, data: Partial<TeamMemberInput>) =>
+      adminRequest<{ member: AdminTeamMember }>(`/team/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+    reorder: (ids: string[]) =>
+      adminRequest<{ members: AdminTeamMember[] }>('/team/reorder', {
+        method: 'PUT',
+        body: JSON.stringify({ ids }),
+      }),
+    remove: (id: string) => adminRequest<{ ok: boolean }>(`/team/${id}`, { method: 'DELETE' }),
+  },
+
+  gallery: {
+    list: () => adminRequest<{ images: AdminGalleryImage[] }>('/gallery/admin/all'),
+    create: (data: GalleryImageInput) =>
+      adminRequest<{ image: AdminGalleryImage }>('/gallery', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    update: (id: string, data: Partial<GalleryImageInput>) =>
+      adminRequest<{ image: AdminGalleryImage }>(`/gallery/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+    reorder: (ids: string[]) =>
+      adminRequest<{ images: AdminGalleryImage[] }>('/gallery/reorder', {
+        method: 'PUT',
+        body: JSON.stringify({ ids }),
+      }),
+    remove: (id: string) => adminRequest<{ ok: boolean }>(`/gallery/${id}`, { method: 'DELETE' }),
+  },
+
   news: {
     list: () => adminRequest<{ articles: AdminArticle[] }>('/news/admin/all'),
     create: (data: ArticleInput) =>
@@ -263,6 +309,54 @@ export const adminApi = {
       }),
     remove: (id: string) =>
       adminRequest<{ ok: boolean }>(`/news/${id}`, { method: 'DELETE' }),
+  },
+
+  vacancies: {
+    list: () => adminRequest<{ vacancies: AdminVacancy[] }>('/vacancies/admin/all'),
+    create: (data: VacancyInput) =>
+      adminRequest<{ vacancy: AdminVacancy }>('/vacancies', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    update: (id: string, data: Partial<VacancyInput>) =>
+      adminRequest<{ vacancy: AdminVacancy }>(`/vacancies/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+    close: (id: string) =>
+      adminRequest<{ vacancy: AdminVacancy }>(`/vacancies/${id}/close`, {
+        method: 'PATCH',
+      }),
+    remove: (id: string) =>
+      adminRequest<{ ok: boolean }>(`/vacancies/${id}`, { method: 'DELETE' }),
+    applications: (params?: { vacancyId?: string; status?: string }) => {
+      const q = new URLSearchParams();
+      if (params?.vacancyId) q.set('vacancyId', params.vacancyId);
+      if (params?.status) q.set('status', params.status);
+      const qs = q.toString();
+      return adminRequest<{
+        applications: JobApplication[];
+        counts: { status: string; _count: number }[];
+        unread: number;
+      }>(`/vacancies/applications${qs ? `?${qs}` : ''}`);
+    },
+    updateApplication: (id: string, data: { status?: string; adminNotes?: string }) =>
+      adminRequest<{ application: JobApplication }>(`/vacancies/applications/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      }),
+    markApplicationRead: (id: string) =>
+      adminRequest<{ application: JobApplication; unread: number }>(
+        `/vacancies/applications/${id}/read`,
+        { method: 'PATCH' },
+      ),
+    markAllApplicationsRead: () =>
+      adminRequest<{ unread: number }>('/vacancies/applications/read-all', {
+        method: 'PATCH',
+      }),
+    applicationCvUrl: (id: string) =>
+      `${getDirectApiUrl()}/vacancies/applications/${id}/cv`,
+    applicationsExportUrl: () => `${getDirectApiUrl()}/vacancies/applications/export`,
   },
 
   quotations: {
@@ -453,11 +547,15 @@ export type AdminService = {
   faqs?: FaqItem[] | null;
 } & SeoFieldsPayload;
 
+export type CertificateKind = 'CERTIFICATE' | 'PORTFOLIO';
+
 export type AdminCertificate = {
   id: string;
   title: string;
   description: string | null;
   image: string | null;
+  images: string[] | null;
+  kind: CertificateKind;
   order: number;
   status: string;
 };
@@ -466,6 +564,58 @@ export type CertificateInput = {
   title: string;
   description?: string | null;
   image?: string | null;
+  images?: string[] | null;
+  kind?: CertificateKind;
+  order?: number;
+  status?: 'DRAFT' | 'PUBLISHED';
+};
+
+export type TeamSection = 'LEADERSHIP' | 'ENGINEERING' | 'TEAM';
+
+export type AdminTeamMember = {
+  id: string;
+  fullName: string;
+  position: string;
+  bio: string | null;
+  photo: string | null;
+  email: string | null;
+  phone: string | null;
+  linkedin: string | null;
+  section: TeamSection;
+  order: number;
+  status: string;
+};
+
+export type TeamMemberInput = {
+  fullName: string;
+  position: string;
+  bio?: string | null;
+  photo?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  linkedin?: string | null;
+  section?: TeamSection;
+  order?: number;
+  status?: 'DRAFT' | 'PUBLISHED';
+};
+
+export type GalleryCategory = 'PHOTOS' | 'ACTIVITIES' | 'PROJECTS' | 'EVENTS' | 'OTHER';
+
+export type AdminGalleryImage = {
+  id: string;
+  title: string;
+  description: string | null;
+  image: string;
+  category: GalleryCategory;
+  order: number;
+  status: string;
+};
+
+export type GalleryImageInput = {
+  title: string;
+  description?: string | null;
+  image: string;
+  category?: GalleryCategory;
   order?: number;
   status?: 'DRAFT' | 'PUBLISHED';
 };
@@ -502,6 +652,76 @@ export type ArticleInput = {
   category?: string;
   status?: 'DRAFT' | 'PUBLISHED';
 } & SeoFieldsPayload;
+
+export type VacancyStatus = 'DRAFT' | 'OPEN' | 'CLOSED';
+
+export type AdminVacancy = {
+  id: string;
+  title: string;
+  slug: string;
+  department: string | null;
+  location: string | null;
+  employmentType: string | null;
+  description: string;
+  requirements: string;
+  deadline: string;
+  status: VacancyStatus;
+  _count?: { applications: number };
+} & SeoFieldsPayload;
+
+export type VacancyInput = {
+  title: string;
+  slug?: string;
+  department?: string | null;
+  location?: string | null;
+  employmentType?: string | null;
+  description: string;
+  requirements: string;
+  deadline: string;
+  status?: VacancyStatus;
+} & SeoFieldsPayload;
+
+export type JobApplication = {
+  id: string;
+  vacancyId: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  coverLetter: string | null;
+  cvOriginalName: string;
+  hasCv: boolean;
+  status: string;
+  adminNotes: string | null;
+  readAt: string | null;
+  createdAt: string;
+  vacancy?: { id: string; title: string; slug: string };
+};
+
+export const APPLICATION_STATUSES = [
+  'NEW',
+  'UNDER_REVIEW',
+  'SHORTLISTED',
+  'INTERVIEW',
+  'OFFERED',
+  'REJECTED',
+  'HIRED',
+] as const;
+
+export const APPLICATION_STATUS_LABELS: Record<string, string> = {
+  NEW: 'New',
+  UNDER_REVIEW: 'Under Review',
+  SHORTLISTED: 'Shortlisted',
+  INTERVIEW: 'Interview',
+  OFFERED: 'Offered',
+  REJECTED: 'Rejected',
+  HIRED: 'Hired',
+};
+
+export const VACANCY_STATUS_LABELS: Record<string, string> = {
+  DRAFT: 'Draft',
+  OPEN: 'Open',
+  CLOSED: 'Closed',
+};
 
 export type QuotationRequest = {
   id: string;
@@ -578,6 +798,14 @@ export type HomePageContent = {
   introBody: string | null;
   introBodySecondary: string | null;
   introImage: string | null;
+  gmName: string | null;
+  gmPosition: string | null;
+  gmPhoto: string | null;
+  gmMessage: string | null;
+  engName: string | null;
+  engPosition: string | null;
+  engPhoto: string | null;
+  engMessage: string | null;
 };
 
 export type ContactMessage = {

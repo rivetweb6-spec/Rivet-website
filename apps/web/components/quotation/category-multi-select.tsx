@@ -46,7 +46,6 @@ export function CategoryMultiSelect({
         role="group"
         aria-labelledby={`${id}-label`}
         aria-describedby={error ? `${id}-error` : undefined}
-        aria-invalid={error ? true : undefined}
         onBlur={(e) => {
           if (!e.currentTarget.contains(e.relatedTarget as Node | null)) onBlur?.();
         }}

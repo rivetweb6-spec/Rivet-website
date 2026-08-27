@@ -3,11 +3,28 @@ import type { FaqItem } from '@/lib/seo';
 
 type JsonLdProps = { data: Record<string, unknown> | Record<string, unknown>[] };
 
+/**
+ * JSON.stringify does not escape characters that are significant inside a
+ * <script> block, so a title containing "</script>" would close the tag and let
+ * the rest of the field run as markup. Escaping these as JSON unicode escapes
+ * keeps the payload byte-identical to parsers while making tag breakout
+ * impossible. U+2028/U+2029 are escaped because they are literal line
+ * terminators in JavaScript but legal inside JSON strings.
+ */
+function serializeJsonLd(data: JsonLdProps['data']): string {
+  return JSON.stringify(data)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
+}
+
 export function JsonLd({ data }: JsonLdProps) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }}
     />
   );
 }
@@ -200,6 +217,64 @@ export function ProductGroupJsonLd({
   );
 }
 
+export function ServiceJsonLd({
+  title,
+  description,
+  slug,
+  image,
+}: {
+  title: string;
+  description?: string | null;
+  slug: string;
+  image?: string | null;
+}) {
+  return (
+    <JsonLd
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        name: title,
+        description: description ?? undefined,
+        url: `${SITE_URL}/services/${slug}`,
+        image: image ? [image] : undefined,
+        provider: {
+          '@type': 'Organization',
+          name: SITE_NAME,
+          url: SITE_URL,
+          logo: LOGO_URL,
+        },
+        areaServed: {
+          '@type': 'Country',
+          name: 'Ethiopia',
+        },
+      }}
+    />
+  );
+}
+
+export function AboutPageJsonLd({
+  description,
+}: {
+  description?: string | null;
+}) {
+  return (
+    <JsonLd
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'AboutPage',
+        name: `About ${SITE_NAME}`,
+        url: `${SITE_URL}/company`,
+        description: description ?? DEFAULT_DESCRIPTION,
+        mainEntity: {
+          '@type': 'Organization',
+          name: SITE_NAME,
+          url: SITE_URL,
+        },
+      }}
+    />
+  );
+}
+
 export function FAQPageJsonLd({ faqs }: { faqs: FaqItem[] }) {
   if (!faqs.length) return null;
   return (
@@ -226,6 +301,7 @@ export function ArticleJsonLd({
   slug,
   image,
   publishedAt,
+  updatedAt,
   category,
 }: {
   title: string;
@@ -233,6 +309,7 @@ export function ArticleJsonLd({
   slug: string;
   image?: string | null;
   publishedAt?: string | null;
+  updatedAt?: string | null;
   category?: string | null;
 }) {
   return (
@@ -244,6 +321,7 @@ export function ArticleJsonLd({
         description: description ?? undefined,
         image: image ? [image] : undefined,
         datePublished: publishedAt ?? undefined,
+        dateModified: updatedAt ?? publishedAt ?? undefined,
         author: { '@type': 'Organization', name: SITE_NAME },
         publisher: {
           '@type': 'Organization',
@@ -300,6 +378,68 @@ export function WebSiteJsonLd() {
           },
           'query-input': 'required name=search_term_string',
         },
+      }}
+    />
+  );
+}
+
+const EMPLOYMENT_TYPE_MAP: Record<string, string> = {
+  'full-time': 'FULL_TIME',
+  'part-time': 'PART_TIME',
+  contract: 'CONTRACTOR',
+  contractor: 'CONTRACTOR',
+  temporary: 'TEMPORARY',
+  internship: 'INTERN',
+  intern: 'INTERN',
+};
+
+export function JobPostingJsonLd({
+  title,
+  description,
+  slug,
+  datePosted,
+  validThrough,
+  employmentType,
+  location,
+}: {
+  title: string;
+  description?: string | null;
+  slug: string;
+  datePosted?: string | null;
+  validThrough?: string | null;
+  employmentType?: string | null;
+  location?: string | null;
+}) {
+  const mappedType = employmentType
+    ? EMPLOYMENT_TYPE_MAP[employmentType.toLowerCase()]
+    : undefined;
+
+  return (
+    <JsonLd
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'JobPosting',
+        title,
+        description: description ?? undefined,
+        datePosted: datePosted ?? undefined,
+        validThrough: validThrough ?? undefined,
+        employmentType: mappedType,
+        hiringOrganization: {
+          '@type': 'Organization',
+          name: SITE_NAME,
+          sameAs: SITE_URL,
+          logo: LOGO_URL,
+        },
+        jobLocation: {
+          '@type': 'Place',
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: location || 'Addis Ababa',
+            addressCountry: 'ET',
+          },
+        },
+        url: `${SITE_URL}/careers/${slug}`,
+        directApply: true,
       }}
     />
   );

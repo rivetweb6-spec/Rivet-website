@@ -5,7 +5,9 @@ import { adminApi, getStoredToken } from '@/lib/admin-api';
 
 type QuotationNotificationsValue = {
   unreadCount: number;
+  applicationUnread: number;
   applyUnreadCount: (count: number) => void;
+  applyApplicationUnread: (count: number) => void;
   refresh: () => Promise<void>;
 };
 
@@ -19,15 +21,21 @@ const QuotationNotificationsContext = React.createContext<QuotationNotifications
  */
 export function QuotationNotificationsProvider({ children }: { children: React.ReactNode }) {
   const [unreadCount, setUnreadCount] = React.useState(0);
+  const [applicationUnread, setApplicationUnread] = React.useState(0);
 
   const applyUnreadCount = React.useCallback((count: number) => {
     setUnreadCount(Math.max(0, count));
+  }, []);
+
+  const applyApplicationUnread = React.useCallback((count: number) => {
+    setApplicationUnread(Math.max(0, count));
   }, []);
 
   const refresh = React.useCallback(async () => {
     try {
       const data = await adminApi.analytics();
       setUnreadCount(data.cards.quotationUnread);
+      setApplicationUnread(data.cards.applicationsUnread ?? 0);
     } catch {
       /* ignore transient poll errors */
     }
@@ -41,7 +49,10 @@ export function QuotationNotificationsProvider({ children }: { children: React.R
     const poll = async () => {
       try {
         const data = await adminApi.analytics();
-        if (!cancelled) setUnreadCount(data.cards.quotationUnread);
+        if (!cancelled) {
+          setUnreadCount(data.cards.quotationUnread);
+          setApplicationUnread(data.cards.applicationsUnread ?? 0);
+        }
       } catch {
         /* ignore */
       }
@@ -58,6 +69,12 @@ export function QuotationNotificationsProvider({ children }: { children: React.R
       es.addEventListener('quotation-read', () => {
         void poll();
       });
+      es.addEventListener('job-application', () => {
+        setApplicationUnread((c) => c + 1);
+      });
+      es.addEventListener('job-application-read', () => {
+        void poll();
+      });
     } catch {
       /* EventSource unavailable */
     }
@@ -70,8 +87,8 @@ export function QuotationNotificationsProvider({ children }: { children: React.R
   }, []);
 
   const value = React.useMemo(
-    () => ({ unreadCount, applyUnreadCount, refresh }),
-    [unreadCount, applyUnreadCount, refresh],
+    () => ({ unreadCount, applicationUnread, applyUnreadCount, applyApplicationUnread, refresh }),
+    [unreadCount, applicationUnread, applyUnreadCount, applyApplicationUnread, refresh],
   );
 
   return (

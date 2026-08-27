@@ -4,23 +4,10 @@ import { PageHero } from '@/components/site/page-hero';
 import { Container, Section } from '@/components/ui/container';
 import { QuotationForm } from '@/components/quotation/quotation-form';
 import { Breadcrumbs } from '@/components/seo/breadcrumbs';
-import { api } from '@/lib/api';
-import { resolveSeo } from '@/lib/seo';
+import { metadataForStaticPage } from '@/lib/page-seo';
 
 export async function generateMetadata(): Promise<Metadata> {
-  let page = null;
-  try {
-    ({ page } = await api.pageSeo.byKey('request-quotation'));
-  } catch {
-    /* defaults */
-  }
-  return resolveSeo(page, {
-    title: 'Request a Quotation | Rivet',
-    description:
-      'Request a quotation for commercial and residential products from Rivet in Ethiopia — elevators, granite, doors, furniture and building materials.',
-    path: '/request-quotation',
-    keywords: ['request quotation', 'Rivet Ethiopia', 'product quotation Addis Ababa'],
-  });
+  return metadataForStaticPage('request-quotation');
 }
 
 export default async function RequestQuotationPage() {

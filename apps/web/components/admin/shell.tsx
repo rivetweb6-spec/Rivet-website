@@ -8,6 +8,7 @@ import {
   Building2,
   FileText,
   Home,
+  Images,
   LayoutDashboard,
   LogOut,
   Package,
@@ -15,8 +16,10 @@ import {
   Search,
   Tags,
   User,
+  Users,
   Wrench,
   Award,
+  Briefcase,
   Inbox,
   Menu,
   X,
@@ -33,20 +36,25 @@ const nav = [
   { href: '/admin/products', label: 'Products', icon: Package },
   { href: '/admin/categories', label: 'Categories', icon: Tags },
   { href: '/admin/services', label: 'Services', icon: Wrench },
-  { href: '/admin/certificates', label: 'Certificates', icon: Award },
+  { href: '/admin/certificates', label: 'Certificate & Portfolio', icon: Award },
   { href: '/admin/news', label: 'News', icon: FileText },
   { href: '/admin/site-seo', label: 'Site SEO', icon: Search },
   { href: '/admin/quotation-requests', label: 'Quotation Requests', icon: Inbox },
+  { href: '/admin/vacancies', label: 'Vacancies', icon: Briefcase },
   { href: '/admin/company', label: 'Company', icon: Building2 },
+  { href: '/admin/team', label: 'Team', icon: Users },
+  { href: '/admin/gallery', label: 'Gallery', icon: Images },
   { href: '/admin/contact', label: 'Contact', icon: Phone },
   { href: '/admin/profile', label: 'Profile', icon: User },
 ];
 
 function AdminSidebar({
   unreadCount,
+  applicationUnread,
   onNavigate,
 }: {
   unreadCount: number;
+  applicationUnread: number;
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
@@ -65,6 +73,7 @@ function AdminSidebar({
             : pathname === item.href || pathname.startsWith(`${item.href}/`);
           const Icon = item.icon;
           const isQuotations = item.href === '/admin/quotation-requests';
+          const isVacancies = item.href === '/admin/vacancies';
           return (
             <Link
               key={item.href}
@@ -87,6 +96,11 @@ function AdminSidebar({
                   {unreadCount}
                 </span>
               )}
+              {isVacancies && applicationUnread > 0 && !active && (
+                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1.5 text-[0.6875rem] font-semibold text-navy">
+                  {applicationUnread}
+                </span>
+              )}
             </Link>
           );
         })}
@@ -107,7 +121,7 @@ function AdminSidebar({
 }
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
-  const { unreadCount } = useQuotationNotifications();
+  const { unreadCount, applicationUnread } = useQuotationNotifications();
   const pathname = usePathname();
   const viewingQuotations = pathname === '/admin/quotation-requests';
   const [open, setOpen] = React.useState(false);
@@ -125,8 +139,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-bg">
-      <div className="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-64">
-        <AdminSidebar unreadCount={unreadCount} />
+      <div className="hidden lg:fixed lg:inset-y-0 lg:z-[60] lg:flex lg:w-64">
+        <AdminSidebar unreadCount={unreadCount} applicationUnread={applicationUnread} />
       </div>
 
       {open && (
@@ -138,7 +152,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             onClick={closeDrawer}
           />
           <div className="absolute inset-y-0 left-0 z-10 shadow-xl">
-            <AdminSidebar unreadCount={unreadCount} onNavigate={closeDrawer} />
+            <AdminSidebar
+              unreadCount={unreadCount}
+              applicationUnread={applicationUnread}
+              onNavigate={closeDrawer}
+            />
           </div>
         </div>
       )}

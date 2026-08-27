@@ -1,11 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { createPortal } from 'react-dom';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
+import { ImageLightbox, allItemImages } from '@/components/company/image-lightbox';
 import type { Certificate } from '@/lib/api';
 
 export function CertificateGallery({ certificates }: { certificates: Certificate[] }) {
@@ -13,6 +12,12 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
   const [active, setActive] = React.useState<number | null>(null);
 
   if (items.length === 0) return null;
+
+  const lightboxItems = items.map((cert) => ({
+    src: cert.image!,
+    title: cert.title,
+    description: cert.description,
+  }));
 
   return (
     <>
@@ -42,7 +47,7 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
                     />
                     <RivetImage
                       src={cert.image!}
-                      alt={cert.title}
+                      alt={`${cert.title} — River Company certificate`}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-contain p-5"
@@ -65,122 +70,117 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
       </Section>
 
       {active !== null && (
-        <CertificateLightbox
-          items={items}
+        <ImageLightbox
+          items={lightboxItems}
           index={active}
           onClose={() => setActive(null)}
           onIndexChange={setActive}
+          labelledBy="certificate-lightbox-title"
         />
       )}
     </>
   );
 }
 
-function CertificateLightbox({
-  items,
-  index,
-  onClose,
-  onIndexChange,
-}: {
-  items: Certificate[];
-  index: number;
-  onClose: () => void;
-  onIndexChange: (index: number) => void;
-}) {
-  const cert = items[index];
-  const [mounted, setMounted] = React.useState(false);
+export function PortfolioGallery({ items }: { items: Certificate[] }) {
+  const projects = items.filter((p) => allItemImages(p).length > 0);
+  const [active, setActive] = React.useState<{ project: number; image: number } | null>(null);
 
-  React.useEffect(() => setMounted(true), []);
+  if (projects.length === 0) return null;
 
-  React.useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, []);
+  const lightboxItems =
+    active === null
+      ? []
+      : allItemImages(projects[active.project]!).map((src) => ({
+          src,
+          title: projects[active.project]!.title,
+          description: projects[active.project]!.description,
+        }));
 
-  React.useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowLeft') onIndexChange((index - 1 + items.length) % items.length);
-      if (e.key === 'ArrowRight') onIndexChange((index + 1) % items.length);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [index, items.length, onClose, onIndexChange]);
+  return (
+    <>
+      <Section id="portfolio" className="scroll-mt-24">
+        <Container>
+          <FadeUp>
+            <Eyebrow>Work</Eyebrow>
+            <h2 className="mt-3 max-w-xl text-[2rem] md:text-[2.5rem]">Portfolio</h2>
+            <p className="mt-4 max-w-2xl text-[1.0625rem] leading-relaxed text-muted">
+              Selected projects and installations — the spaces, systems, and finishes River Company
+              has delivered.
+            </p>
+          </FadeUp>
 
-  if (!mounted || !cert?.image) return null;
+          <Stagger className="mt-12 grid gap-8 lg:grid-cols-2">
+            {projects.map((project, projectIndex) => {
+              const images = allItemImages(project);
+              return (
+                <StaggerItem key={project.id}>
+                  <article className="group overflow-hidden rounded-[16px] border border-border bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:border-gold/40 hover:shadow-[var(--shadow-md)]">
+                    <button
+                      type="button"
+                      onClick={() => setActive({ project: projectIndex, image: 0 })}
+                      className="relative block aspect-[16/10] w-full overflow-hidden bg-navy/5 text-left"
+                    >
+                      <RivetImage
+                        src={images[0]!}
+                        alt={`${project.title} — River Company project portfolio`}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"
+                      />
+                      {images.length > 1 && (
+                        <span className="absolute right-4 bottom-4 rounded-full bg-navy/80 px-3 py-1 text-[0.75rem] text-white backdrop-blur">
+                          {images.length} images
+                        </span>
+                      )}
+                    </button>
+                    <div className="p-6 md:p-8">
+                      <h3 className="text-[1.375rem] text-navy">{project.title}</h3>
+                      {project.description && (
+                        <p className="mt-3 text-[1rem] leading-relaxed text-muted">
+                          {project.description}
+                        </p>
+                      )}
+                      {images.length > 1 && (
+                        <div className="mt-5 flex gap-2 overflow-x-auto">
+                          {images.slice(1, 5).map((src, imageIndex) => (
+                            <button
+                              key={src}
+                              type="button"
+                              onClick={() =>
+                                setActive({ project: projectIndex, image: imageIndex + 1 })
+                              }
+                              className="relative h-16 w-20 shrink-0 overflow-hidden rounded-[8px] border border-border"
+                            >
+                              <RivetImage
+                                src={src}
+                                alt={`${project.title} — additional photo ${imageIndex + 2}`}
+                                fill
+                                sizes="80px"
+                                className="object-cover"
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </article>
+                </StaggerItem>
+              );
+            })}
+          </Stagger>
+        </Container>
+      </Section>
 
-  const content = (
-    <div
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-navy/92 p-4 md:p-10"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="certificate-lightbox-title"
-    >
-      <button
-        type="button"
-        className="absolute inset-0 cursor-zoom-out"
-        aria-label="Close certificate"
-        onClick={onClose}
-      />
-      <div className="relative z-10 flex max-h-full w-full max-w-5xl flex-col">
-        <div className="relative h-[70vh] w-full overflow-hidden rounded-[16px] bg-white">
-          <RivetImage
-            src={cert.image}
-            alt={cert.title}
-            fill
-            sizes="(max-width: 1024px) 100vw, 960px"
-            className="object-contain p-4 sm:p-8"
-          />
-        </div>
-        <div className="mt-5 flex items-start justify-between gap-4 text-white">
-          <div>
-            <h3 id="certificate-lightbox-title" className="text-[1.25rem]">
-              {cert.title}
-            </h3>
-            {cert.description && (
-              <p className="mt-1 max-w-2xl text-[0.9375rem] text-white/70">{cert.description}</p>
-            )}
-          </div>
-          <p className="shrink-0 text-[0.75rem] uppercase tracking-[0.16em] text-gold">
-            {index + 1} / {items.length}
-          </p>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        onClick={onClose}
-        className="absolute top-4 right-4 grid h-11 w-11 place-items-center rounded-full border border-white/20 text-white hover:border-gold hover:text-gold"
-        aria-label="Close"
-      >
-        <X size={18} />
-      </button>
-
-      {items.length > 1 && (
-        <>
-          <button
-            type="button"
-            onClick={() => onIndexChange((index - 1 + items.length) % items.length)}
-            className="absolute top-1/2 left-3 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/20 text-white hover:border-gold hover:text-gold md:left-6"
-            aria-label="Previous certificate"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <button
-            type="button"
-            onClick={() => onIndexChange((index + 1) % items.length)}
-            className="absolute top-1/2 right-3 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/20 text-white hover:border-gold hover:text-gold md:right-6"
-            aria-label="Next certificate"
-          >
-            <ChevronRight size={20} />
-          </button>
-        </>
+      {active !== null && lightboxItems.length > 0 && (
+        <ImageLightbox
+          items={lightboxItems}
+          index={active.image}
+          onClose={() => setActive(null)}
+          onIndexChange={(image) => setActive({ ...active, image })}
+          labelledBy="portfolio-lightbox-title"
+        />
       )}
-    </div>
+    </>
   );
-
-  return createPortal(content, document.body);
 }

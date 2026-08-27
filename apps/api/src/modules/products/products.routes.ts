@@ -18,7 +18,8 @@ const listQuery = z.object({
   category: z.string().optional(),
   featured: z.enum(['true', 'false']).optional(),
   page: z.coerce.number().int().min(1).default(1),
-  pageSize: z.coerce.number().int().min(1).max(48).default(12),
+  // Allow larger pages for sitemap / SSG; catalog UI still defaults to 12.
+  pageSize: z.coerce.number().int().min(1).max(200).default(12),
 });
 
 const upsertSchema = z

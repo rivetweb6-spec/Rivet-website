@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { adminApi } from '@/lib/admin-api';
+import { adminApi, revalidatePublicCache } from '@/lib/admin-api';
 import {
   AdminButton,
   AdminCard,
@@ -25,6 +25,16 @@ const defaults = {
   introBodySecondary:
     'We operate the way we build: with restraint, precision, and an obsession for the details that others overlook.',
   introImage: '',
+  gmName: 'General Manager',
+  gmPosition: 'General Manager',
+  gmPhoto: '',
+  gmMessage:
+    'Every project we take on is a commitment — to specification, to craft, and to the people who will live and work in the spaces we help build.',
+  engName: 'Engineering Manager',
+  engPosition: 'Engineering Manager',
+  engPhoto: '',
+  engMessage:
+    'Engineering is the quiet work behind a confident installation. We specify with care so that what arrives on site performs as promised.',
 };
 
 export default function AdminHomePage() {
@@ -50,6 +60,14 @@ export default function AdminHomePage() {
           introBody: home.introBody ?? defaults.introBody,
           introBodySecondary: home.introBodySecondary ?? defaults.introBodySecondary,
           introImage: home.introImage ?? '',
+          gmName: home.gmName ?? defaults.gmName,
+          gmPosition: home.gmPosition ?? defaults.gmPosition,
+          gmPhoto: home.gmPhoto ?? '',
+          gmMessage: home.gmMessage ?? defaults.gmMessage,
+          engName: home.engName ?? defaults.engName,
+          engPosition: home.engPosition ?? defaults.engPosition,
+          engPhoto: home.engPhoto ?? '',
+          engMessage: home.engMessage ?? defaults.engMessage,
         });
       })
       .catch((e: Error) => setError(e.message))
@@ -73,7 +91,20 @@ export default function AdminHomePage() {
         introBody: form.introBody || null,
         introBodySecondary: form.introBodySecondary || null,
         introImage: form.introImage || null,
+        gmName: form.gmName || null,
+        gmPosition: form.gmPosition || null,
+        gmPhoto: form.gmPhoto || null,
+        gmMessage: form.gmMessage || null,
+        engName: form.engName || null,
+        engPosition: form.engPosition || null,
+        engPhoto: form.engPhoto || null,
+        engMessage: form.engMessage || null,
       });
+      try {
+        await revalidatePublicCache('home');
+      } catch {
+        /* public cache will refresh on the next ISR window */
+      }
       setMessage('Homepage content saved. Changes appear on the public site shortly.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Save failed');
@@ -87,7 +118,7 @@ export default function AdminHomePage() {
       <div>
         <AdminPageHeader
           title="Homepage"
-          description="Edit the public home page hero and intro."
+          description="Edit the public home page hero, intro, and management messages."
         />
         <p className="text-[0.875rem] text-muted">Loading…</p>
       </div>
@@ -98,7 +129,7 @@ export default function AdminHomePage() {
     <div>
       <AdminPageHeader
         title="Homepage"
-        description="Edit the public home page hero copy, intro text, and photos."
+        description="Edit the public home page hero, intro, photos, and a word from management."
       />
       <form onSubmit={save} className="space-y-6">
         <AdminCard>
@@ -165,6 +196,72 @@ export default function AdminHomePage() {
               label="Intro image"
               value={form.introImage}
               onChange={(introImage) => setForm({ ...form, introImage })}
+              onError={setError}
+            />
+          </div>
+        </AdminCard>
+
+        <AdminCard>
+          <h3 className="mb-1 text-[1rem] font-semibold text-ink">General Manager</h3>
+          <p className="mb-4 text-[0.8125rem] text-muted">
+            Appears on the public home page. Keep the message to two or three short sentences.
+          </p>
+          <div className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <AdminInput
+                label="Name"
+                value={form.gmName}
+                onChange={(e) => setForm({ ...form, gmName: e.target.value })}
+              />
+              <AdminInput
+                label="Position"
+                value={form.gmPosition}
+                onChange={(e) => setForm({ ...form, gmPosition: e.target.value })}
+              />
+            </div>
+            <AdminTextarea
+              label="Message"
+              rows={4}
+              value={form.gmMessage}
+              onChange={(e) => setForm({ ...form, gmMessage: e.target.value })}
+            />
+            <ImageUploadField
+              label="Photo"
+              value={form.gmPhoto}
+              onChange={(gmPhoto) => setForm({ ...form, gmPhoto })}
+              onError={setError}
+            />
+          </div>
+        </AdminCard>
+
+        <AdminCard>
+          <h3 className="mb-1 text-[1rem] font-semibold text-ink">Engineering Manager</h3>
+          <p className="mb-4 text-[0.8125rem] text-muted">
+            Appears on the public home page. Keep the message to two or three short sentences.
+          </p>
+          <div className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <AdminInput
+                label="Name"
+                value={form.engName}
+                onChange={(e) => setForm({ ...form, engName: e.target.value })}
+              />
+              <AdminInput
+                label="Position"
+                value={form.engPosition}
+                onChange={(e) => setForm({ ...form, engPosition: e.target.value })}
+              />
+            </div>
+            <AdminTextarea
+              label="Message"
+              rows={4}
+              value={form.engMessage}
+              onChange={(e) => setForm({ ...form, engMessage: e.target.value })}
+            />
+            <ImageUploadField
+              label="Photo"
+              value={form.engPhoto}
+              onChange={(engPhoto) => setForm({ ...form, engPhoto })}
               onError={setError}
             />
           </div>

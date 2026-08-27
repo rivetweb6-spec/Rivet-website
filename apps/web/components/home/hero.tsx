@@ -47,7 +47,7 @@ export function Hero({ content }: { content?: HeroContent | null }) {
     reduceMotion
       ? { initial: { opacity: 1, y: 0 }, animate: { opacity: 1, y: 0 } }
       : {
-          initial: { opacity: 0, y: 32 },
+          initial: { opacity: 1, y: 24 },
           animate: { opacity: 1, y: 0 },
           transition: { duration: 1, ease, delay },
         };
@@ -61,7 +61,7 @@ export function Hero({ content }: { content?: HeroContent | null }) {
       <motion.div style={{ y, scale }} className="absolute inset-0 -z-10">
         <RivetImage
           src={heroImage}
-          alt="RIVET flagship installation"
+          alt="RIVET flagship architectural installation in Ethiopia"
           fill
           priority
           sizes="100vw"

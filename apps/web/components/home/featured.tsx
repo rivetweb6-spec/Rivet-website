@@ -3,10 +3,21 @@ import { ArrowUpRight } from 'lucide-react';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { FadeUp } from '@/components/motion/reveal';
-import { featuredProducts } from '@/lib/data/content';
+import { featuredProducts as fallbackProducts } from '@/lib/data/content';
+import { buildProductAltText } from '@/lib/seo';
 import { cn } from '@/lib/utils';
 
-export function Featured() {
+export type FeaturedProductCard = {
+  slug: string;
+  name: string;
+  category: string;
+  description: string;
+  image: string;
+};
+
+export function Featured({ products }: { products?: FeaturedProductCard[] }) {
+  const list = products && products.length > 0 ? products : fallbackProducts;
+
   return (
     <Section>
       <Container>
@@ -28,7 +39,7 @@ export function Featured() {
         </FadeUp>
 
         <div className="grid gap-5 md:grid-cols-6 md:gap-6">
-          {featuredProducts.map((p, i) => {
+          {list.map((p, i) => {
             const large = i < 2;
             return (
               <FadeUp
@@ -53,14 +64,7 @@ function ProductCard({
   description,
   image,
   tall,
-}: {
-  slug: string;
-  name: string;
-  category: string;
-  description: string;
-  image: string;
-  tall?: boolean;
-}) {
+}: FeaturedProductCard & { tall?: boolean }) {
   return (
     <Link
       href={`/products/${slug}`}
@@ -69,7 +73,7 @@ function ProductCard({
       <div className={cn('relative overflow-hidden', tall ? 'aspect-[16/11]' : 'aspect-[4/3]')}>
         <RivetImage
           src={image}
-          alt={name}
+          alt={buildProductAltText(name, category, description)}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover transition-transform duration-[1.1s] ease-out group-hover:scale-[1.05]"

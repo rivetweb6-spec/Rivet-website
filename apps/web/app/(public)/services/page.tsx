@@ -6,21 +6,10 @@ import { Container, Section } from '@/components/ui/container';
 import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
 import { RequestQuotationButton } from '@/components/quotation/request-quotation-button';
 import { api } from '@/lib/api';
-import { resolveSeo } from '@/lib/seo';
+import { metadataForStaticPage } from '@/lib/page-seo';
 
 export async function generateMetadata(): Promise<Metadata> {
-  let page = null;
-  try {
-    ({ page } = await api.pageSeo.byKey('services'));
-  } catch {
-    /* defaults */
-  }
-  return resolveSeo(page, {
-    title: 'Services — Import, Installation & Consultation | Rivet',
-    description:
-      'RIVET services in Ethiopia: product import, elevator installation and maintenance, granite supply, building materials, and construction consultation. Request a quotation.',
-    path: '/services',
-  });
+  return metadataForStaticPage('services');
 }
 
 export default async function ServicesPage() {
@@ -30,7 +19,7 @@ export default async function ServicesPage() {
     <>
       <PageHero
         eyebrow="Capabilities"
-        title="Services"
+        title="Import, installation & consultation"
         description="End-to-end capability from sourcing and import to installation, maintenance and engineering consultation across Ethiopia."
       />
       <Section>

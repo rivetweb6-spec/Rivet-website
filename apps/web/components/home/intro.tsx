@@ -38,7 +38,7 @@ export function Intro({ content }: { content?: IntroContent | null }) {
             <div className="frame-offset relative ml-4 aspect-[4/5] overflow-hidden rounded-[4px] shadow-[var(--shadow-luxury)]">
               <RivetImage
                 src={image}
-                alt="RIVET showroom"
+                alt="RIVET showroom and imported architectural products in Ethiopia"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover transition-transform duration-[1.2s] ease-out hover:scale-[1.03]"

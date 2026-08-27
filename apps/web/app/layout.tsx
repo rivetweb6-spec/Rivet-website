@@ -1,6 +1,16 @@
 import type { Metadata } from 'next';
-import { Cormorant_Garamond, Inter } from 'next/font/google';
-import { DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, SITE_KEYWORDS, SITE_NAME, SITE_TAGLINE, SITE_URL } from '@/lib/seo';
+import {
+  Cormorant_Garamond,
+  Inter,
+} from 'next/font/google';
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_OG_IMAGE,
+  SITE_KEYWORDS,
+  SITE_NAME,
+  SITE_TAGLINE,
+  SITE_URL,
+} from '@/lib/seo';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import './globals.css';
 
@@ -22,14 +32,20 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    // Used only when a page passes a plain string title (e.g. admin).
+    // Public pages use absolute titles via pageMetadata().
     template: '%s | RIVET',
   },
   description: DEFAULT_DESCRIPTION,
   keywords: SITE_KEYWORDS,
-  alternates: { canonical: SITE_URL },
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  category: 'construction',
   openGraph: {
-    title: SITE_NAME,
-    description: 'A digital flagship for premium construction and architectural products.',
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    description: DEFAULT_DESCRIPTION,
     type: 'website',
     siteName: SITE_NAME,
     locale: 'en_US',
@@ -38,7 +54,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: SITE_NAME,
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
     description: DEFAULT_DESCRIPTION,
     images: [DEFAULT_OG_IMAGE],
   },
@@ -50,7 +66,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${cormorant.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.variable} ${cormorant.variable}`}
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { ADMIN_EMAIL, ADMIN_PASSWORD, loginAsAdmin } from './helpers';
+import { ADMIN_APP_URL, ADMIN_EMAIL, ADMIN_PASSWORD, loginAsAdmin } from './helpers';
 
 test.describe('Admin authentication', () => {
   test('renders the login form', async ({ page }) => {
@@ -23,7 +23,8 @@ test.describe('Admin authentication', () => {
     await page.getByLabel('Email').fill(ADMIN_EMAIL);
     await page.getByLabel('Password').fill(ADMIN_PASSWORD);
     await page.getByRole('button', { name: /sign in/i }).click();
-    await expect(page).toHaveURL(/\/admin(\/|$)/, { timeout: 15_000 });
+    await expect(page).toHaveURL(ADMIN_APP_URL, { timeout: 15_000 });
+    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
   });
 
   test('protects the dashboard from anonymous access', async ({ page }) => {
@@ -33,10 +34,8 @@ test.describe('Admin authentication', () => {
 
   test('logs out back to the login screen', async ({ page }) => {
     await loginAsAdmin(page);
-    const logout = page.getByRole('button', { name: /log ?out|sign ?out/i });
-    if (await logout.count()) {
-      await logout.first().click();
-      await expect(page).toHaveURL(/\/admin\/login/, { timeout: 15_000 });
-    }
+    await page.getByRole('button', { name: /sign out/i }).click({ force: true });
+    await expect(page).toHaveURL(/\/admin\/login/, { timeout: 15_000 });
+    await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
   });
 });

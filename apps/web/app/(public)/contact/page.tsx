@@ -5,22 +5,10 @@ import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { ContactForm } from '@/components/contact/contact-form';
 import { api } from '@/lib/api';
 import { contactSocials, mailtoHref, telHref } from '@/lib/contact';
-
-import { resolveSeo } from '@/lib/seo';
+import { metadataForStaticPage } from '@/lib/page-seo';
 
 export async function generateMetadata(): Promise<Metadata> {
-  let page = null;
-  try {
-    ({ page } = await api.pageSeo.byKey('contact'));
-  } catch {
-    /* defaults */
-  }
-  return resolveSeo(page, {
-    title: 'Contact Rivet in Addis Ababa, Ethiopia',
-    description:
-      'Contact River Company (RIVET) in Addis Ababa — office, phone, email and social channels. Request a quotation for elevators, granite, doors and more.',
-    path: '/contact',
-  });
+  return metadataForStaticPage('contact');
 }
 
 export default async function ContactPage() {
@@ -42,7 +30,7 @@ export default async function ContactPage() {
     <>
       <PageHero
         eyebrow="Get in touch"
-        title="Contact"
+        title="Contact River Company"
         description="Speak with a RIVET specialist about products, installation, or request a quotation."
       />
       <Section>

@@ -48,7 +48,7 @@ export function News({ articles }: { articles: NewsArticle[] }) {
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <RivetImage
                       src={n.coverImage ?? assets.news.n1}
-                      alt={n.title}
+                      alt={`${n.title} — RIVET news`}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover transition-transform duration-[1.1s] ease-out group-hover:scale-[1.05]"

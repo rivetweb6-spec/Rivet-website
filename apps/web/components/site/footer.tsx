@@ -29,8 +29,11 @@ const columns = [
     title: 'Company',
     links: [
       { label: 'About', href: '/company' },
-      { label: 'Certificates', href: '/company#certificates' },
+      { label: 'Certificate & Portfolio', href: '/company/certificate-portfolio' },
+      { label: 'Meet Our Team', href: '/company/team' },
+      { label: 'Gallery', href: '/company/gallery' },
       { label: 'News', href: '/news' },
+      { label: 'Careers', href: '/careers' },
       { label: 'Contact', href: '/contact' },
       { label: 'Request a Quotation', href: '/request-quotation' },
     ],
@@ -82,9 +85,9 @@ export function Footer({ contact }: { contact?: ContactInfo | null }) {
 
           {columns.map((col) => (
             <div key={col.title}>
-              <h4 className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-gold">
+              <h2 className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-gold">
                 {col.title}
-              </h4>
+              </h2>
               <ul className="mt-6 space-y-3.5 text-[0.875rem] font-light">
                 {col.links.map((l) => (
                   <li key={l.label}>
@@ -138,6 +141,19 @@ export function Footer({ contact }: { contact?: ContactInfo | null }) {
             </Link>
           </div>
         </div>
+
+        <p className="mt-6 text-center text-[0.75rem] tracking-[0.04em] text-white/35">
+          Developed by{' '}
+          <a
+            href="https://www.linkedin.com/in/abel-erkalew-32525534b"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Abel Erkalew on LinkedIn (opens in a new tab)"
+            className="text-white/55 transition-colors duration-300 hover:text-gold"
+          >
+            Abel Erkalew
+          </a>
+        </p>
       </Container>
     </footer>
   );

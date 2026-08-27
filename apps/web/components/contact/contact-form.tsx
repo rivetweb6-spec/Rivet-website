@@ -87,6 +87,7 @@ export function ContactForm() {
       <Field
         label="Full Name"
         required
+        autoComplete="name"
         value={fields.name}
         error={touched.name ? errors.name : undefined}
         onChange={(v) => set('name', v)}
@@ -100,6 +101,7 @@ export function ContactForm() {
           label="Email"
           type="email"
           required
+          autoComplete="email"
           value={fields.email}
           error={touched.email ? errors.email : undefined}
           onChange={(v) => set('email', v)}
@@ -108,13 +110,23 @@ export function ContactForm() {
             setErrors(validate(fields));
           }}
         />
-        <Field label="Phone" value={fields.phone} onChange={(v) => set('phone', v)} />
+        <Field
+          label="Phone"
+          type="tel"
+          autoComplete="tel"
+          value={fields.phone}
+          onChange={(v) => set('phone', v)}
+        />
       </div>
       <div>
-        <label className="mb-1.5 block text-[0.875rem] font-medium text-ink">
+        <label
+          htmlFor="contact-message"
+          className="mb-1.5 block text-[0.875rem] font-medium text-ink"
+        >
           Message <span className="text-gold">*</span>
         </label>
         <textarea
+          id="contact-message"
           rows={5}
           value={fields.message}
           onChange={(e) => set('message', e.target.value)}
@@ -156,6 +168,7 @@ function Field({
   error,
   required,
   type = 'text',
+  autoComplete,
 }: {
   label: string;
   value: string;
@@ -164,15 +177,22 @@ function Field({
   error?: string;
   required?: boolean;
   type?: string;
+  autoComplete?: string;
 }) {
+  const id = React.useId();
+  const errorId = `${id}-error`;
   return (
     <div>
-      <label className="mb-1.5 block text-[0.875rem] font-medium text-ink">
+      <label htmlFor={id} className="mb-1.5 block text-[0.875rem] font-medium text-ink">
         {label} {required && <span className="text-gold">*</span>}
       </label>
       <input
+        id={id}
         type={type}
         value={value}
+        autoComplete={autoComplete}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={cn(
@@ -180,7 +200,11 @@ function Field({
           error ? 'border-error/60' : 'border-border',
         )}
       />
-      {error && <p className="mt-1.5 text-[0.75rem] text-error">{error}</p>}
+      {error && (
+        <p id={errorId} className="mt-1.5 text-[0.75rem] text-error">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

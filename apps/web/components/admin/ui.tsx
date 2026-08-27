@@ -201,7 +201,13 @@ export function StatusBadge({ status }: { status: string }) {
     PUBLISHED: 'bg-success/10 text-success',
     DRAFT: 'bg-muted/15 text-muted',
     NEW: 'bg-gold/15 text-navy',
+    OPEN: 'bg-success/10 text-success',
+    CLOSED: 'bg-muted/15 text-muted',
     UNDER_REVIEW: 'bg-warning/15 text-warning',
+    SHORTLISTED: 'bg-navy/10 text-navy',
+    INTERVIEW: 'bg-navy/10 text-navy',
+    OFFERED: 'bg-success/10 text-success',
+    HIRED: 'bg-success/10 text-success',
     CONTACTED: 'bg-navy/10 text-navy',
     QUOTATION_SENT: 'bg-navy/10 text-navy',
     APPROVED: 'bg-success/10 text-success',
@@ -211,6 +217,10 @@ export function StatusBadge({ status }: { status: string }) {
   const labels: Record<string, string> = {
     UNDER_REVIEW: 'Under Review',
     QUOTATION_SENT: 'Quotation Sent',
+    SHORTLISTED: 'Shortlisted',
+    INTERVIEW: 'Interview',
+    OFFERED: 'Offered',
+    HIRED: 'Hired',
   };
   return (
     <span

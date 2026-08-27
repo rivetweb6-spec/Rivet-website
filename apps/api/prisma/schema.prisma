@@ -31,6 +31,41 @@ enum QuotationStatus {
   COMPLETED
 }
 
+enum CertificateKind {
+  CERTIFICATE
+  PORTFOLIO
+}
+
+enum TeamSection {
+  LEADERSHIP
+  ENGINEERING
+  TEAM
+}
+
+enum GalleryCategory {
+  PHOTOS
+  ACTIVITIES
+  PROJECTS
+  EVENTS
+  OTHER
+}
+
+enum VacancyStatus {
+  DRAFT
+  OPEN
+  CLOSED
+}
+
+enum ApplicationStatus {
+  NEW
+  UNDER_REVIEW
+  SHORTLISTED
+  INTERVIEW
+  OFFERED
+  REJECTED
+  HIRED
+}
+
 model User {
   id           String   @id @default(cuid())
   name         String
@@ -129,16 +164,55 @@ model Service {
 }
 
 model Certificate {
-  id          String        @id @default(cuid())
+  id          String          @id @default(cuid())
   title       String
   description String?
   image       String?
-  order       Int           @default(0)
-  status      ContentStatus @default(PUBLISHED)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  images      Json? // string[] additional images (portfolio)
+  kind        CertificateKind @default(CERTIFICATE)
+  order       Int             @default(0)
+  status      ContentStatus   @default(PUBLISHED)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 
   @@index([status])
+  @@index([order])
+  @@index([kind])
+}
+
+model TeamMember {
+  id        String        @id @default(cuid())
+  fullName  String
+  position  String
+  bio       String?
+  photo     String?
+  email     String?
+  phone     String?
+  linkedin  String?
+  section   TeamSection   @default(TEAM)
+  order     Int           @default(0)
+  status    ContentStatus @default(PUBLISHED)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([status])
+  @@index([section])
+  @@index([order])
+}
+
+model GalleryImage {
+  id          String          @id @default(cuid())
+  title       String
+  description String?
+  image       String
+  category    GalleryCategory @default(PHOTOS)
+  order       Int             @default(0)
+  status      ContentStatus   @default(PUBLISHED)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([status])
+  @@index([category])
   @@index([order])
 }
 
@@ -169,7 +243,7 @@ model NewsArticle {
 
 model PageSeo {
   id             String   @id @default(cuid())
-  pageKey        String   @unique // home | company | services | news | contact | request-quotation | products
+  pageKey        String   @unique // home | company | certificate-portfolio | team | gallery | services | news | contact | request-quotation | products | careers
   seoTitle       String?
   seoDescription String?
   primaryKeyword String?
@@ -216,6 +290,56 @@ model ContactMessage {
   createdAt DateTime @default(now())
 }
 
+model Vacancy {
+  id             String           @id @default(cuid())
+  title          String
+  slug           String           @unique
+  department     String?
+  location       String?
+  employmentType String? // Full-time | Part-time | Contract | Internship
+  description    String // rich-text HTML
+  requirements   String // rich-text HTML
+  deadline       DateTime
+  status         VacancyStatus    @default(DRAFT)
+  seoTitle       String?
+  seoDescription String?
+  primaryKeyword String?
+  ogTitle        String?
+  ogDescription  String?
+  ogImage        String?
+  canonicalUrl   String?
+  noIndex        Boolean          @default(false)
+  applications   JobApplication[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([status])
+  @@index([deadline])
+}
+
+model JobApplication {
+  id             String            @id @default(cuid())
+  vacancyId      String
+  vacancy        Vacancy           @relation(fields: [vacancyId], references: [id], onDelete: Cascade)
+  fullName       String
+  email          String
+  phone          String
+  coverLetter    String?
+  cvPublicId     String // local:filename or Cloudinary public id — never expose publicly
+  cvOriginalName String
+  cvMimeType     String
+  status         ApplicationStatus @default(NEW)
+  adminNotes     String?
+  readAt         DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([vacancyId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([readAt])
+}
+
 // Singleton (single row) — company profile.
 model CompanyInfo {
   id             String   @id @default("company")
@@ -257,5 +381,13 @@ model HomePageContent {
   introBody          String?
   introBodySecondary String?
   introImage         String?
+  gmName             String?
+  gmPosition         String?
+  gmPhoto            String?
+  gmMessage          String?
+  engName            String?
+  engPosition        String?
+  engPhoto           String?
+  engMessage         String?
   updatedAt          DateTime @updatedAt
 }

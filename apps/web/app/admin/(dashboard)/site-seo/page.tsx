@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { adminApi, type PageSeoRecord, type SeoFieldsInput } from '@/lib/admin-api';
+import { adminApi, revalidatePublicCache, type PageSeoRecord, type SeoFieldsInput } from '@/lib/admin-api';
 import {
   AdminButton,
   AdminCard,
@@ -14,53 +14,31 @@ import {
   seoPayload,
   SeoFieldsPanel,
 } from '@/components/admin/seo-fields-panel';
+import { PAGE_SEO_DEFAULTS, PAGE_SEO_KEYS, type PageSeoKey } from '@/lib/page-seo-defaults';
 
-const PAGE_KEYS = [
-  { key: 'home', label: 'Homepage', path: '/' },
-  { key: 'products', label: 'Products catalog', path: '/products' },
-  { key: 'services', label: 'Services index', path: '/services' },
-  { key: 'company', label: 'About / Company', path: '/company' },
-  { key: 'news', label: 'News index', path: '/news' },
-  { key: 'contact', label: 'Contact', path: '/contact' },
-  { key: 'request-quotation', label: 'Request a Quotation', path: '/request-quotation' },
-] as const;
-
-const DEFAULTS: Record<string, { title: string; description: string }> = {
-  home: {
-    title: 'Premium Elevators, Granite & Building Materials in Ethiopia',
-    description:
-      'RIVET imports premium elevators, granite, doors, sanitary ware and building materials for projects in Ethiopia.',
-  },
-  products: {
-    title: 'Products — Elevators, Granite, Doors & Materials',
-    description: 'Browse RIVET’s premium catalog and request a quotation in Ethiopia.',
-  },
-  services: {
-    title: 'Services — Import, Installation & Consultation | Rivet',
-    description: 'RIVET services in Ethiopia: import, installation, maintenance, and consultation.',
-  },
-  company: {
-    title: 'About Rivet — River Company in Ethiopia',
-    description: 'History, vision, mission and values of River Company (RIVET).',
-  },
-  news: {
-    title: 'News & Insights | Rivet',
-    description: 'Journal of RIVET projects, product launches and company updates.',
-  },
-  contact: {
-    title: 'Contact Rivet in Addis Ababa, Ethiopia',
-    description: 'Contact River Company (RIVET) — office, phone, email and social channels.',
-  },
-  'request-quotation': {
-    title: 'Request a Quotation | Rivet',
-    description:
-      'Request a quotation for commercial and residential products from Rivet in Ethiopia.',
-  },
+const PAGE_LABELS: Record<PageSeoKey, string> = {
+  home: 'Homepage',
+  products: 'Products catalog',
+  services: 'Services index',
+  company: 'About / Company',
+  'certificate-portfolio': 'Certificate & Portfolio',
+  team: 'Meet Our Team',
+  gallery: 'Company Gallery',
+  news: 'News index',
+  careers: 'Careers',
+  contact: 'Contact',
+  'request-quotation': 'Request a Quotation',
 };
+
+const PAGE_KEYS = PAGE_SEO_KEYS.map((key) => ({
+  key,
+  label: PAGE_LABELS[key],
+  path: PAGE_SEO_DEFAULTS[key].path,
+}));
 
 export default function AdminSiteSeoPage() {
   const [pages, setPages] = React.useState<PageSeoRecord[]>([]);
-  const [activeKey, setActiveKey] = React.useState<string>('home');
+  const [activeKey, setActiveKey] = React.useState<PageSeoKey>('home');
   const [form, setForm] = React.useState<SeoFieldsInput>(emptySeoFields());
   const [error, setError] = React.useState<string | null>(null);
   const [saving, setSaving] = React.useState(false);
@@ -82,7 +60,7 @@ export default function AdminSiteSeoPage() {
   }, [activeKey, pages]);
 
   const meta = PAGE_KEYS.find((p) => p.key === activeKey)!;
-  const defaults = DEFAULTS[activeKey]!;
+  const defaults = PAGE_SEO_DEFAULTS[activeKey];
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,6 +69,7 @@ export default function AdminSiteSeoPage() {
     setSaved(false);
     try {
       await adminApi.pageSeo.upsert(activeKey, seoPayload(form));
+      await revalidatePublicCache('page-seo');
       await load();
       setSaved(true);
     } catch (err) {
