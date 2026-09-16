@@ -20,8 +20,8 @@ services:
     region: frankfurt
     branch: main
     healthCheckPath: /api/health
-    buildCommand: corepack enable && pnpm install --frozen-lockfile --prod=false && pnpm db:generate && pnpm --filter @rivet/api prisma:deploy && pnpm --filter @rivet/api build
-    startCommand: pnpm --filter @rivet/api start
+    buildCommand: corepack enable && pnpm install --frozen-lockfile --prod=false && pnpm db:generate && pnpm --filter @rivet/api build
+    startCommand: pnpm --filter @rivet/api prisma:deploy && pnpm --filter @rivet/api start
     envVars:
       - key: NODE_VERSION
         value: "24"
