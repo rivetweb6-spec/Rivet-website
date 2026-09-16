@@ -11,6 +11,9 @@ import { metadataForStaticPage } from '@/lib/page-seo';
 import { AboutPageJsonLd } from '@/components/seo/json-ld';
 import { truncateMetaDescription } from '@/lib/seo';
 
+/** CMS-backed; skip static prerender so `next build` does not require a live API. */
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(): Promise<Metadata> {
   let history: string | null = null;
   try {
