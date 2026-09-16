@@ -98,7 +98,7 @@ export default async function CompanyPage() {
               <div className="absolute top-0 bottom-0 left-[7px] w-px bg-divider md:left-1/2 md:-translate-x-px" />
               <div className="space-y-10">
                 {timeline.map((item, i) => (
-                  <FadeUp key={`${item.year}-${item.title}`} delay={i * 0.05}>
+                  <FadeUp key={`${item.year}-${item.title}-${i}`} delay={i * 0.05}>
                     <div
                       className={`relative grid gap-4 md:grid-cols-2 md:gap-12 ${
                         i % 2 === 0 ? '' : 'md:[&>*:first-child]:order-2'

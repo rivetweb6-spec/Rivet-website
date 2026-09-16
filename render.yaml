@@ -38,7 +38,7 @@ services:
       - key: JWT_REFRESH_SECRET
         generateValue: true
       - key: JWT_ACCESS_TTL
-        value: "900"
+        value: "28800"
       - key: JWT_REFRESH_TTL
         value: "604800"
       # Comma-separated Vercel origins, e.g.

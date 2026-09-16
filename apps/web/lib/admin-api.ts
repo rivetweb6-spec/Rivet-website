@@ -19,7 +19,15 @@ function getDirectApiUrl(): string {
 }
 
 const TOKEN_KEY = 'rivet_admin_token';
+const REFRESH_KEY = 'rivet_admin_refresh';
 const USER_KEY = 'rivet_admin_user';
+
+/** Fired when access + refresh both fail so the admin UI can send the user back to login. */
+export const AUTH_EXPIRED_EVENT = 'rivet-admin-auth-expired';
+
+type AdminRequestInit = RequestInit & { apiBase?: string; skipAuthRefresh?: boolean };
+
+let refreshInFlight: Promise<string | null> | null = null;
 
 export type AdminUser = {
   id: string;
@@ -42,17 +50,63 @@ export function getStoredToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
 
+export function getStoredRefreshToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(REFRESH_KEY);
+}
+
+function notifyAuthExpired() {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new Event(AUTH_EXPIRED_EVENT));
+}
+
+async function refreshAccessToken(): Promise<string | null> {
+  if (typeof window === 'undefined') return null;
+  if (refreshInFlight) return refreshInFlight;
+
+  refreshInFlight = (async () => {
+    const refreshToken = getStoredRefreshToken();
+    try {
+      const res = await fetch(`${getApiUrl()}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(refreshToken ? { refreshToken } : {}),
+        cache: 'no-store',
+      });
+      if (!res.ok) return null;
+      const data = (await res.json()) as { accessToken?: string; refreshToken?: string };
+      if (!data.accessToken) return null;
+      localStorage.setItem(TOKEN_KEY, data.accessToken);
+      if (data.refreshToken) localStorage.setItem(REFRESH_KEY, data.refreshToken);
+      return data.accessToken;
+    } catch {
+      return null;
+    }
+  })().finally(() => {
+    refreshInFlight = null;
+  });
+
+  return refreshInFlight;
+}
+
 /** Bust public ISR so homepage / news pages pick up admin changes immediately. */
 export async function revalidatePublicCache(tag: string) {
-  const token = getStoredToken();
-  await fetch('/admin/revalidate', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify({ tag }),
-  });
+  const send = (token: string | null) =>
+    fetch('/admin/revalidate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ tag }),
+    });
+
+  let res = await send(getStoredToken());
+  if (res.status === 401) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) res = await send(refreshed);
+  }
 }
 
 export function getStoredUser(): AdminUser | null {
@@ -66,51 +120,65 @@ export function getStoredUser(): AdminUser | null {
   }
 }
 
-export function setSession(token: string, user: AdminUser) {
+export function setSession(token: string, user: AdminUser, refreshToken?: string) {
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(USER_KEY, JSON.stringify(user));
+  if (refreshToken) localStorage.setItem(REFRESH_KEY, refreshToken);
 }
 
 export function clearSession() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+  localStorage.removeItem(REFRESH_KEY);
 }
 
-async function adminRequest<T>(
-  path: string,
-  init?: RequestInit & { apiBase?: string },
-): Promise<T> {
-  const token = getStoredToken();
-  const isForm = typeof FormData !== 'undefined' && init?.body instanceof FormData;
-  const { apiBase, headers: initHeaders, ...rest } = init ?? {};
-  let res: Response;
+async function readErrorMessage(res: Response): Promise<string> {
+  let message = res.statusText;
   try {
-    res = await fetch(`${apiBase ?? getApiUrl()}${path}`, {
-      ...rest,
-      credentials: 'include',
-      headers: {
-        ...(isForm ? {} : { 'Content-Type': 'application/json' }),
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...(initHeaders ?? {}),
-      },
-      cache: 'no-store',
-    });
+    const body = (await res.json()) as { error?: string };
+    if (body.error) message = body.error;
   } catch {
-    throw new AdminApiError(
-      0,
-      'Cannot reach the API. Confirm NEXT_PUBLIC_API_URL points at your hosted API (including /api) and redeploy the web app.',
-    );
+    /* ignore */
+  }
+  return message;
+}
+
+async function adminRequest<T>(path: string, init?: AdminRequestInit): Promise<T> {
+  const { apiBase, headers: initHeaders, skipAuthRefresh, ...rest } = init ?? {};
+  const isForm = typeof FormData !== 'undefined' && rest.body instanceof FormData;
+
+  const execute = async (token: string | null) => {
+    try {
+      return await fetch(`${apiBase ?? getApiUrl()}${path}`, {
+        ...rest,
+        credentials: 'include',
+        headers: {
+          ...(isForm ? {} : { 'Content-Type': 'application/json' }),
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          ...(initHeaders ?? {}),
+        },
+        cache: 'no-store',
+      });
+    } catch {
+      throw new AdminApiError(
+        0,
+        'Cannot reach the API. Confirm NEXT_PUBLIC_API_URL points at your hosted API (including /api) and redeploy the web app.',
+      );
+    }
+  };
+
+  let res = await execute(getStoredToken());
+
+  if (res.status === 401 && !skipAuthRefresh) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) {
+      res = await execute(refreshed);
+    }
+    if (res.status === 401) notifyAuthExpired();
   }
 
   if (!res.ok) {
-    let message = res.statusText;
-    try {
-      const body = (await res.json()) as { error?: string };
-      if (body.error) message = body.error;
-    } catch {
-      /* ignore */
-    }
-    throw new AdminApiError(res.status, message);
+    throw new AdminApiError(res.status, await readErrorMessage(res));
   }
 
   if (res.status === 204) return undefined as T;
@@ -121,11 +189,16 @@ async function adminRequest<T>(
 
 export const adminApi = {
   login: async (email: string, password: string) => {
-    const data = await adminRequest<{ accessToken: string; user: AdminUser }>('/auth/login', {
+    const data = await adminRequest<{
+      accessToken: string;
+      refreshToken?: string;
+      user: AdminUser;
+    }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
+      skipAuthRefresh: true,
     });
-    setSession(data.accessToken, data.user);
+    setSession(data.accessToken, data.user, data.refreshToken);
     return data;
   },
 

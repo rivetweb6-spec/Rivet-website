@@ -94,6 +94,7 @@ export default function AdminTeamPage() {
 
   const remove = async (id: string) => {
     if (!confirm('Delete this team member?')) return;
+    setError(null);
     try {
       await adminApi.team.remove(id);
       await bustCache();

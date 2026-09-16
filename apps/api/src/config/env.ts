@@ -10,7 +10,7 @@ const schema = z.object({
     .default('postgresql://postgres:postgres@localhost:5432/rivet?schema=public'),
   JWT_ACCESS_SECRET: z.string().default('dev-access-secret'),
   JWT_REFRESH_SECRET: z.string().default('dev-refresh-secret'),
-  JWT_ACCESS_TTL: z.coerce.number().default(900),
+  JWT_ACCESS_TTL: z.coerce.number().default(60 * 60 * 8),
   JWT_REFRESH_TTL: z.coerce.number().default(60 * 60 * 24 * 7),
   CLOUDINARY_CLOUD_NAME: z.string().optional(),
   CLOUDINARY_API_KEY: z.string().optional(),

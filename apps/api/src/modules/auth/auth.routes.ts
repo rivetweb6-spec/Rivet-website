@@ -72,7 +72,8 @@ router.post(
 
     res.json({
       accessToken,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+      refreshToken,
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, avatarUrl: user.avatarUrl },
     });
   }),
 );
@@ -80,17 +81,33 @@ router.post(
 router.post(
   '/refresh',
   asyncHandler(async (req, res) => {
-    const token = (req.cookies?.refreshToken as string | undefined) ?? req.body?.refreshToken;
-    if (!token) throw unauthorized('Missing refresh token');
+    const candidates = [
+      typeof req.body?.refreshToken === 'string' ? req.body.refreshToken.trim() : '',
+      typeof req.cookies?.refreshToken === 'string' ? req.cookies.refreshToken.trim() : '',
+    ].filter(Boolean);
+    if (candidates.length === 0) throw unauthorized('Missing refresh token');
+
     let payload;
-    try {
-      payload = verifyRefreshToken(token);
-    } catch {
-      throw unauthorized('Invalid refresh token');
+    let verified = false;
+    for (const token of candidates) {
+      try {
+        payload = verifyRefreshToken(token);
+        verified = true;
+        break;
+      } catch {
+        /* try the other source */
+      }
     }
-    const accessToken = signAccessToken({ sub: payload.sub, role: payload.role });
+    if (!verified || !payload) throw unauthorized('Invalid refresh token');
+    const nextPayload = { sub: payload.sub, role: payload.role };
+    const accessToken = signAccessToken(nextPayload);
+    const refreshToken = signRefreshToken(nextPayload);
     res.cookie('accessToken', accessToken, { ...cookieOpts, maxAge: env.JWT_ACCESS_TTL * 1000 });
-    res.json({ accessToken });
+    res.cookie('refreshToken', refreshToken, {
+      ...cookieOpts,
+      maxAge: env.JWT_REFRESH_TTL * 1000,
+    });
+    res.json({ accessToken, refreshToken });
   }),
 );
 

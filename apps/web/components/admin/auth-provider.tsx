@@ -8,6 +8,7 @@ import {
   getStoredToken,
   getStoredUser,
   setSession,
+  AUTH_EXPIRED_EVENT,
   type AdminUser,
   AdminApiError,
 } from '@/lib/admin-api';
@@ -46,7 +47,8 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
       .me()
       .then(({ user: u }) => {
         setUserState(u);
-        setSession(token, u);
+        const current = getStoredToken();
+        if (current) setSession(current, u);
       })
       .catch(() => {
         clearSession();
@@ -54,6 +56,16 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
       })
       .finally(() => setReady(true));
   }, []);
+
+  React.useEffect(() => {
+    const onExpired = () => {
+      clearSession();
+      setUserState(null);
+      router.replace('/admin/login');
+    };
+    window.addEventListener(AUTH_EXPIRED_EVENT, onExpired);
+    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, onExpired);
+  }, [router]);
 
   const login = async (email: string, password: string) => {
     const data = await adminApi.login(email, password);
