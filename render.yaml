@@ -17,7 +17,7 @@ services:
     name: rivet-api
     runtime: node
     plan: free
-    region: frankfurt
+    region: oregon
     branch: main
     healthCheckPath: /api/health
     buildCommand: corepack enable && pnpm install --frozen-lockfile --prod=false && pnpm db:generate && pnpm --filter @rivet/api build
