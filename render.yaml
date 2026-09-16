@@ -1,7 +1,6 @@
 # RIVET API — Render Blueprint (P7-5, P7-6)
 #
 # Provisions a managed PostgreSQL instance and the Express API service.
-# The DB migration runs on every deploy via `preDeployCommand`.
 #
 # Deploy: Render Dashboard → New → Blueprint → point at this repo.
 # Set the `sync: false` secrets (CORS_ORIGIN + Cloudinary + Sentry) in the
@@ -21,12 +20,11 @@ services:
     region: frankfurt
     branch: main
     healthCheckPath: /api/health
-    buildCommand: corepack enable && pnpm install --frozen-lockfile --prod=false && pnpm db:generate && pnpm --filter @rivet/api build
-    preDeployCommand: pnpm --filter @rivet/api prisma:deploy
+    buildCommand: corepack enable && pnpm install --frozen-lockfile --prod=false && pnpm db:generate && pnpm --filter @rivet/api prisma:deploy && pnpm --filter @rivet/api build
     startCommand: pnpm --filter @rivet/api start
     envVars:
       - key: NODE_VERSION
-        value: "22"
+        value: "24"
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
