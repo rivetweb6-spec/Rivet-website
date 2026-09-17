@@ -3,6 +3,9 @@ import { api } from '@/lib/api';
 import { PAGE_SEO_DEFAULTS, type PageSeoKey } from '@/lib/page-seo-defaults';
 import { isIndexableSlug, SITE_URL } from '@/lib/seo';
 
+/** CMS-backed; skip static prerender so `next build` does not require a live API. */
+export const dynamic = 'force-dynamic';
+
 export const revalidate = 3600;
 
 const STATIC_PATHS = Object.values(PAGE_SEO_DEFAULTS).map((d) => d.path);
