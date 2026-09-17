@@ -9,6 +9,9 @@ import { assets } from '@/lib/assets';
 import { sortNewsNewestFirst } from '@/lib/news';
 import { metadataForStaticPage } from '@/lib/page-seo';
 
+/** CMS-backed; skip static prerender so `next build` does not require a live API. */
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(): Promise<Metadata> {
   return metadataForStaticPage('news');
 }

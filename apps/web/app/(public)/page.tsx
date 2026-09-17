@@ -33,6 +33,8 @@ export default async function HomePage() {
     newsResult.status === 'fulfilled'
       ? sortNewsNewestFirst(newsResult.value.articles).slice(0, 3)
       : [];
+  // Pass `undefined` only when the API call failed (allows local demo fallbacks).
+  // Pass `[]` when the API succeeded but returned no rows — never invent catalog links.
   const categories =
     categoriesResult.status === 'fulfilled'
       ? categoriesResult.value.categories.map((c) => ({
@@ -40,9 +42,17 @@ export default async function HomePage() {
           name: c.name,
           image: c.image,
         }))
-      : [];
+      : undefined;
 
-  let featured =
+  let featured:
+    | {
+        slug: string;
+        name: string;
+        category: string;
+        description: string;
+        image: string;
+      }[]
+    | undefined =
     featuredResult.status === 'fulfilled'
       ? featuredResult.value.products.map((p) => ({
           slug: p.slug,
@@ -51,9 +61,9 @@ export default async function HomePage() {
           description: p.shortDescription ?? '',
           image: p.images[0]?.url ?? assets.products.p1,
         }))
-      : [];
+      : undefined;
 
-  if (featured.length === 0) {
+  if (!featured?.length) {
     try {
       const { products } = await api.products.list({ pageSize: 5 });
       featured = products.map((p) => ({
@@ -64,7 +74,8 @@ export default async function HomePage() {
         image: p.images[0]?.url ?? assets.products.p1,
       }));
     } catch {
-      /* static fallback inside Featured */
+      /* leave undefined so Featured can use local demo fallbacks when API is down */
+      if (featuredResult.status === 'fulfilled') featured = [];
     }
   }
 
@@ -76,7 +87,7 @@ export default async function HomePage() {
           statement: s.narrative,
           icon: s.icon,
         }))
-      : [];
+      : undefined;
 
   return (
     <>

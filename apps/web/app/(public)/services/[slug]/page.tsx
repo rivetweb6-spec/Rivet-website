@@ -14,6 +14,8 @@ import { notFoundMetadata, parseFaqs, serviceMetadata } from '@/lib/seo';
 type Params = Promise<{ slug: string }>;
 
 export const revalidate = 60;
+/** Allow CMS slugs added after build (empty generateStaticParams at Vercel build is OK). */
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
   try {

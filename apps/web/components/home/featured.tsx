@@ -16,7 +16,10 @@ export type FeaturedProductCard = {
 };
 
 export function Featured({ products }: { products?: FeaturedProductCard[] }) {
-  const list = products && products.length > 0 ? products : fallbackProducts;
+  // `undefined` = API unreachable (dev fallback OK). `[]` = API empty — do not invent links.
+  const list = products === undefined ? fallbackProducts : products;
+
+  if (list.length === 0) return null;
 
   return (
     <Section>

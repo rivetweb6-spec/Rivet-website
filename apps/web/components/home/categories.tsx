@@ -24,10 +24,13 @@ const FALLBACK_IMAGES: Record<string, string> = {
 };
 
 export function Categories({ items }: { items?: CategoryCard[] }) {
+  // `undefined` = API unreachable (dev fallback OK). `[]` = API empty — do not invent links.
   const list =
-    items && items.length > 0
-      ? items
-      : fallbackCategories.map((c) => ({ slug: c.slug, name: c.name, image: c.image }));
+    items === undefined
+      ? fallbackCategories.map((c) => ({ slug: c.slug, name: c.name, image: c.image }))
+      : items;
+
+  if (list.length === 0) return null;
 
   return (
     <Section className="bg-pearl">

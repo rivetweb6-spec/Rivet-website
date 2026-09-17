@@ -12,7 +12,10 @@ export type ServiceCard = {
 };
 
 export function Services({ items }: { items?: ServiceCard[] }) {
-  const list = items && items.length > 0 ? items : fallbackServices;
+  // `undefined` = API unreachable (dev fallback OK). `[]` = API empty — do not invent links.
+  const list = items === undefined ? fallbackServices : items;
+
+  if (list.length === 0) return null;
 
   return (
     <Section className="bg-pearl">

@@ -7,6 +7,9 @@ import { api } from '@/lib/api';
 import { metadataForStaticPage } from '@/lib/page-seo';
 import { daysUntilDeadline, formatDeadline, stripHtml } from '@/lib/vacancies';
 
+/** CMS-backed; skip static prerender so `next build` does not require a live API. */
+export const dynamic = 'force-dynamic';
+
 export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {

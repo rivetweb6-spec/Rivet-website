@@ -9,6 +9,9 @@ import { Breadcrumbs } from '@/components/seo/breadcrumbs';
 import { api, type TeamMember, type TeamSection } from '@/lib/api';
 import { metadataForStaticPage } from '@/lib/page-seo';
 
+/** CMS-backed; skip static prerender so `next build` does not require a live API. */
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(): Promise<Metadata> {
   return metadataForStaticPage('team');
 }
