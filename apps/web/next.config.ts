@@ -34,15 +34,17 @@ const nextConfig: NextConfig = {
   },
   /**
    * Browser calls `/api/*` on the web origin; Next proxies to the Express API.
-   * Avoids production CORS failures when the API is on a different host (e.g. Render).
+   * Use beforeFiles so the proxy wins before the App Router 404 on Vercel.
    */
   async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${apiProxyTarget}/:path*`,
-      },
-    ];
+    return {
+      beforeFiles: [
+        {
+          source: '/api/:path*',
+          destination: `${apiProxyTarget}/:path*`,
+        },
+      ],
+    };
   },
 };
 
