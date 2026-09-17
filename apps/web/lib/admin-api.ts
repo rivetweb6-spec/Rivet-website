@@ -6,8 +6,13 @@
  */
 
 function getApiUrl(): string {
-  if (typeof window !== 'undefined') return '/api';
-  return process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
+  const explicit = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '');
+  // Browser: prefer the public API origin in production (Vercel `/api` proxy is unreliable).
+  // Fall back to same-origin `/api` when the env var is unset (local proxy via next.config).
+  if (typeof window !== 'undefined') {
+    return explicit || '/api';
+  }
+  return explicit ?? 'http://localhost:4000/api';
 }
 
 /** Direct API origin so multipart uploads bypass the Next.js/Vercel proxy size cap. */
