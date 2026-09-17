@@ -3,6 +3,12 @@
   "framework": "nextjs",
   "installCommand": "cd ../.. && corepack enable && PRISMA_SKIP_POSTINSTALL_GENERATE=1 pnpm install --frozen-lockfile",
   "buildCommand": "cd ../.. && pnpm --filter @rivet/web build",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://rivet-api-4ccw.onrender.com/api/:path*"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
