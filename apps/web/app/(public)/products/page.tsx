@@ -7,6 +7,9 @@ import { api } from '@/lib/api';
 import { pageMetadata } from '@/lib/seo';
 import { metadataForStaticPage } from '@/lib/page-seo';
 
+/** CMS-backed; skip static prerender so `next build` does not require a live API. */
+export const dynamic = 'force-dynamic';
+
 type SearchParams = Promise<{
   search?: string;
   page?: string;
