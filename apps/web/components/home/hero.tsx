@@ -113,7 +113,7 @@ export function Hero({ content }: { content?: HeroContent | null }) {
                 Explore Products
               </Button>
             </Link>
-            <Button variant="secondary" size="lg" onClick={() => open()}>
+            <Button variant="primary" size="lg" onClick={() => open()}>
               Request a Quotation
             </Button>
             <Link href="/contact">
