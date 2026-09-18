@@ -213,7 +213,7 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                   href="/request-quotation"
                   className="inline-flex h-14 items-center justify-center rounded-[12px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
                 >
-                  Quotation page
+                  Open full quotation form
                 </Link>
                 <Link
                   href="/contact"

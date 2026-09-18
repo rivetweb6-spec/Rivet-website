@@ -60,7 +60,7 @@ export default async function ServicesPage() {
                 href="/request-quotation"
                 className="inline-flex h-14 items-center justify-center rounded-[12px] border border-white/25 px-8 text-[1rem] font-medium text-white transition-all hover:border-gold hover:text-gold"
               >
-                Quotation page
+                Open full quotation form
               </Link>
             </div>
           </FadeUp>
