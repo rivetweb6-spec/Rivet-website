@@ -28,13 +28,37 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const { open } = useQuotationModal();
 
+  // Lock page scroll while the mobile drawer is open; always restore on close/unmount.
+  React.useEffect(() => {
+    if (!menuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
+
+  // Close drawer on Escape and when crossing into desktop layout.
+  React.useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const onBreakpoint = () => {
+      if (mq.matches) setMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    mq.addEventListener('change', onBreakpoint);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      mq.removeEventListener('change', onBreakpoint);
+    };
+  }, [menuOpen]);
+
   return (
     <>
-      <motion.header
-        className={`fixed inset-x-0 top-0 z-50 border-b border-gold/15${
-          menuOpen ? ' overflow-hidden' : ''
-        }`}
-      >
+      <motion.header className="fixed inset-x-0 top-0 z-50 border-b border-gold/15">
         {/* Opaque brand fill — exact #001A30 */}
         <div className="absolute inset-0" style={{ backgroundColor: '#001A30' }} aria-hidden="true" />
         {/* 80px grid aligned with hero */}
@@ -97,44 +121,74 @@ export function Navbar() {
             </button>
           </div>
         </div>
-
-        <AnimatePresence>
-          {menuOpen && (
-            <motion.nav
-              id="mobile-nav"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="relative overflow-hidden border-t border-gold/15 lg:hidden"
-              aria-label="Mobile"
-            >
-              <div className="flex flex-col px-6 py-6">
-                {links.map((l) =>
-                  'menu' in l && l.menu ? (
-                    <CompanyMenu
-                      key={l.href}
-                      variant="mobile"
-                      onNavigate={() => setMenuOpen(false)}
-                    />
-                  ) : (
-                    <Link
-                      key={l.href}
-                      href={l.href}
-                      onClick={() => setMenuOpen(false)}
-                      className="border-b border-white/5 py-4 text-[0.9375rem] tracking-wide text-white/80 transition-colors hover:text-gold"
-                    >
-                      {l.label}
-                    </Link>
-                  ),
-                )}
-                <Button variant="primary" className="mt-6" onClick={() => open()}>
-                  Request a Quotation
-                </Button>
-              </div>
-            </motion.nav>
-          )}
-        </AnimatePresence>
       </motion.header>
+
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.button
+            key="mobile-nav-backdrop"
+            type="button"
+            aria-label="Close menu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-40 bg-navy-deep/60 backdrop-blur-sm lg:hidden"
+            onClick={() => setMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.nav
+            key="mobile-nav-drawer"
+            id="mobile-nav"
+            role="navigation"
+            aria-label="Mobile"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'tween', duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-y-0 right-0 z-[45] flex w-[min(20rem,100vw)] max-w-full flex-col overflow-x-hidden overflow-y-auto border-l border-gold/15 shadow-[var(--shadow-lg)] lg:hidden"
+          >
+            <div className="absolute inset-0" style={{ backgroundColor: '#001A30' }} aria-hidden="true" />
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                backgroundImage:
+                  'linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)',
+                backgroundSize: '80px 80px',
+                backgroundPosition: '0 0',
+              }}
+              aria-hidden="true"
+            />
+            <div className="relative flex flex-1 flex-col px-6 pt-[5.25rem] pb-8">
+              {links.map((l) =>
+                'menu' in l && l.menu ? (
+                  <CompanyMenu
+                    key={l.href}
+                    variant="mobile"
+                    onNavigate={() => setMenuOpen(false)}
+                  />
+                ) : (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="border-b border-white/5 py-4 text-[0.9375rem] tracking-wide text-white/80 transition-colors hover:text-gold"
+                  >
+                    {l.label}
+                  </Link>
+                ),
+              )}
+              <Button variant="primary" className="mt-6" onClick={() => open()}>
+                Request a Quotation
+              </Button>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
 
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
