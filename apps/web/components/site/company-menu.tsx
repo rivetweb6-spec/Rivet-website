@@ -15,6 +15,50 @@ export function CompanyMenu({
   onNavigate?: () => void;
   variant: 'desktop' | 'mobile';
 }) {
+  if (variant === 'mobile') {
+    return <MobileCompanyMenu onNavigate={onNavigate} />;
+  }
+  return <DesktopCompanyMenu onNavigate={onNavigate} />;
+}
+
+function MobileCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <div>
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls="company-mobile-submenu"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between border-b border-white/5 py-4 text-[0.9375rem] tracking-wide text-white/80 transition-colors hover:text-gold"
+      >
+        Company
+        <ChevronDown
+          size={16}
+          className={cn('transition-transform', open && 'rotate-180')}
+          aria-hidden="true"
+        />
+      </button>
+      {open && (
+        <div id="company-mobile-submenu" className="border-b border-white/5 pb-3 pl-4">
+          {companyNavLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={onNavigate}
+              className="block py-2.5 text-[0.875rem] text-white/70 transition-colors hover:text-gold"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DesktopCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
   const wrapRef = React.useRef<HTMLDivElement>(null);
@@ -35,41 +79,6 @@ export function CompanyMenu({
       window.removeEventListener('keydown', onKey);
     };
   }, [open]);
-
-  if (variant === 'mobile') {
-    return (
-      <div>
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-controls="company-mobile-submenu"
-          onClick={() => setOpen((v) => !v)}
-          className="flex w-full items-center justify-between border-b border-white/5 py-4 text-[0.9375rem] tracking-wide text-white/80 transition-colors hover:text-gold"
-        >
-          Company
-          <ChevronDown
-            size={16}
-            className={cn('transition-transform', open && 'rotate-180')}
-            aria-hidden="true"
-          />
-        </button>
-        {open && (
-          <div id="company-mobile-submenu" className="border-b border-white/5 pb-3 pl-4">
-            {companyNavLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={onNavigate}
-                className="block py-2.5 text-[0.875rem] text-white/70 transition-colors hover:text-gold"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
 
   return (
     <div
