@@ -182,7 +182,14 @@ export function Navbar() {
                   </Link>
                 ),
               )}
-              <Button variant="primary" className="mt-6" onClick={() => open()}>
+              <Button
+                variant="primary"
+                className="mt-6"
+                onClick={() => {
+                  setMenuOpen(false);
+                  open();
+                }}
+              >
                 Request a Quotation
               </Button>
             </div>
