@@ -1,13 +1,17 @@
+import type { ReactNode } from 'react';
 import { Container, Eyebrow } from '@/components/ui/container';
 
 export function PageHero({
   eyebrow,
   title,
   description,
+  lead,
 }: {
   eyebrow: string;
   title: string;
   description?: string;
+  /** Optional content above the eyebrow (e.g. breadcrumbs) — avoids a second header clearance strip. */
+  lead?: ReactNode;
 }) {
   return (
     <section className="relative overflow-hidden bg-navy-deep pt-36 pb-20 md:pt-44 md:pb-24 luxury-grain">
@@ -25,6 +29,7 @@ export function PageHero({
         aria-hidden="true"
       />
       <Container className="relative">
+        {lead}
         <div className="rivet-line max-w-3xl lg:pl-8">
           <Eyebrow className="text-gold">{eyebrow}</Eyebrow>
           <h1 className="headline-display mt-5 text-[2.5rem] text-white sm:text-[3.25rem] lg:text-[3.75rem]">

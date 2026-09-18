@@ -16,17 +16,17 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RequestQuotationPage() {
   return (
     <>
-      <section className="bg-bg pt-28 pb-2 md:pt-32">
-        <Container>
-          <Breadcrumbs
-            items={[
-              { name: 'Home', path: '/' },
-              { name: 'Request a Quotation', path: '/request-quotation' },
-            ]}
-          />
-        </Container>
-      </section>
       <PageHero
+        lead={
+          <div className="mb-8 text-white/70 [&_a]:text-white/70 [&_a:hover]:text-gold [&_[aria-current]]:text-white">
+            <Breadcrumbs
+              items={[
+                { name: 'Home', path: '/' },
+                { name: 'Request a Quotation', path: '/request-quotation' },
+              ]}
+            />
+          </div>
+        }
         eyebrow="Project pricing"
         title="Request a quotation"
         description="Tell us about your project. We prepare tailored quotations for elevators, granite, doors, furniture and building materials supplied in Ethiopia."
