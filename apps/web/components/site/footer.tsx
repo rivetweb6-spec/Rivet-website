@@ -130,16 +130,8 @@ export function Footer({ contact }: { contact?: ContactInfo | null }) {
           </div>
         )}
 
-        <div className="mt-10 flex flex-col justify-between gap-4 border-t border-white/8 pt-8 text-[0.75rem] text-white/35 sm:flex-row">
+        <div className="mt-10 border-t border-white/8 pt-8 text-[0.75rem] text-white/35">
           <span>© {new Date().getFullYear()} River Company (RIVET). All rights reserved.</span>
-          <div className="flex gap-8">
-            <Link href="/contact" className="transition-colors hover:text-gold">
-              Privacy Policy
-            </Link>
-            <Link href="/contact" className="transition-colors hover:text-gold">
-              Terms
-            </Link>
-          </div>
         </div>
 
         <p className="mt-6 text-center text-[0.75rem] tracking-[0.04em] text-white/35">
