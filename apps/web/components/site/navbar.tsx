@@ -210,6 +210,17 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
   const [categories, setCategories] = React.useState<{ name: string; slug: string }[]>([]);
   const [searched, setSearched] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  // Lock page scroll while search is open; always restore on close/unmount.
+  React.useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
 
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -221,6 +232,8 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
       setProducts([]);
       setCategories([]);
       setSearched(false);
+      setLoading(false);
+      setError(null);
     }
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
@@ -232,9 +245,12 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
       setProducts([]);
       setCategories([]);
       setSearched(false);
+      setLoading(false);
+      setError(null);
       return;
     }
     setLoading(true);
+    setError(null);
     let cancelled = false;
     const timer = window.setTimeout(async () => {
       try {
@@ -244,7 +260,11 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
         setCategories(data.categories);
         setSearched(true);
       } catch {
-        /* suggestions are best-effort */
+        if (cancelled) return;
+        setProducts([]);
+        setCategories([]);
+        setSearched(false);
+        setError('Suggestions unavailable. Press Enter to search all products.');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -267,7 +287,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
     go(`/products?search=${encodeURIComponent(q)}`);
   };
 
-  const showNoResults = searched && !loading && products.length === 0;
+  const showNoResults = searched && !loading && !error && products.length === 0;
 
   return (
     <AnimatePresence>
@@ -308,12 +328,24 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
                   type="button"
                   onClick={onClose}
                   aria-label="Close search"
-                  className="text-white/60 transition-colors hover:text-gold"
+                  className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-white/60 transition-colors hover:bg-white/8 hover:text-gold"
                 >
                   <X size={22} />
                 </button>
               </div>
             </form>
+
+            {loading && (
+              <p className="mt-5 text-[0.8125rem] tracking-wide text-white/50" role="status">
+                Searching…
+              </p>
+            )}
+
+            {error && (
+              <p className="mt-5 text-[0.8125rem] tracking-wide text-gold" role="alert">
+                {error}
+              </p>
+            )}
 
             {products.length > 0 && (
               <ul className="mt-4 overflow-hidden rounded-[16px] bg-navy-deep/90 ring-1 ring-white/10">
@@ -386,7 +418,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
               </div>
             )}
 
-            {!searched && (
+            {!searched && !loading && !error && (
               <p className="mt-5 text-[0.8125rem] tracking-wide text-white/50">
                 Start typing for suggestions, or press Enter to search. Esc to close.
               </p>
