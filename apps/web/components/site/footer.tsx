@@ -133,19 +133,6 @@ export function Footer({ contact }: { contact?: ContactInfo | null }) {
         <div className="mt-10 border-t border-white/8 pt-8 text-[0.75rem] text-white/35">
           <span>© {new Date().getFullYear()} River Company (RIVET). All rights reserved.</span>
         </div>
-
-        <p className="mt-6 text-center text-[0.75rem] tracking-[0.04em] text-white/35">
-          Developed by{' '}
-          <a
-            href="https://www.linkedin.com/in/abel-erkalew-32525534b"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Abel Erkalew on LinkedIn (opens in a new tab)"
-            className="text-white/55 transition-colors duration-300 hover:text-gold"
-          >
-            Abel Erkalew
-          </a>
-        </p>
       </Container>
     </footer>
   );
