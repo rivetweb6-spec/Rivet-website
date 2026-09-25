@@ -7,10 +7,12 @@ const analyze = withBundleAnalyzer({
 });
 
 /** Express API base including `/api` — used for same-origin browser proxy rewrites. */
+const rawTarget =
+  process.env.API_PROXY_TARGET?.trim() ||
+  process.env.NEXT_PUBLIC_API_URL?.trim();
+
 const apiProxyTarget = (
-  process.env.API_PROXY_TARGET ??
-  process.env.NEXT_PUBLIC_API_URL ??
-  'http://localhost:4000/api'
+  rawTarget || 'https://rivet-api-4ccw.onrender.com/api'
 ).replace(/\/$/, '');
 
 const nextConfig: NextConfig = {

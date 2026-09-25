@@ -8,15 +8,18 @@
 
 function getApiUrl(): string {
   if (typeof window !== 'undefined') return '/api';
-  return process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
+  return (
+    process.env.NEXT_PUBLIC_API_URL?.trim() ||
+    'https://rivet-api-4ccw.onrender.com/api'
+  );
 }
 
 /** Direct API origin so CV uploads can bypass the Next.js/Vercel proxy size cap. */
 function getDirectApiUrl(): string {
-  const explicit = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '');
+  const explicit = process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/$/, '');
   if (explicit) return explicit;
   if (typeof window !== 'undefined') return '/api';
-  return 'http://localhost:4000/api';
+  return 'https://rivet-api-4ccw.onrender.com/api';
 }
 
 export class ApiError extends Error {
