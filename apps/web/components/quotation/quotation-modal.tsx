@@ -173,6 +173,7 @@ export function QuotationModal({
     <AnimatePresence>
       {open && (
         <motion.div
+          data-lenis-prevent
           className="fixed inset-0 z-[100] flex items-center justify-center p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -188,7 +189,9 @@ export function QuotationModal({
             role="dialog"
             aria-modal="true"
             aria-labelledby="quotation-modal-title"
-            className="relative z-10 max-h-[92dvh] w-full max-w-lg overflow-y-auto overflow-x-hidden rounded-[20px] bg-surface shadow-[var(--shadow-bloom)]"
+            data-lenis-prevent
+            onWheel={(e) => e.stopPropagation()}
+            className="relative z-10 max-h-[92dvh] w-full max-w-lg overflow-y-auto overflow-x-hidden overscroll-contain rounded-[20px] bg-surface shadow-[var(--shadow-bloom)]"
             initial={{ opacity: 0, y: 24, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
