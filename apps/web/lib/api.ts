@@ -77,6 +77,53 @@ async function request<T>(path: string, init?: RequestOptions): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+/**
+ * Retry-safe wrapper for **non-idempotent** POST requests (quotations, contact
+ * forms) that may fail because the Render free-tier backend is cold-starting.
+ *
+ * Safety contract:
+ *  - `fetch()` throwing means the request never reached the server (DNS / TCP
+ *    failure), so the POST was never processed. A retry is safe.
+ *  - An HTTP error response (4xx / 5xx — including 502 / 504 gateway timeouts)
+ *    means the server *did* receive the request, so we must NOT retry in order
+ *    to avoid duplicate records.
+ *
+ * On a network-level failure the function sends a cheap GET /health probe to
+ * wake the backend, then retries the original POST exactly once.
+ */
+async function requestWithWakeRetry<T>(
+  path: string,
+  init: RequestOptions,
+): Promise<T> {
+  try {
+    return await request<T>(path, init);
+  } catch (err) {
+    // Only retry on network-level failures (status 0 = fetch threw).
+    // Any HTTP response (4xx, 5xx) means the server received the request;
+    // retrying could create a duplicate record.
+    if (!(err instanceof ApiError) || err.status !== 0) throw err;
+
+    // Probe the health endpoint to wake the backend from a cold start.
+    // Use a generous 45-second timeout — Render cold starts can take 30s+.
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 45_000);
+    try {
+      await fetch(`${getApiUrl()}/health`, {
+        signal: controller.signal,
+        cache: 'no-store',
+      });
+    } catch {
+      // Health probe also failed — server is truly unreachable.
+      throw err;
+    } finally {
+      clearTimeout(timer);
+    }
+
+    // Server is now awake. Retry the original POST exactly once.
+    return request<T>(path, init);
+  }
+}
+
 async function parseError(res: Response): Promise<string> {
   let message = res.statusText;
   try {
@@ -434,7 +481,7 @@ export const api = {
     quantity?: string;
     message?: string;
   }) =>
-    request<{ ok: boolean; id: string }>('/quotation-requests', {
+    requestWithWakeRetry<{ ok: boolean; id: string }>('/quotation-requests', {
       method: 'POST',
       body: JSON.stringify(data),
       revalidate: false,
