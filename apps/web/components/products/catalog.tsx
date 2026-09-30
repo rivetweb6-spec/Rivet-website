@@ -74,12 +74,15 @@ export function ProductsCatalog({
     return () => window.clearTimeout(timer);
   }, [searchValue, search, update]);
 
+  const primaryCategories = categories.filter((c) => !c.parentId);
+  const filterCategories = primaryCategories.length > 0 ? primaryCategories : categories;
+
   return (
     <div className={cn('transition-opacity', pending && 'opacity-60')}>
       <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-wrap gap-2">
           <FilterChip active={!activeCategory} href="/products" label="All" />
-          {categories.map((c) => (
+          {filterCategories.map((c) => (
             <FilterChip
               key={c.slug}
               active={activeCategory === c.slug}

@@ -4,6 +4,7 @@ import { Breadcrumbs } from '@/components/seo/breadcrumbs';
 import { FaqSection } from '@/components/seo/faq-section';
 import { ProductGroupJsonLd } from '@/components/seo/json-ld';
 import { RivetImage } from '@/components/ui/rivet-image';
+import { ElevatorSolutions } from '@/components/products/elevator-solutions';
 import type { Category, Product, Service } from '@/lib/api';
 import { assets } from '@/lib/assets';
 import { buildProductAltText, parseFaqs } from '@/lib/seo';
@@ -19,6 +20,7 @@ export function CategoryPageView({
 }) {
   const faqs = parseFaqs(category.faqs);
   const relatedServices = services.slice(0, 3);
+  const isElevator = category.slug.startsWith('elevator');
 
   return (
     <>
@@ -40,13 +42,18 @@ export function CategoryPageView({
             items={[
               { name: 'Home', path: '/' },
               { name: 'Products', path: '/products' },
+              ...(category.parent
+                ? [{ name: category.parent.name, path: `/products/${category.parent.slug}` }]
+                : []),
               { name: category.name, path: `/products/${category.slug}` },
             ]}
           />
 
           <div className="mt-10 grid items-center gap-10 lg:mt-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
             <div>
-              <Eyebrow>Product category</Eyebrow>
+              <Eyebrow>
+                {category.parent ? `Product category · ${category.parent.name}` : 'Product category'}
+              </Eyebrow>
               <h1 className="mt-3 text-[2.25rem] sm:text-[2.75rem] lg:text-[3.25rem]">
                 {category.name}
               </h1>
@@ -54,6 +61,31 @@ export function CategoryPageView({
                 {category.description ??
                   `Explore premium ${category.name.toLowerCase()} from Rivet — quality products for commercial and residential projects in Ethiopia.`}
               </p>
+
+              {category.children && category.children.length > 0 && (
+                <div className="mt-6">
+                  <p className="text-[0.75rem] uppercase tracking-wider text-muted font-medium mb-2.5">
+                    Subcategories
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {category.children.map((sub) => (
+                      <Link
+                        key={sub.slug}
+                        href={`/products/${sub.slug}`}
+                        className="inline-flex items-center rounded-full border border-navy/15 bg-pearl/60 px-3.5 py-1.5 text-[0.8125rem] font-medium text-navy transition-all hover:border-gold hover:bg-gold/10 hover:text-navy"
+                      >
+                        {sub.name}
+                        {sub._count?.products !== undefined && (
+                          <span className="ml-1.5 rounded-full bg-navy/10 px-1.5 py-0.2 text-[0.6875rem] text-muted font-normal">
+                            {sub._count.products}
+                          </span>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
                   href="/request-quotation"
@@ -84,6 +116,20 @@ export function CategoryPageView({
           </div>
         </Container>
       </section>
+
+      {isElevator ? (
+        <ElevatorSolutions category={category} />
+      ) : category.children?.some((c) => c.children && c.children.length > 0) ? (
+        <ElevatorSolutions
+          category={category}
+          eyebrow={`${category.name} Solutions`}
+          title={`Explore our ${category.name.toLowerCase()} range`}
+          description={
+            category.description ??
+            `Explore the complete ${category.name.toLowerCase()} range from Rivet.`
+          }
+        />
+      ) : null}
 
       <Section>
         <Container>

@@ -162,7 +162,21 @@ export default function AdminProductsPage() {
             {products.map((p) => (
               <tr key={p.id} className="border-b border-divider last:border-0">
                 <td className="px-5 py-3 font-medium text-ink">{p.name}</td>
-                <td className="px-5 py-3 text-muted">{p.category?.name ?? '—'}</td>
+                <td className="px-5 py-3 text-muted">
+                  {p.category ? (
+                    <span>
+                      {p.category.parent?.parent && (
+                        <span className="text-muted/60">{p.category.parent.parent.name} &rarr; </span>
+                      )}
+                      {p.category.parent && (
+                        <span className="text-muted/80">{p.category.parent.name} &rarr; </span>
+                      )}
+                      <span className="font-medium text-ink">{p.category.name}</span>
+                    </span>
+                  ) : (
+                    '—'
+                  )}
+                </td>
                 <td className="px-5 py-3">
                   <StatusBadge status={p.status} />
                 </td>
@@ -207,11 +221,28 @@ export default function AdminProductsPage() {
               value={form.categoryId}
               onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
             >
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
+              <option value="">Select a category</option>
+              {(() => {
+                const map = new Map<string, Category>();
+                for (const c of categories) map.set(c.id, c);
+                const getPath = (c: Category): string => {
+                  const parts: string[] = [c.name];
+                  let cur = c.parentId ? map.get(c.parentId) : null;
+                  while (cur) {
+                    parts.unshift(cur.name);
+                    cur = cur.parentId ? map.get(cur.parentId) : null;
+                  }
+                  return parts.join(' → ');
+                };
+                return [...categories]
+                  .map((c) => ({ id: c.id, path: getPath(c) }))
+                  .sort((a, b) => a.path.localeCompare(b.path))
+                  .map((opt) => (
+                    <option key={opt.id} value={opt.id}>
+                      {opt.path}
+                    </option>
+                  ));
+              })()}
             </AdminSelect>
             <AdminInput
               label="Brand"

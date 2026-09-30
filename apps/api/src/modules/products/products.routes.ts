@@ -59,6 +59,17 @@ const searchCandidateSelect = {
   category: { select: { name: true, slug: true } },
 } as const;
 
+const productInclude = {
+  category: {
+    include: {
+      parent: {
+        include: { parent: true },
+      },
+    },
+  },
+  images: { orderBy: { order: 'asc' } },
+} as const;
+
 // Public — list with search, filter, pagination
 router.get(
   '/',
@@ -66,7 +77,13 @@ router.get(
   asyncHandler(async (req, res) => {
     const q = req.query as unknown as z.infer<typeof listQuery>;
     const where: Prisma.ProductWhereInput = { status: 'PUBLISHED' };
-    if (q.category) where.category = { slug: q.category };
+    if (q.category) {
+      where.OR = [
+        { category: { slug: q.category } },
+        { category: { parent: { slug: q.category } } },
+        { category: { parent: { parent: { slug: q.category } } } },
+      ];
+    }
     if (q.featured) where.featured = q.featured === 'true';
 
     if (q.search?.trim()) {
@@ -78,7 +95,7 @@ router.get(
         .map((r) => r.id);
       const rows = await prisma.product.findMany({
         where: { id: { in: pageIds } },
-        include: { category: true, images: { orderBy: { order: 'asc' } } },
+        include: productInclude,
       });
       const byId = new Map(rows.map((row) => [row.id, row]));
       const products = pageIds.flatMap((id) => byId.get(id) ?? []);
@@ -99,7 +116,7 @@ router.get(
       prisma.product.count({ where }),
       prisma.product.findMany({
         where,
-        include: { category: true, images: { orderBy: { order: 'asc' } } },
+        include: productInclude,
         orderBy: [{ featured: 'desc' }, { createdAt: 'desc' }],
         skip: (q.page - 1) * q.pageSize,
         take: q.pageSize,
@@ -176,7 +193,7 @@ router.get(
   requireRole('ADMIN', 'EDITOR'),
   asyncHandler(async (_req, res) => {
     const products = await prisma.product.findMany({
-      include: { category: true, images: { orderBy: { order: 'asc' } } },
+      include: productInclude,
       orderBy: { updatedAt: 'desc' },
     });
     res.json({ products });
@@ -189,7 +206,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const product = await prisma.product.findUnique({
       where: { slug: param(req, 'slug') },
-      include: { category: true, images: { orderBy: { order: 'asc' } } },
+      include: productInclude,
     });
     if (!product || product.status !== 'PUBLISHED') throw notFound('Product not found');
 
@@ -248,7 +265,7 @@ router.post(
         features: data.features ?? undefined,
         images: images ? { create: images.map((img, i) => ({ ...img, order: i })) } : undefined,
       },
-      include: { images: true, category: true },
+      include: productInclude,
     });
     res.status(201).json({ product });
   }),
@@ -314,7 +331,7 @@ router.put(
             }
           : {}),
       },
-      include: { images: true, category: true },
+      include: productInclude,
     });
     res.json({ product });
   }),

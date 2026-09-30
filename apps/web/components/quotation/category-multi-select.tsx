@@ -53,6 +53,7 @@ export function CategoryMultiSelect({
           'grid grid-cols-2 gap-2 rounded-[12px] border p-3 sm:grid-cols-3',
           error ? 'border-error/60' : 'border-border',
         )}
+        aria-invalid={error ? true : undefined}
       >
         {productInterests.map((interest) => {
           const checked = selected.includes(interest);

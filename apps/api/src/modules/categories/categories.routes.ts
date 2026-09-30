@@ -1,3 +1,4 @@
+import type { Prisma } from '@prisma/client';
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../../config/prisma.js';
@@ -20,12 +21,35 @@ const upsertSchema = z
   .object({
     name: z.string().min(1),
     slug: z.string().optional(),
+    parentId: z.string().nullable().optional().or(z.literal('')),
     description: z.string().optional().nullable(),
     image: imageRefSchema.optional().nullable().or(z.literal('')),
     order: z.number().int().optional(),
     faqs: z.array(faqItemSchema).optional().nullable(),
   })
   .merge(seoFieldsSchema);
+
+async function assertNoCircularParent(categoryId: string, candidateParentId: string): Promise<void> {
+  if (categoryId === candidateParentId) {
+    throw badRequest('A category cannot be its own parent.');
+  }
+  let currentId: string | null = candidateParentId;
+  const visited = new Set<string>([categoryId]);
+  while (currentId) {
+    if (visited.has(currentId)) {
+      throw badRequest('Circular parent category relationship is not allowed.');
+    }
+    visited.add(currentId);
+    const parentCat: { parentId: string | null } | null = await prisma.category.findUnique({
+      where: { id: currentId },
+      select: { parentId: true },
+    });
+    if (!parentCat) {
+      throw badRequest('Parent category not found.');
+    }
+    currentId = parentCat.parentId;
+  }
+}
 
 function readReassignToCategoryId(req: { query: unknown; body: unknown }): string | undefined {
   const fromQuery = (req.query as { reassignToCategoryId?: unknown }).reassignToCategoryId;
@@ -35,13 +59,40 @@ function readReassignToCategoryId(req: { query: unknown; body: unknown }): strin
   return id || undefined;
 }
 
+const categoryInclude: Prisma.CategoryInclude = {
+  parent: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      parentId: true,
+      parent: { select: { id: true, name: true, slug: true } },
+    },
+  },
+  children: {
+    orderBy: [{ order: 'asc' }, { name: 'asc' }],
+    include: {
+      parent: { select: { id: true, name: true, slug: true, parentId: true } },
+      children: {
+        orderBy: [{ order: 'asc' }, { name: 'asc' }],
+        include: {
+          parent: { select: { id: true, name: true, slug: true, parentId: true } },
+          _count: { select: { products: true, children: true } },
+        },
+      },
+      _count: { select: { products: true, children: true } },
+    },
+  },
+  _count: { select: { products: true, children: true } },
+};
+
 // Public
 router.get(
   '/',
   asyncHandler(async (_req, res) => {
     const categories = await prisma.category.findMany({
-      orderBy: { order: 'asc' },
-      include: { _count: { select: { products: true } } },
+      orderBy: [{ order: 'asc' }, { name: 'asc' }],
+      include: categoryInclude,
     });
     res.json({ categories });
   }),
@@ -52,6 +103,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const category = await prisma.category.findUnique({
       where: { slug: param(req, 'slug') },
+      include: categoryInclude,
     });
     if (!category) throw notFound('Category not found');
     res.json({ category });
@@ -77,8 +129,16 @@ router.post(
       noIndex,
       faqs,
       image,
+      parentId: rawParentId,
       ...data
     } = body;
+
+    const parentId = rawParentId && rawParentId.trim() ? rawParentId.trim() : null;
+    if (parentId) {
+      const parent = await prisma.category.findUnique({ where: { id: parentId } });
+      if (!parent) throw badRequest('Parent category not found.');
+    }
+
     const slug = await assertSlugAvailable('category', data.slug ?? slugify(data.name));
     const seo = normalizeSeoFields({
       seoTitle,
@@ -94,11 +154,13 @@ router.post(
     const category = await prisma.category.create({
       data: {
         ...data,
+        parentId,
         slug,
         image: image || null,
         faqs: toPrismaFaqs(faqs),
         ...seo,
       },
+      include: categoryInclude,
     });
     res.status(201).json({ category });
   }),
@@ -123,8 +185,18 @@ router.put(
       noIndex,
       faqs,
       image,
+      parentId: rawParentId,
       ...data
     } = body;
+
+    let parentId: string | null | undefined = undefined;
+    if (rawParentId !== undefined) {
+      const trimmed = typeof rawParentId === 'string' ? rawParentId.trim() : null;
+      parentId = trimmed || null;
+      if (parentId) {
+        await assertNoCircularParent(id, parentId);
+      }
+    }
 
     let slug = data.slug;
     if (slug !== undefined || data.name) {
@@ -152,11 +224,13 @@ router.put(
       where: { id },
       data: {
         ...data,
+        ...(parentId !== undefined ? { parentId } : {}),
         ...(slug !== undefined ? { slug } : {}),
         ...(image !== undefined ? { image: image || null } : {}),
         ...(faqs !== undefined ? { faqs: toPrismaFaqs(faqs) } : {}),
         ...seo,
       },
+      include: categoryInclude,
     });
     res.json({ category });
   }),
@@ -170,9 +244,21 @@ router.delete(
     const id = param(req, 'id');
     const category = await prisma.category.findUnique({
       where: { id },
-      include: { _count: { select: { products: true } } },
+      include: {
+        _count: { select: { products: true, children: true } },
+        children: { select: { id: true, name: true } },
+      },
     });
     if (!category) throw notFound('Category not found');
+
+    const childrenCount = category._count.children;
+    if (childrenCount > 0) {
+      const names = category.children.map((c) => c.name).join(', ');
+      throw conflict(
+        `This category has ${childrenCount} subcategor${childrenCount === 1 ? 'y' : 'ies'} (${names}). Please delete or reassign its subcategories before deleting this category.`,
+        { childrenCount },
+      );
+    }
 
     const productCount = category._count.products;
     const reassignToCategoryId = readReassignToCategoryId(req);

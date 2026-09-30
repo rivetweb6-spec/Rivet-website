@@ -75,8 +75,9 @@ export function QuotationForm({
     setErrors(validate(fields));
   };
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
     const found = validate(fields);
     setErrors(found);
     setTouched({
@@ -87,7 +88,15 @@ export function QuotationForm({
       productName: true,
       quantity: true,
     });
-    if (Object.keys(found).length > 0) return;
+    if (Object.keys(found).length > 0) {
+      requestAnimationFrame(() => {
+        const el = form.querySelector<HTMLElement>(
+          'input[aria-invalid="true"], textarea[aria-invalid="true"], [role="group"][aria-invalid="true"] input',
+        );
+        el?.focus();
+      });
+      return;
+    }
 
     setStatus('submitting');
     setSubmitError(null);
@@ -134,17 +143,24 @@ export function QuotationForm({
       <Field
         label="Full Name"
         required
+        autoComplete="name"
         value={fields.fullName}
         error={touched.fullName ? errors.fullName : undefined}
         onChange={(v) => set('fullName', v)}
         onBlur={() => blur('fullName')}
       />
-      <Field label="Company Name" value={fields.company} onChange={(v) => set('company', v)} />
+      <Field
+        label="Company Name"
+        autoComplete="organization"
+        value={fields.company}
+        onChange={(v) => set('company', v)}
+      />
       <div className="grid gap-4 sm:grid-cols-2">
         <Field
           label="Email Address"
           type="email"
           required
+          autoComplete="email"
           value={fields.email}
           error={touched.email ? errors.email : undefined}
           onChange={(v) => set('email', v)}
@@ -152,7 +168,9 @@ export function QuotationForm({
         />
         <Field
           label="Phone Number"
+          type="tel"
           required
+          autoComplete="tel"
           value={fields.phone}
           error={touched.phone ? errors.phone : undefined}
           onChange={(v) => set('phone', v)}
@@ -201,7 +219,11 @@ export function QuotationForm({
       <Button type="submit" variant="primary" size="lg" className="w-full" disabled={status === 'submitting'}>
         {status === 'submitting' ? 'Sending…' : 'Submit Quotation Request'}
       </Button>
-      {submitError && <p className="text-center text-[0.8125rem] text-error">{submitError}</p>}
+      {submitError && (
+        <p className="text-center text-[0.8125rem] text-error" role="alert">
+          {submitError}
+        </p>
+      )}
     </form>
   );
 }
@@ -215,6 +237,7 @@ function Field({
   required,
   type = 'text',
   placeholder,
+  autoComplete,
 }: {
   label: string;
   value: string;
@@ -224,8 +247,10 @@ function Field({
   required?: boolean;
   type?: string;
   placeholder?: string;
+  autoComplete?: string;
 }) {
   const id = React.useId();
+  const errorId = `${id}-error`;
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-[0.875rem] font-medium text-ink">
@@ -236,6 +261,9 @@ function Field({
         type={type}
         value={value}
         placeholder={placeholder}
+        autoComplete={autoComplete}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={cn(
@@ -243,7 +271,11 @@ function Field({
           error ? 'border-error/60' : 'border-border',
         )}
       />
-      {error && <p className="mt-1.5 text-[0.75rem] text-error">{error}</p>}
+      {error && (
+        <p id={errorId} className="mt-1.5 text-[0.75rem] text-error">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

@@ -127,3 +127,93 @@ export const productInterests = [
   'Building Materials',
   'Other',
 ];
+
+/* ── Elevator sub-categories ──────────────────────────────────────────── */
+
+export type ElevatorSubCategory = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  group: string;
+};
+
+export const elevatorSubCategories: ElevatorSubCategory[] = [
+  /* Passenger Elevators */
+  {
+    id: 'standard-passenger',
+    name: 'Standard Passenger Elevators',
+    description:
+      'Reliable traction and machine-room-less systems engineered for mid-rise residential and commercial buildings.',
+    image: assets.elevatorSolutions.standardPassenger,
+    group: 'Passenger Elevators',
+  },
+  {
+    id: 'premium-passenger',
+    name: 'Premium Passenger Elevators',
+    description:
+      'Luxury cabin finishes, whisper-quiet drives, and smart destination-dispatch technology for high-end developments.',
+    image: assets.elevatorSolutions.premiumPassenger,
+    group: 'Passenger Elevators',
+  },
+  {
+    id: 'panoramic',
+    name: 'Panoramic Elevators',
+    description:
+      'Glass-walled observation elevators that transform vertical transport into an architectural centrepiece.',
+    image: assets.elevatorSolutions.panoramic,
+    group: 'Passenger Elevators',
+  },
+
+  /* Commercial Elevators */
+  {
+    id: 'office-building',
+    name: 'Office Building Elevators',
+    description:
+      'High-traffic, energy-efficient elevator systems designed for peak-hour performance in commercial towers.',
+    image: assets.elevatorSolutions.officeBuilding,
+    group: 'Commercial Elevators',
+  },
+  {
+    id: 'hotel',
+    name: 'Hotel Elevators',
+    description:
+      'Elegant, ultra-quiet elevators with customisable interiors that complement five-star hospitality experiences.',
+    image: assets.elevatorSolutions.hotel,
+    group: 'Commercial Elevators',
+  },
+  {
+    id: 'shopping-mall',
+    name: 'Shopping Mall Elevators',
+    description:
+      'High-capacity passenger elevators engineered for constant foot traffic in retail and mixed-use environments.',
+    image: assets.elevatorSolutions.shoppingMall,
+    group: 'Commercial Elevators',
+  },
+
+  /* Service & Freight Elevators */
+  {
+    id: 'service',
+    name: 'Service Elevators',
+    description:
+      'Durable, back-of-house elevators built for staff, housekeeping, and light cargo movement.',
+    image: assets.elevatorSolutions.service,
+    group: 'Service & Freight Elevators',
+  },
+  {
+    id: 'freight',
+    name: 'Freight Elevators',
+    description:
+      'Heavy-platform lifts with reinforced cabins and wide door openings for palletised goods and equipment.',
+    image: assets.elevatorSolutions.freight,
+    group: 'Service & Freight Elevators',
+  },
+  {
+    id: 'heavy-duty',
+    name: 'Heavy-Duty Elevators',
+    description:
+      'Industrial-grade lifts rated for extreme payloads — ideal for warehouses, factories, and construction sites.',
+    image: assets.elevatorSolutions.heavyDuty,
+    group: 'Service & Freight Elevators',
+  },
+];

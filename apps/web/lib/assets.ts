@@ -44,6 +44,17 @@ export const assets = {
     sanitary: u('photo-1584622650111-993a426fbf0a'),
     materials: u('photo-1541888946425-d81bb19240f5'),
   },
+  elevatorSolutions: {
+    standardPassenger: u('photo-1621905252507-b35492cc74b4'),
+    premiumPassenger: u('photo-1486406146926-c627a92ad1ab'),
+    panoramic: u('photo-1520333789090-1afc82db536a'),
+    officeBuilding: u('photo-1497366754035-f200968a6e72'),
+    hotel: u('photo-1566073771259-6a8506099945'),
+    shoppingMall: u('photo-1519567241046-7f570a63b3e2'),
+    service: u('photo-1504307651254-35680f356dfd'),
+    freight: u('photo-1586528116311-ad8dd3c8310d'),
+    heavyDuty: u('photo-1581094794329-c8112a89af12'),
+  },
   products: {
     p1: u('photo-1621905252507-b35492cc74b4'),
     p2: u('photo-1615529182904-14819c35db37'),

@@ -122,6 +122,9 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
   const crumbs = [
     { name: 'Home', path: '/' },
     { name: 'Products', path: '/products' },
+    ...(product.category?.parent
+      ? [{ name: product.category.parent.name, path: `/products/${product.category.parent.slug}` }]
+      : []),
     ...(product.category
       ? [{ name: product.category.name, path: `/products/${product.category.slug}` }]
       : []),
@@ -160,7 +163,11 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                   href={`/products/${product.category.slug}`}
                   className="inline-block transition-colors hover:text-gold"
                 >
-                  <Eyebrow>{product.category.name}</Eyebrow>
+                  <Eyebrow>
+                    {product.category.parent
+                      ? `${product.category.parent.name} · ${product.category.name}`
+                      : product.category.name}
+                  </Eyebrow>
                 </Link>
               )}
               <h1 className="mt-3 text-[2.25rem] sm:text-[2.75rem]">{product.name}</h1>

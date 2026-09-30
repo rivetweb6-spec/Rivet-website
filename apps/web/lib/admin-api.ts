@@ -570,15 +570,26 @@ export type PageSeoRecord = {
 
 export type FaqItem = { question: string; answer: string };
 
+export type ParentCategoryRef = {
+  id: string;
+  name: string;
+  slug: string;
+  parentId?: string | null;
+  parent?: ParentCategoryRef | null;
+};
+
 export type Category = {
   id: string;
   name: string;
   slug: string;
+  parentId?: string | null;
+  parent?: ParentCategoryRef | null;
+  children?: Category[] | null;
   description: string | null;
   image: string | null;
   order: number;
   faqs?: FaqItem[] | null;
-  _count?: { products: number };
+  _count?: { products: number; children?: number };
 } & SeoFieldsPayload;
 
 export type AdminProduct = {
