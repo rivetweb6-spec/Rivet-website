@@ -21,7 +21,7 @@ services:
     branch: main
     healthCheckPath: /api/health
     buildCommand: pnpm install --frozen-lockfile --prod=false && pnpm db:generate && pnpm --filter @rivet/api build
-    startCommand: pnpm --filter @rivet/api prisma:deploy && pnpm --filter @rivet/api start
+    startCommand: pnpm --filter @rivet/api prisma:deploy && pnpm --filter @rivet/api exec tsx prisma/seed-elevator-subcategories.ts && pnpm --filter @rivet/api start
     envVars:
       - key: NODE_VERSION
         value: "24"
