@@ -40,11 +40,13 @@ export default async function HomePage() {
   // Pass `[]` when the API succeeded but returned no rows — never invent catalog links.
   const categories =
     categoriesResult.status === 'fulfilled'
-      ? categoriesResult.value.categories.map((c) => ({
-          slug: c.slug,
-          name: c.name,
-          image: c.image,
-        }))
+      ? categoriesResult.value.categories
+          .filter((c) => !c.parentId)
+          .map((c) => ({
+            slug: c.slug,
+            name: c.name,
+            image: c.image,
+          }))
       : undefined;
 
   let featured:

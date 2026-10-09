@@ -12,7 +12,13 @@ import { RivetImage } from '@/components/ui/rivet-image';
 import { productInterests } from '@/lib/data/content';
 import { api } from '@/lib/api';
 import { assets } from '@/lib/assets';
-import { buildProductAltText, categoryMetadata, notFoundMetadata, productMetadata } from '@/lib/seo';
+import {
+  buildProductAltText,
+  categoryMetadata,
+  getCategoryAncestors,
+  notFoundMetadata,
+  productMetadata,
+} from '@/lib/seo';
 
 type Params = Promise<{ slug: string }>;
 
@@ -64,16 +70,18 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
   // first so JSX is not returned from inside try/catch.
   let categoryPage: {
     category: Awaited<ReturnType<typeof api.categories.bySlug>>['category'];
+    allCategories: Awaited<ReturnType<typeof api.categories.list>>['categories'];
     products: Awaited<ReturnType<typeof api.products.list>>['products'];
     services: Awaited<ReturnType<typeof api.services.list>>['services'];
   } | null = null;
   try {
-    const { category } = await api.categories.bySlug(slug);
-    const [{ products }, { services }] = await Promise.all([
-      api.products.list({ category: category.slug, pageSize: 48 }),
+    const [{ category }, { categories }, { products }, { services }] = await Promise.all([
+      api.categories.bySlug(slug),
+      api.categories.list(),
+      api.products.list({ category: slug, pageSize: 48 }),
       api.services.list(),
     ]);
-    categoryPage = { category, products, services };
+    categoryPage = { category, allCategories: categories, products, services };
   } catch {
     /* Not a category slug — resolve as a product instead. */
   }
@@ -82,6 +90,7 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
     return (
       <CategoryPageView
         category={categoryPage.category}
+        allCategories={categoryPage.allCategories}
         products={categoryPage.products}
         services={categoryPage.services}
       />
@@ -99,9 +108,18 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
   const specs = Array.isArray(product.specs) ? product.specs : [];
   const features = Array.isArray(product.features) ? product.features : [];
   const primaryImage = product.images[0]?.url ?? null;
+  const candidateCategoryNames = [
+    product.category?.name,
+    ...getCategoryAncestors(product.category?.parent).map((a) => a.name).reverse(),
+  ].filter(Boolean) as string[];
+
+  const matchedInterest = candidateCategoryNames.find((catName) =>
+    productInterests.some((interest) => interest.toLowerCase() === catName.toLowerCase()),
+  );
+
   const productInterest =
     productInterests.find(
-      (interest) => interest.toLowerCase() === product.category?.name?.toLowerCase(),
+      (interest) => interest.toLowerCase() === matchedInterest?.toLowerCase(),
     ) ?? (product.category?.name ? 'Other' : undefined);
 
   let services: Awaited<ReturnType<typeof api.services.list>>['services'] = [];
@@ -122,9 +140,7 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
   const crumbs = [
     { name: 'Home', path: '/' },
     { name: 'Products', path: '/products' },
-    ...(product.category?.parent
-      ? [{ name: product.category.parent.name, path: `/products/${product.category.parent.slug}` }]
-      : []),
+    ...getCategoryAncestors(product.category?.parent),
     ...(product.category
       ? [{ name: product.category.name, path: `/products/${product.category.slug}` }]
       : []),
@@ -164,9 +180,10 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                   className="inline-block transition-colors hover:text-gold"
                 >
                   <Eyebrow>
-                    {product.category.parent
-                      ? `${product.category.parent.name} · ${product.category.name}`
-                      : product.category.name}
+                    {[
+                      ...getCategoryAncestors(product.category.parent).map((a) => a.name),
+                      product.category.name,
+                    ].join(' · ')}
                   </Eyebrow>
                 </Link>
               )}

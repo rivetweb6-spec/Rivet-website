@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { PageHero } from '@/components/site/page-hero';
 import { Container, Section } from '@/components/ui/container';
 import { ProductsCatalog } from '@/components/products/catalog';
@@ -12,6 +13,7 @@ export const dynamic = 'force-dynamic';
 
 type SearchParams = Promise<{
   search?: string;
+  category?: string;
   page?: string;
 }>;
 
@@ -32,10 +34,21 @@ export async function generateMetadata({
     });
   }
 
+  if (sp.category) {
+    const { categories } = await api.categories.list();
+    const cat = categories.find((c) => c.slug === sp.category);
+    const catName = cat?.name ?? sp.category;
+    return pageMetadata({
+      title: `${catName} — Products`,
+      description: `Browse premium ${catName.toLowerCase()} and architectural products from RIVET in Ethiopia.`,
+      path: `/products/${encodeURIComponent(sp.category)}`,
+    });
+  }
+
   if (page > 1) {
     return pageMetadata({
       title: `Products — Page ${page}`,
-      description: `Browse page ${page} of RIVET’s premium elevators, granite, doors, furniture and building materials in Ethiopia.`,
+      description: `Browse page ${page} of RIVET’s premium elevators, granite, doors, furniture and fine building materials in Ethiopia.`,
       path: `/products?page=${page}`,
     });
   }
@@ -45,15 +58,25 @@ export async function generateMetadata({
 
 export default async function ProductsPage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
+
+  // When visiting /products?category=xyz without search, redirect to the canonical category route /products/xyz
+  if (sp.category && !sp.search) {
+    redirect(`/products/${sp.category}`);
+  }
+
   const page = Number(sp.page ?? 1) || 1;
 
-  const [{ products, pagination }, { categories }] = await Promise.all([
+  const [{ products, pagination }, { categories }, allProductsRes] = await Promise.all([
     api.products.list({
       search: sp.search,
+      category: sp.category,
       page,
       pageSize: 12,
     }),
     api.categories.list(),
+    !sp.search
+      ? api.products.list({ pageSize: 100, page: 1 })
+      : Promise.resolve({ products: [], pagination: { total: 0, page: 1, pageSize: 100, pages: 1 } }),
   ]);
 
   return (
@@ -68,8 +91,10 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
           <Suspense fallback={<p className="text-muted">Loading catalog…</p>}>
             <ProductsCatalog
               products={products}
+              allProducts={allProductsRes.products}
               categories={categories}
               pagination={pagination}
+              activeCategory={sp.category}
               search={sp.search}
             />
           </Suspense>

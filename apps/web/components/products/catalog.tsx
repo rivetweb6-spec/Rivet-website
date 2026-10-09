@@ -2,16 +2,27 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
 import { Search } from 'lucide-react';
 import type { Category, Product, Pagination } from '@/lib/api';
-import { RivetImage } from '@/components/ui/rivet-image';
-import { assets } from '@/lib/assets';
-import { buildProductAltText } from '@/lib/seo';
 import { cn } from '@/lib/utils';
+import {
+  AllCategoriesHierarchy,
+  ProductCard,
+  buildCategoryTree,
+} from '@/components/products/category-group';
 
-function productsHref({ search, page }: { search?: string; page?: number }) {
+function productsHref({
+  search,
+  category,
+  page,
+}: {
+  search?: string;
+  category?: string;
+  page?: number;
+}) {
   const sp = new URLSearchParams();
+  if (category) sp.set('category', category);
   if (search) sp.set('search', search);
   if (page && page > 1) sp.set('page', String(page));
   const qs = sp.toString();
@@ -20,12 +31,14 @@ function productsHref({ search, page }: { search?: string; page?: number }) {
 
 export function ProductsCatalog({
   products,
+  allProducts = [],
   categories,
   pagination,
   activeCategory,
   search,
 }: {
   products: Product[];
+  allProducts?: Product[];
   categories: Category[];
   pagination: Pagination;
   activeCategory?: string;
@@ -42,19 +55,11 @@ export function ProductsCatalog({
 
   const update = useCallback(
     (patch: Record<string, string | undefined>) => {
-      // Category chips navigate to path-based category pages
-      if (patch.category) {
-        startTransition(() => {
-          router.push(`/products/${patch.category}`);
-        });
-        return;
-      }
       const next = new URLSearchParams(params.toString());
       Object.entries(patch).forEach(([k, v]) => {
         if (!v) next.delete(k);
         else next.set(k, v);
       });
-      next.delete('category');
       if (!('page' in patch)) next.delete('page');
       const qs = next.toString();
       startTransition(() => {
@@ -74,14 +79,26 @@ export function ProductsCatalog({
     return () => window.clearTimeout(timer);
   }, [searchValue, search, update]);
 
-  const primaryCategories = categories.filter((c) => !c.parentId);
+  // Build full hierarchy tree for all categories
+  const categoryTree = useMemo(() => buildCategoryTree(categories), [categories]);
+  const primaryCategories = useMemo(
+    () => categories.filter((c) => !c.parentId),
+    [categories],
+  );
   const filterCategories = primaryCategories.length > 0 ? primaryCategories : categories;
+
+  const isAllView = !search && !activeCategory;
 
   return (
     <div className={cn('transition-opacity', pending && 'opacity-60')}>
-      <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      {/* Category filter chips & search input */}
+      <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-wrap gap-2">
-          <FilterChip active={!activeCategory} href="/products" label="All" />
+          <FilterChip
+            active={!activeCategory && !search}
+            href="/products"
+            label="All"
+          />
           {filterCategories.map((c) => (
             <FilterChip
               key={c.slug}
@@ -110,78 +127,101 @@ export function ProductsCatalog({
         </form>
       </div>
 
-      {products.length === 0 ? (
-        <div className="py-20 text-center">
-          <p className="text-[1.125rem] text-ink">
-            {search ? <>No products found for &ldquo;{search}&rdquo;.</> : 'No products match your filters.'}
-          </p>
-          <p className="mt-2 text-[0.9375rem] text-muted">
-            Check the spelling, try a shorter keyword, or explore a category below.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-2">
-            {categories.map((c) => (
-              <FilterChip
-                key={c.slug}
-                active={false}
-                href={`/products/${c.slug}`}
-                label={c.name}
-              />
-            ))}
+      {/* If search query is active: show search results */}
+      {search ? (
+        products.length === 0 ? (
+          <div className="py-20 text-center">
+            <p className="text-[1.125rem] text-ink">
+              No products found for &ldquo;{search}&rdquo;.
+            </p>
+            <p className="mt-2 text-[0.9375rem] text-muted">
+              Check the spelling, try a shorter keyword, or explore a category below.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-2">
+              <FilterChip active={false} href="/products" label="All" />
+              {filterCategories.map((c) => (
+                <FilterChip
+                  key={c.slug}
+                  active={false}
+                  href={`/products/${c.slug}`}
+                  label={c.name}
+                />
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setSearchValue('');
+                update({ search: undefined, category: undefined });
+              }}
+              className="mt-8 text-[0.875rem] font-medium text-gold hover:underline"
+            >
+              View all products
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              setSearchValue('');
-              update({ search: undefined });
-            }}
-            className="mt-8 text-[0.875rem] font-medium text-gold hover:underline"
-          >
-            View all products
-          </button>
-        </div>
+        ) : (
+          <div>
+            <div className="mb-6 flex items-baseline justify-between">
+              <h2 className="headline-display text-[1.75rem]">
+                Search results for &ldquo;{search}&rdquo;
+              </h2>
+              <span className="text-[0.875rem] text-muted">
+                {pagination.total} result{pagination.total === 1 ? '' : 's'}
+              </span>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {products.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+        )
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Names the results region so the card headings do not jump from h1 to h3. */}
-          <h2 className="sr-only">
-            {search ? `Search results for ${search}` : 'Product catalog'}
-          </h2>
-          {products.map((p) => {
-            const image = p.images[0]?.url ?? assets.products.p1;
-            return (
-              <Link
-                key={p.id}
-                href={`/products/${p.slug}`}
-                className="luxury-card group overflow-hidden rounded-[4px] border border-border/60 bg-canvas shadow-[var(--shadow-sm)]"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <RivetImage
-                    src={image}
-                    alt={
-                      p.images[0]?.alt ||
-                      buildProductAltText(p.name, p.category?.name, p.shortDescription)
-                    }
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
-                  />
-                </div>
-                <div className="p-6">
-                  <span className="eyebrow text-gold-muted">{p.category?.name ?? 'Product'}</span>
-                  <h3 className="headline-display mt-2 text-[1.25rem]">{p.name}</h3>
-                  {p.shortDescription && (
-                    <p className="mt-2 line-clamp-2 text-[0.875rem] text-muted">{p.shortDescription}</p>
-                  )}
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+        /* When viewing "All" on /products: display the category hierarchy */
+        <>
+          {isAllView && (
+            <AllCategoriesHierarchy
+              tree={categoryTree}
+              allProducts={allProducts.length > 0 ? allProducts : products}
+            />
+          )}
+
+          {/* Complete Product Catalog Section */}
+          <div className="pt-4">
+            <div className="mb-8 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 border-b border-border/50 pb-5">
+              <div>
+                <span className="eyebrow text-gold-muted text-[0.6875rem] uppercase tracking-wider font-medium">
+                  Catalog
+                </span>
+                <h3 className="headline-display mt-1 text-[1.75rem] sm:text-[2rem]">
+                  {isAllView ? 'All Products' : `${activeCategory} Products`}
+                </h3>
+              </div>
+              <span className="text-[0.875rem] text-muted">
+                {pagination.total} product{pagination.total === 1 ? '' : 's'} in catalog
+              </span>
+            </div>
+
+            {products.length === 0 ? (
+              <div className="py-16 text-center text-muted">
+                <p>No products available in this section.</p>
+              </div>
+            ) : (
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {products.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+            )}
+          </div>
+        </>
       )}
 
+      {/* Pagination Controls */}
       {pagination.pages > 1 && (
         <div className="mt-14 flex items-center justify-center gap-3">
           <PagerLink
-            href={productsHref({ search, page: pagination.page - 1 })}
+            href={productsHref({ search, category: activeCategory, page: pagination.page - 1 })}
             disabled={pagination.page <= 1}
             label="Previous"
           />
@@ -189,7 +229,7 @@ export function ProductsCatalog({
             Page {pagination.page} of {pagination.pages}
           </span>
           <PagerLink
-            href={productsHref({ search, page: pagination.page + 1 })}
+            href={productsHref({ search, category: activeCategory, page: pagination.page + 1 })}
             disabled={pagination.page >= pagination.pages}
             label="Next"
           />

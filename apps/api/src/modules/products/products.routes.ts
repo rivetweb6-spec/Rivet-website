@@ -56,7 +56,24 @@ const searchCandidateSelect = {
   brand: true,
   countryOfOrigin: true,
   features: true,
-  category: { select: { name: true, slug: true } },
+  category: {
+    select: {
+      name: true,
+      slug: true,
+      parent: {
+        select: {
+          name: true,
+          slug: true,
+          parent: {
+            select: {
+              name: true,
+              slug: true,
+            },
+          },
+        },
+      },
+    },
+  },
 } as const;
 
 const productInclude = {
@@ -78,11 +95,26 @@ router.get(
     const q = req.query as unknown as z.infer<typeof listQuery>;
     const where: Prisma.ProductWhereInput = { status: 'PUBLISHED' };
     if (q.category) {
-      where.OR = [
-        { category: { slug: q.category } },
-        { category: { parent: { slug: q.category } } },
-        { category: { parent: { parent: { slug: q.category } } } },
-      ];
+      const allCategories = await prisma.category.findMany({
+        select: { id: true, slug: true, parentId: true },
+      });
+      const target = allCategories.find((c) => c.slug === q.category);
+      if (target) {
+        const matchingCategoryIds = new Set<string>([target.id]);
+        let added = true;
+        while (added) {
+          added = false;
+          for (const c of allCategories) {
+            if (c.parentId && matchingCategoryIds.has(c.parentId) && !matchingCategoryIds.has(c.id)) {
+              matchingCategoryIds.add(c.id);
+              added = true;
+            }
+          }
+        }
+        where.categoryId = { in: Array.from(matchingCategoryIds) };
+      } else {
+        where.category = { slug: q.category };
+      }
     }
     if (q.featured) where.featured = q.featured === 'true';
 

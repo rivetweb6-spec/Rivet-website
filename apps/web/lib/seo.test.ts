@@ -4,6 +4,7 @@ import {
   SITE_NAME,
   SITE_URL,
   buildProductAltText,
+  getCategoryAncestors,
   isIndexableSlug,
   pageMetadata,
   parseFaqs,
@@ -158,5 +159,39 @@ describe('resolveSeo keywords', () => {
       { title: 'Stone', description: 'Granite from Rivet.', path: '/products/granite', keywords: ['Ethiopia'] },
     );
     expect(meta.keywords).toEqual(['Rivet', 'granite', 'doors', 'Ethiopia']);
+  });
+});
+
+describe('getCategoryAncestors', () => {
+  it('returns empty array when parent is null or undefined', () => {
+    expect(getCategoryAncestors(null)).toEqual([]);
+    expect(getCategoryAncestors(undefined)).toEqual([]);
+  });
+
+  it('returns single ancestor for 2-level hierarchy', () => {
+    const parent = { name: 'Elevators', slug: 'elevators', parent: null };
+    expect(getCategoryAncestors(parent)).toEqual([
+      { name: 'Elevators', path: '/products/elevators' },
+    ]);
+  });
+
+  it('returns full top-down ancestor list for 3-level hierarchy', () => {
+    const root = { name: 'Elevators', slug: 'elevators', parent: null };
+    const parent = { name: 'Passenger Elevators', slug: 'passenger-elevators', parent: root };
+    expect(getCategoryAncestors(parent)).toEqual([
+      { name: 'Elevators', path: '/products/elevators' },
+      { name: 'Passenger Elevators', path: '/products/passenger-elevators' },
+    ]);
+  });
+
+  it('supports arbitrary depth beyond 3 levels', () => {
+    const l1 = { name: 'Elevators', slug: 'elevators', parent: null };
+    const l2 = { name: 'Passenger Elevators', slug: 'passenger-elevators', parent: l1 };
+    const l3 = { name: 'Standard Passenger Elevators', slug: 'standard-passenger-elevators', parent: l2 };
+    expect(getCategoryAncestors(l3)).toEqual([
+      { name: 'Elevators', path: '/products/elevators' },
+      { name: 'Passenger Elevators', path: '/products/passenger-elevators' },
+      { name: 'Standard Passenger Elevators', path: '/products/standard-passenger-elevators' },
+    ]);
   });
 });

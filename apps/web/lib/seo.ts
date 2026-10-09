@@ -69,6 +69,25 @@ export function buildProductAltText(
   return `${parts.join(' — ')} supplied by Rivet in Ethiopia`;
 }
 
+export type CategoryAncestor = {
+  name: string;
+  slug: string;
+  parent?: CategoryAncestor | null;
+};
+
+/** Build ancestor breadcrumbs from top-level down to the immediate parent. */
+export function getCategoryAncestors(
+  parent?: CategoryAncestor | null,
+): { name: string; path: string }[] {
+  const ancestors: { name: string; path: string }[] = [];
+  let current = parent;
+  while (current) {
+    ancestors.unshift({ name: current.name, path: `/products/${current.slug}` });
+    current = current.parent;
+  }
+  return ancestors;
+}
+
 export function buildPersonAltText(name: string, role?: string | null): string {
   const rolePart = role?.trim();
   return rolePart

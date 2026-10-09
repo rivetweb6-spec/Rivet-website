@@ -381,9 +381,10 @@ export type SearchSuggestion = {
 
 export const api = {
   categories: {
-    list: () => request<{ categories: Category[] }>('/categories', { tags: ['categories'] }),
-    bySlug: (slug: string) =>
-      request<{ category: Category }>(`/categories/${slug}`, { tags: ['categories'] }),
+    list: (opts?: RequestOptions) =>
+      request<{ categories: Category[] }>('/categories', { tags: ['categories'], revalidate: 0, ...opts }),
+    bySlug: (slug: string, opts?: RequestOptions) =>
+      request<{ category: Category }>(`/categories/${slug}`, { tags: ['categories'], revalidate: 0, ...opts }),
   },
 
   products: {

@@ -64,6 +64,19 @@ function typoBudget(length: number): number {
   return 0;
 }
 
+export type SearchableCategory = {
+  name: string;
+  slug: string;
+  parent?: {
+    name: string;
+    slug: string;
+    parent?: {
+      name: string;
+      slug: string;
+    } | null;
+  } | null;
+};
+
 export type SearchableProduct = {
   id: string;
   name: string;
@@ -73,7 +86,7 @@ export type SearchableProduct = {
   brand?: string | null;
   countryOfOrigin?: string | null;
   features?: unknown;
-  category?: { name: string; slug: string } | null;
+  category?: SearchableCategory | null;
 };
 
 type IndexedProduct = {
@@ -92,7 +105,17 @@ function words(text: string): string[] {
 
 function indexProduct(p: SearchableProduct): IndexedProduct {
   const features = Array.isArray(p.features) ? (p.features as unknown[]).join(' ') : '';
-  const primary = [p.name, p.brand, p.category?.name, p.category?.slug, p.slug]
+  const categoryNames = [
+    p.category?.name,
+    p.category?.slug,
+    p.category?.parent?.name,
+    p.category?.parent?.slug,
+    p.category?.parent?.parent?.name,
+    p.category?.parent?.parent?.slug,
+  ]
+    .filter(Boolean)
+    .join(' ');
+  const primary = [p.name, p.brand, categoryNames, p.slug]
     .filter(Boolean)
     .join(' ')
     .toLowerCase();

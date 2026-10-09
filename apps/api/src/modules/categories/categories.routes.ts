@@ -106,6 +106,37 @@ router.get(
       include: categoryInclude,
     });
     if (!category) throw notFound('Category not found');
+
+    if (category.parentId) {
+      const allCategories = await prisma.category.findMany({
+        select: { id: true, name: true, slug: true, parentId: true },
+      });
+      const catMap = new Map(allCategories.map((c) => [c.id, c]));
+
+      type ParentRef = {
+        id: string;
+        name: string;
+        slug: string;
+        parentId?: string | null;
+        parent?: ParentRef | null;
+      };
+
+      const buildAncestors = (pId: string | null | undefined): ParentRef | null => {
+        if (!pId) return null;
+        const p = catMap.get(pId);
+        if (!p) return null;
+        return {
+          id: p.id,
+          name: p.name,
+          slug: p.slug,
+          parentId: p.parentId,
+          parent: buildAncestors(p.parentId),
+        };
+      };
+
+      (category as Record<string, unknown>).parent = buildAncestors(category.parentId);
+    }
+
     res.json({ category });
   }),
 );
