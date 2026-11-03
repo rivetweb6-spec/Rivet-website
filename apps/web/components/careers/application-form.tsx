@@ -155,6 +155,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
         <textarea
           id="careers-cover-letter"
           rows={4}
+          maxLength={8000}
           value={fields.coverLetter}
           onChange={(e) => set('coverLetter', e.target.value)}
           placeholder="Optional — a short note about why this role fits."

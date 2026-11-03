@@ -6,33 +6,58 @@ import { validate } from '../../middleware/validate.js';
 import { requireAuth, requireRole } from '../../middleware/auth.js';
 import { asyncHandler, notFound, param } from '../../utils/http.js';
 import { toCsv } from '../../utils/csv.js';
+import {
+  FORM_LIMITS,
+  emailField,
+  optionalText,
+  parsePublicForm,
+  publicFormLimiter,
+  requiredText,
+} from '../../utils/public-forms.js';
 import { emitEvent } from '../../realtime/stream.js';
 
 const router = Router();
 
-/** Treat empty strings as omitted optional fields. */
-const optionalString = z
-  .union([z.string(), z.literal('')])
-  .optional()
-  .transform((v) => (v ? v : undefined));
-
+/**
+ * Public quotation form. `productSlug` / `productImage` are still accepted
+ * from older clients but ignored: they are looked up from `productId` so a
+ * visitor cannot plant an arbitrary URL (e.g. a tracking pixel) in the
+ * admin inbox.
+ */
 const createSchema = z.object({
-  fullName: z.string().min(1),
-  company: optionalString,
-  email: z.string().email(),
-  phone: z.string().min(1),
-  productInterest: z.string().min(1),
-  productId: optionalString,
-  productName: optionalString,
-  productSlug: optionalString,
-  // Accept any non-empty image URL/path (Cloudinary absolute or relative).
-  productImage: optionalString,
-  quantity: z
-    .union([z.string().max(60), z.literal('')])
-    .optional()
-    .transform((v) => (v ? v : undefined)),
-  message: optionalString,
+  fullName: requiredText('Full name', FORM_LIMITS.name),
+  company: optionalText('Company name', FORM_LIMITS.company),
+  email: emailField(),
+  phone: requiredText('Phone number', FORM_LIMITS.phone),
+  productInterest: requiredText('Product category', FORM_LIMITS.productInterest),
+  productId: optionalText('Product', FORM_LIMITS.id),
+  productName: optionalText('Product name', FORM_LIMITS.productName),
+  quantity: optionalText('Quantity', FORM_LIMITS.quantity),
+  message: optionalText('Message', FORM_LIMITS.message),
 });
+
+const quotationLimiter = publicFormLimiter('quotation requests', 10);
+
+/** Trusted product details for a quotation, or nothing if the id is unknown. */
+async function productDetails(productId: string | undefined) {
+  if (!productId) return null;
+  const product = await prisma.product.findFirst({
+    where: { id: productId, status: 'PUBLISHED' },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      images: { orderBy: { order: 'asc' }, take: 1, select: { url: true } },
+    },
+  });
+  if (!product) return null;
+  return {
+    productId: product.id,
+    productSlug: product.slug,
+    productImage: product.images[0]?.url ?? null,
+    name: product.name,
+  };
+}
 
 export const QUOTATION_STATUSES = [
   'NEW',
@@ -47,9 +72,19 @@ export const QUOTATION_STATUSES = [
 // Public — submit a quotation request
 router.post(
   '/',
-  validate({ body: createSchema }),
+  quotationLimiter,
   asyncHandler(async (req, res) => {
-    const quotation = await prisma.quotationRequest.create({ data: req.body });
+    const { productId, productName, ...fields } = parsePublicForm(createSchema, req.body);
+    const product = await productDetails(productId);
+    const quotation = await prisma.quotationRequest.create({
+      data: {
+        ...fields,
+        productName: productName ?? product?.name ?? null,
+        productId: product?.productId ?? null,
+        productSlug: product?.productSlug ?? null,
+        productImage: product?.productImage ?? null,
+      },
+    });
     emitEvent({
       type: 'quotation-request',
       data: { id: quotation.id, fullName: quotation.fullName, productName: quotation.productName },

@@ -5,6 +5,12 @@ import { parseAllowedOrigins } from './origins.js';
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().default(4000),
+  /**
+   * Number of reverse proxies in front of the API whose X-Forwarded-For
+   * entries are trusted. Rate limits key on the resulting client IP, so this
+   * must match the hosting setup (see .env.example). 0 = exposed directly.
+   */
+  TRUST_PROXY: z.coerce.number().int().min(0).max(10).default(1),
   CORS_ORIGIN: z.string().default('http://localhost:3000'),
   DATABASE_URL: z
     .string()

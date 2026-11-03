@@ -32,4 +32,32 @@ describe('toCsv', () => {
     const csv = toCsv([{ a: null, b: undefined, c: 0 }]);
     expect(csv).toBe('a,b,c\n,,0');
   });
+
+  it('quotes cells containing a carriage return', () => {
+    expect(toCsv([{ note: 'a\rb' }])).toBe('note\n"a\rb"');
+  });
+});
+
+describe('CSV formula injection', () => {
+  it.each([
+    ['=HYPERLINK("http://evil.example","Click")', `"'=HYPERLINK(""http://evil.example"",""Click"")"`],
+    ['=1+1', "'=1+1"],
+    ['+cmd|" /C calc"!A0', `"'+cmd|"" /C calc""!A0"`],
+    ['-2+3+cmd|x', "'-2+3+cmd|x"],
+    ['@SUM(A1:A2)', "'@SUM(A1:A2)"],
+    ['\t=1+1', "'\t=1+1"],
+  ])('neutralizes %j', (input, expected) => {
+    expect(toCsv([{ v: input }])).toBe(`v\n${expected}`);
+  });
+
+  it.each(['+251 911 234 567', '-12.5', '+1 (555) 010-0000', '0911234567'])(
+    'leaves numbers and phone numbers unchanged: %s',
+    (input) => {
+      expect(toCsv([{ v: input }])).toBe(`v\n${input}`);
+    },
+  );
+
+  it('leaves ordinary text alone', () => {
+    expect(toCsv([{ v: 'Need 3 elevators = urgent' }])).toBe('v\nNeed 3 elevators = urgent');
+  });
 });

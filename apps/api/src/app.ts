@@ -13,7 +13,8 @@ import { notFoundHandler, errorHandler } from './middleware/error.js';
 export function createApp() {
   const app = express();
 
-  app.set('trust proxy', 1);
+  // How many proxy hops to trust for req.ip (rate limiting). See TRUST_PROXY.
+  app.set('trust proxy', env.TRUST_PROXY);
   app.use(
     helmet({
       // Uploaded images are loaded by the Next.js origin (Vercel / localhost:3000).

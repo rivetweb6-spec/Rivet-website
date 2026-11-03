@@ -128,6 +128,7 @@ export function ContactForm() {
         <textarea
           id="contact-message"
           rows={5}
+          maxLength={5000}
           value={fields.message}
           onChange={(e) => set('message', e.target.value)}
           onBlur={() => {

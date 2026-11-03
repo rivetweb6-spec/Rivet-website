@@ -17,6 +17,13 @@ import { normalizeSeoFields, seoFieldsSchema } from '../../utils/seo-fields.js';
 import { toCsv } from '../../utils/csv.js';
 import { emitEvent } from '../../realtime/stream.js';
 import {
+  FORM_LIMITS,
+  emailField,
+  optionalText,
+  parsePublicForm,
+  requiredText,
+} from '../../utils/public-forms.js';
+import {
   cloudinaryEnabled,
   cloudinaryRawUrl,
   destroyCloudinaryRaw,
@@ -44,10 +51,6 @@ export const APPLICATION_STATUSES = [
   'HIRED',
 ] as const;
 
-const optionalString = z
-  .union([z.string(), z.literal('')])
-  .optional()
-  .transform((v) => (v ? v : undefined));
 
 const upsertSchema = z
   .object({
@@ -64,10 +67,10 @@ const upsertSchema = z
   .merge(seoFieldsSchema);
 
 const applyFieldsSchema = z.object({
-  fullName: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().min(1),
-  coverLetter: optionalString,
+  fullName: requiredText('Full name', FORM_LIMITS.name),
+  email: emailField(),
+  phone: requiredText('Phone number', FORM_LIMITS.phone),
+  coverLetter: optionalText('Cover letter', FORM_LIMITS.coverLetter),
 });
 
 const applyLimiter = rateLimit({
@@ -349,8 +352,7 @@ router.post(
   applyLimiter,
   handleCvUpload,
   asyncHandler(async (req, res) => {
-    const parsed = applyFieldsSchema.safeParse(req.body);
-    if (!parsed.success) throw badRequest('Validation failed', parsed.error.flatten());
+    const fields = parsePublicForm(applyFieldsSchema, req.body);
 
     const vacancy = await prisma.vacancy.findUnique({
       where: { slug: param(req, 'slug') },
@@ -366,10 +368,10 @@ router.post(
     const application = await prisma.jobApplication.create({
       data: {
         vacancyId: vacancy.id,
-        fullName: parsed.data.fullName.trim(),
-        email: parsed.data.email.trim(),
-        phone: parsed.data.phone.trim(),
-        coverLetter: parsed.data.coverLetter?.trim() || null,
+        fullName: fields.fullName,
+        email: fields.email,
+        phone: fields.phone,
+        coverLetter: fields.coverLetter ?? null,
         cvPublicId: stored.cvPublicId,
         cvOriginalName: file.originalname.slice(0, 180),
         cvMimeType: stored.cvMimeType,
