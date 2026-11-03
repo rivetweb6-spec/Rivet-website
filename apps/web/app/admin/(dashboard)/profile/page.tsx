@@ -51,10 +51,15 @@ export default function AdminProfilePage() {
     setMessage(null);
     setError(null);
     try {
-      await adminApi.updatePassword(currentPassword, newPassword);
+      const result = await adminApi.updatePassword(currentPassword, newPassword);
       setCurrentPassword('');
       setNewPassword('');
-      setMessage('Password changed.');
+      const ended = result.otherSessionsEnded ?? 0;
+      setMessage(
+        ended > 0
+          ? `Password changed. Signed out ${ended} other ${ended === 1 ? 'device' : 'devices'}.`
+          : 'Password changed.',
+      );
     } catch (err) {
       setError(err instanceof AdminApiError ? err.message : 'Password change failed');
     }

@@ -207,9 +207,15 @@ export const adminApi = {
     return data;
   },
 
+  /** Ends this device's session on the server, then clears local credentials. */
   logout: async () => {
+    const refreshToken = getStoredRefreshToken();
     try {
-      await adminRequest('/auth/logout', { method: 'POST' });
+      await adminRequest('/auth/logout', {
+        method: 'POST',
+        body: JSON.stringify(refreshToken ? { refreshToken } : {}),
+        skipAuthRefresh: true,
+      });
     } finally {
       clearSession();
     }
@@ -224,7 +230,7 @@ export const adminApi = {
     }),
 
   updatePassword: (currentPassword: string, newPassword: string) =>
-    adminRequest<{ ok: boolean }>('/auth/me/password', {
+    adminRequest<{ ok: boolean; otherSessionsEnded?: number }>('/auth/me/password', {
       method: 'PUT',
       body: JSON.stringify({ currentPassword, newPassword }),
     }),

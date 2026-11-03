@@ -3,6 +3,7 @@ import { unauthorized, forbidden } from '../utils/http.js';
 import { verifyAccessToken } from '../utils/jwt.js';
 import { allowedOrigins } from '../config/env.js';
 import { isAllowedOrigin } from '../config/origins.js';
+import { isSessionActive } from '../modules/auth/sessions.js';
 
 function headerValue(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
@@ -60,22 +61,33 @@ export function isCrossSiteCookieWrite(req: Request, source: TokenSource): boole
   return !isAllowedOrigin(allowedOrigins, origin);
 }
 
-export function requireAuth(req: Request, _res: Response, next: NextFunction) {
+/**
+ * A valid signature is not enough: the token's session must still be active,
+ * so logout, password changes and deleted users take effect immediately.
+ */
+export async function requireAuth(req: Request, _res: Response, next: NextFunction) {
   const tokens = tokenSources(req);
   if (tokens.length === 0) return next(unauthorized('Authentication required'));
 
-  for (const { token, source } of tokens) {
-    let user;
-    try {
-      user = verifyAccessToken(token);
-    } catch {
-      continue; // try the next source — a stale Bearer must not hide a valid cookie
+  try {
+    for (const { token, source } of tokens) {
+      let user;
+      try {
+        user = verifyAccessToken(token);
+      } catch {
+        continue; // try the next source — a stale Bearer must not hide a valid cookie
+      }
+      if (!user.sid || !(await isSessionActive(user.sid, user.sub))) {
+        continue; // signed, but its session has ended (or predates sessions)
+      }
+      if (isCrossSiteCookieWrite(req, source)) {
+        return next(forbidden('Cross-site request blocked'));
+      }
+      req.user = user;
+      return next();
     }
-    if (isCrossSiteCookieWrite(req, source)) {
-      return next(forbidden('Cross-site request blocked'));
-    }
-    req.user = user;
-    return next();
+  } catch (err) {
+    return next(err);
   }
 
   next(unauthorized('Invalid or expired token'));
