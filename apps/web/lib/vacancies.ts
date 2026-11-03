@@ -1,4 +1,5 @@
-const CV_FILENAME = /\.(pdf|docx?)$/i;
+/** CVs are accepted as PDF only. */
+const CV_FILENAME = /\.pdf$/i;
 
 export function stripHtml(html: string): string {
   return html

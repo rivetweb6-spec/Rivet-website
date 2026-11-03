@@ -21,10 +21,14 @@ describe('formatDeadline', () => {
 });
 
 describe('isAllowedCvFilename', () => {
-  it('accepts PDF and Word documents', () => {
+  it('accepts PDF files (any case)', () => {
     expect(isAllowedCvFilename('Abel-CV.pdf')).toBe(true);
-    expect(isAllowedCvFilename('Abel-CV.DOCX')).toBe(true);
-    expect(isAllowedCvFilename('Abel-CV.doc')).toBe(true);
+    expect(isAllowedCvFilename('Abel-CV.PDF')).toBe(true);
+  });
+
+  it('rejects Word documents — CVs are PDF only', () => {
+    expect(isAllowedCvFilename('Abel-CV.DOCX')).toBe(false);
+    expect(isAllowedCvFilename('Abel-CV.doc')).toBe(false);
   });
 
   it('rejects other file types', () => {

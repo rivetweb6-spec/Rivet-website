@@ -17,6 +17,12 @@ import { normalizeSeoFields, seoFieldsSchema } from '../../utils/seo-fields.js';
 import { toCsv } from '../../utils/csv.js';
 import { emitEvent } from '../../realtime/stream.js';
 import {
+  DOCUMENT_EXT,
+  DOCUMENT_MIME,
+  detectDocumentKind,
+  type DocumentKind,
+} from '../../utils/document-signature.js';
+import {
   FORM_LIMITS,
   emailField,
   optionalText,
@@ -89,7 +95,7 @@ const cvUpload = multer({
       cb(null, true);
       return;
     }
-    cb(new Error('Please upload a PDF or Word document (PDF, DOC, DOCX).'));
+    cb(new Error('Please upload your CV as a PDF file.'));
   },
 });
 
@@ -120,18 +126,21 @@ function serializeApplication<T extends { cvPublicId: string }>(app: T) {
   return { ...rest, hasCv: Boolean(cvPublicId) };
 }
 
-async function storeCv(file: Express.Multer.File): Promise<{
+/** Store a CV whose type was verified from its bytes; `kind` decides extension + MIME. */
+async function storeCv(
+  file: Express.Multer.File,
+  kind: DocumentKind,
+): Promise<{
   cvPublicId: string;
   cvMimeType: string;
 }> {
   if (cloudinaryEnabled) {
-    const uploaded = await uploadRawBuffer(file.buffer, file.originalname);
-    return {
-      cvPublicId: uploaded.publicId,
-      cvMimeType: file.mimetype || 'application/octet-stream',
-    };
+    // A neutral name with the verified extension — the applicant's filename is
+    // kept separately (cvOriginalName) for display only.
+    const uploaded = await uploadRawBuffer(file.buffer, `cv${DOCUMENT_EXT[kind]}`);
+    return { cvPublicId: uploaded.publicId, cvMimeType: DOCUMENT_MIME[kind] };
   }
-  const stored = await saveLocalCv(file);
+  const stored = await saveLocalCv(file, kind);
   return { cvPublicId: stored.publicId, cvMimeType: stored.mimeType };
 }
 
@@ -362,9 +371,21 @@ router.post(
     }
 
     const file = req.file;
-    if (!file) throw badRequest('Please attach your CV (PDF, DOC, or DOCX).');
+    if (!file) throw badRequest('Please attach your CV as a PDF file.');
 
-    const stored = await storeCv(file);
+    // The declared type and filename are only a first filter; the bytes decide.
+    // CVs are accepted as PDF only (Word files can carry macros).
+    const kind = detectDocumentKind(file.buffer);
+    if (kind === 'doc' || kind === 'docx') {
+      throw badRequest(
+        'Word documents are not accepted. Please save your CV as a PDF (File → Save As → PDF) and upload it again.',
+      );
+    }
+    if (kind !== 'pdf') {
+      throw badRequest('This file is not a valid PDF. Please upload your CV as a PDF file.');
+    }
+
+    const stored = await storeCv(file, kind);
     const application = await prisma.jobApplication.create({
       data: {
         vacancyId: vacancy.id,

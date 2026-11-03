@@ -5,6 +5,7 @@ import type { Request } from 'express';
 import { env, isProd } from './env.js';
 import { cloudinaryEnabled } from './cloudinary.js';
 import { badRequest } from '../utils/http.js';
+import { DOCUMENT_EXT, DOCUMENT_MIME, type DocumentKind } from '../utils/document-signature.js';
 
 export const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
 export const MAX_UPLOAD_FILES = 10;
@@ -21,13 +22,12 @@ const ALLOWED_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif'])
 
 export const MAX_CV_BYTES = 8 * 1024 * 1024;
 
-export const ALLOWED_CV_MIME = new Map<string, string>([
-  ['application/pdf', '.pdf'],
-  ['application/msword', '.doc'],
-  ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', '.docx'],
-]);
-
-const ALLOWED_CV_EXT = new Set(['.pdf', '.doc', '.docx']);
+/**
+ * Extensions of CV files that may exist on disk. New uploads are PDF only,
+ * but applications received before that rule (Word files) must stay
+ * downloadable for HR.
+ */
+const STORED_CV_EXT = new Set(['.pdf', '.doc', '.docx']);
 
 export function cvsDir(): string {
   return path.join(uploadsDir(), 'cvs');
@@ -37,16 +37,13 @@ export async function ensureCvsDir(): Promise<void> {
   await fs.mkdir(cvsDir(), { recursive: true });
 }
 
-export function cvExtensionFor(mime: string, originalName: string): string | null {
-  const fromMime = ALLOWED_CV_MIME.get(mime);
-  if (fromMime) return fromMime;
-  const ext = path.extname(originalName).toLowerCase();
-  if (ALLOWED_CV_EXT.has(ext)) return ext;
-  return null;
-}
-
+/**
+ * Quick first filter for new CV uploads: PDF only. Some browsers send PDFs as
+ * application/octet-stream, so a .pdf filename is also accepted here — the
+ * file's bytes are verified afterwards either way.
+ */
 export function isAllowedCvFile(mime: string, originalName: string): boolean {
-  return cvExtensionFor(mime, originalName) !== null;
+  return mime === 'application/pdf' || path.extname(originalName).toLowerCase() === '.pdf';
 }
 
 export function resolvedCvPath(filename: string): string | null {
@@ -59,17 +56,20 @@ export function resolvedCvPath(filename: string): string | null {
   return resolved;
 }
 
+/**
+ * Store a CV whose type was verified from its bytes (`kind`). The extension
+ * and MIME type come from that check, never from what the uploader declared.
+ */
 export async function saveLocalCv(
   file: Express.Multer.File,
+  kind: DocumentKind,
 ): Promise<{ publicId: string; mimeType: string }> {
-  const ext = cvExtensionFor(file.mimetype, file.originalname);
-  if (!ext) throw badRequest('Unsupported CV type. Use PDF, DOC, or DOCX.');
-  const filename = `${Date.now()}-${crypto.randomBytes(8).toString('hex')}${ext}`;
+  const filename = `${Date.now()}-${crypto.randomBytes(8).toString('hex')}${DOCUMENT_EXT[kind]}`;
   await ensureCvsDir();
   const dest = resolvedCvPath(filename);
   if (!dest) throw badRequest('Could not store CV');
   await fs.writeFile(dest, file.buffer);
-  return { publicId: `local:${filename}`, mimeType: file.mimetype || 'application/octet-stream' };
+  return { publicId: `local:${filename}`, mimeType: DOCUMENT_MIME[kind] };
 }
 
 export async function deleteLocalCv(filename: string): Promise<void> {
@@ -89,7 +89,7 @@ export function localCvFilename(publicId: string): string | null {
   const filename = path.basename(raw);
   if (!filename || filename !== raw) return null;
   const ext = path.extname(filename).toLowerCase();
-  if (!ALLOWED_CV_EXT.has(ext)) return null;
+  if (!STORED_CV_EXT.has(ext)) return null;
   return filename;
 }
 

@@ -8,7 +8,7 @@ import { isAllowedCvFilename } from '@/lib/vacancies';
 import { cn } from '@/lib/utils';
 
 const MAX_CV_BYTES = 8 * 1024 * 1024;
-const ACCEPTED = '.pdf,.doc,.docx';
+const ACCEPTED = '.pdf,application/pdf';
 
 type Fields = {
   fullName: string;
@@ -32,8 +32,12 @@ function validate(f: Fields, file: File | null): Errors {
   if (!f.email.trim()) e.email = 'An email is required.';
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) e.email = 'That email looks incomplete.';
   if (!f.phone.trim()) e.phone = 'A phone number is required.';
-  if (!file) e.cv = 'Attach your CV as a PDF or Word document.';
-  else if (!isAllowedCvFilename(file.name)) e.cv = 'Attach your CV as a PDF or Word document.';
+  if (!file) e.cv = 'Attach your CV as a PDF file.';
+  else if (!isAllowedCvFilename(file.name)) {
+    e.cv = /\.docx?$/i.test(file.name)
+      ? 'Word files are not accepted. Please save your CV as a PDF and attach that.'
+      : 'Please attach your CV as a PDF file.';
+  }
   else if (file.size > MAX_CV_BYTES) e.cv = 'CV is too large. Maximum size is 8 MB.';
   return e;
 }
@@ -198,8 +202,8 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
             )}
           >
             <FileUp size={22} className="text-gold" strokeWidth={1.5} />
-            <span className="text-[0.875rem] font-medium">Upload PDF or Word CV</span>
-            <span className="text-[0.75rem] text-muted">Maximum 8 MB · PDF, DOC, DOCX</span>
+            <span className="text-[0.875rem] font-medium">Upload your CV (PDF)</span>
+            <span className="text-[0.75rem] text-muted">PDF only · maximum 8 MB</span>
           </button>
         )}
         {touched.cv && errors.cv && <p className="mt-1.5 text-[0.75rem] text-error">{errors.cv}</p>}
