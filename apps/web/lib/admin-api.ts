@@ -278,6 +278,12 @@ export const adminApi = {
         : '';
       return adminRequest<{ ok: boolean }>(`/categories/${id}${query}`, { method: 'DELETE' });
     },
+    /** `ids` = all siblings under one parent, in their new display order. */
+    reorder: (ids: string[]) =>
+      adminRequest<{ ok: boolean }>('/categories/reorder', {
+        method: 'PATCH',
+        body: JSON.stringify({ ids }),
+      }),
   },
 
   products: {
