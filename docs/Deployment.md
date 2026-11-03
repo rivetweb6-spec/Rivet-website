@@ -103,7 +103,7 @@ Config at [`apps/web/vercel.json`](../apps/web/vercel.json).
    and (optional) the `NEXT_PUBLIC_SENTRY_*` + `SENTRY_ORG/PROJECT/AUTH_TOKEN`.
 5. Deploy. Preview deployments are created per PR; production on `main`.
 6. After the first web deploy, update the API's `CORS_ORIGIN` to the exact Vercel URL
-   (no wildcards). Browser admin calls use a same-origin `/api` proxy, but set
+   (no wildcards — the API refuses to start with one). Browser admin calls use a same-origin `/api` proxy, but set
    `CORS_ORIGIN` anyway for non-proxied clients and cookies.
 7. On first API boot with an empty `User` table, a default admin is created
    (`SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`, defaults `admin@rivet.com` /

@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { z } from 'zod';
+import { parseAllowedOrigins } from './origins.js';
 
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
@@ -41,3 +42,6 @@ if (parsed.NODE_ENV === 'production') {
 
 export const env = parsed;
 export const isProd = env.NODE_ENV === 'production';
+
+/** Exact browser origins allowed to call the API with credentials. Fails fast on wildcards. */
+export const allowedOrigins = parseAllowedOrigins(env.CORS_ORIGIN);

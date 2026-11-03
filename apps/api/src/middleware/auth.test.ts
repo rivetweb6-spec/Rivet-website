@@ -74,3 +74,65 @@ describe('requireAuth', () => {
     expect(err.message).toBe('Authentication required');
   });
 });
+
+describe('requireAuth — cross-site cookie writes (CSRF)', () => {
+  // Tests run with the default CORS_ORIGIN of http://localhost:3000.
+  const ours = 'http://localhost:3000';
+  const evil = 'https://evil.vercel.app';
+  const errorOf = (next: NextFunction) =>
+    (next as unknown as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as ApiError | undefined;
+
+  it('blocks a cookie-authenticated POST from another site', () => {
+    const { next, req } = run({
+      method: 'POST',
+      headers: { origin: evil },
+      cookies: { accessToken: signAccessToken(payload) },
+    });
+    expect(errorOf(next)?.status).toBe(403);
+    expect(req.user).toBeUndefined();
+  });
+
+  it.each(['PUT', 'PATCH', 'DELETE'])('blocks cross-site cookie %s', (method) => {
+    const { next } = run({
+      method,
+      headers: { origin: evil },
+      cookies: { accessToken: signAccessToken(payload) },
+    });
+    expect(errorOf(next)?.status).toBe(403);
+  });
+
+  it('allows a cookie-authenticated POST from our own origin', () => {
+    const { next, req } = run({
+      method: 'POST',
+      headers: { origin: ours },
+      cookies: { accessToken: signAccessToken(payload) },
+    });
+    expect(next).toHaveBeenCalledWith();
+    expect(req.user).toEqual(expect.objectContaining(payload));
+  });
+
+  it('allows cookie-authenticated reads from anywhere (CORS still hides the response)', () => {
+    const { next } = run({
+      method: 'GET',
+      headers: { origin: evil },
+      cookies: { accessToken: signAccessToken(payload) },
+    });
+    expect(next).toHaveBeenCalledWith();
+  });
+
+  it('allows bearer-authenticated writes regardless of origin', () => {
+    const { next } = run({
+      method: 'POST',
+      headers: { origin: evil, authorization: `Bearer ${signAccessToken(payload)}` },
+    });
+    expect(next).toHaveBeenCalledWith();
+  });
+
+  it('allows non-browser clients that send no Origin', () => {
+    const { next } = run({
+      method: 'POST',
+      cookies: { accessToken: signAccessToken(payload) },
+    });
+    expect(next).toHaveBeenCalledWith();
+  });
+});
