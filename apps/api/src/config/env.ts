@@ -20,7 +20,7 @@ const schema = z.object({
   UPLOAD_DIR: z.string().optional(),
   /**
    * Public origin of this API (no `/api` suffix), used in stored image URLs.
-   * Example: http://localhost:4000 or https://rivet-api.onrender.com
+   * Example: http://localhost:4000 or https://api.your-domain.com
    * When empty, derived from the incoming request.
    */
   PUBLIC_API_URL: z.string().optional(),

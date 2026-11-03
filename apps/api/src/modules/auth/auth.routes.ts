@@ -17,7 +17,7 @@ import { imageRefSchema } from '../../utils/image-ref.js';
 const router = Router();
 
 /**
- * Production web (Vercel) and API (Render) are different sites.
+ * In production the web app and the API may be on different sites.
  * `sameSite: 'none'` + `secure` is required for cross-origin cookie auth.
  * Same-origin Next proxy still works with these flags.
  */

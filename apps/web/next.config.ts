@@ -6,14 +6,48 @@ const analyze = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
+const LOCAL_API_URL = 'http://localhost:4000/api';
+
 /** Express API base including `/api` — used for same-origin browser proxy rewrites. */
 const rawTarget =
   process.env.API_PROXY_TARGET?.trim() ||
   process.env.NEXT_PUBLIC_API_URL?.trim();
 
-const apiProxyTarget = (
-  rawTarget || 'https://rivet-api-4ccw.onrender.com/api'
-).replace(/\/$/, '');
+if (!rawTarget && process.env.NODE_ENV === 'production') {
+  console.warn(
+    '\n[rivet] NEXT_PUBLIC_API_URL is not set — this build will proxy /api to ' +
+      `${LOCAL_API_URL}. Set NEXT_PUBLIC_API_URL to the deployed API (including /api) ` +
+      'before building for production.\n',
+  );
+}
+
+const apiProxyTarget = (rawTarget || LOCAL_API_URL).replace(/\/$/, '');
+
+/** Images uploaded to the API are served from its own host at /api/uploads/files/*. */
+function apiUploadsPattern(): NonNullable<NonNullable<NextConfig['images']>['remotePatterns']>[number] | null {
+  try {
+    const url = new URL(apiProxyTarget);
+    if (url.hostname === 'localhost') return null; // covered by the explicit localhost entry
+    return {
+      protocol: url.protocol.replace(':', '') as 'http' | 'https',
+      hostname: url.hostname,
+      ...(url.port ? { port: url.port } : {}),
+      pathname: '/api/uploads/**',
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Baseline security headers for every response (host-independent). */
+const securityHeaders = [
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+];
+
+const uploadsPattern = apiUploadsPattern();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -26,9 +60,11 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'res.cloudinary.com' },
       { protocol: 'http', hostname: 'localhost', port: '4000', pathname: '/api/uploads/**' },
-      { protocol: 'https', hostname: '*.onrender.com', pathname: '/api/uploads/**' },
-      { protocol: 'https', hostname: '*.up.railway.app', pathname: '/api/uploads/**' },
+      ...(uploadsPattern ? [uploadsPattern] : []),
     ],
+  },
+  async headers() {
+    return [{ source: '/:path*', headers: securityHeaders }];
   },
   // Prefer static generation where possible; data revalidated via fetch + route segment.
   experimental: {
@@ -36,7 +72,7 @@ const nextConfig: NextConfig = {
   },
   /**
    * Browser calls `/api/*` on the web origin; Next proxies to the Express API.
-   * Use beforeFiles so the proxy wins before the App Router 404 on Vercel.
+   * Use beforeFiles so the proxy wins before the App Router's 404 handling.
    */
   async rewrites() {
     return {
