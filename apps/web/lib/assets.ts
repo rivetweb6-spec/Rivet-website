@@ -36,7 +36,7 @@ export const assets = {
   categories: {
     elevators: u('photo-1486406146926-c627a92ad1ab'),
     lifts: u('photo-1621905251189-08b45d6a269e'),
-    escalators: u('photo-1520333789090-1afc82db536a'),
+    escalators: u('photo-1752066469007-fc183e1b6a0d'),
     granite: u('photo-1615529182904-14819c35db37'),
     doors: u('photo-1600585154340-be6161a56a0c'),
     chairs: u('photo-1567016432779-094069958ea5'),
@@ -47,13 +47,13 @@ export const assets = {
   elevatorSolutions: {
     standardPassenger: u('photo-1621905252507-b35492cc74b4'),
     premiumPassenger: u('photo-1486406146926-c627a92ad1ab'),
-    panoramic: u('photo-1520333789090-1afc82db536a'),
+    panoramic: u('photo-1758518731135-6d9af1849b25'),
     officeBuilding: u('photo-1497366754035-f200968a6e72'),
-    hotel: u('photo-1566073771259-6a8506099945'),
+    hotel: u('photo-1759038086454-5644437ccf4c'),
     shoppingMall: u('photo-1486406146926-c627a92ad1ab'),
     service: u('photo-1504307651254-35680f356dfd'),
     freight: u('photo-1586528116311-ad8dd3c8310d'),
-    heavyDuty: u('photo-1581094794329-c8112a89af12'),
+    heavyDuty: u('photo-1758024264451-5cbfa9bee420'),
   },
   products: {
     p1: u('photo-1621905252507-b35492cc74b4'),

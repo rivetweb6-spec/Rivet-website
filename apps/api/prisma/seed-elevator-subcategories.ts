@@ -48,7 +48,7 @@ async function main() {
           slug: 'panoramic-elevators',
           description:
             'Glass-walled observation elevators that transform vertical transport into an architectural centrepiece.',
-          image: u('photo-1520333789090-1afc82db536a'),
+          image: u('photo-1758518731135-6d9af1849b25'),
           order: 3,
         },
       ],
@@ -74,7 +74,7 @@ async function main() {
           slug: 'hotel-elevators',
           description:
             'Elegant, ultra-quiet elevators with customisable interiors that complement five-star hospitality experiences.',
-          image: u('photo-1566073771259-6a8506099945'),
+          image: u('photo-1759038086454-5644437ccf4c'),
           order: 2,
         },
         {
@@ -117,7 +117,7 @@ async function main() {
           slug: 'heavy-duty-elevators',
           description:
             'Industrial-grade lifts rated for extreme payloads — ideal for warehouses, factories, and construction sites.',
-          image: u('photo-1581094794329-c8112a89af12'),
+          image: u('photo-1758024264451-5cbfa9bee420'),
           order: 3,
         },
       ],
