@@ -625,7 +625,7 @@ Match public mobile nav patterns: Escape, `aria-expanded`/`aria-controls`, focus
 - Keyboard check of admin shell on a narrow viewport
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -738,7 +738,7 @@ Add a skip link and `id="main-content" tabIndex={-1}` on admin `<main>`.
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -793,7 +793,7 @@ Include unread count in the accessible name; add visually hidden text on sidebar
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -820,7 +820,7 @@ Set `aria-current={active ? 'page' : undefined}` on nav links.
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -847,7 +847,7 @@ Implement a proper tabs pattern or a segmented control with `aria-pressed`.
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -874,7 +874,7 @@ Add labels + `aria-pressed`; name the editor; use `role="status"` on loading.
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -1120,7 +1120,7 @@ Add `role="status"`; keep loading UI until redirect completes.
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -1147,7 +1147,7 @@ Use `role="img"` or visually hidden text (“Unread”).
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -1174,7 +1174,7 @@ Admin table pages (e.g. products, news, quotations, vacancies)
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -1255,7 +1255,7 @@ Use `fieldset`/`legend` or `aria-labelledby` on the control group.
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -1282,7 +1282,7 @@ Status region for loading; keep `AdminPageHeader` on error + retry.
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -1309,4 +1309,4 @@ Recharts bar chart is not keyboard/AT accessible; a sibling list helps, but the 
 - git diff --check
 
 ### Status
-Pending
+Completed

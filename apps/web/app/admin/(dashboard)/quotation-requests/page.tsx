@@ -146,7 +146,9 @@ export default function AdminQuotationRequestsPage() {
               <th className="px-5 py-3 font-medium">Contact</th>
               <th className="px-5 py-3 font-medium">Date</th>
               <th className="px-5 py-3 font-medium">Status</th>
-              <th className="px-5 py-3 font-medium" />
+              <th className="px-5 py-3 font-medium">
+                <span className="sr-only">Actions</span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -168,10 +170,10 @@ export default function AdminQuotationRequestsPage() {
                 <td className="px-5 py-3">
                   <p className="flex items-center gap-2 font-medium">
                     {!r.readAt && (
-                      <span
-                        className="h-2 w-2 shrink-0 rounded-full bg-gold"
-                        aria-label="Unread"
-                      />
+                      <>
+                        <span className="h-2 w-2 shrink-0 rounded-full bg-gold" aria-hidden="true" />
+                        <span className="sr-only">Unread:</span>
+                      </>
                     )}
                     {r.fullName}
                   </p>

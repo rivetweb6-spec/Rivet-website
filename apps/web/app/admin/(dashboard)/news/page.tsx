@@ -114,7 +114,9 @@ export default function AdminNewsPage() {
               <th className="px-5 py-3 font-medium">Title</th>
               <th className="px-5 py-3 font-medium">Category</th>
               <th className="px-5 py-3 font-medium">Status</th>
-              <th className="px-5 py-3 font-medium" />
+              <th className="px-5 py-3 font-medium">
+                <span className="sr-only">Actions</span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -202,14 +204,15 @@ export default function AdminNewsPage() {
             value={form.excerpt ?? ''}
             onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
           />
-          <label className="block">
+          <div>
             <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">Body</span>
             <RichTextEditor
               key={editingId ?? 'new'}
+              label="Body"
               value={form.body}
               onChange={(body) => setForm({ ...form, body })}
             />
-          </label>
+          </div>
           <SeoFieldsPanel
             value={form}
             onChange={(seo) => setForm({ ...form, ...seo })}

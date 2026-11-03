@@ -266,27 +266,22 @@ export default function AdminVacanciesPage() {
       />
       {error && <p className="mb-4 text-[0.875rem] text-error">{error}</p>}
 
-      <div className="mb-6 flex gap-2">
-        <button
-          type="button"
-          onClick={() => setTab('vacancies')}
-          className={cn(
-            'rounded-[12px] px-4 py-2 text-[0.875rem] font-medium',
-            tab === 'vacancies' ? 'bg-navy text-white' : 'bg-surface text-ink hover:bg-bg',
-          )}
-        >
-          Vacancies
-        </button>
-        <button
-          type="button"
-          onClick={() => setTab('applications')}
-          className={cn(
-            'rounded-[12px] px-4 py-2 text-[0.875rem] font-medium',
-            tab === 'applications' ? 'bg-navy text-white' : 'bg-surface text-ink hover:bg-bg',
-          )}
-        >
-          Applications
-        </button>
+      {/* Segmented control: aria-pressed tells assistive tech which view is shown. */}
+      <div className="mb-6 flex gap-2" role="group" aria-label="Show">
+        {(['vacancies', 'applications'] as const).map((value) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={tab === value}
+            onClick={() => setTab(value)}
+            className={cn(
+              'rounded-[12px] px-4 py-2 text-[0.875rem] font-medium',
+              tab === value ? 'bg-navy text-white' : 'bg-surface text-ink hover:bg-bg',
+            )}
+          >
+            {value === 'vacancies' ? 'Vacancies' : 'Applications'}
+          </button>
+        ))}
       </div>
 
       {tab === 'vacancies' ? (
@@ -299,7 +294,9 @@ export default function AdminVacanciesPage() {
                 <th className="px-5 py-3 font-medium">Deadline</th>
                 <th className="px-5 py-3 font-medium">Status</th>
                 <th className="px-5 py-3 font-medium">Applications</th>
-                <th className="px-5 py-3 font-medium" />
+                <th className="px-5 py-3 font-medium">
+                <span className="sr-only">Actions</span>
+              </th>
               </tr>
             </thead>
             <tbody>
@@ -408,7 +405,9 @@ export default function AdminVacanciesPage() {
                   <th className="px-5 py-3 font-medium">Contact</th>
                   <th className="px-5 py-3 font-medium">Date</th>
                   <th className="px-5 py-3 font-medium">Status</th>
-                  <th className="px-5 py-3 font-medium" />
+                  <th className="px-5 py-3 font-medium">
+                <span className="sr-only">Actions</span>
+              </th>
                 </tr>
               </thead>
               <tbody>
@@ -430,7 +429,10 @@ export default function AdminVacanciesPage() {
                     <td className="px-5 py-3">
                       <p className="flex items-center gap-2 font-medium">
                         {!a.readAt && (
-                          <span className="h-2 w-2 shrink-0 rounded-full bg-gold" aria-label="Unread" />
+                          <>
+                            <span className="h-2 w-2 shrink-0 rounded-full bg-gold" aria-hidden="true" />
+                            <span className="sr-only">Unread:</span>
+                          </>
                         )}
                         {a.fullName}
                       </p>
@@ -527,24 +529,26 @@ export default function AdminVacanciesPage() {
               </option>
             ))}
           </AdminSelect>
-          <label className="block">
+          <div>
             <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">Description</span>
             <RichTextEditor
               key={`${editingId ?? 'new'}-desc`}
+              label="Description"
               value={form.description}
               onChange={(description) => setForm({ ...form, description })}
             />
-          </label>
-          <label className="block">
+          </div>
+          <div>
             <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">
               Requirements / qualifications
             </span>
             <RichTextEditor
               key={`${editingId ?? 'new'}-req`}
+              label="Requirements / qualifications"
               value={form.requirements}
               onChange={(requirements) => setForm({ ...form, requirements })}
             />
-          </label>
+          </div>
           <SeoFieldsPanel
             value={form}
             onChange={(seo) => setForm({ ...form, ...seo })}
