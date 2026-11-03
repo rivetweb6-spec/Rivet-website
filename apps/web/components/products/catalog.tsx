@@ -2,27 +2,26 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
-import { Search } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState, useTransition, type ReactNode } from 'react';
+import { ArrowLeft, ArrowRight, Search } from 'lucide-react';
 import type { Category, Product, Pagination } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import {
-  AllCategoriesHierarchy,
+  DepartmentGrid,
   ProductCard,
   buildCategoryTree,
 } from '@/components/products/category-group';
 
-function productsHref({
-  search,
-  category,
-  page,
-}: {
-  search?: string;
-  category?: string;
-  page?: number;
-}) {
+/**
+ * - `overview`: departments + featured products (the default /products page)
+ * - `all`: every product, paginated (/products?view=all)
+ * - `search`: search results
+ */
+export type CatalogMode = 'overview' | 'all' | 'search';
+
+function productsHref({ search, page, view }: { search?: string; page?: number; view?: 'all' }) {
   const sp = new URLSearchParams();
-  if (category) sp.set('category', category);
+  if (view) sp.set('view', view);
   if (search) sp.set('search', search);
   if (page && page > 1) sp.set('page', String(page));
   const qs = sp.toString();
@@ -30,19 +29,20 @@ function productsHref({
 }
 
 export function ProductsCatalog({
+  mode,
   products,
-  allProducts = [],
   categories,
   pagination,
-  activeCategory,
   search,
+  productsHeading = 'Featured products',
 }: {
+  mode: CatalogMode;
   products: Product[];
-  allProducts?: Product[];
   categories: Category[];
   pagination: Pagination;
-  activeCategory?: string;
   search?: string;
+  /** Overview only: "Featured products", or "Latest products" when nothing is featured. */
+  productsHeading?: string;
 }) {
   const router = useRouter();
   const params = useSearchParams();
@@ -79,45 +79,47 @@ export function ProductsCatalog({
     return () => window.clearTimeout(timer);
   }, [searchValue, search, update]);
 
-  // Build full hierarchy tree for all categories
   const categoryTree = useMemo(() => buildCategoryTree(categories), [categories]);
-  const primaryCategories = useMemo(
-    () => categories.filter((c) => !c.parentId),
-    [categories],
-  );
-  const filterCategories = primaryCategories.length > 0 ? primaryCategories : categories;
-
-  const isAllView = !search && !activeCategory;
+  const departments = useMemo(() => categories.filter((c) => !c.parentId), [categories]);
+  const view = mode === 'all' ? 'all' : undefined;
 
   return (
     <div className={cn('transition-opacity', pending && 'opacity-60')}>
-      {/* Category filter chips & search input */}
-      <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-wrap gap-2">
-          <FilterChip
-            active={!activeCategory && !search}
+      {/* Search */}
+      <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {mode === 'overview' ? (
+          <p className="text-[0.9375rem] text-muted">
+            Choose a department, or search the full catalog.
+          </p>
+        ) : (
+          <Link
             href="/products"
-            label="All"
-          />
-          {filterCategories.map((c) => (
-            <FilterChip
-              key={c.slug}
-              active={activeCategory === c.slug}
-              href={`/products/${c.slug}`}
-              label={c.name}
-            />
-          ))}
-        </div>
+            className="inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy transition-colors hover:text-gold"
+          >
+            <ArrowLeft size={15} aria-hidden="true" />
+            Browse by department
+          </Link>
+        )}
 
         <form
-          className="relative w-full max-w-sm"
+          role="search"
+          className="relative w-full sm:max-w-sm"
           onSubmit={(e) => {
             e.preventDefault();
             update({ search: searchValue.trim() || undefined });
           }}
         >
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
+          <label htmlFor="catalog-search" className="sr-only">
+            Search products
+          </label>
+          <Search
+            size={18}
+            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"
+            aria-hidden="true"
+          />
           <input
+            id="catalog-search"
+            type="search"
             name="search"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
@@ -127,101 +129,69 @@ export function ProductsCatalog({
         </form>
       </div>
 
-      {/* If search query is active: show search results */}
-      {search ? (
-        products.length === 0 ? (
-          <div className="py-20 text-center">
-            <p className="text-[1.125rem] text-ink">
-              No products found for &ldquo;{search}&rdquo;.
-            </p>
-            <p className="mt-2 text-[0.9375rem] text-muted">
-              Check the spelling, try a shorter keyword, or explore a category below.
-            </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-2">
-              <FilterChip active={false} href="/products" label="All" />
-              {filterCategories.map((c) => (
-                <FilterChip
-                  key={c.slug}
-                  active={false}
-                  href={`/products/${c.slug}`}
-                  label={c.name}
-                />
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                setSearchValue('');
-                update({ search: undefined, category: undefined });
-              }}
-              className="mt-8 text-[0.875rem] font-medium text-gold hover:underline"
-            >
-              View all products
-            </button>
-          </div>
-        ) : (
-          <div>
-            <div className="mb-6 flex items-baseline justify-between">
-              <h2 className="headline-display text-[1.75rem]">
-                Search results for &ldquo;{search}&rdquo;
-              </h2>
-              <span className="text-[0.875rem] text-muted">
-                {pagination.total} result{pagination.total === 1 ? '' : 's'}
-              </span>
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {products.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
-          </div>
-        )
-      ) : (
-        /* When viewing "All" on /products: display the category hierarchy */
+      {mode === 'search' && (
+        <SearchResults
+          search={search ?? ''}
+          products={products}
+          total={pagination.total}
+          departments={departments}
+          onClear={() => {
+            setSearchValue('');
+            update({ search: undefined });
+          }}
+        />
+      )}
+
+      {mode === 'overview' && (
         <>
-          {isAllView && (
-            <AllCategoriesHierarchy
-              tree={categoryTree}
-              allProducts={allProducts.length > 0 ? allProducts : products}
-            />
+          <DepartmentGrid tree={categoryTree} />
+
+          {products.length > 0 && (
+            <section aria-labelledby="featured-heading">
+              <SectionHeader
+                id="featured-heading"
+                eyebrow="Catalog"
+                title={productsHeading}
+                action={
+                  <Link
+                    href="/products?view=all"
+                    className="inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy transition-colors hover:text-gold"
+                  >
+                    View all products
+                    <ArrowRight size={15} aria-hidden="true" />
+                  </Link>
+                }
+              />
+              <ProductGrid products={products} />
+            </section>
           )}
-
-          {/* Complete Product Catalog Section */}
-          <div className="pt-4">
-            <div className="mb-8 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 border-b border-border/50 pb-5">
-              <div>
-                <span className="eyebrow text-gold-muted text-[0.6875rem] uppercase tracking-wider font-medium">
-                  Catalog
-                </span>
-                <h3 className="headline-display mt-1 text-[1.75rem] sm:text-[2rem]">
-                  {isAllView ? 'All Products' : `${activeCategory} Products`}
-                </h3>
-              </div>
-              <span className="text-[0.875rem] text-muted">
-                {pagination.total} product{pagination.total === 1 ? '' : 's'} in catalog
-              </span>
-            </div>
-
-            {products.length === 0 ? (
-              <div className="py-16 text-center text-muted">
-                <p>No products available in this section.</p>
-              </div>
-            ) : (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {products.map((p) => (
-                  <ProductCard key={p.id} product={p} />
-                ))}
-              </div>
-            )}
-          </div>
         </>
       )}
 
-      {/* Pagination Controls */}
-      {pagination.pages > 1 && (
-        <div className="mt-14 flex items-center justify-center gap-3">
+      {mode === 'all' && (
+        <section aria-labelledby="all-products-heading">
+          <SectionHeader
+            id="all-products-heading"
+            eyebrow="Catalog"
+            title="All products"
+            action={
+              <span className="text-[0.875rem] text-muted">
+                {pagination.total} product{pagination.total === 1 ? '' : 's'}
+              </span>
+            }
+          />
+          {products.length === 0 ? (
+            <p className="py-16 text-center text-muted">No products have been published yet.</p>
+          ) : (
+            <ProductGrid products={products} />
+          )}
+        </section>
+      )}
+
+      {mode !== 'overview' && pagination.pages > 1 && (
+        <nav aria-label="Pagination" className="mt-14 flex items-center justify-center gap-3">
           <PagerLink
-            href={productsHref({ search, category: activeCategory, page: pagination.page - 1 })}
+            href={productsHref({ search, view, page: pagination.page - 1 })}
             disabled={pagination.page <= 1}
             label="Previous"
           />
@@ -229,38 +199,108 @@ export function ProductsCatalog({
             Page {pagination.page} of {pagination.pages}
           </span>
           <PagerLink
-            href={productsHref({ search, category: activeCategory, page: pagination.page + 1 })}
+            href={productsHref({ search, view, page: pagination.page + 1 })}
             disabled={pagination.page >= pagination.pages}
             label="Next"
           />
-        </div>
+        </nav>
       )}
     </div>
   );
 }
 
-function FilterChip({
-  label,
-  active,
-  href,
+function SectionHeader({
+  id,
+  eyebrow,
+  title,
+  action,
 }: {
-  label: string;
-  active: boolean;
-  href: string;
+  id: string;
+  eyebrow: string;
+  title: string;
+  action?: ReactNode;
 }) {
   return (
-    <Link
-      href={href}
-      aria-current={active ? 'page' : undefined}
-      className={cn(
-        'rounded-full border px-4 py-2 text-[0.8125rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2',
-        active
-          ? 'border-navy bg-navy text-white'
-          : 'border-border bg-surface text-ink hover:border-gold hover:text-gold',
-      )}
-    >
-      {label}
-    </Link>
+    <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-border/60 pb-5">
+      <div>
+        <span className="eyebrow text-gold-muted text-[0.6875rem] uppercase tracking-wider font-medium">
+          {eyebrow}
+        </span>
+        <h2 id={id} className="headline-display mt-1 text-[1.75rem] sm:text-[2rem]">
+          {title}
+        </h2>
+      </div>
+      {action}
+    </div>
+  );
+}
+
+function ProductGrid({ products }: { products: Product[] }) {
+  return (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {products.map((p) => (
+        <ProductCard key={p.id} product={p} />
+      ))}
+    </div>
+  );
+}
+
+function SearchResults({
+  search,
+  products,
+  total,
+  departments,
+  onClear,
+}: {
+  search: string;
+  products: Product[];
+  total: number;
+  departments: Category[];
+  onClear: () => void;
+}) {
+  if (products.length > 0) {
+    return (
+      <section aria-labelledby="search-heading">
+        <SectionHeader
+          id="search-heading"
+          eyebrow="Search"
+          title={`Results for “${search}”`}
+          action={
+            <span className="text-[0.875rem] text-muted">
+              {total} result{total === 1 ? '' : 's'}
+            </span>
+          }
+        />
+        <ProductGrid products={products} />
+      </section>
+    );
+  }
+
+  return (
+    <div className="py-16 text-center">
+      <p className="text-[1.125rem] text-ink">No products found for &ldquo;{search}&rdquo;.</p>
+      <p className="mt-2 text-[0.9375rem] text-muted">
+        Check the spelling, try a shorter keyword, or browse a department.
+      </p>
+      <div className="mt-8 flex flex-wrap justify-center gap-2">
+        {departments.map((c) => (
+          <Link
+            key={c.slug}
+            href={`/products/${c.slug}`}
+            className="rounded-full border border-border bg-surface px-4 py-2 text-[0.8125rem] font-medium text-ink transition-colors hover:border-gold hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+          >
+            {c.name}
+          </Link>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={onClear}
+        className="mt-8 text-[0.875rem] font-medium text-navy underline-offset-4 hover:text-gold hover:underline"
+      >
+        Clear search
+      </button>
+    </div>
   );
 }
 

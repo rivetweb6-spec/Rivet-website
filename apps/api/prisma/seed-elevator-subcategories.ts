@@ -22,6 +22,9 @@ async function main() {
     {
       name: 'Passenger Elevators',
       slug: 'passenger-elevators',
+      description:
+        'Comfortable, quiet passenger elevators for residential buildings, offices and mixed-use developments.',
+      image: u('photo-1758448511533-e1502259fff6'),
       order: 1,
       items: [
         {
@@ -53,6 +56,9 @@ async function main() {
     {
       name: 'Commercial Elevators',
       slug: 'commercial-elevators',
+      description:
+        'High-capacity elevators for offices, hotels and shopping centres, built for heavy daily traffic.',
+      image: u('photo-1758448721205-8465cebc26af'),
       order: 2,
       items: [
         {
@@ -76,7 +82,8 @@ async function main() {
           slug: 'shopping-mall-elevators',
           description:
             'High-capacity passenger elevators engineered for constant foot traffic in retail and mixed-use environments.',
-          image: u('photo-1519567241046-7f570a63b3e2'),
+          // Previous Unsplash photo was removed (404); falls back to the Elevators image.
+          image: null,
           order: 3,
         },
       ],
@@ -84,6 +91,9 @@ async function main() {
     {
       name: 'Service & Freight Elevators',
       slug: 'service-freight-elevators',
+      description:
+        'Durable service and goods lifts for hotels, hospitals, warehouses and industrial sites.',
+      image: u('photo-1547630824-eed1be6a27b0'),
       order: 3,
       items: [
         {
@@ -91,7 +101,7 @@ async function main() {
           slug: 'service-elevators',
           description:
             'Durable, back-of-house elevators built for staff, housekeeping, and light cargo movement.',
-          image: u('photo-1504307651254-35680f356dfd'),
+          image: u('photo-1719463814218-52e17f720e8a'),
           order: 1,
         },
         {
@@ -127,6 +137,8 @@ async function main() {
         slug: group.slug,
         parentId: elevators.id,
         order: group.order,
+        description: group.description,
+        image: group.image,
       },
     });
 

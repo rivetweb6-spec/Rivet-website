@@ -50,7 +50,7 @@ export const assets = {
     panoramic: u('photo-1520333789090-1afc82db536a'),
     officeBuilding: u('photo-1497366754035-f200968a6e72'),
     hotel: u('photo-1566073771259-6a8506099945'),
-    shoppingMall: u('photo-1519567241046-7f570a63b3e2'),
+    shoppingMall: u('photo-1486406146926-c627a92ad1ab'),
     service: u('photo-1504307651254-35680f356dfd'),
     freight: u('photo-1586528116311-ad8dd3c8310d'),
     heavyDuty: u('photo-1581094794329-c8112a89af12'),

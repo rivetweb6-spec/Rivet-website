@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { PageHero } from '@/components/site/page-hero';
 import { Container, Section } from '@/components/ui/container';
-import { ProductsCatalog } from '@/components/products/catalog';
+import { ProductsCatalog, type CatalogMode } from '@/components/products/catalog';
 import { api } from '@/lib/api';
 import { pageMetadata } from '@/lib/seo';
 import { metadataForStaticPage } from '@/lib/page-seo';
@@ -15,7 +15,22 @@ type SearchParams = Promise<{
   search?: string;
   category?: string;
   page?: string;
+  view?: string;
 }>;
+
+const FEATURED_LIMIT = 6;
+
+/**
+ * `/products` → departments + featured products.
+ * `/products?view=all` → every product, paginated. Older `?page=N` links
+ * (from before the overview existed) also land on the full list.
+ */
+function catalogMode(sp: Awaited<SearchParams>): CatalogMode {
+  if (sp.search?.trim()) return 'search';
+  const page = Number(sp.page ?? 1) || 1;
+  if (sp.view === 'all' || page > 1) return 'all';
+  return 'overview';
+}
 
 export async function generateMetadata({
   searchParams,
@@ -45,11 +60,11 @@ export async function generateMetadata({
     });
   }
 
-  if (page > 1) {
+  if (catalogMode(sp) === 'all') {
     return pageMetadata({
-      title: `Products — Page ${page}`,
-      description: `Browse page ${page} of RIVET’s premium elevators, granite, doors, furniture and fine building materials in Ethiopia.`,
-      path: `/products?page=${page}`,
+      title: page > 1 ? `All products — Page ${page}` : 'All products',
+      description: `Browse ${page > 1 ? `page ${page} of ` : ''}RIVET’s full catalog of premium elevators, granite, doors, furniture and fine building materials in Ethiopia.`,
+      path: page > 1 ? `/products?view=all&page=${page}` : '/products?view=all',
     });
   }
 
@@ -65,19 +80,22 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
   }
 
   const page = Number(sp.page ?? 1) || 1;
+  const mode = catalogMode(sp);
 
-  const [{ products, pagination }, { categories }, allProductsRes] = await Promise.all([
-    api.products.list({
-      search: sp.search,
-      category: sp.category,
-      page,
-      pageSize: 12,
-    }),
+  const [productsRes, { categories }] = await Promise.all([
+    mode === 'overview'
+      ? api.products.list({ featured: true, pageSize: FEATURED_LIMIT })
+      : api.products.list({ search: sp.search, page, pageSize: 12 }),
     api.categories.list(),
-    !sp.search
-      ? api.products.list({ pageSize: 100, page: 1 })
-      : Promise.resolve({ products: [], pagination: { total: 0, page: 1, pageSize: 100, pages: 1 } }),
   ]);
+
+  // Nothing marked as featured yet → show the newest products instead.
+  let { products, pagination } = productsRes;
+  let productsHeading = 'Featured products';
+  if (mode === 'overview' && products.length === 0) {
+    ({ products, pagination } = await api.products.list({ pageSize: FEATURED_LIMIT }));
+    productsHeading = 'Latest products';
+  }
 
   return (
     <>
@@ -86,16 +104,16 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
         title="Elevators, granite, doors & materials"
         description="A curated portfolio of imported elevators, natural stone, doors, furniture and fine building materials for projects in Ethiopia."
       />
-      <Section>
+      <Section className="pt-14 md:pt-20">
         <Container>
           <Suspense fallback={<p className="text-muted">Loading catalog…</p>}>
             <ProductsCatalog
+              mode={mode}
               products={products}
-              allProducts={allProductsRes.products}
               categories={categories}
               pagination={pagination}
-              activeCategory={sp.category}
               search={sp.search}
+              productsHeading={productsHeading}
             />
           </Suspense>
         </Container>

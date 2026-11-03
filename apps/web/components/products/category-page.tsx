@@ -98,30 +98,6 @@ export function CategoryPageView({
                   `Explore premium ${category.name.toLowerCase()} from Rivet — quality products for commercial and residential projects in Ethiopia.`}
               </p>
 
-              {category.children && category.children.length > 0 && (
-                <div className="mt-6">
-                  <p className="text-[0.75rem] uppercase tracking-wider text-muted font-medium mb-2.5">
-                    Subcategories
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {category.children.map((sub) => (
-                      <Link
-                        key={sub.slug}
-                        href={`/products/${sub.slug}`}
-                        className="inline-flex items-center rounded-full border border-navy/15 bg-pearl/60 px-3.5 py-1.5 text-[0.8125rem] font-medium text-navy transition-all hover:border-gold hover:bg-gold/10 hover:text-navy"
-                      >
-                        {sub.name}
-                        {sub._count?.products !== undefined && (
-                          <span className="ml-1.5 rounded-full bg-navy/10 px-1.5 py-0.2 text-[0.6875rem] text-muted font-normal">
-                            {sub._count.products}
-                          </span>
-                        )}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
                   href="/request-quotation"
