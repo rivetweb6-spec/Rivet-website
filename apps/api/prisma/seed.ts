@@ -1,6 +1,7 @@
 import { PrismaClient, ContentStatus } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import 'dotenv/config';
+import { resolveSeedAdmin } from '../src/bootstrap/seed-admin.js';
 
 const prisma = new PrismaClient();
 
@@ -283,8 +284,14 @@ const products: SeedProduct[] = [
 ];
 
 async function main() {
-  const email = process.env.SEED_ADMIN_EMAIL ?? 'admin@rivet.com';
-  const password = process.env.SEED_ADMIN_PASSWORD ?? 'Admin123!';
+  // Production seeds need explicit, strong admin credentials — see seed-admin.ts.
+  const admin = resolveSeedAdmin(process.env, process.env.NODE_ENV === 'production');
+  if (!admin.ok) {
+    throw new Error(
+      `${admin.problem} Set SEED_ADMIN_EMAIL and a strong SEED_ADMIN_PASSWORD before seeding production.`,
+    );
+  }
+  const { email, password } = admin;
   const passwordHash = await bcrypt.hash(password, 12);
 
   await prisma.user.upsert({

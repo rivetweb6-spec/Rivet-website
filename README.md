@@ -27,7 +27,7 @@ pnpm db:migrate       # create tables (requires DATABASE_URL)
 pnpm db:seed          # seed categories, sample content, admin user
 ```
 
-Default seeded admin: `admin@rivet.com` / `Admin123!` (override via `SEED_ADMIN_*`).
+Default local admin: `admin@rivet.com` / `Admin123!` (override via `SEED_ADMIN_*`). These defaults work in development only — production requires `SEED_ADMIN_EMAIL` and a strong `SEED_ADMIN_PASSWORD`.
 
 ## Run
 
