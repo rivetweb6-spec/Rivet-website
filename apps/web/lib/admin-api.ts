@@ -5,22 +5,22 @@
  * Express backend). That keeps login working when the API is hosted separately.
  */
 
+import { browserApiBase } from './api-base';
+
 function getApiUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '');
-  // Browser: prefer the public API origin in production (Vercel `/api` proxy is unreliable).
-  // Fall back to same-origin `/api` when the env var is unset (local proxy via next.config).
-  if (typeof window !== 'undefined') {
-    return explicit || '/api';
-  }
+  // Browser: prefer the public API origin when configured; otherwise (or when it
+  // points at localhost but the page was opened from another device) use the
+  // same-origin `/api` proxy from next.config.
+  if (typeof window !== 'undefined') return browserApiBase(explicit);
   return explicit ?? 'http://localhost:4000/api';
 }
 
-/** Direct API origin so multipart uploads bypass the Next.js/Vercel proxy size cap. */
+/** Direct API origin so multipart uploads bypass the Next.js proxy size cap. */
 function getDirectApiUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '');
-  if (explicit) return explicit;
-  if (typeof window !== 'undefined') return '/api';
-  return 'http://localhost:4000/api';
+  if (typeof window !== 'undefined') return browserApiBase(explicit);
+  return explicit || 'http://localhost:4000/api';
 }
 
 const TOKEN_KEY = 'rivet_admin_token';

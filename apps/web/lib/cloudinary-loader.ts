@@ -4,6 +4,7 @@
  *
  * Wired via next.config.ts → images.loaderFile
  */
+import { sameOriginUploadUrl } from './media';
 
 type LoaderProps = {
   src: string;
@@ -45,12 +46,14 @@ function withWidthHint(src: string, width: number): string {
   }
 }
 
-export default function rivetImageLoader({ src, width, quality }: LoaderProps): string {
+export default function rivetImageLoader({ src: rawSrc, width, quality }: LoaderProps): string {
   const q = quality ?? 75;
 
-  if (src.startsWith('data:') || src.startsWith('blob:')) {
-    return src;
+  if (rawSrc.startsWith('data:') || rawSrc.startsWith('blob:')) {
+    return rawSrc;
   }
+
+  const src = sameOriginUploadUrl(rawSrc);
 
   if (src.includes('res.cloudinary.com') && src.includes('/upload/')) {
     return withCloudinaryTransforms(src, width, q);

@@ -1,3 +1,4 @@
+import { networkInterfaces } from 'node:os';
 import type { NextConfig } from 'next';
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
@@ -7,6 +8,20 @@ const analyze = withBundleAnalyzer({
 });
 
 const LOCAL_API_URL = 'http://localhost:4000/api';
+
+/**
+ * Development only: this machine's LAN addresses, so the dev server can be
+ * opened from a phone on the same network (http://<lan-ip>:3000). Next.js
+ * otherwise blocks dev assets / hot reload for non-localhost origins and the
+ * page never becomes interactive.
+ */
+function lanDevHosts(): string[] {
+  if (process.env.NODE_ENV === 'production') return [];
+  return Object.values(networkInterfaces())
+    .flat()
+    .filter((i): i is NonNullable<typeof i> => !!i && i.family === 'IPv4' && !i.internal)
+    .map((i) => i.address);
+}
 
 /** Express API base including `/api` — used for same-origin browser proxy rewrites. */
 const rawTarget =
@@ -53,6 +68,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // The default bottom-left badge sits on top of the admin "Sign out" control.
   devIndicators: false,
+  allowedDevOrigins: lanDevHosts(),
   images: {
     loader: 'custom',
     loaderFile: './lib/cloudinary-loader.ts',

@@ -37,6 +37,7 @@ import {
 import { ImageUploadField } from '@/components/admin/image-upload-field';
 import type { FaqItem, SeoFieldsInput } from '@/lib/admin-api';
 import { cn } from '@/lib/utils';
+import { sameOriginUploadUrl } from '@/lib/media';
 
 /**
  * Department (level 0) → group (level 1) → subcategory (level 2).
@@ -866,7 +867,8 @@ function Stat({ label, value }: { label: string; value: number }) {
 }
 
 /** Ask the image CDN for a small rendition — the stored URLs are 1600px wide. */
-function thumbUrl(src: string): string {
+function thumbUrl(rawSrc: string): string {
+  const src = sameOriginUploadUrl(rawSrc);
   try {
     const url = new URL(src);
     if (url.hostname === 'images.unsplash.com') {
