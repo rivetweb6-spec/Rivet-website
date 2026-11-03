@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
+import { useFocusTrap } from '@/lib/use-focus-trap';
 
 export function AdminPageHeader({
   title,
@@ -110,19 +111,62 @@ export function AdminModal({
   if (!mounted || !open) return null;
 
   return createPortal(
+    <ModalFrame onClose={onClose} className={className} labelledBy={labelledBy}>
+      {children}
+    </ModalFrame>,
+    document.body,
+  );
+}
+
+/**
+ * The rendered dialog. Split out so its focus trap and auto-labelling run
+ * only while it is actually on screen.
+ */
+function ModalFrame({
+  onClose,
+  children,
+  className,
+  labelledBy,
+}: {
+  onClose: () => void;
+  children: React.ReactNode;
+  className?: string;
+  labelledBy?: string;
+}) {
+  const dialogRef = React.useRef<HTMLDivElement>(null);
+  const panelRef = React.useRef<HTMLDivElement>(null);
+  const autoTitleId = React.useId();
+
+  // Move focus into the dialog, keep Tab inside it, restore focus on close.
+  useFocusTrap(panelRef, true);
+
+  // Name the dialog after its heading when the caller did not pass labelledBy.
+  React.useEffect(() => {
+    if (labelledBy) return;
+    const heading = panelRef.current?.querySelector<HTMLElement>('h1, h2, h3');
+    if (!heading || !dialogRef.current) return;
+    if (!heading.id) heading.id = autoTitleId;
+    dialogRef.current.setAttribute('aria-labelledby', heading.id);
+  });
+
+  return (
     <div
+      ref={dialogRef}
       className="fixed inset-0 z-[200] flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby={labelledBy}
     >
+      {/* Click-outside-to-close for mouse users; keyboard users have Escape and the dialog's buttons. */}
       <button
         type="button"
+        tabIndex={-1}
+        aria-hidden="true"
         className="absolute inset-0 bg-navy/50 backdrop-blur-sm"
-        aria-label="Close dialog"
         onClick={onClose}
       />
       <div
+        ref={panelRef}
         className={cn(
           'relative z-10 max-h-[90dvh] w-full overflow-y-auto rounded-[20px] bg-surface p-6 shadow-[var(--shadow-bloom)]',
           className,
@@ -131,8 +175,7 @@ export function AdminModal({
       >
         {children}
       </div>
-    </div>,
-    document.body,
+    </div>
   );
 }
 

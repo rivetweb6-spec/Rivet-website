@@ -8,6 +8,7 @@ import { RivetImage } from '@/components/ui/rivet-image';
 import { api, ApiError } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { focusFirstInvalid } from '@/lib/form-a11y';
+import { useFocusTrap } from '@/lib/use-focus-trap';
 import type { QuotationOptions } from './quotation-modal-provider';
 import {
   CategoryMultiSelect,
@@ -82,35 +83,18 @@ export function QuotationModal({
       setTouched({});
       setStatus('idle');
       setSubmitError(null);
-      const prev = document.activeElement as HTMLElement | null;
-      requestAnimationFrame(() => closeBtnRef.current?.focus());
-      return () => prev?.focus?.();
     }
   }, [open, options.productInterest, options.productName, options.message]);
+
+  // Focus the first field on open (Escape / Close stay available), keep Tab
+  // inside the dialog, and return focus to the trigger when it closes.
+  useFocusTrap(dialogRef, open);
 
   React.useEffect(() => {
     if (!open) return;
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-        return;
-      }
-      if (e.key !== 'Tab' || !dialogRef.current) return;
-
-      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])',
-      );
-      if (focusable.length === 0) return;
-      const first = focusable[0]!;
-      const last = focusable[focusable.length - 1]!;
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
+      if (e.key === 'Escape') onClose();
     };
 
     window.addEventListener('keydown', onKey);

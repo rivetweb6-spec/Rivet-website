@@ -189,7 +189,7 @@ Add focus trap + focus restore patterned after the quotation modal for search an
 - Keyboard Tab/Escape check on search, lightbox, and drawer if changed
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -361,7 +361,7 @@ Focus the first text field on open while keeping Escape/close available.
 - Keyboard open modal and confirm initial focus target
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -567,7 +567,7 @@ Port the Tab-cycle + initial-focus + restore pattern from `quotation-modal.tsx` 
 - Keyboard Tab/Escape on a representative admin CRUD modal
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -595,7 +595,7 @@ Require `labelledBy` (or auto-id the title) and update modal call sites.
 - Spot-check multiple admin modals for labelled titles
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -1011,7 +1011,7 @@ Reuse the quotation modal focus-trap pattern in `SearchOverlay` (coordinate with
 - Keyboard Tab check on search overlay
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -1038,7 +1038,7 @@ Add trap + initial focus on close (coordinate with UX-09; implement once).
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -1093,7 +1093,7 @@ Use `useReducedMotion()` for instant transitions / skip motion when preferred.
 - Emulate reduced motion in browser and open drawer/search/modal
 
 ### Status
-Pending
+Completed
 
 ---
 
