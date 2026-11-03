@@ -70,6 +70,14 @@
     scroll-behavior: smooth;
   }
 
+  /*
+   * Lenis animates scrolling itself; native smooth scrolling on top of it
+   * makes in-page jumps unreliable, so it is turned off while Lenis runs.
+   */
+  html.lenis {
+    scroll-behavior: auto;
+  }
+
   body {
     background-color: var(--color-canvas);
     color: var(--color-ink);
@@ -204,7 +212,10 @@
     background: linear-gradient(90deg, var(--color-gold), var(--color-gold-soft));
     transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .gold-underline:hover::after {
+  /* Keyboard users get the same underline as mouse hover. */
+  .gold-underline:hover::after,
+  .gold-underline:focus-visible::after,
+  .gold-underline:focus-within::after {
     width: 100%;
   }
 

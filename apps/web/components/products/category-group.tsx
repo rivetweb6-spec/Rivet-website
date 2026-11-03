@@ -444,6 +444,13 @@ export function ProductEmptyState({ categoryName }: { categoryName: string }) {
           Contact our team
         </Link>
       </div>
+      <Link
+        href="/products"
+        className="mt-5 inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 transition-colors hover:text-gold hover:underline"
+      >
+        Browse all products
+        <ArrowRight size={14} aria-hidden="true" />
+      </Link>
     </div>
   );
 }

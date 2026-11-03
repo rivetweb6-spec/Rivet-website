@@ -11,6 +11,9 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       duration: 1.1,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
+      // Let Lenis handle in-page links (e.g. the hero's "Discover" → #intro)
+      // so they scroll reliably, landing below the fixed 72px header.
+      anchors: { offset: -72 },
     });
 
     let raf = 0;

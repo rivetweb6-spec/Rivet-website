@@ -85,9 +85,10 @@ export function ContactForm() {
 
   return (
     <form
+      id="contact-form"
       onSubmit={submit}
       noValidate
-      className="space-y-4 rounded-[20px] border border-border bg-surface p-8 shadow-[var(--shadow-sm)]"
+      className="scroll-mt-28 space-y-4 rounded-[20px] border border-border bg-surface p-8 shadow-[var(--shadow-sm)]"
     >
       <Field
         label="Full Name"

@@ -218,7 +218,7 @@ Add an empty panel with Contact / Request quotation recovery, mirroring careers-
 - Confirm empty-branch UI exists in code path for `services.length === 0`
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -247,7 +247,7 @@ Add recovery links (e.g. `/products`, related services, or quotation) when a cat
 - Inspect empty-state markup for recovery links
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -275,7 +275,7 @@ Add an `aria-label` or visible label for the catalog search field.
 - Confirm label/`aria-label` on the catalog search input
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -304,7 +304,7 @@ Build footer columns from API data with safe fallbacks, or only link to top-leve
 - Review footer link sources against live catalog strategy
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -332,7 +332,7 @@ Add fallback messaging and emphasize the contact form when channels are unset.
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -389,7 +389,7 @@ Use a toolbar/radiogroup pattern, or implement full tabs with panels and arrow k
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -417,7 +417,7 @@ Add a fade hint, a visible thin scrollbar, or wrap chips so overflow is discover
 - Visual check at ~320–390px width
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -447,7 +447,7 @@ Keep one primary and one secondary action; demote Contact to a text link or quie
 - Visual check of hero CTA group on mobile and desktop
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -474,7 +474,7 @@ Increase submenu item padding/min-height to match primary drawer links (`py-4` o
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -502,7 +502,7 @@ Add `.gold-underline:focus-visible::after { width: 100%; }` (and optionally `:fo
 - Keyboard Tab through desktop nav links
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -531,7 +531,7 @@ Intercept in-page anchors with `lenis.scrollTo('#intro')`, or use a button + `sc
 - Click Discover on homepage with default motion settings
 
 ### Status
-Pending
+Completed
 
 ---
 

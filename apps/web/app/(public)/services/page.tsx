@@ -27,6 +27,29 @@ export default async function ServicesPage() {
       />
       <Section>
         <Container>
+          {services.length === 0 && (
+            <div className="rounded-[20px] border border-dashed border-border bg-surface/60 px-6 py-14 text-center">
+              <h2 className="text-[1.5rem]">Our service listings are being updated</h2>
+              <p className="mx-auto mt-3 max-w-lg text-muted">
+                RIVET handles product import, installation, maintenance and consultation. Tell us
+                about your project and our team will reply with the right service.
+              </p>
+              <div className="mt-8 flex flex-wrap justify-center gap-3">
+                <Link
+                  href="/contact"
+                  className="inline-flex h-12 items-center justify-center rounded-[12px] bg-navy px-6 text-[0.9375rem] font-medium text-white transition-colors hover:bg-navy-600"
+                >
+                  Contact our team
+                </Link>
+                <Link
+                  href="/products"
+                  className="inline-flex h-12 items-center justify-center rounded-[12px] border border-border px-6 text-[0.9375rem] font-medium text-ink transition-colors hover:border-gold hover:text-navy"
+                >
+                  Browse products
+                </Link>
+              </div>
+            </div>
+          )}
           <Stagger className="grid gap-6 md:grid-cols-2">
             {services.map((s) => {
               const Icon = (Icons[s.icon as keyof typeof Icons] ?? Icons.Wrench) as Icons.LucideIcon;
