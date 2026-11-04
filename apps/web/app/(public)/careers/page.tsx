@@ -34,18 +34,18 @@ export default async function CareersPage() {
       <Section>
         <Container>
           {vacancies.length === 0 ? (
-            <div className="mx-auto max-w-xl rounded-[12px] border border-border bg-surface px-8 py-16 text-center">
-              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-gold">
+            <div className="mx-auto max-w-xl rounded-[8px] border border-border bg-surface px-8 py-16 text-center">
+              <p className="eyebrow text-gold-ink">
                 Roster
               </p>
-              <h2 className="mt-4 text-[1.75rem]">No open vacancies right now</h2>
+              <h2 className="headline-display mt-4 text-[1.75rem]">No open vacancies right now</h2>
               <p className="mt-3 text-muted">
                 When a role is posted, it will appear here with a closing date. You can also reach
                 the team through Contact.
               </p>
               <Link
                 href="/contact"
-                className="mt-8 inline-flex text-[0.9375rem] font-medium text-navy hover:text-gold"
+                className="mt-8 inline-flex text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline"
               >
                 Contact RIVET →
               </Link>
@@ -57,8 +57,8 @@ export default async function CareersPage() {
                 const excerpt = stripHtml(v.description).slice(0, 180);
                 return (
                   <StaggerItem key={v.id}>
-                    <Link href={`/careers/${v.slug}`} className="group block scroll-mt-28">
-                      <article className="relative overflow-hidden rounded-[10px] border border-border bg-surface transition-all duration-500 hover:-translate-y-0.5 hover:border-gold/40 hover:shadow-[var(--shadow-lg)]">
+                    <Link href={`/careers/${v.slug}`} className="group block scroll-mt-28 rounded-[8px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2">
+                      <article className="luxury-card relative overflow-hidden rounded-[8px] bg-canvas">
                         <div className="absolute inset-y-0 left-0 w-[3px] bg-gold" aria-hidden="true" />
                         <div className="grid gap-6 p-6 pl-8 md:grid-cols-[1fr_auto] md:items-start md:p-8 md:pl-10">
                           <div>
@@ -67,7 +67,7 @@ export default async function CareersPage() {
                               {v.location && <span>{v.location}</span>}
                               {v.employmentType && <span>{v.employmentType}</span>}
                             </div>
-                            <h2 className="mt-3 text-[1.5rem] leading-snug md:text-[1.75rem]">
+                            <h2 className="mt-3 text-[1.375rem] leading-snug group-hover:underline group-hover:underline-offset-4 md:text-[1.5rem]">
                               {v.title}
                             </h2>
                             {excerpt && (
@@ -76,19 +76,19 @@ export default async function CareersPage() {
                                 {excerpt.length >= 180 ? '…' : ''}
                               </p>
                             )}
-                            <p className="mt-5 text-[0.875rem] font-medium text-gold">
+                            <p className="mt-5 text-[0.9375rem] font-semibold text-navy group-hover:underline group-hover:underline-offset-4">
                               View role and apply →
                             </p>
                           </div>
-                          <div className="shrink-0 border border-gold/35 bg-navy px-5 py-4 text-white md:min-w-[11.5rem]">
-                            <p className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-gold">
+                          <div className="shrink-0 rounded-[6px] border border-border bg-bg px-5 py-4 text-ink md:min-w-[11.5rem]">
+                            <p className="eyebrow text-gold-ink">
                               Close
                             </p>
-                            <p className="mt-1 font-display text-[1.125rem] leading-tight">
+                            <p className="mt-1 font-display text-[1.125rem] font-bold leading-tight">
                               {formatDeadline(v.deadline)}
                             </p>
                             {remaining >= 0 && remaining <= 14 && (
-                              <p className="mt-2 text-[0.75rem] text-white/65">
+                              <p className="mt-2 text-[0.8125rem] text-muted">
                                 {remaining === 0
                                   ? 'Closes today'
                                   : remaining === 1

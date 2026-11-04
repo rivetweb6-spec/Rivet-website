@@ -169,7 +169,7 @@ export function QuotationModal({
           exit={{ opacity: 0 }}
         >
           <div
-            className="absolute inset-0 bg-navy/50 backdrop-blur-md"
+            className="absolute inset-0 bg-navy-deep/60"
             onClick={onClose}
             aria-hidden
           />
@@ -180,7 +180,7 @@ export function QuotationModal({
             aria-labelledby="quotation-modal-title"
             data-lenis-prevent
             onWheel={(e) => e.stopPropagation()}
-            className="relative z-10 max-h-[92dvh] w-full max-w-lg overflow-y-auto overflow-x-hidden overscroll-contain rounded-[12px] bg-surface shadow-[var(--shadow-bloom)]"
+            className="relative z-10 max-h-[92dvh] w-full max-w-lg overflow-y-auto overflow-x-hidden overscroll-contain rounded-[8px] bg-surface shadow-[var(--shadow-bloom)]"
             initial={{ opacity: 0, y: 24, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -204,7 +204,7 @@ export function QuotationModal({
                   animate={{ opacity: 1, y: 0 }}
                 >
                   <motion.div
-                    className="grid h-16 w-16 place-items-center rounded-full bg-gold/15 text-gold"
+                    className="grid h-16 w-16 place-items-center rounded-[8px] bg-bg text-success-ink"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: 'spring', stiffness: 220, damping: 16 }}
@@ -232,7 +232,7 @@ export function QuotationModal({
                   </p>
 
                   {prefilledProduct && (
-                    <div className="mt-5 flex items-center gap-4 rounded-[8px] border border-gold/30 bg-gold/5 p-3">
+                    <div className="mt-5 flex items-center gap-4 rounded-[6px] border border-border bg-bg p-3">
                       {options.productImage && (
                         <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-[6px]">
                           <RivetImage
@@ -338,7 +338,7 @@ export function QuotationModal({
                         maxLength={5000}
                         value={fields.message}
                         onChange={(e) => set('message', e.target.value)}
-                        className="w-full rounded-[8px] border border-border bg-surface px-4 py-3 text-[1rem] outline-none transition-colors focus:border-navy"
+                        className="w-full rounded-[6px] border border-border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg py-3 text-[1rem] outline-none transition-colors focus:border-navy focus:ring-2 focus:ring-navy/15 dark:focus:border-gold dark:focus:ring-gold/25"
                       />
                     </div>
 
@@ -352,7 +352,7 @@ export function QuotationModal({
                       {status === 'submitting' ? 'Sending…' : 'Submit Quotation Request'}
                     </Button>
                     {submitError && (
-                      <p className="text-center text-[0.8125rem] text-error" role="alert">
+                      <p className="text-center text-[0.875rem] text-error-ink" role="alert">
                         {submitError}
                       </p>
                     )}
@@ -393,7 +393,7 @@ function Field({
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-[0.875rem] font-medium text-ink">
-        {label} {required && <span className="text-gold">*</span>}
+        {label} {required && <span className="text-gold-ink">*</span>}
       </label>
       <input
         id={id}
@@ -407,8 +407,8 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={cn(
-          'h-12 w-full rounded-[8px] border bg-surface px-4 text-[1rem] outline-none transition-colors placeholder:text-muted/60 focus:border-navy',
-          error ? 'border-error/60' : 'border-border',
+          'h-12 w-full rounded-[6px] border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg text-[1rem] outline-none transition-colors placeholder:text-muted focus:border-navy focus:ring-2 focus:ring-navy/15 dark:focus:border-gold dark:focus:ring-gold/25',
+          error ? 'border-error-ink' : 'border-border',
         )}
       />
       <AnimatePresence>
@@ -418,7 +418,7 @@ function Field({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-1.5 text-[0.75rem] text-error"
+            className="mt-1.5 text-[0.8125rem] text-error-ink"
           >
             {error}
           </motion.p>

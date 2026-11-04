@@ -42,12 +42,12 @@ export default async function ContactPage() {
           <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr]">
             <div>
               <Eyebrow>Reach us</Eyebrow>
-              <h2 className="mt-3 text-[2rem]">Office & channels</h2>
+              <h2 className="headline-display mt-3 text-[2rem]">Office & channels</h2>
               {!hasChannels && (
                 <p className="mt-6 rounded-[8px] border border-border bg-surface px-5 py-4 text-[0.9375rem] leading-relaxed text-muted">
                   Our direct phone and email details are being updated. The quickest way to reach a
                   RIVET specialist is the{' '}
-                  <a href="#contact-form" className="font-medium text-navy underline underline-offset-4 hover:text-gold">
+                  <a href="#contact-form" className="font-medium text-navy underline underline-offset-4 hover:no-underline">
                     contact form
                   </a>{' '}
                   — we reply within one business day.
@@ -56,22 +56,22 @@ export default async function ContactPage() {
               <ul className="mt-8 space-y-5 text-[0.9375rem]">
                 {info?.address && (
                   <li className="flex items-start gap-3">
-                    <MapPin size={18} className="mt-0.5 text-gold" />
+                    <MapPin size={18} className="mt-0.5 shrink-0 text-navy dark:text-gold" aria-hidden="true" />
                     <span>{info.address}</span>
                   </li>
                 )}
                 {info?.phone && (
                   <li className="flex items-start gap-3">
-                    <Phone size={18} className="mt-0.5 text-gold" />
-                    <a href={telHref(info.phone)} className="transition-colors hover:text-gold">
+                    <Phone size={18} className="mt-0.5 shrink-0 text-navy dark:text-gold" aria-hidden="true" />
+                    <a href={telHref(info.phone)} className="transition-colors underline-offset-4 hover:underline">
                       {info.phone}
                     </a>
                   </li>
                 )}
                 {info?.email && (
                   <li className="flex items-start gap-3">
-                    <Mail size={18} className="mt-0.5 text-gold" />
-                    <a href={mailtoHref(info.email)} className="transition-colors hover:text-gold">
+                    <Mail size={18} className="mt-0.5 shrink-0 text-navy dark:text-gold" aria-hidden="true" />
+                    <a href={mailtoHref(info.email)} className="transition-colors underline-offset-4 hover:underline">
                       {info.email}
                     </a>
                   </li>
@@ -89,7 +89,7 @@ export default async function ContactPage() {
                         target="_blank"
                         rel="noreferrer"
                         aria-label={s.label}
-                        className="grid h-11 w-11 place-items-center rounded-full border border-border text-navy transition-all hover:border-gold hover:text-gold"
+                        className="grid h-11 w-11 place-items-center rounded-[6px] border border-border text-navy transition-colors hover:border-navy hover:bg-bg dark:hover:border-gold"
                       >
                         <Icon size={18} />
                       </a>
@@ -98,7 +98,7 @@ export default async function ContactPage() {
                 </div>
               )}
 
-              <div className="mt-10 overflow-hidden rounded-[10px] border border-border shadow-[var(--shadow-sm)]">
+              <div className="mt-10 overflow-hidden rounded-[8px] border border-border">
                 <iframe
                   title="RIVET office location"
                   src={mapSrc}

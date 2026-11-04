@@ -1,3 +1,4 @@
+import { buttonVariants } from '@/components/ui/button-variants';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import * as Icons from 'lucide-react';
@@ -71,30 +72,30 @@ export default async function ServiceDetailPage({ params }: { params: Params }) 
         <Container>
           <div className="grid gap-12 lg:grid-cols-[1fr_0.9fr] lg:items-start">
             <div>
-              <span className="grid h-14 w-14 place-items-center rounded-[8px] bg-navy/5 text-navy">
+              <span className="grid h-12 w-12 place-items-center rounded-[6px] bg-bg text-navy">
                 <Icon size={26} strokeWidth={1.5} />
               </span>
               <Eyebrow className="mt-6">Service</Eyebrow>
-              <h1 className="mt-3 text-[2.25rem] sm:text-[2.75rem]">{service.title}</h1>
+              <h1 className="headline-display mt-3 text-[2.25rem] sm:text-[2.75rem]">{service.title}</h1>
               <p className="mt-5 text-[1.125rem] leading-relaxed text-muted">{service.narrative}</p>
               <div className="mt-10 flex flex-wrap gap-3">
                 <RequestQuotationButton />
                 <Link
                   href="/request-quotation"
-                  className="inline-flex h-14 items-center justify-center rounded-[8px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
+                  className={buttonVariants({ variant: 'outline', size: 'lg' })}
                 >
                   Open full quotation form
                 </Link>
                 <Link
                   href="/products"
-                  className="inline-flex h-14 items-center justify-center rounded-[8px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
+                  className={buttonVariants({ variant: 'outline', size: 'lg' })}
                 >
                   Browse products
                 </Link>
               </div>
             </div>
             {service.image && (
-              <div className="relative aspect-[4/3] overflow-hidden rounded-[12px] bg-surface shadow-[var(--shadow-lg)]">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] border border-border bg-surface">
                 <RivetImage
                   src={service.image}
                   alt={`${service.title} — Rivet services in Ethiopia`}

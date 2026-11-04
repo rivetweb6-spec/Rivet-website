@@ -39,7 +39,7 @@ export function CategoryMultiSelect({
   return (
     <div>
       <p id={`${id}-label`} className="mb-1.5 block text-[0.875rem] font-medium text-ink">
-        Product Category <span className="text-gold">*</span>
+        Product Category <span className="text-gold-ink">*</span>
       </p>
       <p className="mb-3 text-[0.75rem] text-muted">Select one or more categories.</p>
       <div
@@ -51,7 +51,7 @@ export function CategoryMultiSelect({
         }}
         className={cn(
           'grid grid-cols-2 gap-2 rounded-[8px] border p-3 sm:grid-cols-3',
-          error ? 'border-error/60' : 'border-border',
+          error ? 'border-error-ink' : 'border-border',
         )}
         aria-invalid={error ? true : undefined}
       >
@@ -80,7 +80,7 @@ export function CategoryMultiSelect({
         })}
       </div>
       {error && (
-        <p id={`${id}-error`} className="mt-1.5 text-[0.75rem] text-error">
+        <p id={`${id}-error`} className="mt-1.5 text-[0.8125rem] text-error-ink">
           {error}
         </p>
       )}

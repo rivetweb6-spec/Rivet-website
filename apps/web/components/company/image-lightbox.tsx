@@ -72,7 +72,7 @@ export function ImageLightbox({
         onClick={onClose}
       />
       <div className="relative z-10 flex max-h-full w-full max-w-5xl flex-col">
-        <div className="relative h-[70vh] w-full overflow-hidden rounded-[10px] bg-white">
+        <div className="relative h-[70vh] w-full overflow-hidden rounded-[8px] bg-white">
           <RivetImage
             src={item.src}
             alt={item.title}
@@ -100,7 +100,7 @@ export function ImageLightbox({
         ref={closeRef}
         type="button"
         onClick={onClose}
-        className="absolute top-4 right-4 grid h-11 w-11 place-items-center rounded-full border border-white/20 text-white hover:border-gold hover:text-gold"
+        className="absolute top-4 right-4 grid h-11 w-11 place-items-center rounded-[6px] border border-white/25 bg-navy-deep/60 text-white transition-colors hover:bg-white/10"
         aria-label="Close"
       >
         <X size={18} />
@@ -111,7 +111,7 @@ export function ImageLightbox({
           <button
             type="button"
             onClick={() => onIndexChange((index - 1 + items.length) % items.length)}
-            className="absolute top-1/2 left-3 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/20 text-white hover:border-gold hover:text-gold md:left-6"
+            className="absolute top-1/2 left-3 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-[6px] border border-white/25 bg-navy-deep/60 text-white transition-colors hover:bg-white/10 md:left-6"
             aria-label="Previous image"
           >
             <ChevronLeft size={20} />
@@ -119,7 +119,7 @@ export function ImageLightbox({
           <button
             type="button"
             onClick={() => onIndexChange((index + 1) % items.length)}
-            className="absolute top-1/2 right-3 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/20 text-white hover:border-gold hover:text-gold md:right-6"
+            className="absolute top-1/2 right-3 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-[6px] border border-white/25 bg-navy-deep/60 text-white transition-colors hover:bg-white/10 md:right-6"
             aria-label="Next image"
           >
             <ChevronRight size={20} />

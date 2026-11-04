@@ -38,7 +38,7 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
                 <button
                   type="button"
                   onClick={() => setActive(index)}
-                  className="group flex h-full w-full flex-col rounded-[10px] border border-border bg-surface p-4 text-left shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[var(--shadow-md)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                  className="luxury-card group flex h-full w-full flex-col rounded-[8px] bg-canvas p-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] bg-white">
                     <span
@@ -59,7 +59,7 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
                       {cert.description}
                     </p>
                   )}
-                  <span className="mt-4 text-[0.8125rem] font-medium text-gold sm:opacity-0 sm:transition-opacity sm:duration-300 sm:group-hover:opacity-100">
+                  <span className="mt-4 text-[0.8125rem] font-semibold text-navy sm:opacity-0 sm:transition-opacity sm:duration-300 sm:group-hover:opacity-100">
                     View certificate
                   </span>
                 </button>
@@ -115,11 +115,11 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
               const images = allItemImages(project);
               return (
                 <StaggerItem key={project.id}>
-                  <article className="group overflow-hidden rounded-[10px] border border-border bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:border-gold/40 hover:shadow-[var(--shadow-md)]">
+                  <article className="luxury-card group overflow-hidden rounded-[8px] bg-canvas">
                     <button
                       type="button"
                       onClick={() => setActive({ project: projectIndex, image: 0 })}
-                      className="relative block aspect-[16/10] w-full overflow-hidden bg-navy/5 text-left"
+                      className="relative block aspect-[16/10] w-full overflow-hidden bg-bg text-left"
                     >
                       <RivetImage
                         src={images[0]!}
@@ -129,7 +129,7 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
                         className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"
                       />
                       {images.length > 1 && (
-                        <span className="absolute right-4 bottom-4 rounded-full bg-navy/80 px-3 py-1 text-[0.75rem] text-white backdrop-blur">
+                        <span className="absolute right-4 bottom-4 rounded-[4px] bg-navy px-2.5 py-1 text-[0.75rem] font-medium text-white">
                           {images.length} images
                         </span>
                       )}

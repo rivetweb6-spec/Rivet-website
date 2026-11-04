@@ -10,11 +10,11 @@ export function CompanySubnav() {
   const pathname = usePathname();
 
   return (
-    <div className="border-b border-gold/15 bg-navy-deep">
+    <div className="border-b border-border bg-canvas">
       <Container>
         <nav
           aria-label="Company pages"
-          className="flex flex-wrap gap-1 py-3"
+          className="-mb-px flex gap-6 overflow-x-auto md:gap-8"
         >
           {companyNavLinks.map((link) => {
             const active = 'exact' in link && link.exact
@@ -26,10 +26,10 @@ export function CompanySubnav() {
                 href={link.href}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'shrink-0 rounded-full px-4 py-2 text-[0.8125rem] tracking-wide transition-colors',
+                  'shrink-0 border-b-2 py-4 text-[0.9375rem] font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-inset',
                   active
-                    ? 'bg-gold text-navy'
-                    : 'text-white/70 hover:bg-white/8 hover:text-white',
+                    ? 'border-gold text-navy'
+                    : 'border-transparent text-muted hover:border-border hover:text-navy',
                 )}
               >
                 {link.label}

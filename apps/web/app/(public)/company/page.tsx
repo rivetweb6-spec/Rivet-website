@@ -52,14 +52,14 @@ export default async function CompanyPage() {
           <div className="grid gap-12 lg:grid-cols-2">
             <FadeUp>
               <Eyebrow>Vision</Eyebrow>
-              <h2 className="mt-3 text-[2rem]">Where we are going</h2>
+              <h2 className="headline-display mt-3 text-[2rem]">Where we are going</h2>
               <p className="mt-5 text-[1.125rem] leading-relaxed text-muted">
                 {company?.vision ?? 'To be the region’s most trusted name in imported engineering excellence.'}
               </p>
             </FadeUp>
             <FadeUp delay={0.1}>
               <Eyebrow>Mission</Eyebrow>
-              <h2 className="mt-3 text-[2rem]">How we work</h2>
+              <h2 className="headline-display mt-3 text-[2rem]">How we work</h2>
               <p className="mt-5 text-[1.125rem] leading-relaxed text-muted">
                 {company?.mission ??
                   'To supply and install world-class products with precision, reliability and care.'}
@@ -74,12 +74,12 @@ export default async function CompanyPage() {
           <Container>
             <FadeUp>
               <Eyebrow>Principles</Eyebrow>
-              <h2 className="mt-3 text-[2rem]">Core values</h2>
+              <h2 className="headline-display mt-3 text-[2rem]">Core values</h2>
             </FadeUp>
             <Stagger className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {values.map((v) => (
                 <StaggerItem key={v}>
-                  <div className="rounded-[10px] border border-border bg-surface px-6 py-8 text-center">
+                  <div className="rounded-[8px] border border-border bg-canvas px-6 py-8 text-center">
                     <div className="mx-auto h-[2px] w-8 bg-gold" />
                     <h3 className="mt-5 text-[1.125rem]">{v}</h3>
                   </div>
@@ -95,7 +95,7 @@ export default async function CompanyPage() {
           <Container>
             <FadeUp>
               <Eyebrow>History</Eyebrow>
-              <h2 className="mt-3 text-[2rem]">Timeline</h2>
+              <h2 className="headline-display mt-3 text-[2rem]">Timeline</h2>
             </FadeUp>
             <div className="relative mt-14">
               <div className="absolute top-0 bottom-0 left-[7px] w-px bg-divider md:left-1/2 md:-translate-x-px" />
@@ -130,7 +130,7 @@ export default async function CompanyPage() {
               {achievements.length > 0 && (
                 <FadeUp>
                   <Eyebrow className="text-gold">Milestones</Eyebrow>
-                  <h2 className="mt-3 text-[2rem] text-white">Achievements</h2>
+                  <h2 className="headline-display mt-3 text-[2rem] text-white">Achievements</h2>
                   <ul className="mt-6 space-y-3">
                     {achievements.map((a) => (
                       <li key={a} className="flex items-center gap-3 text-white/80">
@@ -144,7 +144,7 @@ export default async function CompanyPage() {
               {certLabels.length > 0 && (
                 <FadeUp delay={0.1}>
                   <Eyebrow className="text-gold">Credentials</Eyebrow>
-                  <h2 className="mt-3 text-[2rem] text-white">Certifications</h2>
+                  <h2 className="headline-display mt-3 text-[2rem] text-white">Certifications</h2>
                   <ul className="mt-6 space-y-3">
                     {certLabels.map((c) => (
                       <li key={c} className="flex items-center gap-3 text-white/80">
@@ -170,7 +170,7 @@ export default async function CompanyPage() {
         <Container>
           <FadeUp>
             <Eyebrow>Company</Eyebrow>
-            <h2 className="mt-3 text-[2rem]">Explore River Company</h2>
+            <h2 className="headline-display mt-3 text-[2rem]">Explore River Company</h2>
           </FadeUp>
           <Stagger className="mt-10 grid gap-5 md:grid-cols-3">
             {[
@@ -196,14 +196,14 @@ export default async function CompanyPage() {
               <StaggerItem key={card.href}>
                 <Link
                   href={card.href}
-                  className="group flex h-full flex-col rounded-[10px] border border-border bg-surface p-7 transition-all duration-500 hover:-translate-y-1 hover:border-gold/40 hover:shadow-[var(--shadow-md)]"
+                  className="luxury-card group flex h-full flex-col rounded-[8px] bg-canvas p-7 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
                 >
-                  <span className="grid h-12 w-12 place-items-center rounded-[8px] bg-navy/5 text-navy transition-colors group-hover:bg-gold">
-                    <card.icon size={22} strokeWidth={1.5} />
+                  <span className="grid h-12 w-12 place-items-center rounded-[6px] bg-bg text-navy">
+                    <card.icon size={22} strokeWidth={1.5} aria-hidden="true" />
                   </span>
                   <h3 className="mt-5 text-[1.25rem]">{card.title}</h3>
                   <p className="mt-2 text-[0.9375rem] leading-relaxed text-muted">{card.body}</p>
-                  <span className="mt-5 text-[0.8125rem] font-medium text-gold">Open →</span>
+                  <span className="mt-auto pt-5 text-[0.9375rem] font-semibold text-navy group-hover:underline group-hover:underline-offset-4">Open →</span>
                 </Link>
               </StaggerItem>
             ))}

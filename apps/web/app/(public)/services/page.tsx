@@ -1,3 +1,4 @@
+import { buttonVariants } from '@/components/ui/button-variants';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import * as Icons from 'lucide-react';
@@ -28,7 +29,7 @@ export default async function ServicesPage() {
       <Section>
         <Container>
           {services.length === 0 && (
-            <div className="rounded-[12px] border border-dashed border-border bg-surface/60 px-6 py-14 text-center">
+            <div className="rounded-[8px] border border-dashed border-border bg-surface/60 px-6 py-14 text-center">
               <h2 className="text-[1.5rem]">Our service listings are being updated</h2>
               <p className="mx-auto mt-3 max-w-lg text-muted">
                 RIVET handles product import, installation, maintenance and consultation. Tell us
@@ -37,13 +38,13 @@ export default async function ServicesPage() {
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link
                   href="/contact"
-                  className="inline-flex h-12 items-center justify-center rounded-[8px] bg-navy px-6 text-[0.9375rem] font-medium text-white transition-colors hover:bg-navy-600"
+                  className={buttonVariants({ variant: 'secondary', size: 'md' })}
                 >
                   Contact our team
                 </Link>
                 <Link
                   href="/products"
-                  className="inline-flex h-12 items-center justify-center rounded-[8px] border border-border px-6 text-[0.9375rem] font-medium text-ink transition-colors hover:border-gold hover:text-navy"
+                  className={buttonVariants({ variant: 'outline', size: 'md' })}
                 >
                   Browse products
                 </Link>
@@ -56,13 +57,13 @@ export default async function ServicesPage() {
               return (
                 <StaggerItem key={s.id}>
                   <Link href={`/services/${s.slug}`} className="block h-full">
-                    <article className="group h-full rounded-[12px] border border-border bg-surface p-8 transition-all duration-500 hover:-translate-y-1 hover:border-gold/40 hover:shadow-[var(--shadow-lg)] md:p-10">
-                      <span className="grid h-14 w-14 place-items-center rounded-[8px] bg-navy/5 text-navy transition-colors duration-500 group-hover:bg-gold group-hover:text-navy">
+                    <article className="luxury-card group h-full rounded-[8px] bg-canvas p-7 md:p-8">
+                      <span className="grid h-12 w-12 place-items-center rounded-[6px] bg-bg text-navy">
                         <Icon size={26} strokeWidth={1.5} />
                       </span>
                       <h2 className="mt-6 text-[1.5rem]">{s.title}</h2>
                       <p className="mt-4 leading-relaxed text-muted">{s.narrative}</p>
-                      <p className="mt-6 text-[0.875rem] font-medium text-gold-ink">Learn more →</p>
+                      <p className="mt-6 text-[0.9375rem] font-semibold text-navy group-hover:underline group-hover:underline-offset-4">Learn more →</p>
                     </article>
                   </Link>
                 </StaggerItem>
@@ -70,7 +71,7 @@ export default async function ServicesPage() {
             })}
           </Stagger>
 
-          <FadeUp className="mt-20 rounded-[12px] bg-navy px-8 py-14 text-center md:px-16">
+          <FadeUp className="mt-20 rounded-[8px] bg-navy px-8 py-14 text-center md:px-16">
             <h2 className="text-[1.75rem] text-white sm:text-[2.25rem]">
               Need a tailored engagement?
             </h2>
@@ -81,7 +82,7 @@ export default async function ServicesPage() {
               <RequestQuotationButton />
               <Link
                 href="/request-quotation"
-                className="inline-flex h-14 items-center justify-center rounded-[8px] border border-white/25 px-8 text-[1rem] font-medium text-white transition-all hover:border-gold hover:text-gold"
+                className={buttonVariants({ variant: 'ghost', size: 'lg' })}
               >
                 Open full quotation form
               </Link>
