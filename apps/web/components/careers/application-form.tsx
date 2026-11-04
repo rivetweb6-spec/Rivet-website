@@ -108,7 +108,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
 
   if (status === 'success') {
     return (
-      <div className="rounded-[20px] border border-border bg-surface p-8 text-center md:p-10">
+      <div className="rounded-[12px] border border-border bg-surface p-8 text-center md:p-10">
         <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-gold/15 text-gold">
           <Check size={30} />
         </div>
@@ -126,7 +126,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
       noValidate
       method="post"
       data-ready={ready ? 'true' : undefined}
-      className="space-y-4 rounded-[20px] border border-border bg-surface p-6 md:p-8"
+      className="space-y-4 rounded-[12px] border border-border bg-surface p-6 md:p-8"
     >
       <div>
         <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-gold">
@@ -174,7 +174,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
           value={fields.coverLetter}
           onChange={(e) => set('coverLetter', e.target.value)}
           placeholder="Optional — a short note about why this role fits."
-          className="w-full rounded-[12px] border border-border bg-surface px-4 py-3 text-[1rem] outline-none placeholder:text-muted/60 focus:border-navy"
+          className="w-full rounded-[8px] border border-border bg-surface px-4 py-3 text-[1rem] outline-none placeholder:text-muted/60 focus:border-navy"
         />
       </div>
       <div>
@@ -203,7 +203,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
           onChange={(e) => pickFile(e.target.files?.[0] ?? null)}
         />
         {cv ? (
-          <div className="flex items-center justify-between gap-3 rounded-[12px] border border-border bg-bg px-4 py-3 peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-2">
+          <div className="flex items-center justify-between gap-3 rounded-[8px] border border-border bg-bg px-4 py-3 peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-2">
             <p id={`${cvId}-file`} className="min-w-0 truncate text-[0.875rem]">
               <span className="sr-only">Selected file: </span>
               {cv.name}
@@ -224,7 +224,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
           <label
             htmlFor={cvId}
             className={cn(
-              'flex w-full cursor-pointer flex-col items-center gap-2 rounded-[12px] border border-dashed px-4 py-8 text-center transition-colors hover:border-gold hover:bg-gold/5',
+              'flex w-full cursor-pointer flex-col items-center gap-2 rounded-[8px] border border-dashed px-4 py-8 text-center transition-colors hover:border-gold hover:bg-gold/5',
               'peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-2',
               cvError ? 'border-error/60' : 'border-border',
             )}
@@ -299,7 +299,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={cn(
-          'h-12 w-full rounded-[12px] border bg-surface px-4 text-[1rem] outline-none placeholder:text-muted/60 focus:border-navy',
+          'h-12 w-full rounded-[8px] border bg-surface px-4 text-[1rem] outline-none placeholder:text-muted/60 focus:border-navy',
           error ? 'border-error/60' : 'border-border',
         )}
       />

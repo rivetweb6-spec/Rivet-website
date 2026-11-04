@@ -34,7 +34,7 @@ export default async function CareersPage() {
       <Section>
         <Container>
           {vacancies.length === 0 ? (
-            <div className="mx-auto max-w-xl rounded-[20px] border border-border bg-surface px-8 py-16 text-center">
+            <div className="mx-auto max-w-xl rounded-[12px] border border-border bg-surface px-8 py-16 text-center">
               <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-gold">
                 Roster
               </p>
@@ -58,7 +58,7 @@ export default async function CareersPage() {
                 return (
                   <StaggerItem key={v.id}>
                     <Link href={`/careers/${v.slug}`} className="group block scroll-mt-28">
-                      <article className="relative overflow-hidden rounded-[16px] border border-border bg-surface transition-all duration-500 hover:-translate-y-0.5 hover:border-gold/40 hover:shadow-[var(--shadow-lg)]">
+                      <article className="relative overflow-hidden rounded-[10px] border border-border bg-surface transition-all duration-500 hover:-translate-y-0.5 hover:border-gold/40 hover:shadow-[var(--shadow-lg)]">
                         <div className="absolute inset-y-0 left-0 w-[3px] bg-gold" aria-hidden="true" />
                         <div className="grid gap-6 p-6 pl-8 md:grid-cols-[1fr_auto] md:items-start md:p-8 md:pl-10">
                           <div>

@@ -46,7 +46,7 @@ export default async function NewsPage() {
                 <StaggerItem key={n.id}>
                   <Link
                     href={`/news/${n.slug}`}
-                    className="group block overflow-hidden rounded-[16px] bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[var(--shadow-lg)]"
+                    className="group block overflow-hidden rounded-[10px] bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[var(--shadow-lg)]"
                   >
                     <div className="relative aspect-[16/10] overflow-hidden">
                       <RivetImage

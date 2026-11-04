@@ -88,7 +88,7 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
       </section>
 
       <div className="relative mx-auto -mt-8 max-w-[860px] px-6">
-        <div className="relative aspect-[16/9] overflow-hidden rounded-[20px] shadow-[var(--shadow-lg)]">
+        <div className="relative aspect-[16/9] overflow-hidden rounded-[12px] shadow-[var(--shadow-lg)]">
           <RivetImage
             src={cover}
             alt={`${article.title} — RIVET news in Ethiopia`}

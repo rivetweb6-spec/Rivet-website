@@ -101,20 +101,20 @@ export function CategoryPageView({
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
                   href="/request-quotation"
-                  className="inline-flex h-14 items-center justify-center rounded-[12px] bg-gold px-8 text-[1rem] font-medium text-navy shadow-[var(--shadow-md)] transition-all hover:brightness-110"
+                  className="inline-flex h-14 items-center justify-center rounded-[8px] bg-gold px-8 text-[1rem] font-medium text-navy shadow-[var(--shadow-md)] transition-all hover:brightness-110"
                 >
                   Request a quotation
                 </Link>
                 <Link
                   href="/services"
-                  className="inline-flex h-14 items-center justify-center rounded-[12px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
+                  className="inline-flex h-14 items-center justify-center rounded-[8px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
                 >
                   Related services
                 </Link>
               </div>
             </div>
             {category.image && (
-              <div className="relative aspect-[4/3] overflow-hidden rounded-[20px] bg-surface shadow-[var(--shadow-lg)] sm:aspect-[16/11]">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[12px] bg-surface shadow-[var(--shadow-lg)] sm:aspect-[16/11]">
                 <RivetImage
                   src={category.image}
                   alt={`Premium ${category.name} supplied by Rivet in Ethiopia`}
@@ -183,7 +183,7 @@ export function CategoryPageView({
                 <li key={s.id}>
                   <Link
                     href={`/services/${s.slug}`}
-                    className="block rounded-[16px] border border-border bg-bg p-6 transition-colors hover:border-gold/40"
+                    className="block rounded-[10px] border border-border bg-bg p-6 transition-colors hover:border-gold/40"
                   >
                     <h3 className="text-[1.125rem]">{s.title}</h3>
                     <p className="mt-2 line-clamp-3 text-[0.875rem] text-muted">

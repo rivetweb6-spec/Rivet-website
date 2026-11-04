@@ -117,7 +117,7 @@ export default async function VacancyPage({ params }: { params: Params }) {
               {accepting ? (
                 <ApplicationForm slug={vacancy.slug} title={vacancy.title} />
               ) : (
-                <div className="rounded-[20px] border border-border bg-surface p-8">
+                <div className="rounded-[12px] border border-border bg-surface p-8">
                   <h2 className="text-[1.5rem]">Applications closed</h2>
                   <p className="mt-3 text-muted">
                     This vacancy is no longer accepting CVs. See other open roles, or check back

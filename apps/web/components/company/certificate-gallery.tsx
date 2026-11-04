@@ -38,9 +38,9 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
                 <button
                   type="button"
                   onClick={() => setActive(index)}
-                  className="group flex h-full w-full flex-col rounded-[16px] border border-border bg-surface p-4 text-left shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[var(--shadow-md)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                  className="group flex h-full w-full flex-col rounded-[10px] border border-border bg-surface p-4 text-left shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[var(--shadow-md)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-[12px] bg-white">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] bg-white">
                     <span
                       className="pointer-events-none absolute inset-2 z-10 border border-gold/25"
                       aria-hidden="true"
@@ -115,7 +115,7 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
               const images = allItemImages(project);
               return (
                 <StaggerItem key={project.id}>
-                  <article className="group overflow-hidden rounded-[16px] border border-border bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:border-gold/40 hover:shadow-[var(--shadow-md)]">
+                  <article className="group overflow-hidden rounded-[10px] border border-border bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:border-gold/40 hover:shadow-[var(--shadow-md)]">
                     <button
                       type="button"
                       onClick={() => setActive({ project: projectIndex, image: 0 })}
@@ -150,7 +150,7 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
                               onClick={() =>
                                 setActive({ project: projectIndex, image: imageIndex + 1 })
                               }
-                              className="relative h-16 w-20 shrink-0 overflow-hidden rounded-[8px] border border-border"
+                              className="relative h-16 w-20 shrink-0 overflow-hidden rounded-[6px] border border-border"
                             >
                               <RivetImage
                                 src={src}

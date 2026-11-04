@@ -88,7 +88,7 @@ export function CompanyGalleryGrid({ images }: { images: GalleryImage[] }) {
                   <button
                     type="button"
                     onClick={() => setActive(index)}
-                    className="group relative block w-full overflow-hidden rounded-[16px] text-left"
+                    className="group relative block w-full overflow-hidden rounded-[10px] text-left"
                   >
                     <div className="relative aspect-[4/5] overflow-hidden">
                       <RivetImage

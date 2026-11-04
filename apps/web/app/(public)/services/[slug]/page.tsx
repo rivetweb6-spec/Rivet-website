@@ -71,7 +71,7 @@ export default async function ServiceDetailPage({ params }: { params: Params }) 
         <Container>
           <div className="grid gap-12 lg:grid-cols-[1fr_0.9fr] lg:items-start">
             <div>
-              <span className="grid h-14 w-14 place-items-center rounded-[12px] bg-navy/5 text-navy">
+              <span className="grid h-14 w-14 place-items-center rounded-[8px] bg-navy/5 text-navy">
                 <Icon size={26} strokeWidth={1.5} />
               </span>
               <Eyebrow className="mt-6">Service</Eyebrow>
@@ -81,20 +81,20 @@ export default async function ServiceDetailPage({ params }: { params: Params }) 
                 <RequestQuotationButton />
                 <Link
                   href="/request-quotation"
-                  className="inline-flex h-14 items-center justify-center rounded-[12px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
+                  className="inline-flex h-14 items-center justify-center rounded-[8px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
                 >
                   Open full quotation form
                 </Link>
                 <Link
                   href="/products"
-                  className="inline-flex h-14 items-center justify-center rounded-[12px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
+                  className="inline-flex h-14 items-center justify-center rounded-[8px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
                 >
                   Browse products
                 </Link>
               </div>
             </div>
             {service.image && (
-              <div className="relative aspect-[4/3] overflow-hidden rounded-[20px] bg-surface shadow-[var(--shadow-lg)]">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[12px] bg-surface shadow-[var(--shadow-lg)]">
                 <RivetImage
                   src={service.image}
                   alt={`${service.title} — Rivet services in Ethiopia`}

@@ -79,7 +79,7 @@ export default async function CompanyPage() {
             <Stagger className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {values.map((v) => (
                 <StaggerItem key={v}>
-                  <div className="rounded-[16px] border border-border bg-surface px-6 py-8 text-center">
+                  <div className="rounded-[10px] border border-border bg-surface px-6 py-8 text-center">
                     <div className="mx-auto h-[2px] w-8 bg-gold" />
                     <h3 className="mt-5 text-[1.125rem]">{v}</h3>
                   </div>
@@ -196,9 +196,9 @@ export default async function CompanyPage() {
               <StaggerItem key={card.href}>
                 <Link
                   href={card.href}
-                  className="group flex h-full flex-col rounded-[16px] border border-border bg-surface p-7 transition-all duration-500 hover:-translate-y-1 hover:border-gold/40 hover:shadow-[var(--shadow-md)]"
+                  className="group flex h-full flex-col rounded-[10px] border border-border bg-surface p-7 transition-all duration-500 hover:-translate-y-1 hover:border-gold/40 hover:shadow-[var(--shadow-md)]"
                 >
-                  <span className="grid h-12 w-12 place-items-center rounded-[12px] bg-navy/5 text-navy transition-colors group-hover:bg-gold">
+                  <span className="grid h-12 w-12 place-items-center rounded-[8px] bg-navy/5 text-navy transition-colors group-hover:bg-gold">
                     <card.icon size={22} strokeWidth={1.5} />
                   </span>
                   <h3 className="mt-5 text-[1.25rem]">{card.title}</h3>

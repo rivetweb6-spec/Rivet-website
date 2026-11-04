@@ -116,7 +116,7 @@ function DesktopCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
             transition={{ duration: 0.18 }}
             className="absolute top-full left-1/2 z-50 w-72 -translate-x-1/2 pt-4"
           >
-            <div className="overflow-hidden rounded-[16px] border border-gold/20 bg-[#001A30] py-2 shadow-[var(--shadow-lg)]">
+            <div className="overflow-hidden rounded-[10px] border border-gold/20 bg-[#001A30] py-2 shadow-[var(--shadow-lg)]">
               {companyNavLinks.map((link) => {
                 const isActive =
                   'exact' in link && link.exact

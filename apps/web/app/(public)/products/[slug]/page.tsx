@@ -235,13 +235,13 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                 />
                 <Link
                   href="/request-quotation"
-                  className="inline-flex h-14 items-center justify-center rounded-[12px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
+                  className="inline-flex h-14 items-center justify-center rounded-[8px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
                 >
                   Open full quotation form
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex h-14 items-center justify-center rounded-[12px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
+                  className="inline-flex h-14 items-center justify-center rounded-[8px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
                 >
                   Contact us
                 </Link>
@@ -288,7 +288,7 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                 <li key={s.id}>
                   <Link
                     href={`/services/${s.slug}`}
-                    className="block rounded-[16px] border border-border bg-bg p-6 transition-colors hover:border-gold/40"
+                    className="block rounded-[10px] border border-border bg-bg p-6 transition-colors hover:border-gold/40"
                   >
                     <h3 className="text-[1.125rem]">{s.title}</h3>
                     <p className="mt-2 line-clamp-3 text-[0.875rem] text-muted">{s.narrative}</p>
@@ -326,7 +326,7 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                   <Link
                     key={p.id}
                     href={`/products/${p.slug}`}
-                    className="group overflow-hidden rounded-[16px] bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)]"
+                    className="group overflow-hidden rounded-[10px] bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)]"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <RivetImage

@@ -44,7 +44,7 @@ export default async function ContactPage() {
               <Eyebrow>Reach us</Eyebrow>
               <h2 className="mt-3 text-[2rem]">Office & channels</h2>
               {!hasChannels && (
-                <p className="mt-6 rounded-[14px] border border-border bg-surface px-5 py-4 text-[0.9375rem] leading-relaxed text-muted">
+                <p className="mt-6 rounded-[8px] border border-border bg-surface px-5 py-4 text-[0.9375rem] leading-relaxed text-muted">
                   Our direct phone and email details are being updated. The quickest way to reach a
                   RIVET specialist is the{' '}
                   <a href="#contact-form" className="font-medium text-navy underline underline-offset-4 hover:text-gold">
@@ -98,7 +98,7 @@ export default async function ContactPage() {
                 </div>
               )}
 
-              <div className="mt-10 overflow-hidden rounded-[16px] border border-border shadow-[var(--shadow-sm)]">
+              <div className="mt-10 overflow-hidden rounded-[10px] border border-border shadow-[var(--shadow-sm)]">
                 <iframe
                   title="RIVET office location"
                   src={mapSrc}

@@ -122,7 +122,7 @@ export function QuotationForm({
 
   if (status === 'success') {
     return (
-      <div className="rounded-[20px] border border-border bg-surface p-8 text-center md:p-10">
+      <div className="rounded-[12px] border border-border bg-surface p-8 text-center md:p-10">
         <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-gold/15 text-gold">
           <Check size={30} />
         </div>
@@ -138,7 +138,7 @@ export function QuotationForm({
     <form
       onSubmit={submit}
       noValidate
-      className="space-y-4 rounded-[20px] border border-border bg-surface p-6 md:p-8"
+      className="space-y-4 rounded-[12px] border border-border bg-surface p-6 md:p-8"
     >
       <Field
         label="Full Name"
@@ -214,7 +214,7 @@ export function QuotationForm({
           maxLength={5000}
           value={fields.message}
           onChange={(e) => set('message', e.target.value)}
-          className="w-full rounded-[12px] border border-border bg-surface px-4 py-3 text-[1rem] outline-none focus:border-navy"
+          className="w-full rounded-[8px] border border-border bg-surface px-4 py-3 text-[1rem] outline-none focus:border-navy"
         />
       </div>
       <Button type="submit" variant="primary" size="lg" className="w-full" disabled={status === 'submitting'}>
@@ -268,7 +268,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={cn(
-          'h-12 w-full rounded-[12px] border bg-surface px-4 text-[1rem] outline-none placeholder:text-muted/60 focus:border-navy',
+          'h-12 w-full rounded-[8px] border bg-surface px-4 text-[1rem] outline-none placeholder:text-muted/60 focus:border-navy',
           error ? 'border-error/60' : 'border-border',
         )}
       />

@@ -68,7 +68,7 @@ export function ContactForm() {
   if (status === 'success') {
     return (
       <motion.div
-        className="flex flex-col items-center rounded-[20px] border border-border bg-surface px-8 py-16 text-center shadow-[var(--shadow-sm)]"
+        className="flex flex-col items-center rounded-[12px] border border-border bg-surface px-8 py-16 text-center shadow-[var(--shadow-sm)]"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
       >
@@ -88,7 +88,7 @@ export function ContactForm() {
       id="contact-form"
       onSubmit={submit}
       noValidate
-      className="scroll-mt-28 space-y-4 rounded-[20px] border border-border bg-surface p-8 shadow-[var(--shadow-sm)]"
+      className="scroll-mt-28 space-y-4 rounded-[12px] border border-border bg-surface p-8 shadow-[var(--shadow-sm)]"
     >
       <Field
         label="Full Name"
@@ -145,7 +145,7 @@ export function ContactForm() {
             setErrors(validate(fields));
           }}
           className={cn(
-            'w-full rounded-[12px] border bg-surface px-4 py-3 text-[1rem] outline-none transition-colors focus:border-navy',
+            'w-full rounded-[8px] border bg-surface px-4 py-3 text-[1rem] outline-none transition-colors focus:border-navy',
             touched.message && errors.message ? 'border-error/60' : 'border-border',
           )}
         />
@@ -211,7 +211,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={cn(
-          'h-12 w-full rounded-[12px] border bg-surface px-4 text-[1rem] outline-none transition-colors focus:border-navy',
+          'h-12 w-full rounded-[8px] border bg-surface px-4 text-[1rem] outline-none transition-colors focus:border-navy',
           error ? 'border-error/60' : 'border-border',
         )}
       />

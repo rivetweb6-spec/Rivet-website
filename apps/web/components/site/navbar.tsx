@@ -362,7 +362,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
             )}
 
             {products.length > 0 && (
-              <ul className="mt-4 overflow-hidden rounded-[16px] bg-navy-deep/90 ring-1 ring-white/10">
+              <ul className="mt-4 overflow-hidden rounded-[10px] bg-navy-deep/90 ring-1 ring-white/10">
                 {products.map((p) => (
                   <li key={p.id}>
                     <button
@@ -370,7 +370,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
                       onClick={() => go(`/products/${p.slug}`)}
                       className="flex w-full items-center gap-4 px-4 py-3 text-left transition-colors hover:bg-white/5"
                     >
-                      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-[8px] bg-white/5">
+                      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-[6px] bg-white/5">
                         {p.image && (
                           <RivetImage src={p.image} alt={p.name} fill sizes="44px" className="object-cover" />
                         )}
@@ -398,7 +398,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
             )}
 
             {showNoResults && (
-              <div className="mt-4 rounded-[16px] bg-navy-deep/90 px-5 py-6 ring-1 ring-white/10">
+              <div className="mt-4 rounded-[10px] bg-navy-deep/90 px-5 py-6 ring-1 ring-white/10">
                 <p className="text-[0.9375rem] text-white/80">
                   No products found for “{query.trim()}”.
                 </p>

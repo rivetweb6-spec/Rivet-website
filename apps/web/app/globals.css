@@ -15,18 +15,22 @@
   --color-gold: #d69a2e;
   --color-gold-soft: #e3b658;
   --color-gold-muted: #c4922a;
-  --color-ink: #1e1e1e;
+  /* Body text — charcoal with a navy undertone (15:1 on white). */
+  --color-ink: #1b2533;
 
-  /* Luxury neutrals */
-  --color-canvas: #fdfcfa;
-  --color-pearl: #f8f6f2;
-  --color-bg: #f3f1ec;
-  --color-surface: #faf8f4;
-  --color-champagne: #ebe6dc;
-  --color-border: #e0dcd4;
-  --color-divider: #d8d3c9;
-  /* #5b6470 keeps small secondary text ≥ 4.5:1 on bg/surface/canvas (was #6b7280, 4.28:1 on bg). */
-  --color-muted: #5b6470;
+  /*
+   * Corporate neutrals — clean white page, cool light-grey sections.
+   * canvas: page · surface: cards / alternating sections · bg: tinted bands
+   */
+  --color-canvas: #ffffff;
+  --color-pearl: #f7f9fb;
+  --color-bg: #f1f4f7;
+  --color-surface: #f7f9fb;
+  --color-champagne: #e8edf2;
+  --color-border: #dde3ea;
+  --color-divider: #e3e8ee;
+  /* Secondary text: ≥ 5.6:1 on every light neutral. */
+  --color-muted: #556173;
 
   /*
    * Text-safe variants for small text on light surfaces (WCAG AA ≥ 4.5:1).
@@ -52,21 +56,21 @@
   --text-6xl: 3.5rem;    /* 56 */
   --text-7xl: 4.5rem;    /* 72 */
 
-  /* Radius scale */
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  /* Radius scale — restrained, engineered corners */
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
 
-  /* Fonts (wired via next/font in layout) */
-  --font-display: var(--font-cormorant), 'Georgia', 'Times New Roman', serif;
+  /* Fonts (wired via next/font in layout): Manrope headings, Inter body */
+  --font-display: var(--font-manrope), var(--font-inter), 'Segoe UI', sans-serif;
   --font-sans: var(--font-inter), 'Segoe UI', sans-serif;
 
-  /* Layered, low-opacity shadows */
-  --shadow-sm: 0 1px 2px rgba(2, 20, 38, 0.04), 0 1px 3px rgba(2, 20, 38, 0.06);
-  --shadow-md: 0 4px 12px rgba(2, 20, 38, 0.06), 0 2px 4px rgba(2, 20, 38, 0.04);
-  --shadow-lg: 0 12px 32px rgba(2, 20, 38, 0.1), 0 4px 8px rgba(2, 20, 38, 0.05);
-  --shadow-bloom: 0 20px 48px rgba(0, 47, 84, 0.14), 0 8px 16px rgba(0, 47, 84, 0.08);
-  --shadow-luxury: 0 32px 64px rgba(0, 26, 48, 0.18), 0 12px 24px rgba(0, 47, 84, 0.1);
+  /* Quiet, low-opacity shadows — depth without drama */
+  --shadow-sm: 0 1px 2px rgba(15, 30, 50, 0.05);
+  --shadow-md: 0 2px 8px rgba(15, 30, 50, 0.06), 0 1px 2px rgba(15, 30, 50, 0.04);
+  --shadow-lg: 0 8px 24px rgba(15, 30, 50, 0.08), 0 2px 6px rgba(15, 30, 50, 0.04);
+  --shadow-bloom: 0 16px 40px rgba(15, 30, 50, 0.12), 0 4px 10px rgba(15, 30, 50, 0.06);
+  --shadow-luxury: 0 12px 32px rgba(15, 30, 50, 0.1), 0 2px 6px rgba(15, 30, 50, 0.05);
 }
 
 @layer base {
@@ -98,9 +102,20 @@
   h1, h2, h3, h4, h5 {
     font-family: var(--font-display);
     color: var(--color-navy);
-    letter-spacing: -0.015em;
-    line-height: 1.06;
-    font-weight: 500;
+    letter-spacing: -0.022em;
+    line-height: 1.15;
+    font-weight: 700;
+    text-wrap: balance;
+  }
+
+  h3, h4, h5 {
+    font-weight: 650;
+    letter-spacing: -0.012em;
+    line-height: 1.25;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   /* Visible keyboard focus — gold ring on navy offset (AA UI contrast). */
@@ -133,45 +148,58 @@
     color: var(--color-navy);
   }
 
-  /* Dark mode — warm charcoal derived from navy-deep; brand navy/gold stay fixed */
+  /*
+   * Dark mode — deep slate-navy surfaces (never pure black). Layers get
+   * lighter as they rise: canvas → bg → surface → champagne. All text pairs
+   * meet WCAG AA (ink ≥ 13:1, muted ≥ 7:1).
+   */
   .dark {
-    --color-canvas: #080c10;
-    --color-pearl: #0e1218;
-    --color-bg: #121820;
-    --color-surface: #181f28;
-    --color-champagne: #222a34;
-    --color-border: #2a3340;
-    --color-divider: #343e4c;
-    --color-muted: #9a9590;
-    --color-ink: #ede8df;
+    color-scheme: dark;
+    --color-canvas: #0b1622;
+    --color-pearl: #0f1d2e;
+    --color-bg: #0f1d2e;
+    --color-surface: #14243a;
+    --color-champagne: #1b2e46;
+    --color-border: #24394f;
+    --color-divider: #2a4159;
+    --color-muted: #9fb1c6;
+    --color-ink: #e5ecf4;
     /* Light text-safe variants for dark surfaces. */
     --color-gold-ink: #e3b658;
     --color-success-ink: #4ade80;
     --color-warning-ink: #fbbf24;
     --color-error-ink: #f87171;
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.35), 0 4px 8px rgba(0, 0, 0, 0.2);
-    --shadow-bloom: 0 20px 48px rgba(0, 0, 0, 0.4), 0 8px 16px rgba(0, 0, 0, 0.25);
-    --shadow-luxury: 0 32px 64px rgba(0, 0, 0, 0.45), 0 12px 24px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.2);
+    --shadow-bloom: 0 16px 40px rgba(0, 0, 0, 0.4), 0 4px 10px rgba(0, 0, 0, 0.25);
+    --shadow-luxury: 0 12px 32px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.25);
   }
 
-  /* Headings & navy text accents on dark surfaces — warm pearl, not water blue */
+  /* Headings on dark surfaces — light slate, not brand navy */
   .dark h1,
   .dark h2,
   .dark h3,
   .dark h4,
-  .dark h5,
-  .dark .text-navy {
+  .dark h5 {
     color: var(--color-ink);
   }
+}
 
-  /* Keep brand navy on gold surfaces (buttons, badges) */
-  .dark .bg-gold.text-navy,
-  .dark [class*='bg-gold'].text-navy,
-  .dark .bg-gold .text-navy {
-    color: #002f54;
-  }
+/*
+ * Dark-mode remaps for Tailwind colour utilities. These must be UNLAYERED:
+ * utilities live in a cascade layer, so an override inside @layer base can
+ * never win against `.text-navy` — navy text then stayed navy on dark.
+ */
+.dark .text-navy {
+  color: var(--color-ink);
+}
+
+/* Keep brand navy on gold fills (primary buttons, badges, skip link). */
+.dark .bg-gold.text-navy,
+.dark [class*='bg-gold'].text-navy,
+.dark .bg-gold .text-navy {
+  color: #002f54;
 }
 
 @layer components {
@@ -198,12 +226,12 @@
     outline-offset: 2px;
   }
 
-  /* Eyebrow label — gold accent; sized as large text for AA on navy */
+  /* Eyebrow label — small caps kicker above section titles */
   .eyebrow {
     font-family: var(--font-sans);
     font-size: var(--text-2xs);
     font-weight: 600;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
   }
 
@@ -213,7 +241,7 @@
     background: var(--color-divider);
   }
 
-  /* Gold underline that draws on hover */
+  /* Nav underline that draws on hover / keyboard focus */
   .gold-underline {
     position: relative;
   }
@@ -221,136 +249,77 @@
     content: '';
     position: absolute;
     left: 0;
-    bottom: -2px;
-    height: 1px;
+    bottom: -6px;
+    height: 2px;
     width: 0;
-    background: linear-gradient(90deg, var(--color-gold), var(--color-gold-soft));
-    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    background: var(--color-gold);
+    transition: width 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
-  /* Keyboard users get the same underline as mouse hover. */
   .gold-underline:hover::after,
   .gold-underline:focus-visible::after,
-  .gold-underline:focus-within::after {
+  .gold-underline:focus-within::after,
+  .gold-underline[aria-current='page']::after {
     width: 100%;
   }
 
-  /*
-   * Signature element — the Rivet Line.
-   * A vertical gold rule anchoring editorial sections.
-   */
+  /* Accent rule beside a section kicker / hero copy (brand detail, not decoration) */
   .rivet-line {
     position: relative;
+    padding-left: 1.25rem;
   }
   .rivet-line::before {
     content: '';
     position: absolute;
     left: 0;
-    top: 0.35em;
-    width: 1px;
-    height: calc(100% - 0.7em);
-    background: linear-gradient(
-      to bottom,
-      transparent,
-      var(--color-gold) 15%,
-      var(--color-gold-soft) 85%,
-      transparent
-    );
-  }
-  .rivet-line {
-    padding-left: 2rem;
+    top: 0.2em;
+    width: 3px;
+    height: calc(100% - 0.4em);
+    background: var(--color-gold);
   }
 
-  /* Gold horizontal rule for section breaks */
+  /* Section break — a plain divider line */
   .gold-rule {
     height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--color-gold) 20%,
-      var(--color-gold-soft) 50%,
-      var(--color-gold) 80%,
-      transparent
-    );
+    background: var(--color-divider);
   }
 
-  /* Subtle luxury grain overlay */
+  /* Former grain overlay: intentionally a no-op (flat, clean surfaces). */
   .luxury-grain {
     position: relative;
   }
-  .luxury-grain::after {
-    content: '';
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 128px 128px;
-  }
 
-  /* Display headline treatment */
+  /* Display headline treatment — same family as headings, tighter */
   .headline-display {
     font-family: var(--font-display);
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    line-height: 1.04;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.12;
   }
 
-  /* Gold shimmer text for accent words */
+  /* Accent words in headlines — solid brand gold, no shimmer */
   .text-gold-shimmer {
-    background: linear-gradient(
-      135deg,
-      var(--color-gold-muted) 0%,
-      var(--color-gold) 40%,
-      var(--color-gold-soft) 60%,
-      var(--color-gold) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--color-gold);
   }
 
-  /* Luxury card frame — gold hairline on hover */
+  /* Card frame — quiet lift and border tint on hover */
   .luxury-card {
     position: relative;
     overflow: hidden;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-      box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .luxury-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    border: 1px solid transparent;
-    border-radius: inherit;
-    transition: border-color 0.5s ease;
-  }
-  .luxury-card:hover::before {
-    border-color: rgba(214, 154, 46, 0.45);
+    border: 1px solid var(--color-border);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
   .luxury-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-luxury);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: color-mix(in srgb, var(--color-navy) 25%, var(--color-border));
+  }
+  .dark .luxury-card:hover {
+    border-color: color-mix(in srgb, var(--color-gold) 35%, var(--color-border));
   }
 
-  /* Offset image frame — editorial portrait treatment */
+  /* Image frame — formerly an offset gold outline; now a plain image block */
   .frame-offset {
     position: relative;
-  }
-  .frame-offset::after {
-    content: '';
-    position: absolute;
-    inset: -12px -12px 12px 12px;
-    border: 1px solid var(--color-gold);
-    opacity: 0.35;
-    pointer-events: none;
-    z-index: -1;
-    transition: opacity 0.5s ease, inset 0.5s ease;
-  }
-  .frame-offset:hover::after {
-    opacity: 0.6;
-    inset: -16px -16px 16px 16px;
   }
 }
 

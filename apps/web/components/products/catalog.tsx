@@ -124,7 +124,7 @@ export function ProductsCatalog({
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             placeholder="Search by name, brand, category…"
-            className="h-12 w-full rounded-[12px] border border-border bg-surface pl-11 pr-4 text-[0.9375rem] outline-none transition-colors focus:border-navy focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+            className="h-12 w-full rounded-[8px] border border-border bg-surface pl-11 pr-4 text-[0.9375rem] outline-none transition-colors focus:border-navy focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
           />
         </form>
       </div>
@@ -314,7 +314,7 @@ function PagerLink({
   disabled: boolean;
 }) {
   const className =
-    'rounded-[12px] border border-border px-4 py-2 text-[0.875rem] transition-colors hover:border-gold hover:text-gold';
+    'rounded-[8px] border border-border px-4 py-2 text-[0.875rem] transition-colors hover:border-gold hover:text-gold';
   if (disabled) {
     return (
       <span className={cn(className, 'pointer-events-none opacity-40')} aria-disabled="true">

@@ -85,7 +85,7 @@ export function CategoryCard({
   return (
     <Link
       href={`/products/${category.slug}`}
-      className={`luxury-card group flex h-full flex-col overflow-hidden rounded-[16px] bg-canvas shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)] ${cardLinkFocus}`}
+      className={`luxury-card group flex h-full flex-col overflow-hidden rounded-[10px] bg-canvas shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)] ${cardLinkFocus}`}
     >
       <div className="relative aspect-[3/2] overflow-hidden bg-pearl">
         <RivetImage
@@ -189,7 +189,7 @@ export function ProductCard({
     <Link
       key={product.id}
       href={`/products/${product.slug}`}
-      className="luxury-card group overflow-hidden rounded-[16px] bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)]"
+      className="luxury-card group overflow-hidden rounded-[10px] bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)]"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <RivetImage
@@ -337,7 +337,7 @@ export function DepartmentGrid({ tree }: { tree: CategoryTreeNode[] }) {
           return (
             <li
               key={root.id}
-              className="luxury-card group relative flex flex-col overflow-hidden rounded-[18px] bg-canvas shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)] focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2 focus-within:ring-offset-bg"
+              className="luxury-card group relative flex flex-col overflow-hidden rounded-[12px] bg-canvas shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)] focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2 focus-within:ring-offset-bg"
             >
               <div className="relative aspect-[16/10] overflow-hidden bg-pearl">
                 <RivetImage
@@ -420,7 +420,7 @@ export function DepartmentGrid({ tree }: { tree: CategoryTreeNode[] }) {
 /** Clean branded empty state for categories with no published products yet */
 export function ProductEmptyState({ categoryName }: { categoryName: string }) {
   return (
-    <div className="rounded-[16px] border border-dashed border-border/80 bg-surface/50 p-10 text-center">
+    <div className="rounded-[10px] border border-dashed border-border/80 bg-surface/50 p-10 text-center">
       <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gold/10 text-gold mb-3">
         <Package size={22} strokeWidth={1.5} />
       </div>
@@ -433,13 +433,13 @@ export function ProductEmptyState({ categoryName }: { categoryName: string }) {
       <div className="mt-6 flex flex-wrap justify-center gap-3">
         <Link
           href="/request-quotation"
-          className="inline-flex h-11 items-center justify-center rounded-[10px] bg-gold px-6 text-[0.875rem] font-medium text-navy transition-all hover:brightness-110"
+          className="inline-flex h-11 items-center justify-center rounded-[6px] bg-gold px-6 text-[0.875rem] font-medium text-navy transition-all hover:brightness-110"
         >
           Request a quotation
         </Link>
         <Link
           href="/contact"
-          className="inline-flex h-11 items-center justify-center rounded-[10px] border border-border px-6 text-[0.875rem] font-medium text-ink transition-colors hover:border-gold hover:text-gold"
+          className="inline-flex h-11 items-center justify-center rounded-[6px] border border-border px-6 text-[0.875rem] font-medium text-ink transition-colors hover:border-gold hover:text-gold"
         >
           Contact our team
         </Link>

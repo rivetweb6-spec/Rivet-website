@@ -72,7 +72,7 @@ export function ImageLightbox({
         onClick={onClose}
       />
       <div className="relative z-10 flex max-h-full w-full max-w-5xl flex-col">
-        <div className="relative h-[70vh] w-full overflow-hidden rounded-[16px] bg-white">
+        <div className="relative h-[70vh] w-full overflow-hidden rounded-[10px] bg-white">
           <RivetImage
             src={item.src}
             alt={item.title}

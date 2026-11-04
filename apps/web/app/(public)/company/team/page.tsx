@@ -48,14 +48,14 @@ function MemberCard({ member, featured = false }: { member: TeamMember; featured
     <article
       className={
         featured
-          ? 'grid items-center gap-10 overflow-hidden rounded-[20px] border border-border bg-surface p-6 shadow-[var(--shadow-sm)] md:grid-cols-[minmax(0,0.9fr)_1.1fr] md:p-10'
-          : 'h-full overflow-hidden rounded-[16px] border border-border bg-surface shadow-[var(--shadow-sm)]'
+          ? 'grid items-center gap-10 overflow-hidden rounded-[12px] border border-border bg-surface p-6 shadow-[var(--shadow-sm)] md:grid-cols-[minmax(0,0.9fr)_1.1fr] md:p-10'
+          : 'h-full overflow-hidden rounded-[10px] border border-border bg-surface shadow-[var(--shadow-sm)]'
       }
     >
       <div
         className={
           featured
-            ? 'relative aspect-[4/5] overflow-hidden rounded-[12px] bg-navy/5'
+            ? 'relative aspect-[4/5] overflow-hidden rounded-[8px] bg-navy/5'
             : 'relative aspect-[4/5] overflow-hidden bg-navy/5'
         }
       >

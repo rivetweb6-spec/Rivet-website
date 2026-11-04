@@ -180,7 +180,7 @@ export function QuotationModal({
             aria-labelledby="quotation-modal-title"
             data-lenis-prevent
             onWheel={(e) => e.stopPropagation()}
-            className="relative z-10 max-h-[92dvh] w-full max-w-lg overflow-y-auto overflow-x-hidden overscroll-contain rounded-[20px] bg-surface shadow-[var(--shadow-bloom)]"
+            className="relative z-10 max-h-[92dvh] w-full max-w-lg overflow-y-auto overflow-x-hidden overscroll-contain rounded-[12px] bg-surface shadow-[var(--shadow-bloom)]"
             initial={{ opacity: 0, y: 24, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -232,9 +232,9 @@ export function QuotationModal({
                   </p>
 
                   {prefilledProduct && (
-                    <div className="mt-5 flex items-center gap-4 rounded-[12px] border border-gold/30 bg-gold/5 p-3">
+                    <div className="mt-5 flex items-center gap-4 rounded-[8px] border border-gold/30 bg-gold/5 p-3">
                       {options.productImage && (
-                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-[8px]">
+                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-[6px]">
                           <RivetImage
                             src={options.productImage}
                             alt={options.productName ?? 'Selected product'}
@@ -338,7 +338,7 @@ export function QuotationModal({
                         maxLength={5000}
                         value={fields.message}
                         onChange={(e) => set('message', e.target.value)}
-                        className="w-full rounded-[12px] border border-border bg-surface px-4 py-3 text-[1rem] outline-none transition-colors focus:border-navy"
+                        className="w-full rounded-[8px] border border-border bg-surface px-4 py-3 text-[1rem] outline-none transition-colors focus:border-navy"
                       />
                     </div>
 
@@ -407,7 +407,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={cn(
-          'h-12 w-full rounded-[12px] border bg-surface px-4 text-[1rem] outline-none transition-colors placeholder:text-muted/60 focus:border-navy',
+          'h-12 w-full rounded-[8px] border bg-surface px-4 text-[1rem] outline-none transition-colors placeholder:text-muted/60 focus:border-navy',
           error ? 'border-error/60' : 'border-border',
         )}
       />
