@@ -686,7 +686,7 @@ async function main() {
       headlineAccent: 'for projects in Ethiopia.',
       subheadline:
         'Passenger lifts, escalators, granite, doors, furniture, sanitary goods and construction materials — supplied, installed and supported by one accountable team.',
-      heroImage: u('photo-1487958449943-2429e8be8625', 2400),
+      heroImage: '/images/rivet-elevator-hero.webp',
       introEyebrow: 'About RIVET COMPANY',
       introTitle: 'One supplier for the products that complete a building.',
       introBody:

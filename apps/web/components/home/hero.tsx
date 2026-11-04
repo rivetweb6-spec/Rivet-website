@@ -3,7 +3,6 @@ import { ArrowRight } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button-variants';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { RequestQuotationButton } from '@/components/quotation/request-quotation-button';
-import { assets } from '@/lib/assets';
 import { HOME_COPY } from '@/lib/data/home-copy';
 
 export type HeroContent = {
@@ -14,12 +13,15 @@ export type HeroContent = {
   heroImage?: string | null;
 };
 
+/** Bundled hero photo (public/images). Admin → Homepage can still override it. */
+const HERO_IMAGE = '/images/rivet-elevator-hero.webp';
+
 const defaults = {
   eyebrow: HOME_COPY.eyebrow,
   headline: HOME_COPY.headline,
   headlineAccent: HOME_COPY.headlineAccent,
   subheadline: HOME_COPY.subheadline,
-  heroImage: assets.hero.image,
+  heroImage: HERO_IMAGE,
 };
 
 /**
@@ -39,17 +41,24 @@ export function Hero({ content }: { content?: HeroContent | null }) {
       aria-labelledby="hero-title"
       className="relative isolate flex min-h-[560px] items-center overflow-hidden bg-navy-deep pt-[4.5rem] md:h-[min(85vh,760px)]"
     >
-      <RivetImage
-        src={heroImage}
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className="-z-10 object-cover"
-      />
-      {/* One directional scrim keeps text readable over any photo. */}
+      {/* Full-bleed on mobile/tablet; on desktop the photo is anchored right and its
+          left edge fades into the navy so the elevator sits beside the text. */}
       <div
-        className="absolute inset-0 -z-10 bg-gradient-to-r from-navy-deep/95 via-navy-deep/80 to-navy-deep/30"
+        className="absolute inset-y-0 right-0 -z-10 w-full lg:w-[78%] lg:[mask-image:linear-gradient(to_right,transparent,#000_30%)]"
+        aria-hidden="true"
+      >
+        <RivetImage
+          src={heroImage}
+          alt=""
+          fill
+          priority
+          sizes="(min-width: 1024px) 78vw, 100vw"
+          className="object-cover object-[72%_center] lg:object-center"
+        />
+      </div>
+      {/* Navy scrim, strongest on the left behind the text; heavier on mobile where text covers the photo. */}
+      <div
+        className="absolute inset-0 -z-10 bg-gradient-to-r from-navy-deep/95 via-navy-deep/80 to-navy-deep/55 md:via-navy-deep/70 md:to-navy-deep/10 lg:via-navy-deep/55 lg:to-transparent"
         aria-hidden="true"
       />
 
