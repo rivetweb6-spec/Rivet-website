@@ -32,14 +32,14 @@ export default async function NewsPage() {
   return (
     <>
       <PageHero
-        eyebrow="Journal"
-        title="News & insights"
-        description="Stories from the showroom, the factory floor, and the projects we supply."
+        eyebrow="News"
+        title="News & updates"
+        description="Company announcements, product updates and project news from RIVET COMPANY."
       />
       <Section>
         <Container>
           {articles.length === 0 ? (
-            <p className="rounded-[8px] border border-dashed border-border bg-surface p-10 text-center text-muted">No articles published yet.</p>
+            <p className="rounded-[8px] border border-dashed border-border bg-surface p-10 text-center text-muted">No news articles have been published yet.</p>
           ) : (
             <Stagger className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
               {articles.map((n) => (
@@ -51,7 +51,7 @@ export default async function NewsPage() {
                     <div className="relative aspect-[16/10] overflow-hidden bg-bg">
                       <RivetImage
                         src={n.coverImage ?? assets.news.n1}
-                        alt={`${n.title} — RIVET news`}
+                        alt={`${n.title} — RIVET COMPANY news`}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"

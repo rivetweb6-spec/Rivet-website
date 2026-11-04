@@ -89,7 +89,7 @@ export function ProductsCatalog({
       <div className="mb-12 flex flex-col gap-4 md:mb-14 sm:flex-row sm:items-center sm:justify-between">
         {mode === 'overview' ? (
           <p className="text-[0.9375rem] text-muted">
-            Choose a department, or search the full catalog.
+            Browse by department, or search the full catalog by product name, brand or category.
           </p>
         ) : (
           <Link

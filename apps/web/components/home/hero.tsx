@@ -4,6 +4,7 @@ import { buttonVariants } from '@/components/ui/button-variants';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { RequestQuotationButton } from '@/components/quotation/request-quotation-button';
 import { assets } from '@/lib/assets';
+import { HOME_COPY } from '@/lib/data/home-copy';
 
 export type HeroContent = {
   eyebrow?: string | null;
@@ -14,11 +15,10 @@ export type HeroContent = {
 };
 
 const defaults = {
-  eyebrow: 'River Company · Premium Imports',
-  headline: 'Engineering the architecture',
-  headlineAccent: 'of ambition.',
-  subheadline:
-    'Elevators, granite, doors and fine building materials — imported with precision, installed with mastery.',
+  eyebrow: HOME_COPY.eyebrow,
+  headline: HOME_COPY.headline,
+  headlineAccent: HOME_COPY.headlineAccent,
+  subheadline: HOME_COPY.subheadline,
   heroImage: assets.hero.image,
 };
 

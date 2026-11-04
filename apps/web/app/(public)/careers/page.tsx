@@ -28,26 +28,26 @@ export default async function CareersPage() {
     <>
       <PageHero
         eyebrow="Careers"
-        title="Join the work behind the landmarks"
-        description="Open roles in import, engineering, installation, and commercial operations. Each vacancy lists the specification, the requirements, and a closing date."
+        title="Build your career with RIVET COMPANY"
+        description="Open roles in engineering, installation, sales and operations. Each vacancy lists the responsibilities, the requirements and a closing date."
       />
       <Section>
         <Container>
           {vacancies.length === 0 ? (
             <div className="mx-auto max-w-xl rounded-[8px] border border-border bg-surface px-8 py-16 text-center">
               <p className="eyebrow text-gold-ink">
-                Roster
+                Vacancies
               </p>
               <h2 className="headline-display mt-4 text-[1.75rem]">No open vacancies right now</h2>
               <p className="mt-3 text-muted">
-                When a role is posted, it will appear here with a closing date. You can also reach
-                the team through Contact.
+                New roles are published here with a closing date. You can also contact our team to
+                introduce yourself.
               </p>
               <Link
                 href="/contact"
                 className="mt-8 inline-flex text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline"
               >
-                Contact RIVET →
+                Contact RIVET COMPANY →
               </Link>
             </div>
           ) : (

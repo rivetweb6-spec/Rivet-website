@@ -77,7 +77,7 @@ export function ContactForm() {
         </div>
         <h3 className="mt-5 text-[1.5rem]">Message sent</h3>
         <p className="mt-2 max-w-sm text-muted">
-          Thank you. A RIVET specialist will respond shortly.
+          Thank you. A RIVET COMPANY specialist will reply shortly.
         </p>
       </motion.div>
     );

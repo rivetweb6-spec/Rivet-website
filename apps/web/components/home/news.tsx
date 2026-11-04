@@ -34,7 +34,7 @@ export function News({ articles }: { articles: NewsArticle[] }) {
         </div>
 
         {articles.length === 0 ? (
-          <p className="text-center text-muted">No articles published yet.</p>
+          <p className="text-center text-muted">No news articles have been published yet.</p>
         ) : (
           <Stagger className="grid gap-5 md:grid-cols-3 lg:gap-6">
             {articles.map((n) => (
@@ -46,7 +46,7 @@ export function News({ articles }: { articles: NewsArticle[] }) {
                   <div className="relative aspect-[16/10] overflow-hidden bg-bg">
                     <RivetImage
                       src={n.coverImage ?? assets.news.n1}
-                      alt={`${n.title} — RIVET news`}
+                      alt={`${n.title} — RIVET COMPANY news`}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"

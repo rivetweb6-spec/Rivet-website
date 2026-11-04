@@ -746,10 +746,10 @@ export default function AdminCategoriesPage() {
             <SeoFieldsPanel
               value={form}
               onChange={(seo) => setForm({ ...form, ...seo })}
-              fallbackTitle={`Premium ${form.name || 'Category'} in Ethiopia | Rivet`}
+              fallbackTitle={`${form.name || 'Category'} in Ethiopia | RIVET COMPANY`}
               fallbackDescription={
                 form.description ||
-                `Explore high-quality ${(form.name || 'products').toLowerCase()} from Rivet in Ethiopia.`
+                `${form.name || 'Products'} supplied by RIVET COMPANY for projects in Ethiopia.`
               }
               fallbackImage={form.image}
               pathPreview={`/products/${form.slug || 'category-slug'}`}

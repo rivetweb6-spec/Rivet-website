@@ -563,7 +563,7 @@ export default function AdminVacanciesPage() {
             value={form}
             onChange={(seo) => setForm({ ...form, ...seo })}
             fallbackTitle={form.title || 'Vacancy'}
-            fallbackDescription="Open role at River Company (RIVET)."
+            fallbackDescription="Open role at RIVET COMPANY in Ethiopia."
             pathPreview={`/careers/${form.slug || 'role-slug'}`}
           />
           <div className="flex justify-end gap-3">

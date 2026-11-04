@@ -98,7 +98,7 @@ export default async function ServiceDetailPage({ params }: { params: Params }) 
               <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] border border-border bg-surface">
                 <RivetImage
                   src={service.image}
-                  alt={`${service.title} — Rivet services in Ethiopia`}
+                  alt={`${service.title} — RIVET COMPANY services in Ethiopia`}
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 45vw"

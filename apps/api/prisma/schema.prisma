@@ -1,4 +1,4 @@
-// RIVET — River Company data model
+// RIVET COMPANY data model
 // PostgreSQL + Prisma. English-first; content fields are structured so a
 // Translation layer can be added later without breaking relations.
 

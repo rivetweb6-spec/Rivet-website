@@ -228,9 +228,9 @@ export default function AdminServicesPage() {
           <SeoFieldsPanel
             value={form}
             onChange={(seo) => setForm({ ...form, ...seo })}
-            fallbackTitle={`${form.title || 'Service'} in Ethiopia | Rivet`}
+            fallbackTitle={`${form.title || 'Service'} in Ethiopia | RIVET COMPANY`}
             fallbackDescription={
-              (form.narrative ?? '').slice(0, 160) || 'Rivet services in Ethiopia.'
+              (form.narrative ?? '').slice(0, 160) || 'RIVET COMPANY services in Ethiopia.'
             }
             fallbackImage={form.image ?? undefined}
             pathPreview={`/services/${form.slug || 'service-slug'}`}

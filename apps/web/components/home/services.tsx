@@ -22,11 +22,11 @@ export function Services({ items }: { items?: ServiceCard[] }) {
       <Container>
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-12">
           <div className="max-w-2xl">
-            <Eyebrow>What we do</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">Services</h2>
+            <Eyebrow>Services</Eyebrow>
+            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">Supply, installation and maintenance</h2>
             <p className="mt-4 leading-relaxed text-muted">
-              End-to-end capability, from sourcing and import to installation, maintenance and
-              engineering consultation.
+              Product import, elevator installation and maintenance, granite and building material
+              supply, and construction consultation — coordinated by one team.
             </p>
           </div>
           <Link

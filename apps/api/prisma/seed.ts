@@ -15,45 +15,45 @@ const categoryFaqs: Record<string, FaqItem[]> = {
     {
       question: 'Do you supply elevators for commercial buildings in Ethiopia?',
       answer:
-        'Yes. RIVET imports and supplies passenger and commercial elevators for projects across Ethiopia, with guidance from specification through quotation.',
+        'Yes. RIVET COMPANY supplies passenger, commercial and freight elevators for offices, hotels, apartments and mixed-use buildings in Ethiopia, with support from specification through installation.',
     },
     {
       question: 'Can I request a quotation for a specific elevator model?',
       answer:
-        'Absolutely. Use Request a Quotation on any product page or contact our team with building type, capacity, and floor count for a tailored quote.',
+        'Yes. Use Request a Quotation on any product page, or contact our team with the building type, required capacity and number of floors for a tailored quotation.',
     },
   ],
   granite: [
     {
       question: 'Is your granite suitable for residential and commercial interiors?',
       answer:
-        'Yes. We supply premium granite slabs for cladding, flooring, and counters in homes and commercial spaces across Ethiopia.',
+        'Yes. We supply granite slabs for wall cladding, flooring and countertops in homes, offices, hotels and other commercial spaces in Ethiopia.',
     },
     {
       question: 'Can granite be cut to project specifications?',
       answer:
-        'We offer cut-to-size options based on architectural drawings. Share dimensions and finish preferences when requesting a quotation.',
+        'Yes. Granite can be cut to size from your architectural drawings. Share the dimensions and preferred finish (polished or honed) when you request a quotation.',
     },
   ],
   doors: [
     {
-      question: 'What types of doors does RIVET supply in Ethiopia?',
+      question: 'What types of doors does RIVET COMPANY supply in Ethiopia?',
       answer:
-        'We supply architectural and automatic door systems for lobbies, offices, and residential entries — request a quotation for the right specification.',
+        'We supply architectural and automatic door systems for building entrances, lobbies, offices and residential projects. Request a quotation and we will recommend the right specification.',
     },
   ],
   'office-furniture': [
     {
       question: 'Do you supply office furniture in Addis Ababa?',
       answer:
-        'Yes. RIVET supplies desks, seating, and office systems for commercial fit-outs in Addis Ababa and across Ethiopia.',
+        'Yes. RIVET COMPANY supplies desks, workstations, seating and office systems for commercial fit-outs in Addis Ababa and other cities in Ethiopia.',
     },
   ],
   chairs: [
     {
       question: 'Are your office chairs suitable for executive and open-plan spaces?',
       answer:
-        'Our seating range covers executive lounge chairs and workplace seating. Request a quotation with quantity and preferred finishes.',
+        'Our seating range covers executive and lounge chairs as well as everyday workplace seating. Request a quotation with the quantity and preferred finishes.',
     },
   ],
 };
@@ -64,7 +64,7 @@ const categories = [
     slug: 'elevators',
     order: 1,
     image: u('photo-1486406146926-c627a92ad1ab'),
-    description: 'Premium passenger and commercial elevators for projects in Ethiopia.',
+    description: 'Passenger, commercial and freight elevators supplied and installed for residential and commercial buildings in Ethiopia.',
     faqs: categoryFaqs.elevators,
   },
   {
@@ -72,21 +72,21 @@ const categories = [
     slug: 'passenger-lifts',
     order: 2,
     image: u('photo-1621905251189-08b45d6a269e'),
-    description: 'Passenger lift systems engineered for comfort, safety, and efficiency.',
+    description: 'Passenger lifts for apartments, offices and hotels, selected for safe, quiet and energy-efficient operation.',
   },
   {
     name: 'Escalators',
     slug: 'escalators',
     order: 3,
     image: u('photo-1752066469007-fc183e1b6a0d'),
-    description: 'Commercial escalators for retail, transit, and public buildings.',
+    description: 'Commercial escalators for shopping centres, transit stations and public buildings.',
   },
   {
     name: 'Granite',
     slug: 'granite',
     order: 4,
     image: u('photo-1615529182904-14819c35db37'),
-    description: 'Premium granite and stone finishes for architectural interiors in Ethiopia.',
+    description: 'Granite slabs and natural stone for countertops, cladding and flooring, cut to project specification.',
     faqs: categoryFaqs.granite,
   },
   {
@@ -94,7 +94,7 @@ const categories = [
     slug: 'doors',
     order: 5,
     image: u('photo-1600585154340-be6161a56a0c'),
-    description: 'Architectural and automatic door systems for commercial and residential projects.',
+    description: 'Architectural and automatic door systems for building entrances, offices and residential projects.',
     faqs: categoryFaqs.doors,
   },
   {
@@ -102,7 +102,7 @@ const categories = [
     slug: 'chairs',
     order: 6,
     image: u('photo-1567016432779-094069958ea5'),
-    description: 'Ergonomic and executive seating for modern workplaces.',
+    description: 'Executive, office and lounge seating for workplaces and reception areas.',
     faqs: categoryFaqs.chairs,
   },
   {
@@ -110,7 +110,7 @@ const categories = [
     slug: 'office-furniture',
     order: 7,
     image: u('photo-1524758631624-e2822e304c36'),
-    description: 'Office furniture supplier solutions for commercial fit-outs in Addis Ababa.',
+    description: 'Desks, workstations and office systems for commercial fit-outs in Addis Ababa and across Ethiopia.',
     faqs: categoryFaqs['office-furniture'],
   },
   {
@@ -118,14 +118,14 @@ const categories = [
     slug: 'sanitary-goods',
     order: 8,
     image: u('photo-1584622650111-993a426fbf0a'),
-    description: 'Premium sanitary ware and bathroom fittings for residential and hospitality projects.',
+    description: 'Sanitary ware and bathroom fittings for residential, hotel and commercial projects.',
   },
   {
     name: 'Building Materials',
     slug: 'building-materials',
     order: 9,
     image: u('photo-1541888946425-d81bb19240f5'),
-    description: 'Fine building materials including structural glass and architectural finishes.',
+    description: 'Building materials including structural glass, stone and architectural finishes for construction projects.',
   },
 ];
 
@@ -148,9 +148,9 @@ const products: SeedProduct[] = [
     name: 'Meridian Passenger Elevator',
     slug: 'meridian-passenger-elevator',
     categorySlug: 'elevators',
-    shortDescription: 'Machine-room-less traction system with brushed-steel cabin finishing.',
+    shortDescription: 'Machine-room-less passenger elevator with gearless traction and a brushed-steel cabin.',
     description:
-      'The Meridian is a machine-room-less passenger elevator engineered for premium residential and commercial towers, combining energy-efficient gearless traction with a refined brushed-steel cabin.',
+      'The Meridian is a machine-room-less (MRL) passenger elevator for residential and commercial buildings. Its energy-efficient gearless traction drive needs no separate machine room, and the brushed-steel cabin suits offices, hotels and apartment buildings alike.',
     brand: 'RIVET Vertical',
     countryOfOrigin: 'Germany',
     specs: [
@@ -166,9 +166,9 @@ const products: SeedProduct[] = [
     name: 'Obsidian Granite Slab',
     slug: 'obsidian-granite-slab',
     categorySlug: 'granite',
-    shortDescription: 'Full-bleed veined granite, precision-cut for architectural surfaces.',
+    shortDescription: 'Polished or honed granite slabs, cut to size for countertops, cladding and flooring.',
     description:
-      'Premium full-slab granite with deep obsidian veining, precision-cut and polished for countertops, cladding and flooring in landmark interiors.',
+      'Full-slab granite with deep, dark veining, available polished or honed in 20 mm and 30 mm thicknesses. Slabs are sealed and can be cut to size from your drawings for countertops, wall cladding and flooring.',
     brand: 'RIVET Stone',
     countryOfOrigin: 'Italy',
     specs: [
@@ -183,9 +183,9 @@ const products: SeedProduct[] = [
     name: 'Atrium Glass Door System',
     slug: 'atrium-glass-door',
     categorySlug: 'doors',
-    shortDescription: 'Frameless tempered glass entry with concealed automatic drive.',
+    shortDescription: 'Frameless tempered-glass entrance with a concealed automatic drive.',
     description:
-      'Atrium is a frameless tempered-glass door system with a concealed automatic drive, designed for lobbies and showrooms that demand an uninterrupted visual plane.',
+      'Atrium is a frameless 12 mm tempered-glass door system with a concealed automatic drive, designed for lobbies, offices and retail entrances that need a clean, open look. It closes softly and is ready for access control.',
     brand: 'RIVET Entry',
     countryOfOrigin: 'Italy',
     specs: [
@@ -200,9 +200,9 @@ const products: SeedProduct[] = [
     name: 'Executive Lounge Chair',
     slug: 'executive-lounge-chair',
     categorySlug: 'chairs',
-    shortDescription: 'Ergonomic seating in full-grain leather and cast aluminium.',
+    shortDescription: 'Executive lounge chair in full-grain leather on a cast-aluminium frame.',
     description:
-      'Sculpted lounge seating finished in full-grain leather over a cast-aluminium frame — designed for executive suites and private lounges.',
+      'Lounge seating upholstered in full-grain leather over a cast-aluminium frame, with ergonomic lumbar support and a swivel base — suited to executive offices, reception areas and private lounges.',
     brand: 'RIVET Atelier',
     countryOfOrigin: 'Italy',
     specs: [
@@ -217,9 +217,9 @@ const products: SeedProduct[] = [
     name: 'Lumina Sanitary Suite',
     slug: 'lumina-sanitary-suite',
     categorySlug: 'sanitary-goods',
-    shortDescription: 'Rimless ceramic ware with matte-gold precision fittings.',
+    shortDescription: 'Rimless vitreous-china sanitary suite with matte-gold fittings.',
     description:
-      'A complete rimless ceramic sanitary suite paired with matte-gold fittings — quiet luxury for premium residential baths.',
+      'A complete rimless sanitary suite in vitreous china, paired with matte-gold fittings and a soft-close seat. The rimless bowl is easier to keep clean, making it a practical choice for homes, hotels and residential developments.',
     brand: 'RIVET Bath',
     countryOfOrigin: 'Germany',
     specs: [
@@ -234,9 +234,9 @@ const products: SeedProduct[] = [
     name: 'Horizon Escalator',
     slug: 'horizon-escalator',
     categorySlug: 'escalators',
-    shortDescription: 'Commercial escalator with energy-saving VVVF drive.',
+    shortDescription: 'Commercial escalator with an energy-saving VVVF drive.',
     description:
-      'Horizon escalators deliver reliable vertical circulation for retail and transit environments, with regenerative VVVF drives and modular step construction.',
+      'Horizon escalators move people reliably through shopping centres, transit stations and public buildings. A VVVF drive saves energy, integrated LED lighting improves visibility, and the escalator is available at 30° or 35° inclination.',
     brand: 'RIVET Vertical',
     countryOfOrigin: 'Germany',
     specs: [
@@ -251,9 +251,9 @@ const products: SeedProduct[] = [
     name: 'Nova Office Desk System',
     slug: 'nova-office-desk',
     categorySlug: 'office-furniture',
-    shortDescription: 'Modular executive desk in oak veneer and steel.',
+    shortDescription: 'Modular office desk system in oak veneer and powder-coated steel.',
     description:
-      'A modular desk system combining oak veneer surfaces with a powder-coated steel understructure — scalable from private offices to open-plan suites.',
+      'A modular desk system with oak-veneer worktops on a powder-coated steel frame. It scales from private offices to open-plan workspaces, with built-in cable management and height-adjustable options.',
     brand: 'RIVET Atelier',
     countryOfOrigin: 'Sweden',
     specs: [
@@ -268,9 +268,9 @@ const products: SeedProduct[] = [
     name: 'Atlas Structural Glass',
     slug: 'atlas-structural-glass',
     categorySlug: 'building-materials',
-    shortDescription: 'Laminated structural glass for façades and canopies.',
+    shortDescription: 'Laminated structural glass for façades, canopies and balustrades.',
     description:
-      'Atlas laminated structural glass panels engineered for façade glazing, canopies and balustrades — clear, low-iron, or tinted options.',
+      'Atlas laminated structural glass panels, 12–21 mm thick, for façade glazing, canopies and balustrades. Available in clear, low-iron or tinted glass, CE marked and cut to custom sizes.',
     brand: 'RIVET Materials',
     countryOfOrigin: 'Belgium',
     specs: [
@@ -319,7 +319,7 @@ async function main() {
       name: 'Passenger Elevators',
       slug: 'passenger-elevators',
       description:
-        'Comfortable, quiet passenger elevators for residential buildings, offices and mixed-use developments.',
+        'Quiet, comfortable passenger elevators for apartment buildings, offices and mixed-use developments.',
       image: u('photo-1758448511533-e1502259fff6'),
       order: 1,
       items: [
@@ -327,7 +327,7 @@ async function main() {
           name: 'Standard Passenger Elevators',
           slug: 'standard-passenger-elevators',
           description:
-            'Reliable traction and machine-room-less systems engineered for mid-rise residential and commercial buildings.',
+            'Traction and machine-room-less passenger elevators for mid-rise residential and commercial buildings.',
           image: u('photo-1541888946425-d81bb19240f5'),
           order: 1,
         },
@@ -335,7 +335,7 @@ async function main() {
           name: 'Premium Passenger Elevators',
           slug: 'premium-passenger-elevators',
           description:
-            'Luxury cabin finishes, whisper-quiet drives, and smart destination-dispatch technology for high-end developments.',
+            'Upgraded cabin finishes, quiet drives and destination-dispatch control for high-end residential and office buildings.',
           image: u('photo-1486406146926-c627a92ad1ab'),
           order: 2,
         },
@@ -343,7 +343,7 @@ async function main() {
           name: 'Panoramic Elevators',
           slug: 'panoramic-elevators',
           description:
-            'Glass-walled observation elevators that transform vertical transport into an architectural centrepiece.',
+            'Glass-walled panoramic elevators for atriums, hotels and shopping centres, where the lift is part of the design.',
           image: u('photo-1758518731135-6d9af1849b25'),
           order: 3,
         },
@@ -353,7 +353,7 @@ async function main() {
       name: 'Commercial Elevators',
       slug: 'commercial-elevators',
       description:
-        'High-capacity elevators for offices, hotels and shopping centres, built for heavy daily traffic.',
+        'High-capacity elevators for offices, hotels and shopping centres with heavy daily traffic.',
       image: u('photo-1758448721205-8465cebc26af'),
       order: 2,
       items: [
@@ -361,7 +361,7 @@ async function main() {
           name: 'Office Building Elevators',
           slug: 'office-building-elevators',
           description:
-            'High-traffic, energy-efficient elevator systems designed for peak-hour performance in commercial towers.',
+            'Energy-efficient elevator systems sized for peak-hour traffic in office buildings.',
           image: u('photo-1497366754035-f200968a6e72'),
           order: 1,
         },
@@ -369,7 +369,7 @@ async function main() {
           name: 'Hotel Elevators',
           slug: 'hotel-elevators',
           description:
-            'Elegant, ultra-quiet elevators with customisable interiors that complement five-star hospitality experiences.',
+            'Quiet elevators with customisable cabin interiors for hotels and serviced apartments.',
           image: u('photo-1759038086454-5644437ccf4c'),
           order: 2,
         },
@@ -377,7 +377,7 @@ async function main() {
           name: 'Shopping Mall Elevators',
           slug: 'shopping-mall-elevators',
           description:
-            'High-capacity passenger elevators engineered for constant foot traffic in retail and mixed-use environments.',
+            'High-capacity passenger elevators for constant visitor traffic in shopping centres and mixed-use buildings.',
           // Previous Unsplash photo was removed (404); falls back to the Elevators image.
           image: null,
           order: 3,
@@ -396,7 +396,7 @@ async function main() {
           name: 'Service Elevators',
           slug: 'service-elevators',
           description:
-            'Durable, back-of-house elevators built for staff, housekeeping, and light cargo movement.',
+            'Back-of-house elevators for staff, housekeeping and light goods in hotels, hospitals and offices.',
           image: u('photo-1719463814218-52e17f720e8a'),
           order: 1,
         },
@@ -404,7 +404,7 @@ async function main() {
           name: 'Freight Elevators',
           slug: 'freight-elevators',
           description:
-            'Heavy-platform lifts with reinforced cabins and wide door openings for palletised goods and equipment.',
+            'Freight elevators with reinforced cabins and wide doors for palletised goods and equipment.',
           image: u('photo-1586528116311-ad8dd3c8310d'),
           order: 2,
         },
@@ -412,7 +412,7 @@ async function main() {
           name: 'Heavy-Duty Elevators',
           slug: 'heavy-duty-elevators',
           description:
-            'Industrial-grade lifts rated for extreme payloads — ideal for warehouses, factories, and construction sites.',
+            'Heavy-duty lifts for high payloads in warehouses, factories and industrial facilities.',
           image: u('photo-1758024264451-5cbfa9bee420'),
           order: 3,
         },
@@ -516,18 +516,18 @@ async function main() {
       slug: 'product-import',
       icon: 'Ship',
       narrative:
-        'Sourcing certified premium products from world-class manufacturers. We manage logistics, customs, and quality verification end to end.',
+        'We source building products from international manufacturers and manage the full import process — supplier coordination, shipping, customs clearance and delivery to your site in Ethiopia.',
       order: 1,
       faqs: [
         {
-          question: 'Which product categories can RIVET import to Ethiopia?',
+          question: 'Which products can RIVET COMPANY import to Ethiopia?',
           answer:
-            'We import elevators, granite, doors, sanitary ware, office furniture, and fine building materials — with end-to-end logistics and quality checks.',
+            'We import elevators, escalators, granite, doors, sanitary goods, office furniture and building materials, and handle shipping, customs clearance and delivery.',
         },
         {
           question: 'How do I start an import quotation?',
           answer:
-            'Share product interest, quantities, and destination site details via Request a Quotation. Our team responds with sourcing options and timelines.',
+            'Send your product requirements, quantities and site location through Request a Quotation. Our team will reply with sourcing options, pricing and lead times.',
         },
       ],
     },
@@ -536,13 +536,13 @@ async function main() {
       slug: 'elevator-installation',
       icon: 'Wrench',
       narrative:
-        'Precision installation engineered to international safety standards — from shaft preparation through commissioning and handover.',
+        'Installation of passenger, commercial and freight elevators in line with manufacturer and safety standards — from shaft preparation through testing, commissioning and handover.',
       order: 2,
       faqs: [
         {
           question: 'Do you install elevators for new builds and renovations?',
           answer:
-            'Yes. Our installation teams support new construction and retrofit projects across Ethiopia, following manufacturer and safety standards.',
+            'Yes. Our installation team works on new buildings and on modernisation of existing ones, following manufacturer instructions and safety standards.',
         },
       ],
     },
@@ -551,13 +551,13 @@ async function main() {
       slug: 'elevator-maintenance',
       icon: 'ShieldCheck',
       narrative:
-        'Preventive maintenance programs that keep vertical transportation systems flawless and compliant.',
+        'Scheduled preventive maintenance and repairs for elevators and escalators, keeping your equipment safe, compliant and in reliable daily service.',
       order: 3,
       faqs: [
         {
-          question: 'Can RIVET maintain elevators installed by other suppliers?',
+          question: 'Can RIVET COMPANY maintain elevators installed by other suppliers?',
           answer:
-            'In many cases yes. Contact us with equipment details so we can confirm compatibility and propose a maintenance plan.',
+            'In many cases, yes. Send us the equipment make, model and age so we can confirm compatibility and propose a maintenance plan.',
         },
       ],
     },
@@ -566,13 +566,13 @@ async function main() {
       slug: 'granite-supply',
       icon: 'Layers',
       narrative:
-        'Full-slab granite supply cut to architectural specification, with finishing options for cladding, flooring and counters.',
+        'Granite slabs supplied and cut to your architectural drawings, with polished or honed finishes for cladding, flooring and countertops.',
       order: 4,
       faqs: [
         {
           question: 'Do you supply granite for projects in Addis Ababa?',
           answer:
-            'Yes. We supply premium granite and interior finishing stone for residential and commercial projects in Addis Ababa and nationwide.',
+            'Yes. We supply granite and natural stone for residential and commercial projects in Addis Ababa and other regions of Ethiopia.',
         },
       ],
     },
@@ -581,7 +581,7 @@ async function main() {
       slug: 'building-material-supply',
       icon: 'Package',
       narrative:
-        'Reliable supply of fine building materials at project scale — glass, stone, fittings and structural finishes.',
+        'Supply of building materials at project scale — structural glass, natural stone, fittings and architectural finishes — coordinated with your construction schedule.',
       order: 5,
     },
     {
@@ -589,7 +589,7 @@ async function main() {
       slug: 'construction-consultation',
       icon: 'Compass',
       narrative:
-        'Engineering guidance from concept through commissioning, ensuring the right product for every detail.',
+        'Technical guidance from early design through commissioning, helping architects, contractors and developers choose the right products for every part of the building.',
       order: 6,
     },
   ];
@@ -607,52 +607,7 @@ async function main() {
     });
   }
 
-  const news = [
-    {
-      title: 'RIVET Opens Its Flagship Architectural Showroom',
-      slug: 'rivet-flagship-showroom-opening',
-      excerpt: 'A marble-floored gallery bringing imported engineering to the city center.',
-      body: '<p>River Company (RIVET) has opened its flagship architectural showroom, a marble-floored gallery presenting the full portfolio of imported elevators, granite, doors and fine building materials.</p><p>Visitors can experience cabin finishes, stone samples and door systems in a curated environment designed to mirror a luxury retail gallery.</p>',
-      category: 'Company',
-      coverImage: u('photo-1541888946425-d81bb19240f5'),
-    },
-    {
-      title: 'Introducing Next-Generation Traction Elevators',
-      slug: 'new-generation-traction-elevators',
-      excerpt: 'Energy-efficient drive systems now available across our portfolio.',
-      body: '<p>RIVET Vertical has expanded its passenger elevator line with regenerative gearless traction systems that reduce energy consumption while delivering a quieter, smoother ride.</p>',
-      category: 'Products',
-      coverImage: u('photo-1503387762-592deb58ef4e'),
-    },
-    {
-      title: 'Expanding Our Premium Granite Partnerships',
-      slug: 'granite-partnership-expansion',
-      excerpt: 'New quarry partnerships widen our selection of fine natural stone.',
-      body: '<p>New quarry partnerships across Italy and Brazil expand RIVET Stone’s selection of full-slab granite for architectural cladding, flooring and counters.</p>',
-      category: 'Supply',
-      coverImage: u('photo-1486406146926-c627a92ad1ab'),
-    },
-  ];
-
-  for (const n of news) {
-    await prisma.newsArticle.upsert({
-      where: { slug: n.slug },
-      update: {
-        title: n.title,
-        excerpt: n.excerpt,
-        body: n.body,
-        category: n.category,
-        coverImage: n.coverImage,
-        status: ContentStatus.PUBLISHED,
-        publishedAt: new Date(),
-      },
-      create: {
-        ...n,
-        status: ContentStatus.PUBLISHED,
-        publishedAt: new Date(),
-      },
-    });
-  }
+  // News articles are published from Admin → News (no sample articles are seeded).
 
   await prisma.companyInfo.upsert({
     where: { id: 'company' },
@@ -660,18 +615,15 @@ async function main() {
     create: {
       id: 'company',
       history:
-        'Founded nearly two decades ago, River Company has grown into a leading importer of premium construction and architectural products — elevators, granite, doors, sanitary ware, furniture and fine building materials.',
-      vision: "To be the region's most trusted name in imported engineering excellence.",
-      mission: 'To supply and install world-class products with precision, reliability and care.',
+        'RIVET COMPANY is an Addis Ababa–based supplier of elevators, escalators and building materials, supporting projects from product selection to installation and maintenance.',
+      vision: 'To be the most dependable partner in Ethiopia for elevators, escalators and quality building products.',
+      mission: 'To supply and install reliable, internationally sourced products with clear specifications, honest quotations and responsive after-sales support.',
       coreValues: ['Precision', 'Integrity', 'Craftsmanship', 'Reliability'],
-      timeline: [
-        { year: '2008', title: 'Founded', description: 'River Company established as a premium importer.' },
-        { year: '2015', title: 'Elevator Division', description: 'Launched dedicated vertical-transportation division.' },
-        { year: '2020', title: 'Regional Expansion', description: 'Extended supply partnerships across East Africa.' },
-        { year: '2026', title: 'Flagship Showroom', description: 'Opened the flagship architectural gallery.' },
-      ],
-      achievements: ['640+ projects completed', '1200+ products imported', '18+ years of excellence'],
-      certifications: ['ISO 9001', 'CE Certified Partners'],
+      // Timeline, achievements and certifications are added from Admin → Company
+      // once confirmed — never seeded with sample figures.
+      timeline: [],
+      achievements: [],
+      certifications: [],
     },
   });
 
@@ -682,7 +634,7 @@ async function main() {
       position: 'General Manager',
       section: 'LEADERSHIP' as const,
       order: 1,
-      bio: 'Leads River Company’s operations, client relationships, and long-term strategy — ensuring every import, installation, and partnership meets the standard our projects demand.',
+      bio: 'Leads RIVET COMPANY’s operations, client relationships and strategy, making sure every supply and installation meets the standard our clients expect.',
       photo: u('photo-1560250097-0b93528c311a', 900),
     },
     {
@@ -691,7 +643,7 @@ async function main() {
       position: 'Engineering Manager',
       section: 'ENGINEERING' as const,
       order: 1,
-      bio: 'Directs technical specification, installation quality, and engineering support across elevators, stone, and architectural systems — from site survey through commissioning.',
+      bio: 'Responsible for technical specification, installation quality and engineering support across elevators, stone and building systems — from site survey to commissioning.',
       photo: u('photo-1507003211169-0a1dd7228f2d', 900),
     },
   ];
@@ -729,29 +681,29 @@ async function main() {
     update: {},
     create: {
       id: 'home',
-      eyebrow: 'River Company · Premium Imports',
-      headline: 'Engineering the architecture',
-      headlineAccent: 'of ambition.',
+      eyebrow: 'RIVET COMPANY · Addis Ababa, Ethiopia',
+      headline: 'Elevators & building materials',
+      headlineAccent: 'for projects in Ethiopia.',
       subheadline:
-        'Elevators, granite, doors and fine building materials — imported with precision, installed with mastery.',
+        'Passenger lifts, escalators, granite, doors, furniture, sanitary goods and construction materials — supplied, installed and supported by one accountable team.',
       heroImage: u('photo-1487958449943-2429e8be8625', 2400),
-      introEyebrow: 'The River Company Standard',
-      introTitle: 'A flagship of imported precision.',
+      introEyebrow: 'About RIVET COMPANY',
+      introTitle: 'One supplier for the products that complete a building.',
       introBody:
-        "For nearly two decades, RIVET has brought the world's finest construction and architectural products to landmark projects — from machine-room-less elevators to full-slab granite and engineered building materials.",
+        'RIVET COMPANY is an Ethiopian supplier of elevators, escalators and building products. We source passenger lifts, granite, doors, office furniture, sanitary goods and construction materials from international manufacturers for residential, commercial and public projects.',
       introBodySecondary:
-        'We operate the way we build: with restraint, precision, and an obsession for the details that others overlook.',
+        'Our team supports clients from specification to handover: matching products to your drawings, preparing clear quotations, and coordinating delivery, installation and after-sales service.',
       introImage: u('photo-1503387762-592deb58ef4e', 1400),
       gmName: 'General Manager',
       gmPosition: 'General Manager',
       gmPhoto: u('photo-1560250097-0b93528c311a', 900),
       gmMessage:
-        'Every project we take on is a commitment — to specification, to craft, and to the people who will live and work in the spaces we help build.',
+        'Every project we accept is a commitment to the specification, to the schedule and to the people who will use the building. Our role is to supply products that perform exactly as promised.',
       engName: 'Engineering Manager',
       engPosition: 'Engineering Manager',
       engPhoto: u('photo-1507003211169-0a1dd7228f2d', 900),
       engMessage:
-        'Engineering is the quiet work behind a confident installation. We specify with care so that what arrives on site performs as promised.',
+        'A good installation starts with careful specification. We check every requirement before we order, so that what arrives on site fits the building, the budget and the timeline.',
     },
   });
 
@@ -762,12 +714,12 @@ async function main() {
       gmPosition: 'General Manager',
       gmPhoto: u('photo-1560250097-0b93528c311a', 900),
       gmMessage:
-        'Every project we take on is a commitment — to specification, to craft, and to the people who will live and work in the spaces we help build.',
+        'Every project we accept is a commitment to the specification, to the schedule and to the people who will use the building. Our role is to supply products that perform exactly as promised.',
       engName: 'Engineering Manager',
       engPosition: 'Engineering Manager',
       engPhoto: u('photo-1507003211169-0a1dd7228f2d', 900),
       engMessage:
-        'Engineering is the quiet work behind a confident installation. We specify with care so that what arrives on site performs as promised.',
+        'A good installation starts with careful specification. We check every requirement before we order, so that what arrives on site fits the building, the budget and the timeline.',
     },
   });
 
@@ -787,7 +739,7 @@ async function main() {
       deadline: deadline(45),
       status: 'OPEN' as const,
       description:
-        '<p>RIVET is hiring an Elevator Installation Technician to work on passenger and commercial lift installations across Ethiopia. You will read specifications, coordinate site work, and help deliver installations that match the drawings — not approximations.</p><p>The role sits between our engineering team and the project site. Precision, safety, and clear communication matter more than volume.</p>',
+        '<p>RIVET COMPANY is hiring an Elevator Installation Technician to work on passenger and commercial lift installations across Ethiopia. You will read specifications, coordinate site work, and help deliver installations that match the drawings — not approximations.</p><p>The role sits between our engineering team and the project site. Precision, safety, and clear communication matter more than volume.</p>',
       requirements:
         '<ul><li>Hands-on experience with elevator or vertical-transport installation</li><li>Ability to read installation drawings and method statements</li><li>Willingness to travel to project sites in Ethiopia</li><li>Strong safety discipline on live construction sites</li></ul>',
     },
@@ -800,7 +752,7 @@ async function main() {
       deadline: deadline(30),
       status: 'OPEN' as const,
       description:
-        '<p>A Sales Engineer at RIVET translates project requirements into the right imported specification — elevators, granite, doors, and building materials — then prepares quotations the site team can actually execute.</p><p>You will work with architects, contractors, and developers, and you will be expected to know the catalog well enough to recommend rather than simply list.</p>',
+        '<p>A Sales Engineer at RIVET COMPANY translates project requirements into the right imported specification — elevators, granite, doors, and building materials — then prepares quotations the site team can actually execute.</p><p>You will work with architects, contractors, and developers, and you will be expected to know the catalog well enough to recommend rather than simply list.</p>',
       requirements:
         '<ul><li>Background in construction products, MEP, or technical sales</li><li>Comfort discussing specifications, lead times, and project constraints</li><li>Clear written English for quotations and follow-up</li><li>Based in Addis Ababa, with client visits as needed</li></ul>',
     },

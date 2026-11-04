@@ -39,18 +39,18 @@ export function Categories({ items }: { items?: CategoryCard[] }) {
       <Container>
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-12">
           <div className="max-w-2xl">
-            <Eyebrow>Departments</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">What we supply</h2>
+            <Eyebrow>Product departments</Eyebrow>
+            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">Elevator solutions and building products</h2>
             <p className="mt-4 leading-relaxed text-muted">
-              A curated portfolio spanning vertical transportation, natural stone, and architectural
-              essentials.
+              Elevators, passenger lifts and escalators alongside granite, doors, furniture, sanitary
+              goods and building materials — sourced for projects in Ethiopia.
             </p>
           </div>
           <Link
             href="/products"
             className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline"
           >
-            Browse the full catalog
+            View all products
             <ArrowRight size={16} aria-hidden="true" />
           </Link>
         </div>

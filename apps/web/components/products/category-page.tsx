@@ -96,7 +96,7 @@ export function CategoryPageView({
               </h1>
               <p className="mt-4 max-w-xl text-[1.125rem] leading-relaxed text-muted">
                 {category.description ??
-                  `Explore premium ${category.name.toLowerCase()} from Rivet — quality products for commercial and residential projects in Ethiopia.`}
+                  `${category.name} from RIVET COMPANY for commercial and residential projects in Ethiopia. Browse the range or request a quotation.`}
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
@@ -110,7 +110,7 @@ export function CategoryPageView({
                   href="/services"
                   className={buttonVariants({ variant: 'outline', size: 'lg' })}
                 >
-                  Related services
+                  Our services
                 </Link>
               </div>
             </div>
@@ -118,7 +118,7 @@ export function CategoryPageView({
               <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] border border-border bg-surface sm:aspect-[16/11]">
                 <RivetImage
                   src={category.image}
-                  alt={`Premium ${category.name} supplied by Rivet in Ethiopia`}
+                  alt={`${category.name} supplied by RIVET COMPANY in Ethiopia`}
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 45vw"
@@ -146,8 +146,8 @@ export function CategoryPageView({
           description={
             category.description ??
             (category.slug.startsWith('elevator')
-              ? 'From residential passenger lifts to industrial freight systems, Rivet supplies and installs a complete range of elevator solutions for every project scale in Ethiopia.'
-              : `Explore the complete ${category.name.toLowerCase()} range from Rivet.`)
+              ? 'From passenger lifts for apartments to freight and service elevators, RIVET COMPANY supplies and installs elevator solutions for buildings of every size in Ethiopia.'
+              : `Explore the complete ${category.name.toLowerCase()} range from RIVET COMPANY.`)
           }
         />
       ) : null}

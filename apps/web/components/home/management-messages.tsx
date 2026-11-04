@@ -2,8 +2,10 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
+import { buildPersonAltText } from '@/lib/seo';
 import { FadeUp } from '@/components/motion/reveal';
 import { assets } from '@/lib/assets';
+import { HOME_COPY } from '@/lib/data/home-copy';
 
 export type ManagementMessagesContent = {
   gmName?: string | null;
@@ -17,16 +19,14 @@ export type ManagementMessagesContent = {
 };
 
 const defaults = {
-  gmName: 'General Manager',
-  gmPosition: 'General Manager',
+  gmName: HOME_COPY.gmName,
+  gmPosition: HOME_COPY.gmPosition,
   gmPhoto: assets.management.generalManager,
-  gmMessage:
-    'Every project we take on is a commitment — to specification, to craft, and to the people who will live and work in the spaces we help build.',
-  engName: 'Engineering Manager',
-  engPosition: 'Engineering Manager',
+  gmMessage: HOME_COPY.gmMessage,
+  engName: HOME_COPY.engName,
+  engPosition: HOME_COPY.engPosition,
   engPhoto: assets.management.engineeringManager,
-  engMessage:
-    'Engineering is the quiet work behind a confident installation. We specify with care so that what arrives on site performs as promised.',
+  engMessage: HOME_COPY.engMessage,
 };
 
 type Message = {
@@ -52,7 +52,7 @@ function MessageCard({ person }: { person: Message }) {
         {person.photo ? (
           <RivetImage
             src={person.photo}
-            alt={`${person.name}, ${person.position} at River Company (RIVET)`}
+            alt={buildPersonAltText(person.name, person.position)}
             fill
             sizes="112px"
             className="object-cover object-top"
@@ -98,16 +98,16 @@ export function ManagementMessages({ content }: { content?: ManagementMessagesCo
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-12">
           <div className="max-w-2xl">
             <Eyebrow>Leadership</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">A word from management</h2>
+            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">A message from our management</h2>
             <p className="mt-4 leading-relaxed text-muted">
-              Short notes from the people who set the standard — and stand behind every specification.
+              How RIVET COMPANY approaches every supply, installation and client relationship.
             </p>
           </div>
           <Link
             href="/company/team"
             className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline"
           >
-            Meet the wider team
+            Meet our team
             <ArrowRight size={16} aria-hidden="true" />
           </Link>
         </div>

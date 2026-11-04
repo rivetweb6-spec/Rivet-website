@@ -27,9 +27,9 @@ export default async function RequestQuotationPage() {
             />
           </div>
         }
-        eyebrow="Project pricing"
+        eyebrow="Quotations"
         title="Request a quotation"
-        description="Tell us about your project. We prepare tailored quotations for elevators, granite, doors, furniture and building materials supplied in Ethiopia."
+        description="Tell us about your project and we will prepare a tailored quotation for elevators, escalators, granite, doors, furniture, sanitary goods or building materials."
       />
       <Section>
         <Container>
@@ -42,12 +42,12 @@ export default async function RequestQuotationPage() {
                   quantity, and project details.
                 </li>
                 <li>
-                  <strong className="text-ink">2. We review</strong> — a RIVET specialist matches
-                  supply options to your specification.
+                  <strong className="text-ink">2. We review</strong> — a RIVET COMPANY specialist
+                  matches supply options to your specification.
                 </li>
                 <li>
                   <strong className="text-ink">3. Receive a quotation</strong> — clear pricing and
-                  next steps for your build.
+                  next steps for your project.
                 </li>
               </ol>
               <p className="mt-8 text-[0.9375rem] text-muted">

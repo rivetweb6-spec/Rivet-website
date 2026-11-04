@@ -1,4 +1,4 @@
-# RIVET — River Company Digital Flagship
+# RIVET COMPANY — Website
 
 Monorepo for the RIVET public website and admin dashboard.
 

@@ -37,7 +37,7 @@ export function CompanyGalleryGrid({ images }: { images: GalleryImage[] }) {
       <Section>
         <Container>
           <p className="text-center text-muted">
-            Gallery images will appear here once they are published.
+            Gallery photos will be published here soon.
           </p>
         </Container>
       </Section>
@@ -49,10 +49,10 @@ export function CompanyGalleryGrid({ images }: { images: GalleryImage[] }) {
       <Section>
         <Container>
           <FadeUp>
-            <Eyebrow>Archive</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] md:text-[2.5rem]">Moments from the company</h2>
+            <Eyebrow>Gallery</Eyebrow>
+            <h2 className="headline-display mt-3 text-[2rem] md:text-[2.5rem]">Projects and company life</h2>
             <p className="mt-4 max-w-2xl text-[1.0625rem] leading-relaxed text-muted">
-              Photos from the showroom, site, and the work in between.
+              Selected photos from project sites, installations and company activities.
             </p>
           </FadeUp>
 
@@ -94,7 +94,7 @@ export function CompanyGalleryGrid({ images }: { images: GalleryImage[] }) {
                     <div className="relative aspect-[4/5] overflow-hidden">
                       <RivetImage
                         src={item.image}
-                        alt={`${item.title} — River Company gallery`}
+                        alt={`${item.title} — RIVET COMPANY gallery`}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"

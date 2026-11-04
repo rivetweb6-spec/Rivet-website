@@ -1,22 +1,19 @@
 import { Container } from '@/components/ui/container';
-import { stats } from '@/lib/data/content';
+import { highlights } from '@/lib/data/content';
 
 /**
- * Key figures band directly under the hero — static numbers (readable by
- * crawlers and without JavaScript), separated by hairlines.
+ * Capability band directly under the hero: what RIVET COMPANY supplies and
+ * does, in four short statements (static, readable without JavaScript).
  */
-export function Stats() {
+export function Highlights() {
   return (
-    <section aria-label="RIVET in numbers" className="border-b border-border bg-canvas">
+    <section aria-label="What RIVET COMPANY provides" className="border-b border-border bg-canvas">
       <Container>
-        <dl className="grid grid-cols-2 divide-border lg:grid-cols-4 lg:divide-x">
-          {stats.map((s) => (
-            <div key={s.label} className="flex flex-col px-2 py-8 text-center md:py-10 lg:px-6">
-              <dt className="order-2 mt-2 text-[0.9375rem] text-muted">{s.label}</dt>
-              <dd className="headline-display order-1 text-[2.25rem] text-navy md:text-[2.75rem]">
-                {s.value.toLocaleString('en-US')}
-                <span className="text-gold-ink">{s.suffix}</span>
-              </dd>
+        <dl className="grid grid-cols-1 divide-y divide-border sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
+          {highlights.map((h) => (
+            <div key={h.title} className="flex flex-col py-6 sm:px-2 sm:py-8 lg:px-6">
+              <dt className="text-[1.0625rem] font-semibold leading-snug text-navy">{h.title}</dt>
+              <dd className="mt-1.5 text-[0.9375rem] text-muted">{h.detail}</dd>
             </div>
           ))}
         </dl>

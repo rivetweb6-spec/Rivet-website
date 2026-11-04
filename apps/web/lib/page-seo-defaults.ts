@@ -26,79 +26,97 @@ export type PageSeoDefault = {
 export const PAGE_SEO_DEFAULTS: Record<PageSeoKey, PageSeoDefault> = {
   home: {
     path: '/',
-    title: 'Premium Elevators, Granite & Building Materials in Ethiopia',
+    title: 'RIVET COMPANY | Elevators & Building Materials in Ethiopia',
     description:
-      'RIVET imports premium elevators, granite, doors, sanitary ware and building materials for projects in Ethiopia. Browse our catalog and request a quotation.',
-    keywords: ['elevators Ethiopia', 'building materials', 'request quotation', 'Addis Ababa'],
+      'RIVET COMPANY supplies elevators, passenger lifts, escalators, granite, doors, furniture, sanitary goods and building materials in Ethiopia. Get a quotation.',
+    keywords: [
+      'elevators in Ethiopia',
+      'passenger lifts Ethiopia',
+      'elevator solutions',
+      'building materials suppliers Ethiopia',
+      'escalators Ethiopia',
+      'Addis Ababa',
+    ],
   },
   products: {
     path: '/products',
-    title: 'Products — Elevators, Granite, Doors & Materials',
+    title: 'Elevators & Building Materials Catalog',
     description:
-      'Search and browse RIVET’s elevators, granite, doors, furniture and building materials in Ethiopia. Filter by category and request a quotation.',
-    keywords: ['RIVET products', 'elevators Ethiopia', 'granite', 'doors', 'building materials'],
+      'Browse elevators, passenger lifts, escalators, granite, doors, office furniture, sanitary goods and building materials from RIVET COMPANY in Ethiopia.',
+    keywords: [
+      'elevators in Ethiopia',
+      'passenger lifts',
+      'granite Ethiopia',
+      'doors Ethiopia',
+      'building materials suppliers',
+    ],
   },
   services: {
     path: '/services',
-    title: 'Services — Import, Installation & Consultation',
+    title: 'Elevator Installation, Maintenance & Supply',
     description:
-      'RIVET services in Ethiopia: product import, elevator installation and maintenance, granite supply, and construction consultation.',
-    keywords: ['elevator installation', 'import services', 'construction consultation'],
+      'Product import, elevator installation and maintenance, granite and building material supply, and construction consultation from RIVET COMPANY in Ethiopia.',
+    keywords: [
+      'elevator installation Ethiopia',
+      'elevator maintenance Ethiopia',
+      'elevator solutions',
+      'construction consultation',
+    ],
   },
   company: {
     path: '/company',
-    title: 'About Rivet — River Company in Ethiopia',
+    title: 'About RIVET COMPANY — Building Products Supplier in Ethiopia',
     description:
-      'History, vision, mission and values of River Company (RIVET) — premium construction and architectural products supplier in Ethiopia.',
-    keywords: ['River Company', 'about RIVET', 'construction Ethiopia'],
+      'RIVET COMPANY is an Addis Ababa–based supplier of elevators, escalators and building materials. Learn about our vision, mission and values.',
+    keywords: ['RIVET COMPANY', 'about RIVET COMPANY', 'building materials suppliers Ethiopia'],
   },
   'certificate-portfolio': {
     path: '/company/certificate-portfolio',
-    title: 'Certificate & Portfolio',
+    title: 'Certificates & Project Portfolio',
     description:
-      'View River Company (RIVET) certificates, partner credentials, and selected project portfolio across Ethiopia.',
-    keywords: ['RIVET certificates', 'project portfolio', 'credentials'],
+      'Certificates and selected project work from RIVET COMPANY, supplier of elevators, escalators and building materials in Ethiopia.',
+    keywords: ['RIVET COMPANY certificates', 'project portfolio Ethiopia'],
   },
   team: {
     path: '/company/team',
     title: 'Meet Our Team',
     description:
-      'Meet the River Company (RIVET) team — leadership, engineering, and the people behind premium imports and installations in Ethiopia.',
-    keywords: ['RIVET team', 'leadership', 'engineering'],
+      'Meet the RIVET COMPANY team — the leadership and engineering staff behind our elevator, escalator and building material projects in Ethiopia.',
+    keywords: ['RIVET COMPANY team', 'leadership', 'elevator engineers Ethiopia'],
   },
   gallery: {
     path: '/company/gallery',
     title: 'Company Gallery',
     description:
-      'Photos of River Company (RIVET) activities, projects, events, and day-to-day work across Ethiopia.',
-    keywords: ['RIVET gallery', 'projects', 'events'],
+      'Photos of RIVET COMPANY projects, product installations and team activities in Ethiopia.',
+    keywords: ['RIVET COMPANY gallery', 'elevator installation projects', 'Ethiopia'],
   },
   news: {
     path: '/news',
-    title: 'News & Insights',
+    title: 'News & Updates',
     description:
-      'Journal of RIVET projects, product launches and company updates across Ethiopia and East Africa.',
-    keywords: ['RIVET news', 'product launches', 'company updates'],
+      'Company announcements, product updates and project news from RIVET COMPANY, supplier of elevators and building materials in Ethiopia.',
+    keywords: ['RIVET COMPANY news', 'elevators Ethiopia news', 'company updates'],
   },
   careers: {
     path: '/careers',
-    title: 'Careers',
+    title: 'Careers in Addis Ababa',
     description:
-      'Open vacancies at River Company (RIVET) in Ethiopia — engineering, installation, and commercial roles. View requirements and apply with your CV.',
-    keywords: ['Rivet careers', 'River Company jobs', 'vacancies Ethiopia', 'Addis Ababa jobs'],
+      'Current vacancies at RIVET COMPANY in Ethiopia — engineering, installation and commercial roles. Review the requirements and apply online with your CV.',
+    keywords: ['RIVET COMPANY careers', 'elevator technician jobs Ethiopia', 'Addis Ababa jobs'],
   },
   contact: {
     path: '/contact',
-    title: 'Contact Rivet in Addis Ababa, Ethiopia',
+    title: 'Contact RIVET COMPANY in Addis Ababa',
     description:
-      'Contact River Company (RIVET) in Addis Ababa — office, phone, email and social channels. Request a quotation for elevators, granite, doors and more.',
-    keywords: ['contact RIVET', 'Addis Ababa', 'River Company phone'],
+      'Contact RIVET COMPANY in Addis Ababa, Ethiopia, about elevators, escalators, granite, doors and building materials. Call, email or send us a message.',
+    keywords: ['contact RIVET COMPANY', 'Addis Ababa', 'elevator supplier contact Ethiopia'],
   },
   'request-quotation': {
     path: '/request-quotation',
     title: 'Request a Quotation',
     description:
-      'Request a quotation for commercial and residential products from Rivet in Ethiopia — elevators, granite, doors, furniture and building materials.',
-    keywords: ['request quotation', 'Rivet Ethiopia', 'product quotation Addis Ababa'],
+      'Request a quotation from RIVET COMPANY for elevators, passenger lifts, escalators, granite, doors, furniture or building materials in Ethiopia.',
+    keywords: ['request quotation', 'elevator price Ethiopia', 'building materials quotation Addis Ababa'],
   },
 };

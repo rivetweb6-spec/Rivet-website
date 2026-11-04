@@ -128,8 +128,8 @@ export default function AdminCertificatesPage() {
   return (
     <div>
       <AdminPageHeader
-        title="Certificate & Portfolio"
-        description="Manage credentials and project work shown on the public Certificate & Portfolio page."
+        title="Certificates & Portfolio"
+        description="Manage credentials and project work shown on the public Certificates & Portfolio page."
         actions={
           <AdminButton
             onClick={() => {

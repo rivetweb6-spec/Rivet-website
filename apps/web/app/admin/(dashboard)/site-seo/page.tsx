@@ -21,7 +21,7 @@ const PAGE_LABELS: Record<PageSeoKey, string> = {
   products: 'Products catalog',
   services: 'Services index',
   company: 'About / Company',
-  'certificate-portfolio': 'Certificate & Portfolio',
+  'certificate-portfolio': 'Certificates & Portfolio',
   team: 'Meet Our Team',
   gallery: 'Company Gallery',
   news: 'News index',

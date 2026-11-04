@@ -27,8 +27,8 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
             <Eyebrow>Credentials</Eyebrow>
             <h2 className="mt-3 max-w-xl text-[2rem] md:text-[2.5rem]">Certificates</h2>
             <p className="mt-4 max-w-2xl text-[1.0625rem] leading-relaxed text-muted">
-              Verified standards and partner credentials that underpin every Rivet supply and
-              installation.
+              Certificates and credentials published by RIVET COMPANY. Select a certificate to view
+              it in full.
             </p>
           </FadeUp>
 
@@ -47,7 +47,7 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
                     />
                     <RivetImage
                       src={cert.image!}
-                      alt={`${cert.title} — River Company certificate`}
+                      alt={`${cert.title} — RIVET COMPANY certificate`}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-contain p-5"
@@ -105,8 +105,7 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
             <Eyebrow>Work</Eyebrow>
             <h2 className="mt-3 max-w-xl text-[2rem] md:text-[2.5rem]">Portfolio</h2>
             <p className="mt-4 max-w-2xl text-[1.0625rem] leading-relaxed text-muted">
-              Selected projects and installations — the spaces, systems, and finishes River Company
-              has delivered.
+              Selected projects and installations completed by RIVET COMPANY.
             </p>
           </FadeUp>
 
@@ -123,7 +122,7 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
                     >
                       <RivetImage
                         src={images[0]!}
-                        alt={`${project.title} — River Company project portfolio`}
+                        alt={`${project.title} — RIVET COMPANY project portfolio`}
                         fill
                         sizes="(max-width: 1024px) 100vw, 50vw"
                         className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"

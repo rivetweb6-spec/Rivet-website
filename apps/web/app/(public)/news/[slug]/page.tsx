@@ -91,7 +91,7 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
         <div className="relative aspect-[16/9] overflow-hidden rounded-[8px] border border-border bg-bg">
           <RivetImage
             src={cover}
-            alt={`${article.title} — RIVET news in Ethiopia`}
+            alt={`${article.title} — RIVET COMPANY news`}
             fill
             priority
             sizes="(max-width: 860px) 100vw, 860px"

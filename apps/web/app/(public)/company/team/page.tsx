@@ -23,17 +23,17 @@ const SECTION_COPY: Record<
   LEADERSHIP: {
     eyebrow: 'Leadership',
     title: 'General management',
-    description: 'The people who set direction, hold the standard, and represent River Company.',
+    description: 'Leading RIVET COMPANY’s strategy, client relationships and day-to-day operations.',
   },
   ENGINEERING: {
     eyebrow: 'Engineering',
     title: 'Technical direction',
-    description: 'Specification, installation quality, and engineering support from survey to handover.',
+    description: 'Product specification, installation quality and technical support from site survey to handover.',
   },
   TEAM: {
     eyebrow: 'People',
     title: 'The wider team',
-    description: 'Colleagues across operations, showroom, and site who keep every project moving.',
+    description: 'Colleagues in operations, logistics and site work who keep every project on schedule.',
   },
 };
 
@@ -62,7 +62,7 @@ function MemberCard({ member, featured = false }: { member: TeamMember; featured
         {member.photo ? (
           <RivetImage
             src={member.photo}
-            alt={`${member.fullName}, ${member.position} at River Company (RIVET)`}
+            alt={`${member.fullName}, ${member.position} at RIVET COMPANY`}
             fill
             sizes={featured ? '(max-width: 768px) 100vw, 40vw' : '(max-width: 768px) 100vw, 33vw'}
             className="object-cover"
@@ -119,7 +119,7 @@ export default async function TeamPage() {
       <PageHero
         eyebrow="Company"
         title="Meet Our Team"
-        description="The people who specify, import, install, and stand behind River Company’s work in Ethiopia."
+        description="The people who plan, supply, install and support RIVET COMPANY projects in Ethiopia."
       />
       <CompanySubnav />
       <Container className="pt-8">
@@ -135,7 +135,7 @@ export default async function TeamPage() {
       {members.length === 0 ? (
         <Section>
           <Container>
-            <p className="text-center text-muted">Team profiles will appear here once they are published.</p>
+            <p className="text-center text-muted">Team profiles will be published here soon.</p>
           </Container>
         </Section>
       ) : (

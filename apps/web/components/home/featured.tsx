@@ -26,8 +26,8 @@ export function Featured({ products }: { products?: FeaturedProductCard[] }) {
       <Container>
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-12">
           <div className="max-w-2xl">
-            <Eyebrow>Featured</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">Selected products</h2>
+            <Eyebrow>Catalog</Eyebrow>
+            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">Featured products</h2>
           </div>
           <Link
             href="/products?view=all"

@@ -215,7 +215,7 @@ export function QuotationModal({
                     Request received
                   </h3>
                   <p className="mt-3 max-w-sm text-muted">
-                    Thank you. A RIVET specialist will contact you shortly with your quotation.
+                    Thank you. A RIVET COMPANY specialist will contact you shortly with your quotation.
                   </p>
                   <Button variant="secondary" className="mt-8" onClick={onClose}>
                     Close
@@ -223,7 +223,7 @@ export function QuotationModal({
                 </motion.div>
               ) : (
                 <motion.div key="form" className="px-8 py-8" exit={{ opacity: 0 }}>
-                  <p className="eyebrow text-navy">Project pricing</p>
+                  <p className="eyebrow text-navy">Quotations</p>
                   <h3 id="quotation-modal-title" className="mt-2 text-[1.75rem]">
                     Request a Quotation
                   </h3>

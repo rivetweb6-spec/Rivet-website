@@ -33,16 +33,18 @@ export default async function CompanyPage() {
   const values = company?.coreValues ?? [];
   const achievements = company?.achievements ?? [];
   const certLabels = (company?.certifications ?? []).filter((c) => c && !isMediaUrl(c));
+  // Alternate backgrounds: tint the closing section only when a white section precedes it.
+  const tintExplore = timeline.length > 0 || achievements.length > 0 || certLabels.length > 0;
 
   return (
     <>
       <AboutPageJsonLd description={company?.history ?? company?.mission} />
       <PageHero
         eyebrow="Our story"
-        title="About River Company"
+        title="About RIVET COMPANY"
         description={
           company?.history ??
-          'RIVET imports and supplies premium construction and architectural products with precision and care.'
+          'RIVET COMPANY is an Addis Ababa–based supplier of elevators, escalators and building materials, supporting projects from product selection to installation and maintenance.'
         }
       />
       <CompanySubnav />
@@ -54,7 +56,7 @@ export default async function CompanyPage() {
               <Eyebrow>Vision</Eyebrow>
               <h2 className="headline-display mt-3 text-[2rem]">Where we are going</h2>
               <p className="mt-5 text-[1.125rem] leading-relaxed text-muted">
-                {company?.vision ?? 'To be the region’s most trusted name in imported engineering excellence.'}
+                {company?.vision ?? 'To be the most dependable partner in Ethiopia for elevators, escalators and quality building products.'}
               </p>
             </FadeUp>
             <FadeUp delay={0.1}>
@@ -62,7 +64,7 @@ export default async function CompanyPage() {
               <h2 className="headline-display mt-3 text-[2rem]">How we work</h2>
               <p className="mt-5 text-[1.125rem] leading-relaxed text-muted">
                 {company?.mission ??
-                  'To supply and install world-class products with precision, reliability and care.'}
+                  'To supply and install reliable, internationally sourced products with clear specifications, honest quotations and responsive after-sales support.'}
               </p>
             </FadeUp>
           </div>
@@ -157,7 +159,7 @@ export default async function CompanyPage() {
                     href="/company/certificate-portfolio"
                     className="mt-6 inline-block text-[0.875rem] text-gold hover:underline"
                   >
-                    View certificate & portfolio →
+                    View certificates & portfolio →
                   </Link>
                 </FadeUp>
               )}
@@ -166,31 +168,31 @@ export default async function CompanyPage() {
         </Section>
       )}
 
-      <Section className="bg-bg">
+      <Section className={tintExplore ? "bg-bg" : undefined}>
         <Container>
           <FadeUp>
             <Eyebrow>Company</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem]">Explore River Company</h2>
+            <h2 className="headline-display mt-3 text-[2rem]">More about RIVET COMPANY</h2>
           </FadeUp>
           <Stagger className="mt-10 grid gap-5 md:grid-cols-3">
             {[
               {
                 href: '/company/certificate-portfolio',
                 icon: Award,
-                title: 'Certificate & Portfolio',
-                body: 'Credentials, partner certifications, and selected project work.',
+                title: 'Certificates & Portfolio',
+                body: 'Certificates, credentials and selected project work.',
               },
               {
                 href: '/company/team',
                 icon: Users,
                 title: 'Meet Our Team',
-                body: 'Leadership, engineering, and the people behind every installation.',
+                body: 'The leadership and engineering team behind our supply and installation work.',
               },
               {
                 href: '/company/gallery',
                 icon: Images,
                 title: 'Gallery',
-                body: 'Photos from the showroom, sites, events, and company life.',
+                body: 'Photos from our projects, installations and team activities.',
               },
             ].map((card) => (
               <StaggerItem key={card.href}>

@@ -5,7 +5,7 @@ test.describe('Careers', () => {
   test.describe.configure({ timeout: 60_000 });
   test('lists open vacancies and opens a role with requirements and apply', async ({ page }) => {
     await page.goto('/careers');
-    await expect(page.getByRole('heading', { name: /join the work behind the landmarks/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /build your career with rivet company/i })).toBeVisible();
 
     const empty = page.getByRole('heading', { name: /no open vacancies right now/i });
     if (await empty.isVisible().catch(() => false)) {

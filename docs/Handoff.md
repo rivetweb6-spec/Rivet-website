@@ -1,6 +1,6 @@
 # RIVET — Client Handoff Guide
 
-> For the RIVET / River Company team. How to swap in your real brand assets and
+> For the RIVET COMPANY team. How to swap in your real brand assets and
 > how to run the site day-to-day from the Admin control room. For deployment and
 > environment details, see [`Deployment.md`](./Deployment.md).
 

@@ -1,6 +1,6 @@
 export const companyNavLinks = [
   { href: '/company', label: 'About', exact: true },
-  { href: '/company/certificate-portfolio', label: 'Certificate & Portfolio' },
+  { href: '/company/certificate-portfolio', label: 'Certificates & Portfolio' },
   { href: '/company/team', label: 'Meet Our Team' },
   { href: '/company/gallery', label: 'Gallery' },
 ] as const;

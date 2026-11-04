@@ -104,7 +104,7 @@ export function CategoryCard({
         </h4>
         <p className="mt-2 flex-1 text-[0.875rem] leading-relaxed text-muted line-clamp-2">
           {category.description ||
-            `Supplied and installed by Rivet for projects across Ethiopia.`}
+            `Supplied by RIVET COMPANY for projects in Ethiopia.`}
         </p>
 
         <div className="mt-5 flex items-center justify-between gap-3 border-t border-border pt-4 text-[0.875rem]">
@@ -255,7 +255,7 @@ export function CategoryHierarchySection({
   const sectionDescription =
     description ||
     category.description ||
-    `Browse the complete ${category.name.toLowerCase()} range from Rivet.`;
+    `Browse the complete ${category.name.toLowerCase()} range from RIVET COMPANY.`;
 
   return (
     <Section className="bg-surface">
@@ -367,7 +367,7 @@ export function DepartmentGrid({ tree }: { tree: CategoryTreeNode[] }) {
                 </h3>
                 <p className="mt-2 text-[0.875rem] leading-relaxed text-muted line-clamp-2">
                   {root.description ||
-                    `Imported ${root.name.toLowerCase()} supplied and installed by Rivet across Ethiopia.`}
+                    `${root.name} supplied by RIVET COMPANY for projects in Ethiopia.`}
                 </p>
 
                 {shownSubs.length > 0 && (
@@ -424,10 +424,10 @@ export function ProductEmptyState({ categoryName }: { categoryName: string }) {
         <Package size={22} strokeWidth={1.5} aria-hidden="true" />
       </div>
       <h3 className="text-[1.125rem] font-semibold text-ink">
-        No published products in {categoryName} yet
+        No products published in {categoryName} yet
       </h3>
       <p className="mt-2 text-[0.875rem] text-muted max-w-md mx-auto">
-        Products are added regularly from our international manufacturing partners. Contact our team to request custom specifications or pricing.
+        Our team can still source products in this category for your project. Request a quotation with your specification, or contact us to discuss the options.
       </p>
       <div className="mt-6 flex flex-wrap justify-center gap-3">
         <Link

@@ -128,7 +128,7 @@ export function QuotationForm({
         </div>
         <h2 className="mt-6 text-[1.75rem]">Request received</h2>
         <p className="mt-3 text-muted">
-          Thank you. A RIVET specialist will contact you shortly with your quotation.
+          Thank you. A RIVET COMPANY specialist will contact you shortly with your quotation.
         </p>
       </div>
     );

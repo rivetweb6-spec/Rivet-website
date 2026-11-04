@@ -27,7 +27,7 @@ export default async function GalleryPage() {
       <PageHero
         eyebrow="Company"
         title="Gallery"
-        description="A visual record of River Company — the showroom, the sites, the teams, and the work itself."
+        description="Photos of RIVET COMPANY projects, product installations and our team at work."
       />
       <CompanySubnav />
       <Container className="pt-8">

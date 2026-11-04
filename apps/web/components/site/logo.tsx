@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { assets } from '@/lib/assets';
 import { cn } from '@/lib/utils';
 
-const ALT = 'RIVET — River Company';
+const ALT = 'RIVET COMPANY';
 const SIZE = { width: 525, height: 132 } as const;
 
 /**

@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     default: `${SITE_NAME} | ${SITE_TAGLINE}`,
     // Used only when a page passes a plain string title (e.g. admin).
     // Public pages use absolute titles via pageMetadata().
-    template: '%s | RIVET',
+    template: '%s | RIVET COMPANY',
   },
   description: DEFAULT_DESCRIPTION,
   keywords: SITE_KEYWORDS,

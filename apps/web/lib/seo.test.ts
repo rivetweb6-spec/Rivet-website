@@ -19,7 +19,7 @@ describe('pageMetadata', () => {
   it('builds a canonical URL from the path', () => {
     const meta = pageMetadata({ title: 'Products', path: '/products' });
     expect(meta.alternates?.canonical).toContain('/products');
-    expect(meta.title).toEqual({ absolute: 'Products | RIVET' });
+    expect(meta.title).toEqual({ absolute: 'Products | RIVET COMPANY' });
   });
 
   it('uses an absolute title so the root template does not double the brand', () => {
@@ -61,9 +61,9 @@ describe('pageMetadata', () => {
 });
 
 describe('buildProductAltText', () => {
-  it('includes product, category, and Rivet Ethiopia context', () => {
+  it('includes product, category, and RIVET COMPANY Ethiopia context', () => {
     expect(buildProductAltText('Meridian Elevator', 'Elevators')).toContain('Elevators');
-    expect(buildProductAltText('Meridian Elevator', 'Elevators')).toContain('Rivet in Ethiopia');
+    expect(buildProductAltText('Meridian Elevator', 'Elevators')).toContain('RIVET COMPANY in Ethiopia');
   });
 });
 
@@ -112,8 +112,8 @@ describe('resolveCanonicalUrl', () => {
 describe('staticPageMetadata', () => {
   it('uses unique titles and page-specific keywords', () => {
     const meta = staticPageMetadata('contact');
-    expect(meta.title).toEqual({ absolute: 'Contact Rivet in Addis Ababa, Ethiopia' });
-    expect(meta.keywords).toEqual(expect.arrayContaining(['contact RIVET', 'Addis Ababa']));
+    expect(meta.title).toEqual({ absolute: 'Contact RIVET COMPANY in Addis Ababa' });
+    expect(meta.keywords).toEqual(expect.arrayContaining(['contact RIVET COMPANY', 'Addis Ababa']));
     expect(meta.alternates?.canonical).toBe(`${SITE_URL}/contact`);
   });
 });
@@ -143,8 +143,8 @@ describe('isIndexableSlug', () => {
 });
 
 describe('withBrand', () => {
-  it('appends the brand when the title does not mention Rivet', () => {
-    expect(withBrand('Products')).toBe('Products | RIVET');
+  it('appends the brand when the title does not mention RIVET', () => {
+    expect(withBrand('Products')).toBe('Products | RIVET COMPANY');
   });
 
   it('does not double the brand when RIVET is already in the title', () => {

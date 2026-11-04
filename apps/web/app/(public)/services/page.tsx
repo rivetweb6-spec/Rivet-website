@@ -22,9 +22,9 @@ export default async function ServicesPage() {
   return (
     <>
       <PageHero
-        eyebrow="Capabilities"
-        title="Import, installation & consultation"
-        description="End-to-end capability from sourcing and import to installation, maintenance and engineering consultation across Ethiopia."
+        eyebrow="Services"
+        title="Supply, installation and maintenance"
+        description="From product import and elevator installation to maintenance, granite supply and construction consultation, RIVET COMPANY supports your project from specification to handover."
       />
       <Section>
         <Container>
@@ -32,8 +32,8 @@ export default async function ServicesPage() {
             <div className="rounded-[8px] border border-dashed border-border bg-surface/60 px-6 py-14 text-center">
               <h2 className="text-[1.5rem]">Our service listings are being updated</h2>
               <p className="mx-auto mt-3 max-w-lg text-muted">
-                RIVET handles product import, installation, maintenance and consultation. Tell us
-                about your project and our team will reply with the right service.
+                RIVET COMPANY provides product import, installation, maintenance and consultation.
+                Tell us about your project and we will recommend the right service.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link
@@ -73,10 +73,10 @@ export default async function ServicesPage() {
 
           <FadeUp className="mt-20 rounded-[8px] bg-navy px-8 py-14 text-center md:px-16">
             <h2 className="text-[1.75rem] text-white sm:text-[2.25rem]">
-              Need a tailored engagement?
+              Planning a project?
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-white/70">
-              Request a quotation and we will match RIVET capabilities to your project in Ethiopia.
+              Request a quotation and our team will recommend the right products and services for your building.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <RequestQuotationButton />

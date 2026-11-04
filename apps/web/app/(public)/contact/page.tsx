@@ -34,23 +34,23 @@ export default async function ContactPage() {
     <>
       <PageHero
         eyebrow="Get in touch"
-        title="Contact River Company"
-        description="Speak with a RIVET specialist about products, installation, or request a quotation."
+        title="Contact RIVET COMPANY"
+        description="Speak with our team about elevators, escalators, building materials or a project quotation."
       />
       <Section>
         <Container>
           <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr]">
             <div>
-              <Eyebrow>Reach us</Eyebrow>
-              <h2 className="headline-display mt-3 text-[2rem]">Office & channels</h2>
+              <Eyebrow>Contact details</Eyebrow>
+              <h2 className="headline-display mt-3 text-[2rem]">Get in touch</h2>
               {!hasChannels && (
                 <p className="mt-6 rounded-[8px] border border-border bg-surface px-5 py-4 text-[0.9375rem] leading-relaxed text-muted">
-                  Our direct phone and email details are being updated. The quickest way to reach a
-                  RIVET specialist is the{' '}
+                  Our direct phone and email details are being updated. The quickest way to reach
+                  our team is the{' '}
                   <a href="#contact-form" className="font-medium text-navy underline underline-offset-4 hover:no-underline">
                     contact form
                   </a>{' '}
-                  — we reply within one business day.
+                  — a member of our team will get back to you.
                 </p>
               )}
               <ul className="mt-8 space-y-5 text-[0.9375rem]">
@@ -100,7 +100,7 @@ export default async function ContactPage() {
 
               <div className="mt-10 overflow-hidden rounded-[8px] border border-border">
                 <iframe
-                  title="RIVET office location"
+                  title="RIVET COMPANY office location in Addis Ababa"
                   src={mapSrc}
                   className="h-64 w-full grayscale-[30%] contrast-[1.05] saturate-[0.7]"
                   loading="lazy"

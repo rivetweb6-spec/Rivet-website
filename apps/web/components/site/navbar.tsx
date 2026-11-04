@@ -78,7 +78,7 @@ export function Navbar() {
         <div className="mx-auto flex h-[4.5rem] max-w-[1280px] items-center justify-between gap-6 px-5 sm:px-6 lg:px-10">
           <Link
             href="/"
-            aria-label="RIVET home"
+            aria-label="RIVET COMPANY home"
             className="shrink-0 rounded-[4px] focus-visible:outline-offset-4"
           >
             <Logo className="h-8 sm:h-9" />

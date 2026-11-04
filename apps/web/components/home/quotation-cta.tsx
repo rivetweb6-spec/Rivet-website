@@ -10,22 +10,22 @@ export function QuotationCta() {
       <Container>
         <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
-            <p className="eyebrow text-gold">Project pricing</p>
+            <p className="eyebrow text-gold">Quotations</p>
             <h2
               id="quotation-cta-title"
               className="headline-display mt-3 text-[1.875rem] text-white sm:text-[2.25rem]"
             >
-              Request a tailored quotation.
+              Request a quotation for your project.
             </h2>
             <p className="mt-3 text-[1.0625rem] leading-relaxed text-white/80">
-              Share your project requirements and receive a detailed quotation from RIVET&apos;s
-              specialists — covering products, delivery and installation.
+              Tell us the product, quantity and site details. A RIVET COMPANY specialist will prepare
+              a tailored quotation covering supply, delivery and installation.
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-3">
             <RequestQuotationButton />
             <Link href="/request-quotation" className={buttonVariants({ variant: 'ghost', size: 'lg' })}>
-              Open full form
+              Use the full form
             </Link>
           </div>
         </div>

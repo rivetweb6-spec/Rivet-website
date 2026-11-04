@@ -26,7 +26,7 @@ const companyColumn = {
     title: 'Company',
     links: [
       { label: 'About', href: '/company' },
-      { label: 'Certificate & Portfolio', href: '/company/certificate-portfolio' },
+      { label: 'Certificates & Portfolio', href: '/company/certificate-portfolio' },
       { label: 'Meet Our Team', href: '/company/team' },
       { label: 'Gallery', href: '/company/gallery' },
       { label: 'News', href: '/news' },
@@ -63,8 +63,8 @@ export function Footer({
           <div>
             <Logo light />
             <p className="mt-5 max-w-xs text-[0.9375rem] leading-relaxed">
-              River Company (RIVET) imports and supplies premium construction and architectural
-              products — engineered precision for landmark spaces.
+              RIVET COMPANY supplies elevators, escalators, granite, doors, furniture, sanitary goods
+              and building materials for residential and commercial projects in Ethiopia.
             </p>
             {socials.length > 0 && (
               <div className="mt-6 flex gap-2">
@@ -135,7 +135,7 @@ export function Footer({
         )}
 
         <div className="mt-8 border-t border-white/10 pt-6 text-[0.8125rem] text-white/60">
-          <span>© {new Date().getFullYear()} River Company (RIVET). All rights reserved.</span>
+          <span>© {new Date().getFullYear()} RIVET COMPANY. All rights reserved.</span>
         </div>
       </Container>
     </footer>

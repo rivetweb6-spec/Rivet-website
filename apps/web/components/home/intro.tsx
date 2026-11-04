@@ -4,6 +4,7 @@ import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { FadeUp } from '@/components/motion/reveal';
 import { assets } from '@/lib/assets';
+import { HOME_COPY } from '@/lib/data/home-copy';
 
 export type IntroContent = {
   introEyebrow?: string | null;
@@ -14,12 +15,10 @@ export type IntroContent = {
 };
 
 const defaults = {
-  introEyebrow: 'The River Company Standard',
-  introTitle: 'A flagship of imported precision.',
-  introBody:
-    "For nearly two decades, RIVET has brought the world's finest construction and architectural products to landmark projects — from machine-room-less elevators to full-slab granite and engineered building materials.",
-  introBodySecondary:
-    'We operate the way we build: with restraint, precision, and an obsession for the details that others overlook.',
+  introEyebrow: HOME_COPY.introEyebrow,
+  introTitle: HOME_COPY.introTitle,
+  introBody: HOME_COPY.introBody,
+  introBodySecondary: HOME_COPY.introBodySecondary,
   introImage: assets.intro.image,
 };
 
@@ -39,7 +38,7 @@ export function Intro({ content }: { content?: IntroContent | null }) {
             <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] bg-bg">
               <RivetImage
                 src={image}
-                alt="RIVET showroom and imported architectural products in Ethiopia"
+                alt="Engineer reviewing architectural drawings for a building project"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
@@ -55,7 +54,7 @@ export function Intro({ content }: { content?: IntroContent | null }) {
               href="/company"
               className="mt-8 inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline"
             >
-              About River Company
+              More about RIVET COMPANY
               <ArrowRight size={16} aria-hidden="true" />
             </Link>
           </FadeUp>

@@ -318,10 +318,10 @@ export default function AdminProductsPage() {
           <SeoFieldsPanel
             value={form}
             onChange={(seo) => setForm({ ...form, ...seo })}
-            fallbackTitle={`${form.name || 'Product'} in Ethiopia | Rivet`}
+            fallbackTitle={`${form.name || 'Product'} in Ethiopia | RIVET COMPANY`}
             fallbackDescription={
               form.shortDescription ||
-              `Explore ${form.name || 'this product'} from Rivet. Request a quotation for premium products in Ethiopia.`
+              `${form.name || 'This product'} at RIVET COMPANY. View specifications and request a quotation for your project in Ethiopia.`
             }
             fallbackImage={form.imageUrls.split('\n').map((s) => s.trim()).find(Boolean)}
             pathPreview={`/products/${form.slug || 'product-slug'}`}
