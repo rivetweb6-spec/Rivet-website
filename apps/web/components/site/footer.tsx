@@ -57,18 +57,17 @@ export function Footer({
   const hasContact = Boolean(contact?.address || contact?.phone || contact?.email);
 
   return (
-    <footer className="relative bg-navy-deep text-white/60 luxury-grain">
-      <div className="gold-rule opacity-30" aria-hidden="true" />
-      <Container className="py-24">
-        <div className="grid gap-14 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+    <footer className="border-t-4 border-gold bg-navy-deep text-white/70">
+      <Container className="py-14 md:py-20">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-14">
           <div>
             <Logo light />
-            <p className="mt-6 max-w-xs text-[0.875rem] font-light leading-[1.8]">
+            <p className="mt-5 max-w-xs text-[0.9375rem] leading-relaxed">
               River Company (RIVET) imports and supplies premium construction and architectural
               products — engineered precision for landmark spaces.
             </p>
             {socials.length > 0 && (
-              <div className="mt-8 flex gap-3">
+              <div className="mt-6 flex gap-2">
                 {socials.map((s) => {
                   const Icon = socialIcons[s.label];
                   return (
@@ -78,7 +77,7 @@ export function Footer({
                       target="_blank"
                       rel="noreferrer"
                       aria-label={s.label}
-                      className="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-white/50 transition-all duration-500 hover:border-gold hover:text-gold"
+                      className="grid h-10 w-10 place-items-center rounded-[6px] border border-white/15 text-white/75 transition-colors hover:border-gold hover:text-gold"
                     >
                       <Icon size={16} strokeWidth={1.5} />
                     </a>
@@ -90,15 +89,15 @@ export function Footer({
 
           {columns.map((col) => (
             <div key={col.title}>
-              <h2 className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-gold">
+              <h2 className="text-[0.75rem] font-semibold uppercase tracking-[0.14em] text-gold">
                 {col.title}
               </h2>
-              <ul className="mt-6 space-y-3.5 text-[0.875rem] font-light">
+              <ul className="mt-5 space-y-3 text-[0.9375rem]">
                 {col.links.map((l) => (
                   <li key={l.label}>
                     <Link
                       href={l.href}
-                      className="transition-colors duration-300 hover:text-gold"
+                      className="transition-colors hover:text-white hover:underline hover:underline-offset-4"
                     >
                       {l.label}
                     </Link>
@@ -110,7 +109,7 @@ export function Footer({
         </div>
 
         {hasContact && (
-          <div className="mt-16 grid gap-5 border-t border-white/8 pt-10 text-[0.875rem] font-light sm:grid-cols-3">
+          <div className="mt-12 grid gap-4 border-t border-white/10 pt-8 text-[0.9375rem] sm:grid-cols-3">
             {contact?.address && (
               <span className="inline-flex items-center gap-2.5">
                 <MapPin size={15} className="text-gold" strokeWidth={1.5} /> {contact.address}
@@ -119,7 +118,7 @@ export function Footer({
             {contact?.phone && (
               <a
                 href={telHref(contact.phone)}
-                className="inline-flex items-center gap-2.5 transition-colors hover:text-gold"
+                className="inline-flex items-center gap-2.5 transition-colors hover:text-white"
               >
                 <Phone size={15} className="text-gold" strokeWidth={1.5} /> {contact.phone}
               </a>
@@ -127,7 +126,7 @@ export function Footer({
             {contact?.email && (
               <a
                 href={mailtoHref(contact.email)}
-                className="inline-flex items-center gap-2.5 transition-colors hover:text-gold"
+                className="inline-flex items-center gap-2.5 transition-colors hover:text-white"
               >
                 <Mail size={15} className="text-gold" strokeWidth={1.5} /> {contact.email}
               </a>
@@ -135,7 +134,7 @@ export function Footer({
           </div>
         )}
 
-        <div className="mt-10 border-t border-white/8 pt-8 text-[0.75rem] text-white/35">
+        <div className="mt-8 border-t border-white/10 pt-6 text-[0.8125rem] text-white/60">
           <span>© {new Date().getFullYear()} River Company (RIVET). All rights reserved.</span>
         </div>
       </Container>

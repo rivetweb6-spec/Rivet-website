@@ -195,10 +195,16 @@
   color: var(--color-ink);
 }
 
-/* Keep brand navy on gold fills (primary buttons, badges, skip link). */
+/*
+ * Keep brand navy on solid gold fills (primary buttons, skip link) — and on
+ * gold hover states (group-hover / hover) while they are actually gold.
+ * Match whole class tokens only: a substring match on 'bg-gold' also hit
+ * 'group-hover:bg-gold', turning idle icons navy-on-navy.
+ */
 .dark .bg-gold.text-navy,
-.dark [class*='bg-gold'].text-navy,
-.dark .bg-gold .text-navy {
+.dark .bg-gold .text-navy,
+.dark .hover\:bg-gold:hover.text-navy,
+.dark .group:hover .group-hover\:bg-gold.text-navy {
   color: #002f54;
 }
 

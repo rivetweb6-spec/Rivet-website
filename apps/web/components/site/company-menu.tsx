@@ -31,7 +31,7 @@ function MobileCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
         aria-expanded={open}
         aria-controls="company-mobile-submenu"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between border-b border-white/5 py-4 text-[0.9375rem] tracking-wide text-white/80 transition-colors hover:text-gold"
+        className="flex min-h-12 w-full items-center justify-between border-b border-border text-[1rem] font-medium text-ink transition-colors hover:text-navy"
       >
         Company
         <ChevronDown
@@ -41,13 +41,13 @@ function MobileCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
         />
       </button>
       {open && (
-        <div id="company-mobile-submenu" className="border-b border-white/5 pb-3 pl-4">
+        <div id="company-mobile-submenu" className="border-b border-border bg-bg/60 py-1 pl-4">
           {companyNavLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={onNavigate}
-              className="flex min-h-11 items-center py-2.5 text-[0.9375rem] text-white/70 transition-colors hover:text-gold"
+              className="flex min-h-11 items-center py-2.5 text-[0.9375rem] text-muted transition-colors hover:text-navy"
             >
               {link.label}
             </Link>
@@ -94,8 +94,8 @@ function DesktopCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
         aria-controls="company-desktop-menu"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'gold-underline inline-flex items-center gap-1.5 text-[0.8125rem] font-medium tracking-[0.06em] transition-colors',
-          active ? 'text-white' : 'text-white/75 hover:text-white',
+          'gold-underline inline-flex items-center gap-1.5 text-[0.9375rem] font-medium transition-colors',
+          active ? 'text-navy' : 'text-ink/75 hover:text-navy',
         )}
       >
         Company
@@ -116,7 +116,7 @@ function DesktopCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
             transition={{ duration: 0.18 }}
             className="absolute top-full left-1/2 z-50 w-72 -translate-x-1/2 pt-4"
           >
-            <div className="overflow-hidden rounded-[10px] border border-gold/20 bg-[#001A30] py-2 shadow-[var(--shadow-lg)]">
+            <div className="overflow-hidden rounded-[8px] border border-border bg-canvas py-2 shadow-[var(--shadow-lg)]">
               {companyNavLinks.map((link) => {
                 const isActive =
                   'exact' in link && link.exact
@@ -132,8 +132,8 @@ function DesktopCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
                       onNavigate?.();
                     }}
                     className={cn(
-                      'block px-5 py-2.5 text-[0.875rem] tracking-wide transition-colors',
-                      isActive ? 'text-gold' : 'text-white/75 hover:bg-white/5 hover:text-white',
+                      'block px-5 py-2.5 text-[0.9375rem] transition-colors',
+                      isActive ? 'bg-bg font-medium text-navy' : 'text-ink hover:bg-bg hover:text-navy',
                     )}
                   >
                     {link.label}

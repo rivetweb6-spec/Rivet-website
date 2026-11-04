@@ -1,23 +1,29 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 
+/**
+ * Corporate button system.
+ * - primary: brand gold, the single main action per view
+ * - secondary: navy, strong but secondary actions
+ * - outline: bordered, for tertiary actions on light surfaces
+ * - ghost: for use on dark imagery / navy bands
+ */
 export const buttonVariants = cva(
-  'relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-[4px] font-medium tracking-wide transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'relative inline-flex items-center justify-center gap-2 rounded-[6px] font-semibold whitespace-nowrap transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        primary:
-          'bg-gold text-navy shadow-[var(--shadow-md)] hover:shadow-[var(--shadow-luxury)] hover:brightness-110',
+        primary: 'bg-gold text-navy hover:bg-gold-soft',
         secondary:
-          'bg-navy text-white shadow-[var(--shadow-sm)] hover:bg-navy-600 hover:shadow-[var(--shadow-md)]',
+          'bg-navy text-white hover:bg-navy-600 dark:bg-navy-400 dark:hover:bg-navy-600',
         ghost:
-          'border border-white/25 bg-white/5 text-white backdrop-blur-sm hover:border-gold/60 hover:text-gold',
+          'border border-white/40 bg-transparent text-white hover:border-white hover:bg-white/10',
         outline:
-          'border border-navy/15 text-navy hover:border-gold hover:text-gold',
+          'border border-border bg-canvas text-navy hover:border-navy dark:bg-transparent dark:hover:border-gold',
       },
       size: {
-        sm: 'h-10 px-5 text-[0.8125rem]',
-        md: 'h-12 px-7 text-[0.9375rem]',
-        lg: 'h-14 px-9 text-[0.9375rem] uppercase tracking-[0.08em]',
+        sm: 'h-10 px-4 text-[0.875rem]',
+        md: 'h-11 px-5 text-[0.9375rem]',
+        lg: 'h-12 px-6 text-[0.9375rem]',
       },
     },
     defaultVariants: {
