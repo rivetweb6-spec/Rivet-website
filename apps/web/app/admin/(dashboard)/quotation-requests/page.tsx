@@ -29,6 +29,7 @@ export default function AdminQuotationRequestsPage() {
   const [notes, setNotes] = React.useState('');
   const [status, setStatus] = React.useState('NEW');
   const [error, setError] = React.useState<string | null>(null);
+  const [loaded, setLoaded] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const { applyUnreadCount } = useQuotationNotifications();
 
@@ -38,7 +39,9 @@ export default function AdminQuotationRequestsPage() {
   }, [filter]);
 
   React.useEffect(() => {
-    load().catch((e: Error) => setError(e.message));
+    load()
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setLoaded(true));
   }, [load]);
 
   React.useEffect(() => {
@@ -119,7 +122,11 @@ export default function AdminQuotationRequestsPage() {
           </AdminButton>
         }
       />
-      {error && <p className="mb-4 text-[0.875rem] text-error">{error}</p>}
+      {error && (
+        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+          {error}
+        </p>
+      )}
 
       <div className="mb-4 max-w-xs">
         <AdminSelect
@@ -155,7 +162,7 @@ export default function AdminQuotationRequestsPage() {
             {requests.length === 0 && (
               <tr>
                 <td colSpan={7}>
-                  <EmptyState message="No quotation requests yet." />
+                  <EmptyState loading={!loaded} message="No quotation requests yet." />
                 </td>
               </tr>
             )}
@@ -211,6 +218,7 @@ export default function AdminQuotationRequestsPage() {
 
       <AdminModal
         open={!!selected}
+        error={error}
         onClose={() => setSelected(null)}
         className="max-w-lg space-y-4"
       >

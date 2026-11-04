@@ -653,7 +653,7 @@ Drop `outline-none` or replace with focus-visible outline/ring utilities matchin
 - Keyboard Tab through admin form fields
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -682,7 +682,7 @@ Admin dashboard pages that save/upload inside modals (e.g. products, news, vacan
 - Code review that error UI is inside modal surfaces
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -766,7 +766,7 @@ Admin list pages (products, categories, news, quotations, vacancies, team, galle
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -902,7 +902,7 @@ Use an alert live region; wire `aria-invalid`/`aria-describedby` on login fields
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -1201,7 +1201,7 @@ Start empty (keep `autoComplete="username"`).
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -1228,7 +1228,7 @@ Add standard autocomplete attributes.
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 

@@ -66,6 +66,8 @@ export default function AdminVacanciesPage() {
   const [notes, setNotes] = React.useState('');
   const [appStatus, setAppStatus] = React.useState('NEW');
   const [error, setError] = React.useState<string | null>(null);
+  const [vacanciesLoaded, setVacanciesLoaded] = React.useState(false);
+  const [applicationsLoaded, setApplicationsLoaded] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const { applyApplicationUnread } = useQuotationNotifications();
 
@@ -84,12 +86,16 @@ export default function AdminVacanciesPage() {
   }, [vacancyFilter, statusFilter, applyApplicationUnread]);
 
   React.useEffect(() => {
-    loadVacancies().catch((e: Error) => setError(e.message));
+    loadVacancies()
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setVacanciesLoaded(true));
   }, [loadVacancies]);
 
   React.useEffect(() => {
     if (tab !== 'applications') return;
-    loadApplications().catch((e: Error) => setError(e.message));
+    loadApplications()
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setApplicationsLoaded(true));
   }, [tab, loadApplications]);
 
   React.useEffect(() => {
@@ -264,7 +270,11 @@ export default function AdminVacanciesPage() {
           )
         }
       />
-      {error && <p className="mb-4 text-[0.875rem] text-error">{error}</p>}
+      {error && (
+        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+          {error}
+        </p>
+      )}
 
       {/* Segmented control: aria-pressed tells assistive tech which view is shown. */}
       <div className="mb-6 flex gap-2" role="group" aria-label="Show">
@@ -303,7 +313,7 @@ export default function AdminVacanciesPage() {
               {vacancies.length === 0 && (
                 <tr>
                   <td colSpan={6}>
-                    <EmptyState message="No vacancies yet." />
+                    <EmptyState loading={!vacanciesLoaded} message="No vacancies yet." />
                   </td>
                 </tr>
               )}
@@ -414,7 +424,7 @@ export default function AdminVacanciesPage() {
                 {applications.length === 0 && (
                   <tr>
                     <td colSpan={6}>
-                      <EmptyState message="No applications yet." />
+                      <EmptyState loading={!applicationsLoaded} message="No applications yet." />
                     </td>
                   </tr>
                 )}
@@ -475,7 +485,7 @@ export default function AdminVacanciesPage() {
         </>
       )}
 
-      <AdminModal open={open} onClose={() => setOpen(false)} className="max-w-2xl">
+      <AdminModal open={open} onClose={() => setOpen(false)} error={error} className="max-w-2xl">
         <form onSubmit={saveVacancy} className="space-y-4">
           <h2 className="text-[1.25rem] text-navy">
             {editingId ? 'Edit vacancy' : 'New vacancy'}
@@ -569,6 +579,7 @@ export default function AdminVacanciesPage() {
 
       <AdminModal
         open={!!selected}
+        error={error}
         onClose={() => setSelected(null)}
         className="max-w-lg space-y-4"
       >

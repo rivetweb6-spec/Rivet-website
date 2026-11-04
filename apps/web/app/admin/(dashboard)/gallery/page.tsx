@@ -45,12 +45,15 @@ export default function AdminGalleryPage() {
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [loaded, setLoaded] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
 
   const load = () => adminApi.gallery.list().then((r) => setImages(r.images));
 
   React.useEffect(() => {
-    load().catch((e: Error) => setError(e.message));
+    load()
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setLoaded(true));
   }, []);
 
   const bustCache = async () => {
@@ -139,10 +142,14 @@ export default function AdminGalleryPage() {
           </AdminButton>
         }
       />
-      {error && <p className="mb-4 text-[0.875rem] text-error">{error}</p>}
+      {error && (
+        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+          {error}
+        </p>
+      )}
 
       {images.length === 0 ? (
-        <EmptyState message="No gallery images yet. Upload a photo with a title and category." />
+        <EmptyState loading={!loaded} message="No gallery images yet. Upload a photo with a title and category." />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {images.map((item, index) => (
@@ -215,7 +222,7 @@ export default function AdminGalleryPage() {
         </div>
       )}
 
-      <AdminModal open={open} onClose={() => setOpen(false)} className="max-w-2xl">
+      <AdminModal open={open} onClose={() => setOpen(false)} error={error} className="max-w-2xl">
         <form onSubmit={(e) => void save(e)} className="space-y-4">
           <h2 className="text-[1.25rem] text-navy">{editingId ? 'Edit image' : 'New gallery image'}</h2>
           <AdminInput

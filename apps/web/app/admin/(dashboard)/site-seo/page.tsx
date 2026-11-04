@@ -85,7 +85,7 @@ export default function AdminSiteSeoPage() {
         title="Site SEO"
         description="Override titles, descriptions, and social metadata for static public pages."
       />
-      {error && <p className="mb-4 text-[0.875rem] text-error">{error}</p>}
+      {error && <p role="alert" className="mb-4 text-[0.875rem] text-error">{error}</p>}
       {saved && <p className="mb-4 text-[0.875rem] text-navy">SEO settings saved.</p>}
 
       <div className="grid gap-6 lg:grid-cols-[220px_1fr]">

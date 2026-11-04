@@ -470,7 +470,7 @@ export default function AdminCategoriesPage() {
             placeholder="Search by name or URL…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-10 w-full rounded-[10px] border border-border bg-surface pl-9 pr-3 text-[0.875rem] text-ink placeholder:text-muted/70 focus:border-gold focus:outline-none"
+            className="h-10 w-full rounded-[10px] border border-border bg-surface pl-9 pr-3 text-[0.875rem] text-ink placeholder:text-muted/70 focus:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
           />
         </label>
         {expandableIds.length > 0 && (

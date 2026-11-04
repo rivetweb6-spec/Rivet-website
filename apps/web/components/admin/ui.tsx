@@ -81,12 +81,18 @@ export function AdminModal({
   children,
   className,
   labelledBy,
+  error,
 }: {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
   className?: string;
   labelledBy?: string;
+  /**
+   * Save/upload error to show inside the dialog. Page-level errors sit under
+   * the modal backdrop and are invisible while it is open.
+   */
+  error?: string | null;
 }) {
   const [mounted, setMounted] = React.useState(false);
 
@@ -111,7 +117,7 @@ export function AdminModal({
   if (!mounted || !open) return null;
 
   return createPortal(
-    <ModalFrame onClose={onClose} className={className} labelledBy={labelledBy}>
+    <ModalFrame onClose={onClose} className={className} labelledBy={labelledBy} error={error}>
       {children}
     </ModalFrame>,
     document.body,
@@ -127,11 +133,13 @@ function ModalFrame({
   children,
   className,
   labelledBy,
+  error,
 }: {
   onClose: () => void;
   children: React.ReactNode;
   className?: string;
   labelledBy?: string;
+  error?: string | null;
 }) {
   const dialogRef = React.useRef<HTMLDivElement>(null);
   const panelRef = React.useRef<HTMLDivElement>(null);
@@ -173,6 +181,14 @@ function ModalFrame({
         )}
         onClick={(e) => e.stopPropagation()}
       >
+        {error && (
+          <div
+            role="alert"
+            className="mb-4 rounded-[10px] border border-error/25 bg-error/10 px-3.5 py-3 text-[0.875rem] text-error"
+          >
+            {error}
+          </div>
+        )}
         {children}
       </div>
     </div>
@@ -189,7 +205,7 @@ export function AdminInput({
       {label && <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">{label}</span>}
       <input
         className={cn(
-          'h-11 w-full rounded-[12px] border border-border bg-surface px-3 text-[0.9375rem] outline-none focus:border-navy',
+          'h-11 w-full rounded-[12px] border border-border bg-surface px-3 text-[0.9375rem] outline-none focus:border-navy focus-visible:ring-2 focus-visible:ring-gold/60',
           className,
         )}
         {...props}
@@ -208,7 +224,7 @@ export function AdminTextarea({
       {label && <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">{label}</span>}
       <textarea
         className={cn(
-          'w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-[0.9375rem] outline-none focus:border-navy',
+          'w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-[0.9375rem] outline-none focus:border-navy focus-visible:ring-2 focus-visible:ring-gold/60',
           className,
         )}
         {...props}
@@ -228,7 +244,7 @@ export function AdminSelect({
       {label && <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">{label}</span>}
       <select
         className={cn(
-          'h-11 w-full rounded-[12px] border border-border bg-surface px-3 text-[0.9375rem] outline-none focus:border-navy',
+          'h-11 w-full rounded-[12px] border border-border bg-surface px-3 text-[0.9375rem] outline-none focus:border-navy focus-visible:ring-2 focus-visible:ring-gold/60',
           className,
         )}
         {...props}
@@ -277,6 +293,17 @@ export function StatusBadge({ status }: { status: string }) {
   );
 }
 
-export function EmptyState({ message }: { message: string }) {
+/**
+ * Empty list message. Pass `loading` until the first fetch settles so the
+ * page shows an announced "Loading…" instead of flashing "No … yet".
+ */
+export function EmptyState({ message, loading = false }: { message: string; loading?: boolean }) {
+  if (loading) {
+    return (
+      <p role="status" className="py-12 text-center text-[0.9375rem] text-muted">
+        Loading…
+      </p>
+    );
+  }
   return <p className="py-12 text-center text-[0.9375rem] text-muted">{message}</p>;
 }

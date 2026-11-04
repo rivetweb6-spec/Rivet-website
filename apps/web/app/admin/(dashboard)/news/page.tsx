@@ -36,11 +36,14 @@ export default function AdminNewsPage() {
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [loaded, setLoaded] = React.useState(false);
 
   const load = () => adminApi.news.list().then((r) => setArticles(r.articles));
 
   React.useEffect(() => {
-    load().catch((e: Error) => setError(e.message));
+    load()
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setLoaded(true));
   }, []);
 
   const save = async (e: React.FormEvent) => {
@@ -105,7 +108,11 @@ export default function AdminNewsPage() {
           </AdminButton>
         }
       />
-      {error && <p className="mb-4 text-[0.875rem] text-error">{error}</p>}
+      {error && (
+        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+          {error}
+        </p>
+      )}
 
       <AdminCard className="overflow-x-auto p-0">
         <table className="w-full min-w-[640px] text-left text-[0.875rem]">
@@ -123,7 +130,7 @@ export default function AdminNewsPage() {
             {articles.length === 0 && (
               <tr>
                 <td colSpan={4}>
-                  <EmptyState message="No articles yet." />
+                  <EmptyState loading={!loaded} message="No articles yet." />
                 </td>
               </tr>
             )}
@@ -164,7 +171,7 @@ export default function AdminNewsPage() {
         </table>
       </AdminCard>
 
-      <AdminModal open={open} onClose={() => setOpen(false)} className="max-w-2xl">
+      <AdminModal open={open} onClose={() => setOpen(false)} error={error} className="max-w-2xl">
         <form onSubmit={save} className="space-y-4">
           <h2 className="text-[1.25rem] text-navy">
             {editingId ? 'Edit article' : 'New article'}

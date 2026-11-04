@@ -47,12 +47,15 @@ export default function AdminTeamPage() {
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [loaded, setLoaded] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
 
   const load = () => adminApi.team.list().then((r) => setMembers(r.members));
 
   React.useEffect(() => {
-    load().catch((e: Error) => setError(e.message));
+    load()
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setLoaded(true));
   }, []);
 
   const bustCache = async () => {
@@ -141,10 +144,14 @@ export default function AdminTeamPage() {
           </AdminButton>
         }
       />
-      {error && <p className="mb-4 text-[0.875rem] text-error">{error}</p>}
+      {error && (
+        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+          {error}
+        </p>
+      )}
 
       {members.length === 0 ? (
-        <EmptyState message="No team members yet. Add a name, position, and portrait." />
+        <EmptyState loading={!loaded} message="No team members yet. Add a name, position, and portrait." />
       ) : (
         <div className="space-y-10">
           {SECTIONS.map((section) => {
@@ -227,7 +234,7 @@ export default function AdminTeamPage() {
         </div>
       )}
 
-      <AdminModal open={open} onClose={() => setOpen(false)} className="max-w-2xl">
+      <AdminModal open={open} onClose={() => setOpen(false)} error={error} className="max-w-2xl">
         <form onSubmit={(e) => void save(e)} className="space-y-4">
           <h2 className="text-[1.25rem] text-navy">
             {editingId ? 'Edit team member' : 'New team member'}
