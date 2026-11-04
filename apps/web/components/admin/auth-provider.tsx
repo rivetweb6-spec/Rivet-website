@@ -107,12 +107,19 @@ export function RequireAdmin({ children }: { children: React.ReactNode }) {
     if (ready && !user) router.replace('/admin/login');
   }, [ready, user, router]);
 
-  if (!ready) {
+  // Keep a visible, announced status both while the session is checked and
+  // while redirecting to the login page (instead of a blank screen).
+  if (!ready || !user) {
     return (
-      <div className="grid min-h-screen place-items-center bg-bg text-muted">Loading…</div>
+      <div
+        role="status"
+        aria-live="polite"
+        className="grid min-h-screen place-items-center bg-bg text-muted"
+      >
+        {ready ? 'Redirecting to sign in…' : 'Loading…'}
+      </div>
     );
   }
-  if (!user) return null;
   return <>{children}</>;
 }
 

@@ -26,6 +26,7 @@ export default function AdminContactPage() {
   const [message, setMessage] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [saving, setSaving] = React.useState(false);
+  const [loaded, setLoaded] = React.useState(false);
 
   React.useEffect(() => {
     Promise.all([adminApi.contactInfo.get(), adminApi.contactMessages.list()])
@@ -46,7 +47,8 @@ export default function AdminContactPage() {
         }
         setMessages(msgRes.messages);
       })
-      .catch((e: Error) => setError(e.message));
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setLoaded(true));
   }, []);
 
   const save = async (e: React.FormEvent) => {
@@ -146,7 +148,7 @@ export default function AdminContactPage() {
               />
             </div>
             {message && <p className="text-[0.875rem] text-success">{message}</p>}
-            {error && <p className="text-[0.875rem] text-error">{error}</p>}
+            {error && <p role="alert" className="text-[0.875rem] text-error">{error}</p>}
             <AdminButton type="submit" disabled={saving}>
               {saving ? 'Saving…' : 'Save'}
             </AdminButton>
@@ -156,7 +158,7 @@ export default function AdminContactPage() {
         <AdminCard>
           <h2 className="mb-4 text-[1.125rem] text-navy">Inbound messages</h2>
           {messages.length === 0 ? (
-            <EmptyState message="No contact messages yet." />
+            <EmptyState loading={!loaded} message="No contact messages yet." />
           ) : (
             <ul className="max-h-[32rem] space-y-4 overflow-y-auto">
               {messages.map((m) => (

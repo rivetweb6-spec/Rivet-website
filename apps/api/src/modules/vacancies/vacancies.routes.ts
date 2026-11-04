@@ -17,6 +17,19 @@ import { normalizeSeoFields, seoFieldsSchema } from '../../utils/seo-fields.js';
 import { toCsv } from '../../utils/csv.js';
 import { emitEvent } from '../../realtime/stream.js';
 import {
+  DOCUMENT_EXT,
+  DOCUMENT_MIME,
+  detectDocumentKind,
+  type DocumentKind,
+} from '../../utils/document-signature.js';
+import {
+  FORM_LIMITS,
+  emailField,
+  optionalText,
+  parsePublicForm,
+  requiredText,
+} from '../../utils/public-forms.js';
+import {
   cloudinaryEnabled,
   cloudinaryRawUrl,
   destroyCloudinaryRaw,
@@ -44,10 +57,6 @@ export const APPLICATION_STATUSES = [
   'HIRED',
 ] as const;
 
-const optionalString = z
-  .union([z.string(), z.literal('')])
-  .optional()
-  .transform((v) => (v ? v : undefined));
 
 const upsertSchema = z
   .object({
@@ -64,10 +73,10 @@ const upsertSchema = z
   .merge(seoFieldsSchema);
 
 const applyFieldsSchema = z.object({
-  fullName: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().min(1),
-  coverLetter: optionalString,
+  fullName: requiredText('Full name', FORM_LIMITS.name),
+  email: emailField(),
+  phone: requiredText('Phone number', FORM_LIMITS.phone),
+  coverLetter: optionalText('Cover letter', FORM_LIMITS.coverLetter),
 });
 
 const applyLimiter = rateLimit({
@@ -86,7 +95,7 @@ const cvUpload = multer({
       cb(null, true);
       return;
     }
-    cb(new Error('Please upload a PDF or Word document (PDF, DOC, DOCX).'));
+    cb(new Error('Please upload your CV as a PDF file.'));
   },
 });
 
@@ -117,18 +126,21 @@ function serializeApplication<T extends { cvPublicId: string }>(app: T) {
   return { ...rest, hasCv: Boolean(cvPublicId) };
 }
 
-async function storeCv(file: Express.Multer.File): Promise<{
+/** Store a CV whose type was verified from its bytes; `kind` decides extension + MIME. */
+async function storeCv(
+  file: Express.Multer.File,
+  kind: DocumentKind,
+): Promise<{
   cvPublicId: string;
   cvMimeType: string;
 }> {
   if (cloudinaryEnabled) {
-    const uploaded = await uploadRawBuffer(file.buffer, file.originalname);
-    return {
-      cvPublicId: uploaded.publicId,
-      cvMimeType: file.mimetype || 'application/octet-stream',
-    };
+    // A neutral name with the verified extension — the applicant's filename is
+    // kept separately (cvOriginalName) for display only.
+    const uploaded = await uploadRawBuffer(file.buffer, `cv${DOCUMENT_EXT[kind]}`);
+    return { cvPublicId: uploaded.publicId, cvMimeType: DOCUMENT_MIME[kind] };
   }
-  const stored = await saveLocalCv(file);
+  const stored = await saveLocalCv(file, kind);
   return { cvPublicId: stored.publicId, cvMimeType: stored.mimeType };
 }
 
@@ -349,8 +361,7 @@ router.post(
   applyLimiter,
   handleCvUpload,
   asyncHandler(async (req, res) => {
-    const parsed = applyFieldsSchema.safeParse(req.body);
-    if (!parsed.success) throw badRequest('Validation failed', parsed.error.flatten());
+    const fields = parsePublicForm(applyFieldsSchema, req.body);
 
     const vacancy = await prisma.vacancy.findUnique({
       where: { slug: param(req, 'slug') },
@@ -360,16 +371,28 @@ router.post(
     }
 
     const file = req.file;
-    if (!file) throw badRequest('Please attach your CV (PDF, DOC, or DOCX).');
+    if (!file) throw badRequest('Please attach your CV as a PDF file.');
 
-    const stored = await storeCv(file);
+    // The declared type and filename are only a first filter; the bytes decide.
+    // CVs are accepted as PDF only (Word files can carry macros).
+    const kind = detectDocumentKind(file.buffer);
+    if (kind === 'doc' || kind === 'docx') {
+      throw badRequest(
+        'Word documents are not accepted. Please save your CV as a PDF (File → Save As → PDF) and upload it again.',
+      );
+    }
+    if (kind !== 'pdf') {
+      throw badRequest('This file is not a valid PDF. Please upload your CV as a PDF file.');
+    }
+
+    const stored = await storeCv(file, kind);
     const application = await prisma.jobApplication.create({
       data: {
         vacancyId: vacancy.id,
-        fullName: parsed.data.fullName.trim(),
-        email: parsed.data.email.trim(),
-        phone: parsed.data.phone.trim(),
-        coverLetter: parsed.data.coverLetter?.trim() || null,
+        fullName: fields.fullName,
+        email: fields.email,
+        phone: fields.phone,
+        coverLetter: fields.coverLetter ?? null,
         cvPublicId: stored.cvPublicId,
         cvOriginalName: file.originalname.slice(0, 180),
         cvMimeType: stored.cvMimeType,

@@ -14,7 +14,7 @@ export function CompanySubnav() {
       <Container>
         <nav
           aria-label="Company pages"
-          className="flex gap-1 overflow-x-auto py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex flex-wrap gap-1 py-3"
         >
           {companyNavLinks.map((link) => {
             const active = 'exact' in link && link.exact
@@ -24,6 +24,7 @@ export function CompanySubnav() {
               <Link
                 key={link.href}
                 href={link.href}
+                aria-current={active ? 'page' : undefined}
                 className={cn(
                   'shrink-0 rounded-full px-4 py-2 text-[0.8125rem] tracking-wide transition-colors',
                   active

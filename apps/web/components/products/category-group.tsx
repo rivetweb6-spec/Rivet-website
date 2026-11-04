@@ -56,94 +56,69 @@ export function buildCategoryTree(allCategories: Category[]): CategoryTreeNode[]
   return roots;
 }
 
-/** Collect all category IDs in a subtree (the node itself + all descendants) */
-export function getCategorySubtreeIds(node: CategoryTreeNode): Set<string> {
-  const ids = new Set<string>([node.id]);
-  const queue = [...node.children];
-  while (queue.length > 0) {
-    const curr = queue.shift()!;
-    ids.add(curr.id);
-    if (curr.children?.length) {
-      queue.push(...curr.children);
-    }
-  }
-  return ids;
+/** Total published products in a category and all of its descendants. */
+export function countSubtreeProducts(node: CategoryTreeNode): number {
+  let total = node._count?.products ?? 0;
+  for (const child of node.children) total += countSubtreeProducts(child);
+  return total;
 }
+
+function productCountLabel(count: number | undefined): string {
+  if (count === undefined) return 'View range';
+  if (count === 0) return 'Available on request';
+  return `${count} product${count === 1 ? '' : 's'}`;
+}
+
+const cardLinkFocus =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-bg';
 
 /** Single reusable category card for all subcategories across the website */
 export function CategoryCard({
   category,
-  parentName,
   fallbackImage,
 }: {
   category: CategoryItemData;
-  parentName?: string;
   fallbackImage?: string;
 }) {
   const image = category.image || fallbackImage || assets.categories.elevators;
 
   return (
-    <div className="luxury-card group flex h-full flex-col overflow-hidden rounded-[16px] bg-canvas shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)]">
-      {/* Clickable Image */}
-      <Link
-        href={`/products/${category.slug}`}
-        className="relative aspect-[4/3] overflow-hidden block"
-        aria-label={`View ${category.name}`}
-      >
+    <Link
+      href={`/products/${category.slug}`}
+      className={`luxury-card group flex h-full flex-col overflow-hidden rounded-[16px] bg-canvas shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)] ${cardLinkFocus}`}
+    >
+      <div className="relative aspect-[3/2] overflow-hidden bg-pearl">
         <RivetImage
           src={image}
-          alt={`${category.name} — premium solutions by Rivet`}
+          alt=""
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/30 to-transparent"
-          aria-hidden="true"
-        />
-      </Link>
+      </div>
 
-      {/* Content */}
       <div className="flex flex-1 flex-col p-6">
-        {parentName && (
-          <span className="eyebrow text-gold-muted text-[0.6875rem] uppercase tracking-wider font-medium">
-            {parentName}
-          </span>
-        )}
-        <h4 className="headline-display mt-2 text-[1.25rem]">
-          <Link
-            href={`/products/${category.slug}`}
-            className="transition-colors hover:text-gold"
-          >
-            {category.name}
-          </Link>
+        <h4 className="headline-display text-[1.25rem] leading-snug transition-colors group-hover:text-gold">
+          {category.name}
         </h4>
-        <p className="mt-2 flex-1 text-[0.875rem] leading-relaxed text-muted line-clamp-3">
+        <p className="mt-2 flex-1 text-[0.875rem] leading-relaxed text-muted line-clamp-2">
           {category.description ||
-            `Explore premium ${category.name.toLowerCase()} supplied and installed by Rivet for projects in Ethiopia.`}
+            `Supplied and installed by Rivet for projects across Ethiopia.`}
         </p>
 
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-border/40">
-          <Link
-            href={`/products/${category.slug}`}
-            className="inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy transition-colors hover:text-gold"
-          >
-            View category
+        <div className="mt-5 flex items-center justify-between gap-3 border-t border-border/50 pt-4 text-[0.8125rem]">
+          <span className="text-muted">{productCountLabel(category._count?.products)}</span>
+          <span className="inline-flex items-center gap-1.5 font-semibold text-navy transition-colors group-hover:text-gold">
+            Explore
             <ArrowRight
               size={15}
               className="transition-transform duration-300 group-hover:translate-x-1"
               aria-hidden="true"
             />
-          </Link>
-          <Link
-            href="/request-quotation"
-            className="inline-flex items-center gap-1 text-[0.8125rem] font-medium text-gold transition-colors hover:text-gold-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
-          >
-            Request quotation
-          </Link>
+          </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -151,37 +126,34 @@ export function CategoryCard({
 export function CategoryGroup({
   name,
   slug,
-  children,
+  items,
   fallbackImage,
   showGroupHeader = true,
 }: {
   name: string;
   slug?: string;
-  children: CategoryItemData[];
+  items: CategoryItemData[];
   fallbackImage?: string;
   showGroupHeader?: boolean;
 }) {
-  if (!children.length) return null;
+  if (!items.length) return null;
 
   return (
     <div>
       {showGroupHeader && (
-        <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 mb-8">
-          <h3 className="text-[1.5rem] sm:text-[1.75rem] font-medium text-navy">
-            {slug ? (
-              <Link href={`/products/${slug}`} className="transition-colors hover:text-gold">
-                {name}
-              </Link>
-            ) : (
-              name
-            )}
-          </h3>
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-border/60 pb-4">
+          <div>
+            <h3 className="headline-display text-[1.5rem] sm:text-[1.75rem]">{name}</h3>
+            <p className="mt-1 text-[0.8125rem] text-muted">
+              {items.length} {items.length === 1 ? 'category' : 'categories'}
+            </p>
+          </div>
           {slug && (
             <Link
               href={`/products/${slug}`}
-              className="inline-flex items-center gap-1 text-[0.875rem] font-medium text-gold hover:text-gold-soft transition-colors"
+              className="inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy transition-colors hover:text-gold"
             >
-              View all {name.toLowerCase()}
+              View all<span className="sr-only"> {name}</span>
               <ArrowRight size={14} aria-hidden="true" />
             </Link>
           )}
@@ -189,13 +161,9 @@ export function CategoryGroup({
       )}
 
       <Stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {children.map((child) => (
+        {items.map((child) => (
           <StaggerItem key={child.id || child.slug}>
-            <CategoryCard
-              category={child}
-              parentName={name}
-              fallbackImage={fallbackImage}
-            />
+            <CategoryCard category={child} fallbackImage={fallbackImage} />
           </StaggerItem>
         ))}
       </Stagger>
@@ -233,7 +201,7 @@ export function ProductCard({
         />
       </div>
       <div className="p-6">
-        <span className="eyebrow text-gold-muted text-[0.6875rem] uppercase tracking-wider font-medium">
+        <span className="eyebrow text-gold-ink text-[0.6875rem] uppercase tracking-wider font-medium">
           {cat}
         </span>
         <h3 className="headline-display mt-2 text-[1.1875rem]">{product.name}</h3>
@@ -242,7 +210,7 @@ export function ProductCard({
             {product.shortDescription}
           </p>
         )}
-        <div className="mt-4 flex items-center text-[0.875rem] font-semibold text-gold transition-colors group-hover:text-gold-soft">
+        <div className="mt-4 flex items-center text-[0.875rem] font-semibold text-gold-ink transition-colors group-hover:text-navy">
           View product
           <ArrowRight
             size={14}
@@ -309,7 +277,7 @@ export function CategoryHierarchySection({
                   key={group.id}
                   name={group.name}
                   slug={group.slug}
-                  children={group.children ?? []}
+                  items={group.children ?? []}
                   fallbackImage={group.image || category.image || undefined}
                   showGroupHeader={true}
                 />
@@ -318,7 +286,7 @@ export function CategoryHierarchySection({
                 <CategoryGroup
                   name={`${category.name} Solutions`}
                   slug={category.slug}
-                  children={directChildren}
+                  items={directChildren}
                   fallbackImage={category.image || undefined}
                   showGroupHeader={true}
                 />
@@ -328,7 +296,7 @@ export function CategoryHierarchySection({
             <CategoryGroup
               name={category.name}
               slug={category.slug}
-              children={category.children}
+              items={category.children}
               fallbackImage={category.image || undefined}
               showGroupHeader={false}
             />
@@ -339,123 +307,113 @@ export function CategoryHierarchySection({
   );
 }
 
-/** Complete category hierarchy rendered on /products when "All" is active */
-export function AllCategoriesHierarchy({
-  tree,
-  allProducts = [],
-}: {
-  tree: CategoryTreeNode[];
-  allProducts: Product[];
-}) {
+/** Department overview rendered on /products when "All" is active */
+export function DepartmentGrid({ tree }: { tree: CategoryTreeNode[] }) {
   if (!tree.length) return null;
 
   return (
-    <div className="space-y-24 mb-24">
-      {tree.map((root) => {
-        const subtreeIds = getCategorySubtreeIds(root);
-        const branchProducts = allProducts.filter((p) => subtreeIds.has(p.categoryId));
+    <section aria-labelledby="departments-heading" className="mb-20">
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-border/60 pb-5">
+        <div>
+          <span className="eyebrow text-gold-ink text-[0.6875rem] uppercase tracking-wider font-medium">
+            Departments
+          </span>
+          <h2 id="departments-heading" className="headline-display mt-1 text-[1.75rem] sm:text-[2rem]">
+            Browse by department
+          </h2>
+        </div>
+        <span className="text-[0.875rem] text-muted">
+          {tree.length} department{tree.length === 1 ? '' : 's'}
+        </span>
+      </div>
 
-        const rootChildren = root.children ?? [];
-        const subGroups = rootChildren.filter((c) => Array.isArray(c.children) && c.children.length > 0);
-        const directChildren = rootChildren.filter((c) => !Array.isArray(c.children) || c.children.length === 0);
+      <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {tree.map((root) => {
+          const productCount = countSubtreeProducts(root);
+          const subs = root.children;
+          const shownSubs = subs.slice(0, 3);
+          const hiddenSubs = subs.length - shownSubs.length;
 
-        return (
-          <section key={root.id} id={root.slug} className="scroll-mt-28">
-            <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-3 mb-6">
-              <div>
-                <span className="eyebrow text-gold-muted text-[0.6875rem] uppercase tracking-wider font-medium">
-                  Department
+          return (
+            <li
+              key={root.id}
+              className="luxury-card group relative flex flex-col overflow-hidden rounded-[18px] bg-canvas shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)] focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2 focus-within:ring-offset-bg"
+            >
+              <div className="relative aspect-[16/10] overflow-hidden bg-pearl">
+                <RivetImage
+                  src={root.image || assets.categories.elevators}
+                  alt=""
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy/55 via-navy/0 to-transparent"
+                  aria-hidden="true"
+                />
+                <span className="absolute bottom-4 left-5 rounded-full bg-white/95 px-3 py-1 text-[0.75rem] font-medium text-navy shadow-[var(--shadow-sm)]">
+                  {productCountLabel(productCount)}
                 </span>
-                <h2 className="headline-display mt-1 text-[2rem] sm:text-[2.5rem]">
-                  <Link href={`/products/${root.slug}`} className="transition-colors hover:text-gold">
-                    {root.name}
-                  </Link>
-                </h2>
               </div>
-              <Link
-                href={`/products/${root.slug}`}
-                className="inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-gold hover:text-gold-soft transition-colors"
-              >
-                Explore all {root.name.toLowerCase()}
-                <ArrowRight size={14} aria-hidden="true" />
-              </Link>
-            </div>
 
-            {root.description && (
-              <p className="max-w-3xl text-[1rem] leading-relaxed text-muted mb-8">
-                {root.description}
-              </p>
-            )}
-
-            {/* Subcategories hierarchy */}
-            {rootChildren.length > 0 && (
-              <div className="space-y-14 mb-12">
-                {subGroups.length > 0 ? (
-                  <>
-                    {subGroups.map((group) => (
-                      <CategoryGroup
-                        key={group.id}
-                        name={group.name}
-                        slug={group.slug}
-                        children={group.children ?? []}
-                        fallbackImage={group.image || root.image || undefined}
-                        showGroupHeader={true}
-                      />
-                    ))}
-                    {directChildren.length > 0 && (
-                      <CategoryGroup
-                        name={`${root.name} Solutions`}
-                        slug={root.slug}
-                        children={directChildren}
-                        fallbackImage={root.image || undefined}
-                        showGroupHeader={true}
-                      />
-                    )}
-                  </>
-                ) : (
-                  <CategoryGroup
-                    name={root.name}
-                    slug={root.slug}
-                    children={rootChildren}
-                    fallbackImage={root.image || undefined}
-                    showGroupHeader={false}
-                  />
-                )}
-              </div>
-            )}
-
-            {/* Relevant Products in this category branch */}
-            {branchProducts.length > 0 && (
-              <div className="mt-10 rounded-[20px] bg-surface/60 border border-border/50 p-6 sm:p-8">
-                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 mb-6">
-                  <div>
-                    <h3 className="headline-display text-[1.25rem] sm:text-[1.5rem]">
-                      {root.name} Products
-                    </h3>
-                    <p className="text-[0.875rem] text-muted mt-1">
-                      Certified models and architectural equipment available in Ethiopia.
-                    </p>
-                  </div>
+              <div className="flex flex-1 flex-col p-6">
+                <h3 className="headline-display text-[1.375rem] leading-snug">
+                  {/* Stretched link: the whole tile opens the department. */}
                   <Link
                     href={`/products/${root.slug}`}
-                    className="text-[0.875rem] font-medium text-gold hover:text-gold-soft transition-colors"
+                    className="transition-colors group-hover:text-gold focus-visible:outline-none after:absolute after:inset-0 after:content-['']"
                   >
-                    View all in {root.name.toLowerCase()} ({branchProducts.length}) &rarr;
+                    {root.name}
                   </Link>
-                </div>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {branchProducts.slice(0, 6).map((p) => (
-                    <ProductCard key={p.id} product={p} categoryName={root.name} />
-                  ))}
+                </h3>
+                <p className="mt-2 text-[0.875rem] leading-relaxed text-muted line-clamp-2">
+                  {root.description ||
+                    `Imported ${root.name.toLowerCase()} supplied and installed by Rivet across Ethiopia.`}
+                </p>
+
+                {shownSubs.length > 0 && (
+                  <ul className="relative z-10 mt-4 flex flex-wrap gap-1.5" aria-label={`${root.name} subcategories`}>
+                    {shownSubs.map((sub) => (
+                      <li key={sub.id}>
+                        <Link
+                          href={`/products/${sub.slug}`}
+                          className="inline-flex rounded-full border border-border bg-surface px-3 py-1 text-[0.75rem] font-medium text-ink transition-colors hover:border-gold hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                        >
+                          {sub.name}
+                        </Link>
+                      </li>
+                    ))}
+                    {hiddenSubs > 0 && (
+                      <li className="inline-flex items-center px-1.5 text-[0.75rem] text-muted">
+                        +{hiddenSubs} more
+                      </li>
+                    )}
+                  </ul>
+                )}
+
+                <div className="mt-auto pt-5">
+                  <div className="flex items-center justify-between border-t border-border/50 pt-4 text-[0.8125rem]">
+                    <span className="text-muted">
+                      {subs.length > 0
+                        ? `${subs.length} ${subs.length === 1 ? 'category' : 'categories'}`
+                        : 'Full range'}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 font-semibold text-navy transition-colors group-hover:text-gold">
+                      Explore
+                      <ArrowRight
+                        size={15}
+                        className="transition-transform duration-300 group-hover:translate-x-1"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </div>
                 </div>
               </div>
-            )}
-
-            <div className="gold-rule mt-16" aria-hidden="true" />
-          </section>
-        );
-      })}
-    </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
 
@@ -486,6 +444,13 @@ export function ProductEmptyState({ categoryName }: { categoryName: string }) {
           Contact our team
         </Link>
       </div>
+      <Link
+        href="/products"
+        className="mt-5 inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 transition-colors hover:text-gold hover:underline"
+      >
+        Browse all products
+        <ArrowRight size={14} aria-hidden="true" />
+      </Link>
     </div>
   );
 }

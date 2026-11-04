@@ -51,10 +51,15 @@ export default function AdminProfilePage() {
     setMessage(null);
     setError(null);
     try {
-      await adminApi.updatePassword(currentPassword, newPassword);
+      const result = await adminApi.updatePassword(currentPassword, newPassword);
       setCurrentPassword('');
       setNewPassword('');
-      setMessage('Password changed.');
+      const ended = result.otherSessionsEnded ?? 0;
+      setMessage(
+        ended > 0
+          ? `Password changed. Signed out ${ended} other ${ended === 1 ? 'device' : 'devices'}.`
+          : 'Password changed.',
+      );
     } catch (err) {
       setError(err instanceof AdminApiError ? err.message : 'Password change failed');
     }
@@ -95,6 +100,7 @@ export default function AdminProfilePage() {
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               required
+              autoComplete="current-password"
             />
             <AdminInput
               label="New password (min 8)"
@@ -103,6 +109,7 @@ export default function AdminProfilePage() {
               onChange={(e) => setNewPassword(e.target.value)}
               required
               minLength={8}
+              autoComplete="new-password"
             />
             <AdminButton type="submit" variant="secondary">
               Update password
@@ -110,8 +117,15 @@ export default function AdminProfilePage() {
           </form>
         </AdminCard>
       </div>
-      {message && <p className="mt-4 text-[0.875rem] text-success">{message}</p>}
-      {error && <p className="mt-4 text-[0.875rem] text-error">{error}</p>}
+      {/* Status messages are announced to screen readers. */}
+      <p role="status" className="mt-4 text-[0.875rem] text-success empty:hidden">
+        {message ?? ''}
+      </p>
+      {error && (
+        <p role="alert" className="mt-4 text-[0.875rem] text-error">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

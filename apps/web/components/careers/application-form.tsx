@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button';
 import { api, ApiError } from '@/lib/api';
 import { isAllowedCvFilename } from '@/lib/vacancies';
 import { cn } from '@/lib/utils';
+import { focusFirstInvalid } from '@/lib/form-a11y';
 
 const MAX_CV_BYTES = 8 * 1024 * 1024;
-const ACCEPTED = '.pdf,.doc,.docx';
+const ACCEPTED = '.pdf,application/pdf';
 
 type Fields = {
   fullName: string;
@@ -32,8 +33,12 @@ function validate(f: Fields, file: File | null): Errors {
   if (!f.email.trim()) e.email = 'An email is required.';
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) e.email = 'That email looks incomplete.';
   if (!f.phone.trim()) e.phone = 'A phone number is required.';
-  if (!file) e.cv = 'Attach your CV as a PDF or Word document.';
-  else if (!isAllowedCvFilename(file.name)) e.cv = 'Attach your CV as a PDF or Word document.';
+  if (!file) e.cv = 'Attach your CV as a PDF file.';
+  else if (!isAllowedCvFilename(file.name)) {
+    e.cv = /\.docx?$/i.test(file.name)
+      ? 'Word files are not accepted. Please save your CV as a PDF and attach that.'
+      : 'Please attach your CV as a PDF file.';
+  }
   else if (file.size > MAX_CV_BYTES) e.cv = 'CV is too large. Maximum size is 8 MB.';
   return e;
 }
@@ -47,6 +52,8 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
   const [submitError, setSubmitError] = React.useState<string | null>(null);
   const [ready, setReady] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const cvId = React.useId();
+  const cvError = touched.cv ? errors.cv : undefined;
 
   React.useEffect(() => {
     setReady(true);
@@ -69,12 +76,16 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
     setErrors(validate(fields, file));
   };
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formEl = e.currentTarget;
     const found = validate(fields, cv);
     setErrors(found);
     setTouched({ fullName: true, email: true, phone: true, cv: true });
-    if (Object.keys(found).length > 0 || !cv) return;
+    if (Object.keys(found).length > 0 || !cv) {
+      focusFirstInvalid(formEl);
+      return;
+    }
 
     setStatus('submitting');
     setSubmitError(null);
@@ -126,6 +137,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
       <Field
         label="Full name"
         required
+        autoComplete="name"
         value={fields.fullName}
         error={touched.fullName ? errors.fullName : undefined}
         onChange={(v) => set('fullName', v)}
@@ -135,6 +147,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
         label="Email"
         type="email"
         required
+        autoComplete="email"
         value={fields.email}
         error={touched.email ? errors.email : undefined}
         onChange={(v) => set('email', v)}
@@ -142,7 +155,9 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
       />
       <Field
         label="Phone"
+        type="tel"
         required
+        autoComplete="tel"
         value={fields.phone}
         error={touched.phone ? errors.phone : undefined}
         onChange={(v) => set('phone', v)}
@@ -155,6 +170,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
         <textarea
           id="careers-cover-letter"
           rows={4}
+          maxLength={8000}
           value={fields.coverLetter}
           onChange={(e) => set('coverLetter', e.target.value)}
           placeholder="Optional — a short note about why this role fits."
@@ -162,19 +178,36 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
         />
       </div>
       <div>
-        <p className="mb-1.5 text-[0.875rem] font-medium text-ink">
+        <p id={`${cvId}-label`} className="mb-1.5 text-[0.875rem] font-medium text-ink">
           CV <span className="text-gold">*</span>
         </p>
+        {/*
+          The file input is the one focusable, labelled control. It is visually
+          hidden; the box below is its <label>, so clicking the box opens the
+          picker and keyboard focus on the input draws a ring around the box.
+        */}
         <input
           ref={inputRef}
+          id={cvId}
           type="file"
           accept={ACCEPTED}
-          className="sr-only"
+          className="peer sr-only"
+          aria-labelledby={`${cvId}-label`}
+          aria-describedby={
+            [cv ? `${cvId}-file` : `${cvId}-hint`, cvError ? `${cvId}-error` : '']
+              .filter(Boolean)
+              .join(' ')
+          }
+          aria-required
+          aria-invalid={cvError ? true : undefined}
           onChange={(e) => pickFile(e.target.files?.[0] ?? null)}
         />
         {cv ? (
-          <div className="flex items-center justify-between gap-3 rounded-[12px] border border-border bg-bg px-4 py-3">
-            <p className="min-w-0 truncate text-[0.875rem]">{cv.name}</p>
+          <div className="flex items-center justify-between gap-3 rounded-[12px] border border-border bg-bg px-4 py-3 peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-2">
+            <p id={`${cvId}-file`} className="min-w-0 truncate text-[0.875rem]">
+              <span className="sr-only">Selected file: </span>
+              {cv.name}
+            </p>
             <button
               type="button"
               aria-label="Remove CV"
@@ -188,20 +221,28 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
             </button>
           </div>
         ) : (
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
+          <label
+            htmlFor={cvId}
             className={cn(
-              'flex w-full flex-col items-center gap-2 rounded-[12px] border border-dashed px-4 py-8 text-center transition-colors hover:border-gold hover:bg-gold/5',
-              touched.cv && errors.cv ? 'border-error/60' : 'border-border',
+              'flex w-full cursor-pointer flex-col items-center gap-2 rounded-[12px] border border-dashed px-4 py-8 text-center transition-colors hover:border-gold hover:bg-gold/5',
+              'peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-2',
+              cvError ? 'border-error/60' : 'border-border',
             )}
           >
-            <FileUp size={22} className="text-gold" strokeWidth={1.5} />
-            <span className="text-[0.875rem] font-medium">Upload PDF or Word CV</span>
-            <span className="text-[0.75rem] text-muted">Maximum 8 MB · PDF, DOC, DOCX</span>
-          </button>
+            <FileUp size={22} className="text-gold" strokeWidth={1.5} aria-hidden="true" />
+            <span className="text-[0.875rem] font-medium" aria-hidden="true">
+              Upload your CV (PDF)
+            </span>
+            <span id={`${cvId}-hint`} className="text-[0.75rem] text-muted">
+              PDF only · maximum 8 MB
+            </span>
+          </label>
         )}
-        {touched.cv && errors.cv && <p className="mt-1.5 text-[0.75rem] text-error">{errors.cv}</p>}
+        {cvError && (
+          <p id={`${cvId}-error`} className="mt-1.5 text-[0.75rem] text-error">
+            {cvError}
+          </p>
+        )}
       </div>
       <Button
         type="submit"
@@ -212,7 +253,11 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
       >
         {status === 'submitting' ? 'Submitting…' : 'Submit application'}
       </Button>
-      {submitError && <p className="text-center text-[0.8125rem] text-error">{submitError}</p>}
+      {submitError && (
+        <p className="text-center text-[0.8125rem] text-error" role="alert">
+          {submitError}
+        </p>
+      )}
     </form>
   );
 }
@@ -225,6 +270,7 @@ function Field({
   error,
   required,
   type = 'text',
+  autoComplete,
 }: {
   label: string;
   value: string;
@@ -233,8 +279,10 @@ function Field({
   error?: string;
   required?: boolean;
   type?: string;
+  autoComplete?: string;
 }) {
   const id = React.useId();
+  const errorId = `${id}-error`;
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-[0.875rem] font-medium text-ink">
@@ -244,6 +292,10 @@ function Field({
         id={id}
         type={type}
         value={value}
+        autoComplete={autoComplete}
+        aria-required={required || undefined}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={cn(
@@ -251,7 +303,11 @@ function Field({
           error ? 'border-error/60' : 'border-border',
         )}
       />
-      {error && <p className="mt-1.5 text-[0.75rem] text-error">{error}</p>}
+      {error && (
+        <p id={errorId} className="mt-1.5 text-[0.75rem] text-error">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

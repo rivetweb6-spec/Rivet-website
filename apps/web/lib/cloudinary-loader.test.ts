@@ -58,4 +58,19 @@ describe('rivetImageLoader', () => {
       '/api/uploads/files/hero.jpg?w=1200',
     );
   });
+
+  it('serves uploads stored with a localhost API URL through the same-origin proxy', () => {
+    expect(
+      rivetImageLoader({ src: 'http://localhost:4000/api/uploads/files/hero.jpg', width: 640 }),
+    ).toBe('/api/uploads/files/hero.jpg?w=640');
+    expect(
+      rivetImageLoader({ src: 'http://127.0.0.1:4000/api/uploads/files/a.png', width: 640 }),
+    ).toBe('/api/uploads/files/a.png?w=640');
+  });
+
+  it('leaves uploads on a real API host untouched', () => {
+    expect(
+      rivetImageLoader({ src: 'https://api.example.com/api/uploads/files/hero.jpg', width: 640 }),
+    ).toBe('https://api.example.com/api/uploads/files/hero.jpg?w=640');
+  });
 });

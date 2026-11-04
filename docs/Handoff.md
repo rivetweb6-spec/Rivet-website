@@ -13,7 +13,7 @@
 | Public website | your Vercel URL (e.g. `https://rivet.vercel.app`) |
 | Admin dashboard | `/admin` on the same URL |
 | First login | `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` (change the password immediately) |
-| API | your Render/Railway URL + `/api` |
+| API | your API URL + `/api` |
 
 ---
 

@@ -211,6 +211,7 @@ export function QuotationForm({
         <textarea
           id="page-quotation-message"
           rows={4}
+          maxLength={5000}
           value={fields.message}
           onChange={(e) => set('message', e.target.value)}
           className="w-full rounded-[12px] border border-border bg-surface px-4 py-3 text-[1rem] outline-none focus:border-navy"

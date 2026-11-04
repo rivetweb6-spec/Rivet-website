@@ -44,7 +44,7 @@ test.describe('Careers', () => {
     await expect(page.getByText(/please share your name/i)).toBeVisible();
     await expect(page.getByText(/an email is required/i)).toBeVisible();
     await expect(page.getByText(/a phone number is required/i)).toBeVisible();
-    await expect(page.getByText(/attach your cv as a pdf or word document/i)).toBeVisible();
+    await expect(page.getByText(/attach your cv as a pdf file/i)).toBeVisible();
   });
 });
 

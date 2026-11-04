@@ -47,7 +47,7 @@ function MobileCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
               key={link.href}
               href={link.href}
               onClick={onNavigate}
-              className="block py-2.5 text-[0.875rem] text-white/70 transition-colors hover:text-gold"
+              className="flex min-h-11 items-center py-2.5 text-[0.9375rem] text-white/70 transition-colors hover:text-gold"
             >
               {link.label}
             </Link>

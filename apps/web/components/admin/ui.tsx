@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
+import { useFocusTrap } from '@/lib/use-focus-trap';
 
 export function AdminPageHeader({
   title,
@@ -80,12 +81,18 @@ export function AdminModal({
   children,
   className,
   labelledBy,
+  error,
 }: {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
   className?: string;
   labelledBy?: string;
+  /**
+   * Save/upload error to show inside the dialog. Page-level errors sit under
+   * the modal backdrop and are invisible while it is open.
+   */
+  error?: string | null;
 }) {
   const [mounted, setMounted] = React.useState(false);
 
@@ -110,29 +117,81 @@ export function AdminModal({
   if (!mounted || !open) return null;
 
   return createPortal(
+    <ModalFrame onClose={onClose} className={className} labelledBy={labelledBy} error={error}>
+      {children}
+    </ModalFrame>,
+    document.body,
+  );
+}
+
+/**
+ * The rendered dialog. Split out so its focus trap and auto-labelling run
+ * only while it is actually on screen.
+ */
+function ModalFrame({
+  onClose,
+  children,
+  className,
+  labelledBy,
+  error,
+}: {
+  onClose: () => void;
+  children: React.ReactNode;
+  className?: string;
+  labelledBy?: string;
+  error?: string | null;
+}) {
+  const dialogRef = React.useRef<HTMLDivElement>(null);
+  const panelRef = React.useRef<HTMLDivElement>(null);
+  const autoTitleId = React.useId();
+
+  // Move focus into the dialog, keep Tab inside it, restore focus on close.
+  useFocusTrap(panelRef, true);
+
+  // Name the dialog after its heading when the caller did not pass labelledBy.
+  React.useEffect(() => {
+    if (labelledBy) return;
+    const heading = panelRef.current?.querySelector<HTMLElement>('h1, h2, h3');
+    if (!heading || !dialogRef.current) return;
+    if (!heading.id) heading.id = autoTitleId;
+    dialogRef.current.setAttribute('aria-labelledby', heading.id);
+  });
+
+  return (
     <div
+      ref={dialogRef}
       className="fixed inset-0 z-[200] flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby={labelledBy}
     >
+      {/* Click-outside-to-close for mouse users; keyboard users have Escape and the dialog's buttons. */}
       <button
         type="button"
+        tabIndex={-1}
+        aria-hidden="true"
         className="absolute inset-0 bg-navy/50 backdrop-blur-sm"
-        aria-label="Close dialog"
         onClick={onClose}
       />
       <div
+        ref={panelRef}
         className={cn(
           'relative z-10 max-h-[90dvh] w-full overflow-y-auto rounded-[20px] bg-surface p-6 shadow-[var(--shadow-bloom)]',
           className,
         )}
         onClick={(e) => e.stopPropagation()}
       >
+        {error && (
+          <div
+            role="alert"
+            className="mb-4 rounded-[10px] border border-error/25 bg-error/10 px-3.5 py-3 text-[0.875rem] text-error"
+          >
+            {error}
+          </div>
+        )}
         {children}
       </div>
-    </div>,
-    document.body,
+    </div>
   );
 }
 
@@ -146,7 +205,7 @@ export function AdminInput({
       {label && <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">{label}</span>}
       <input
         className={cn(
-          'h-11 w-full rounded-[12px] border border-border bg-surface px-3 text-[0.9375rem] outline-none focus:border-navy',
+          'h-11 w-full rounded-[12px] border border-border bg-surface px-3 text-[0.9375rem] outline-none focus:border-navy focus-visible:ring-2 focus-visible:ring-gold/60',
           className,
         )}
         {...props}
@@ -165,7 +224,7 @@ export function AdminTextarea({
       {label && <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">{label}</span>}
       <textarea
         className={cn(
-          'w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-[0.9375rem] outline-none focus:border-navy',
+          'w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-[0.9375rem] outline-none focus:border-navy focus-visible:ring-2 focus-visible:ring-gold/60',
           className,
         )}
         {...props}
@@ -185,7 +244,7 @@ export function AdminSelect({
       {label && <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">{label}</span>}
       <select
         className={cn(
-          'h-11 w-full rounded-[12px] border border-border bg-surface px-3 text-[0.9375rem] outline-none focus:border-navy',
+          'h-11 w-full rounded-[12px] border border-border bg-surface px-3 text-[0.9375rem] outline-none focus:border-navy focus-visible:ring-2 focus-visible:ring-gold/60',
           className,
         )}
         {...props}
@@ -198,21 +257,21 @@ export function AdminSelect({
 
 export function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
-    PUBLISHED: 'bg-success/10 text-success',
-    DRAFT: 'bg-muted/15 text-muted',
+    PUBLISHED: 'bg-success/10 text-success-ink',
+    DRAFT: 'bg-muted/15 text-ink',
     NEW: 'bg-gold/15 text-navy',
-    OPEN: 'bg-success/10 text-success',
-    CLOSED: 'bg-muted/15 text-muted',
-    UNDER_REVIEW: 'bg-warning/15 text-warning',
+    OPEN: 'bg-success/10 text-success-ink',
+    CLOSED: 'bg-muted/15 text-ink',
+    UNDER_REVIEW: 'bg-warning/15 text-warning-ink',
     SHORTLISTED: 'bg-navy/10 text-navy',
     INTERVIEW: 'bg-navy/10 text-navy',
-    OFFERED: 'bg-success/10 text-success',
-    HIRED: 'bg-success/10 text-success',
+    OFFERED: 'bg-success/10 text-success-ink',
+    HIRED: 'bg-success/10 text-success-ink',
     CONTACTED: 'bg-navy/10 text-navy',
     QUOTATION_SENT: 'bg-navy/10 text-navy',
-    APPROVED: 'bg-success/10 text-success',
-    REJECTED: 'bg-error/10 text-error',
-    COMPLETED: 'bg-success/10 text-success',
+    APPROVED: 'bg-success/10 text-success-ink',
+    REJECTED: 'bg-error/10 text-error-ink',
+    COMPLETED: 'bg-success/10 text-success-ink',
   };
   const labels: Record<string, string> = {
     UNDER_REVIEW: 'Under Review',
@@ -234,6 +293,17 @@ export function StatusBadge({ status }: { status: string }) {
   );
 }
 
-export function EmptyState({ message }: { message: string }) {
+/**
+ * Empty list message. Pass `loading` until the first fetch settles so the
+ * page shows an announced "Loading…" instead of flashing "No … yet".
+ */
+export function EmptyState({ message, loading = false }: { message: string; loading?: boolean }) {
+  if (loading) {
+    return (
+      <p role="status" className="py-12 text-center text-[0.9375rem] text-muted">
+        Loading…
+      </p>
+    );
+  }
   return <p className="py-12 text-center text-[0.9375rem] text-muted">{message}</p>;
 }

@@ -75,6 +75,23 @@ model User {
   avatarUrl    String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  sessions     Session[]
+}
+
+/// One signed-in device. Access and refresh tokens carry its id (`sid`) and
+/// are only honoured while the session is active, so logout and password
+/// changes take effect immediately instead of when the tokens expire.
+model Session {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime  @default(now())
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  userAgent  String?
+
+  @@index([userId])
 }
 
 model Category {

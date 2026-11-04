@@ -9,12 +9,27 @@ import { api } from '@/lib/api';
 export const revalidate = 60;
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  let contact: Awaited<ReturnType<typeof api.contactInfo>>['info'] = null;
-  try {
-    ({ info: contact } = await api.contactInfo());
-  } catch {
-    /* optional for JSON-LD */
-  }
+  const [contactRes, categoriesRes, servicesRes] = await Promise.allSettled([
+    api.contactInfo(),
+    api.categories.list(),
+    api.services.list(),
+  ]);
+  const contact = contactRes.status === 'fulfilled' ? contactRes.value.info : null;
+
+  // Footer links come from the CMS so renamed slugs never 404; if the API is
+  // unavailable the footer falls back to the top-level /products and /services.
+  const footerProducts =
+    categoriesRes.status === 'fulfilled'
+      ? categoriesRes.value.categories
+          .filter((c) => !c.parentId)
+          .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name))
+          .slice(0, 4)
+          .map((c) => ({ label: c.name, href: `/products/${c.slug}` }))
+      : [];
+  const footerServices =
+    servicesRes.status === 'fulfilled'
+      ? servicesRes.value.services.slice(0, 3).map((s) => ({ label: s.title, href: `/services/${s.slug}` }))
+      : [];
 
   const sameAs = [contact?.facebook, contact?.linkedin, contact?.telegram, contact?.whatsapp];
 
@@ -43,7 +58,7 @@ export default async function PublicLayout({ children }: { children: React.React
         <main id="main-content" tabIndex={-1}>
           {children}
         </main>
-        <Footer contact={contact} />
+        <Footer contact={contact} products={footerProducts} services={footerServices} />
       </QuotationModalProvider>
     </SmoothScroll>
   );

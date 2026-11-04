@@ -5,22 +5,33 @@ import { validate } from '../../middleware/validate.js';
 import { requireAuth, requireRole } from '../../middleware/auth.js';
 import { asyncHandler, param } from '../../utils/http.js';
 import { emitEvent } from '../../realtime/stream.js';
+import {
+  FORM_LIMITS,
+  emailField,
+  optionalText,
+  parsePublicForm,
+  publicFormLimiter,
+  requiredText,
+} from '../../utils/public-forms.js';
 
 const router = Router();
 
 const createSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().optional(),
-  message: z.string().min(1),
+  name: requiredText('Name', FORM_LIMITS.name),
+  email: emailField(),
+  phone: optionalText('Phone number', FORM_LIMITS.phone),
+  message: requiredText('Message', FORM_LIMITS.message),
 });
+
+const contactLimiter = publicFormLimiter('messages', 5);
 
 // Public — submit a contact message
 router.post(
   '/',
-  validate({ body: createSchema }),
+  contactLimiter,
   asyncHandler(async (req, res) => {
-    const msg = await prisma.contactMessage.create({ data: req.body });
+    const data = parsePublicForm(createSchema, req.body);
+    const msg = await prisma.contactMessage.create({ data });
     emitEvent({ type: 'contact-message', data: { id: msg.id, name: msg.name } });
     res.status(201).json({ ok: true });
   }),

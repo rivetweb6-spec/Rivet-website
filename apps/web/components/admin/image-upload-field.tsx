@@ -108,8 +108,8 @@ export function ImageUploadField({
   const previews = pending.length > 0 ? pending : stored;
 
   return (
-    <div className={cn('space-y-3', className)}>
-      <span className="block text-[0.8125rem] font-medium text-ink">{label}</span>
+    <fieldset className={cn('min-w-0 space-y-3', className)}>
+      <legend className="mb-3 block text-[0.8125rem] font-medium text-ink">{label}</legend>
 
       {previews.length > 0 && (
         <div className={cn('flex flex-wrap gap-2', multiple && 'mb-1')}>
@@ -152,6 +152,8 @@ export function ImageUploadField({
         className={cn(
           'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-[12px] border-2 border-dashed px-4 py-6 transition-colors',
           dragOver ? 'border-gold bg-gold/5' : 'border-border hover:border-gold/50 hover:bg-bg/50',
+          // The real file input is visually hidden; show its keyboard focus on the drop zone.
+          'focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2',
           uploading && 'pointer-events-none opacity-60',
         )}
       >
@@ -174,7 +176,11 @@ export function ImageUploadField({
         />
       </label>
 
-      {localError && <p className="text-[0.8125rem] text-error">{localError}</p>}
+      {localError && (
+        <p role="alert" className="text-[0.8125rem] text-error">
+          {localError}
+        </p>
+      )}
 
       <label className="block">
         <span className="mb-1.5 block text-[0.75rem] text-muted">
@@ -186,7 +192,7 @@ export function ImageUploadField({
             value={value}
             placeholder={urlPlaceholder ?? 'https://…'}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-[0.9375rem] outline-none focus:border-navy"
+            className="w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-[0.9375rem] outline-none focus:border-navy focus-visible:ring-2 focus-visible:ring-gold/60"
           />
         ) : (
           <input
@@ -195,10 +201,10 @@ export function ImageUploadField({
             value={value}
             placeholder={urlPlaceholder ?? 'https://…'}
             onChange={(e) => onChange(e.target.value)}
-            className="h-11 w-full rounded-[12px] border border-border bg-surface px-3 text-[0.9375rem] outline-none focus:border-navy"
+            className="h-11 w-full rounded-[12px] border border-border bg-surface px-3 text-[0.9375rem] outline-none focus:border-navy focus-visible:ring-2 focus-visible:ring-gold/60"
           />
         )}
       </label>
-    </div>
+    </fieldset>
   );
 }

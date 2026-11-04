@@ -40,3 +40,12 @@ test-results/
 # locally stored admin image uploads
 uploads/
 apps/api/uploads/
+
+# database exports / backups (contain user data and password hashes)
+apps/api/prisma/data-export*.json
+apps/api/prisma/*backup*.json
+*.dump
+*.backup
+
+# TypeScript incremental build cache
+*.tsbuildinfo

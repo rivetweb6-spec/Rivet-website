@@ -1,9 +1,16 @@
 import 'dotenv/config';
 import { z } from 'zod';
+import { parseAllowedOrigins } from './origins.js';
 
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().default(4000),
+  /**
+   * Number of reverse proxies in front of the API whose X-Forwarded-For
+   * entries are trusted. Rate limits key on the resulting client IP, so this
+   * must match the hosting setup (see .env.example). 0 = exposed directly.
+   */
+  TRUST_PROXY: z.coerce.number().int().min(0).max(10).default(1),
   CORS_ORIGIN: z.string().default('http://localhost:3000'),
   DATABASE_URL: z
     .string()
@@ -19,7 +26,7 @@ const schema = z.object({
   UPLOAD_DIR: z.string().optional(),
   /**
    * Public origin of this API (no `/api` suffix), used in stored image URLs.
-   * Example: http://localhost:4000 or https://rivet-api.onrender.com
+   * Example: http://localhost:4000 or https://api.your-domain.com
    * When empty, derived from the incoming request.
    */
   PUBLIC_API_URL: z.string().optional(),
@@ -41,3 +48,6 @@ if (parsed.NODE_ENV === 'production') {
 
 export const env = parsed;
 export const isProd = env.NODE_ENV === 'production';
+
+/** Exact browser origins allowed to call the API with credentials. Fails fast on wildcards. */
+export const allowedOrigins = parseAllowedOrigins(env.CORS_ORIGIN);

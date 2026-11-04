@@ -5,27 +5,24 @@ import { Container } from '@/components/ui/container';
 import type { ContactInfo } from '@/lib/api';
 import { contactSocials, mailtoHref, telHref } from '@/lib/contact';
 
-const columns = [
-  {
-    title: 'Products',
-    links: [
-      { label: 'Elevators', href: '/products/elevators' },
-      { label: 'Passenger Lifts', href: '/products/passenger-lifts' },
-      { label: 'Granite', href: '/products/granite' },
-      { label: 'Doors', href: '/products/doors' },
-      { label: 'All products', href: '/products' },
-    ],
-  },
-  {
-    title: 'Services',
-    links: [
-      { label: 'All services', href: '/services' },
-      { label: 'Elevator Installation', href: '/services/elevator-installation' },
-      { label: 'Elevator Maintenance', href: '/services/elevator-maintenance' },
-      { label: 'Granite Supply', href: '/services/granite-supply' },
-    ],
-  },
-  {
+export type FooterLink = { label: string; href: string };
+
+/** Product / service columns are built from CMS data; Company links are fixed routes. */
+function buildColumns(products: FooterLink[], services: FooterLink[]) {
+  return [
+    {
+      title: 'Products',
+      links: [...products, { label: 'All products', href: '/products' }],
+    },
+    {
+      title: 'Services',
+      links: [{ label: 'All services', href: '/services' }, ...services],
+    },
+    companyColumn,
+  ];
+}
+
+const companyColumn = {
     title: 'Company',
     links: [
       { label: 'About', href: '/company' },
@@ -37,8 +34,7 @@ const columns = [
       { label: 'Contact', href: '/contact' },
       { label: 'Request a Quotation', href: '/request-quotation' },
     ],
-  },
-];
+};
 
 const socialIcons = {
   Facebook,
@@ -47,7 +43,16 @@ const socialIcons = {
   WhatsApp: MessageCircle,
 };
 
-export function Footer({ contact }: { contact?: ContactInfo | null }) {
+export function Footer({
+  contact,
+  products = [],
+  services = [],
+}: {
+  contact?: ContactInfo | null;
+  products?: FooterLink[];
+  services?: FooterLink[];
+}) {
+  const columns = buildColumns(products, services);
   const socials = contactSocials(contact ?? null);
   const hasContact = Boolean(contact?.address || contact?.phone || contact?.email);
 

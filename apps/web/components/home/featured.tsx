@@ -85,7 +85,7 @@ function ProductCard({
       </div>
       <div className="flex items-start justify-between gap-4 p-7">
         <div>
-          <span className="eyebrow text-gold-muted">{category}</span>
+          <span className="eyebrow text-gold-ink">{category}</span>
           <h3 className="headline-display mt-2 text-[1.375rem]">{name}</h3>
           <p className="mt-2 text-[0.875rem] font-light leading-relaxed text-muted">
             {description}

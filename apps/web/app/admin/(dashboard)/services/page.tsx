@@ -57,11 +57,14 @@ export default function AdminServicesPage() {
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [loaded, setLoaded] = React.useState(false);
 
   const load = () => adminApi.services.list().then((r) => setServices(r.services));
 
   React.useEffect(() => {
-    load().catch((e: Error) => setError(e.message));
+    load()
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setLoaded(true));
   }, []);
 
   const save = async (e: React.FormEvent) => {
@@ -121,10 +124,14 @@ export default function AdminServicesPage() {
           </AdminButton>
         }
       />
-      {error && <p className="mb-4 text-[0.875rem] text-error">{error}</p>}
+      {error && (
+        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+          {error}
+        </p>
+      )}
 
       <div className="grid gap-4 md:grid-cols-2">
-        {services.length === 0 && <EmptyState message="No services yet." />}
+        {services.length === 0 && <EmptyState loading={!loaded} message="No services yet." />}
         {services.map((s) => (
           <AdminCard key={s.id}>
             <div className="flex items-start justify-between gap-3">
@@ -165,7 +172,7 @@ export default function AdminServicesPage() {
         ))}
       </div>
 
-      <AdminModal open={open} onClose={() => setOpen(false)} className="max-w-2xl">
+      <AdminModal open={open} onClose={() => setOpen(false)} error={error} className="max-w-2xl">
         <form onSubmit={save} className="space-y-4">
           <h2 className="text-[1.25rem] text-navy">
             {editingId ? 'Edit service' : 'New service'}

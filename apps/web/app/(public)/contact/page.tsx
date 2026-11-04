@@ -28,6 +28,7 @@ export default async function ContactPage() {
     WhatsApp: MessageCircle,
   };
   const socials = contactSocials(info);
+  const hasChannels = Boolean(info?.address || info?.phone || info?.email);
 
   return (
     <>
@@ -42,6 +43,16 @@ export default async function ContactPage() {
             <div>
               <Eyebrow>Reach us</Eyebrow>
               <h2 className="mt-3 text-[2rem]">Office & channels</h2>
+              {!hasChannels && (
+                <p className="mt-6 rounded-[14px] border border-border bg-surface px-5 py-4 text-[0.9375rem] leading-relaxed text-muted">
+                  Our direct phone and email details are being updated. The quickest way to reach a
+                  RIVET specialist is the{' '}
+                  <a href="#contact-form" className="font-medium text-navy underline underline-offset-4 hover:text-gold">
+                    contact form
+                  </a>{' '}
+                  — we reply within one business day.
+                </p>
+              )}
               <ul className="mt-8 space-y-5 text-[0.9375rem]">
                 {info?.address && (
                   <li className="flex items-start gap-3">

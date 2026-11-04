@@ -268,7 +268,7 @@ export default function AdminHomePage() {
         </AdminCard>
 
         {message && <p className="text-[0.875rem] text-success">{message}</p>}
-        {error && <p className="text-[0.875rem] text-error">{error}</p>}
+        {error && <p role="alert" className="text-[0.875rem] text-error">{error}</p>}
         <AdminButton type="submit" disabled={saving}>
           {saving ? 'Saving…' : 'Save homepage'}
         </AdminButton>

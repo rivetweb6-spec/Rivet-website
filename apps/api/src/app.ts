@@ -5,14 +5,16 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import { pinoHttp } from 'pino-http';
-import { env } from './config/env.js';
+import { allowedOrigins, env } from './config/env.js';
+import { isAllowedOrigin } from './config/origins.js';
 import routes from './routes.js';
 import { notFoundHandler, errorHandler } from './middleware/error.js';
 
 export function createApp() {
   const app = express();
 
-  app.set('trust proxy', 1);
+  // How many proxy hops to trust for req.ip (rate limiting). See TRUST_PROXY.
+  app.set('trust proxy', env.TRUST_PROXY);
   app.use(
     helmet({
       // Uploaded images are loaded by the Next.js origin (Vercel / localhost:3000).
@@ -20,22 +22,13 @@ export function createApp() {
     }),
   );
 
-  const allowedOrigins = env.CORS_ORIGIN.split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
-
   app.use(
     cors({
       origin(origin, callback) {
         // Non-browser / same-origin proxied requests often omit Origin.
         if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin)) return callback(null, true);
-        // Allow Vercel preview deploys when a production *.vercel.app origin is listed.
-        const vercelAllowed = allowedOrigins.some(
-          (o) => o.endsWith('.vercel.app') && origin.endsWith('.vercel.app'),
-        );
-        if (vercelAllowed) return callback(null, true);
-        callback(null, false);
+        // Exact matches only — see config/origins.ts for why wildcards are refused.
+        callback(null, isAllowedOrigin(allowedOrigins, origin));
       },
       credentials: true,
     }),

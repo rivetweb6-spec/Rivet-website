@@ -10,7 +10,7 @@ import { AdminLogo } from '@/components/admin/admin-logo';
 export default function AdminLoginPage() {
   const { login, user, ready } = useAdminAuth();
   const router = useRouter();
-  const [email, setEmail] = React.useState('admin@rivet.com');
+  const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -53,6 +53,8 @@ export default function AdminLoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="username"
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? 'login-error' : undefined}
           />
           <AdminInput
             label="Password"
@@ -61,8 +63,14 @@ export default function AdminLoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? 'login-error' : undefined}
           />
-          {error && <p className="text-[0.8125rem] text-error">{error}</p>}
+          {error && (
+            <p id="login-error" role="alert" className="text-[0.8125rem] text-error">
+              {error}
+            </p>
+          )}
           <AdminButton type="submit" className="w-full" disabled={loading}>
             {loading ? 'Signing in…' : 'Sign in'}
           </AdminButton>

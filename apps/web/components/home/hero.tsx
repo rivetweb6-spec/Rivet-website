@@ -5,6 +5,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import { ChevronDown } from 'lucide-react';
 import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button-variants';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { useQuotationModal } from '@/components/quotation/quotation-modal-provider';
 import { assets } from '@/lib/assets';
@@ -108,18 +109,18 @@ export function Hero({ content }: { content?: HeroContent | null }) {
             className="mt-12 flex flex-wrap items-center gap-5"
             {...fade(0.55)}
           >
-            <Link href="/products">
-              <Button variant="primary" size="lg">
-                Explore Products
-              </Button>
-            </Link>
+            {/* One primary action, one secondary, and a quiet text link. */}
             <Button variant="primary" size="lg" onClick={() => open()}>
               Request a Quotation
             </Button>
-            <Link href="/contact">
-              <Button variant="ghost" size="lg">
-                Contact Us
-              </Button>
+            <Link href="/products" className={buttonVariants({ variant: 'ghost', size: 'lg' })}>
+              Explore Products
+            </Link>
+            <Link
+              href="/contact"
+              className="text-[0.9375rem] font-medium text-white/80 underline-offset-[6px] transition-colors hover:text-gold hover:underline focus-visible:text-gold focus-visible:underline"
+            >
+              Contact Us
             </Link>
           </motion.div>
         </motion.div>

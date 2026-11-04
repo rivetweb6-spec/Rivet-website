@@ -4,6 +4,7 @@ import * as React from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { RivetImage } from '@/components/ui/rivet-image';
+import { useFocusTrap } from '@/lib/use-focus-trap';
 
 export type LightboxItem = {
   src: string;
@@ -26,6 +27,11 @@ export function ImageLightbox({
 }) {
   const item = items[index];
   const [mounted, setMounted] = React.useState(false);
+  const dialogRef = React.useRef<HTMLDivElement>(null);
+  const closeRef = React.useRef<HTMLButtonElement>(null);
+
+  // Start on the visible Close button, keep Tab inside, restore focus on close.
+  useFocusTrap(dialogRef, mounted, { initialFocus: () => closeRef.current });
 
   React.useEffect(() => setMounted(true), []);
 
@@ -51,15 +57,18 @@ export function ImageLightbox({
 
   const content = (
     <div
+      ref={dialogRef}
       className="fixed inset-0 z-[80] flex items-center justify-center bg-navy/92 p-4 md:p-10"
       role="dialog"
       aria-modal="true"
       aria-labelledby={labelledBy}
     >
+      {/* Click-outside-to-close for mouse users; keyboard users use the Close button. */}
       <button
         type="button"
+        tabIndex={-1}
+        aria-hidden="true"
         className="absolute inset-0 cursor-zoom-out"
-        aria-label="Close"
         onClick={onClose}
       />
       <div className="relative z-10 flex max-h-full w-full max-w-5xl flex-col">
@@ -88,6 +97,7 @@ export function ImageLightbox({
       </div>
 
       <button
+        ref={closeRef}
         type="button"
         onClick={onClose}
         className="absolute top-4 right-4 grid h-11 w-11 place-items-center rounded-full border border-white/20 text-white hover:border-gold hover:text-gold"

@@ -6,8 +6,8 @@
  * production/preview deploy.
  *
  * Usage:
- *   API_URL=https://rivet-api.onrender.com/api \
- *   SITE_URL=https://rivet.vercel.app \
+ *   API_URL=https://api.your-domain.com/api \
+ *   SITE_URL=https://www.your-domain.com \
  *   node scripts/smoke-test.mjs
  *
  * Or pass as flags:

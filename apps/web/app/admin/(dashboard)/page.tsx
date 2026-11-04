@@ -20,20 +20,57 @@ export default function AdminDashboardPage() {
   );
   const [error, setError] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
+  // State is only set when the request settles (never synchronously in the effect).
+  const load = React.useCallback(() => {
     adminApi
       .analytics()
       .then(setData)
       .catch((e: Error) => setError(e.message));
   }, []);
 
-  if (error) return <p className="text-error">{error}</p>;
+  React.useEffect(() => {
+    load();
+  }, [load]);
+
+  const header = (
+    <AdminPageHeader title="Dashboard" description="Overview of catalog, content, and inbound leads." />
+  );
+
+  if (error) {
+    return (
+      <div>
+        {header}
+        <div role="alert" className="rounded-[16px] border border-error/20 bg-error/10 p-5">
+          <p className="text-[0.9375rem] text-error">Could not load the dashboard: {error}</p>
+          <button
+            type="button"
+            onClick={() => {
+              setError(null);
+              setData(null);
+              load();
+            }}
+            className="mt-3 inline-flex h-10 items-center rounded-[12px] bg-navy px-4 text-[0.875rem] font-medium text-white hover:bg-navy-600"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
   if (!data) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-28 animate-pulse rounded-[16px] bg-surface shadow-[var(--shadow-sm)]" />
-        ))}
+      <div>
+        {header}
+        <div role="status" aria-busy="true" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <span className="sr-only">Loading dashboard…</span>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              aria-hidden="true"
+              className="h-28 animate-pulse rounded-[16px] bg-surface shadow-[var(--shadow-sm)]"
+            />
+          ))}
+        </div>
       </div>
     );
   }
@@ -59,10 +96,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div>
-      <AdminPageHeader
-        title="Dashboard"
-        description="Overview of catalog, content, and inbound leads."
-      />
+      {header}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {cards.map((c) => (
@@ -78,7 +112,8 @@ export default function AdminDashboardPage() {
       <div className="mt-8 grid gap-6 lg:grid-cols-5">
         <AdminCard className="lg:col-span-3">
           <h2 className="text-[1.125rem] text-navy">Quotation requests by status</h2>
-          <div className="mt-4 h-64">
+          {/* Visual only: the status list below carries the same numbers for assistive tech. */}
+          <div className="mt-4 h-64" aria-hidden={chartData.length > 0 ? true : undefined}>
             {chartData.length === 0 ? (
               <p className="text-[0.875rem] text-muted">No quotation requests yet.</p>
             ) : (
@@ -93,7 +128,7 @@ export default function AdminDashboardPage() {
               </ResponsiveContainer>
             )}
           </div>
-          <ul className="mt-2 flex flex-wrap gap-3">
+          <ul className="mt-2 flex flex-wrap gap-3" aria-label="Quotation requests by status">
             {data.quotationsByStatus.map((row) => (
               <li key={row.status} className="flex items-center gap-2 text-[0.8125rem]">
                 <StatusBadge status={row.status} />
@@ -106,8 +141,11 @@ export default function AdminDashboardPage() {
         <AdminCard className="lg:col-span-2">
           <div className="flex items-center justify-between">
             <h2 className="text-[1.125rem] text-navy">Recent quotation requests</h2>
-            <Link href="/admin/quotation-requests" className="text-[0.8125rem] text-gold hover:underline">
-              View all
+            <Link
+              href="/admin/quotation-requests"
+              className="text-[0.8125rem] font-medium text-navy underline-offset-4 hover:text-gold hover:underline"
+            >
+              View all<span className="sr-only"> quotation requests</span>
             </Link>
           </div>
           <ul className="mt-4 divide-y divide-divider">

@@ -6,20 +6,25 @@
  * Express backend) so public forms work when the API is on a different host.
  */
 
-function getApiUrl(): string {
-  if (typeof window !== 'undefined') return '/api';
-  return (
-    process.env.NEXT_PUBLIC_API_URL?.trim() ||
-    'https://rivet-api-4ccw.onrender.com/api'
-  );
+import { browserApiBase } from './api-base';
+
+/** Local Express API — used only when NEXT_PUBLIC_API_URL is not set. */
+const LOCAL_API_URL = 'http://localhost:4000/api';
+
+function configuredApiUrl(): string | undefined {
+  return process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/$/, '') || undefined;
 }
 
-/** Direct API origin so CV uploads can bypass the Next.js/Vercel proxy size cap. */
-function getDirectApiUrl(): string {
-  const explicit = process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/$/, '');
-  if (explicit) return explicit;
+function getApiUrl(): string {
   if (typeof window !== 'undefined') return '/api';
-  return 'https://rivet-api-4ccw.onrender.com/api';
+  return configuredApiUrl() ?? LOCAL_API_URL;
+}
+
+/** Direct API origin so CV uploads can bypass the Next.js proxy body-size cap. */
+function getDirectApiUrl(): string {
+  const explicit = configuredApiUrl();
+  if (typeof window !== 'undefined') return browserApiBase(explicit);
+  return explicit ?? LOCAL_API_URL;
 }
 
 export class ApiError extends Error {
@@ -82,7 +87,8 @@ async function request<T>(path: string, init?: RequestOptions): Promise<T> {
 
 /**
  * Retry-safe wrapper for **non-idempotent** POST requests (quotations, contact
- * forms) that may fail because the Render free-tier backend is cold-starting.
+ * forms) that may fail because the backend is cold-starting (common on hosts
+ * that put idle services to sleep).
  *
  * Safety contract:
  *  - `fetch()` throwing means the request never reached the server (DNS / TCP
@@ -107,7 +113,7 @@ async function requestWithWakeRetry<T>(
     if (!(err instanceof ApiError) || err.status !== 0) throw err;
 
     // Probe the health endpoint to wake the backend from a cold start.
-    // Use a generous 45-second timeout — Render cold starts can take 30s+.
+    // Use a generous 45-second timeout — sleeping hosts can take 30s+ to wake.
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 45_000);
     try {

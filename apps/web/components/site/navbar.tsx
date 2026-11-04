@@ -12,6 +12,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useQuotationModal } from '@/components/quotation/quotation-modal-provider';
 import { api, type SearchSuggestion } from '@/lib/api';
 import { RivetImage } from '@/components/ui/rivet-image';
+import { useFocusTrap } from '@/lib/use-focus-trap';
 
 const links = [
   { href: '/', label: 'Home' },
@@ -27,6 +28,13 @@ export function Navbar() {
   const [searchOpen, setSearchOpen] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
   const { open } = useQuotationModal();
+  const menuButtonRef = React.useRef<HTMLButtonElement>(null);
+  const drawerRef = React.useRef<HTMLElement>(null);
+
+  // Keep Tab inside the open drawer (plus the header button that closes it).
+  useFocusTrap([menuButtonRef, drawerRef], menuOpen, {
+    initialFocus: () => drawerRef.current?.querySelector<HTMLElement>('a[href], button'),
+  });
 
   // Lock page scroll while the mobile drawer is open; always restore on close/unmount.
   React.useEffect(() => {
@@ -111,6 +119,7 @@ export function Navbar() {
               Request a Quotation
             </Button>
             <button
+              ref={menuButtonRef}
               onClick={() => setMenuOpen((v) => !v)}
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={menuOpen}
@@ -142,6 +151,7 @@ export function Navbar() {
       <AnimatePresence>
         {menuOpen && (
           <motion.nav
+            ref={drawerRef}
             key="mobile-nav-drawer"
             id="mobile-nav"
             role="navigation"
@@ -205,8 +215,12 @@ export function Navbar() {
 function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
   const router = useRouter();
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const dialogRef = React.useRef<HTMLDivElement>(null);
   const [query, setQuery] = React.useState('');
   const [products, setProducts] = React.useState<SearchSuggestion[]>([]);
+
+  // Focus the search box on open, keep Tab inside, restore focus on close.
+  useFocusTrap(dialogRef, open, { initialFocus: () => inputRef.current });
   const [categories, setCategories] = React.useState<{ name: string; slug: string }[]>([]);
   const [searched, setSearched] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -226,7 +240,6 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
     if (open) {
       window.addEventListener('keydown', onKey);
-      requestAnimationFrame(() => inputRef.current?.focus());
     } else {
       setQuery('');
       setProducts([]);
@@ -293,6 +306,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
     <AnimatePresence>
       {open && (
         <motion.div
+          ref={dialogRef}
           className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto pt-[14vh] pb-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

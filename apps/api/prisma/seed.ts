@@ -1,6 +1,7 @@
 import { PrismaClient, ContentStatus } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import 'dotenv/config';
+import { resolveSeedAdmin } from '../src/bootstrap/seed-admin.js';
 
 const prisma = new PrismaClient();
 
@@ -77,7 +78,7 @@ const categories = [
     name: 'Escalators',
     slug: 'escalators',
     order: 3,
-    image: u('photo-1520333789090-1afc82db536a'),
+    image: u('photo-1752066469007-fc183e1b6a0d'),
     description: 'Commercial escalators for retail, transit, and public buildings.',
   },
   {
@@ -176,7 +177,7 @@ const products: SeedProduct[] = [
     ],
     features: ['Sealed surface', 'Custom cut-to-size'],
     featured: true,
-    images: [u('photo-1615529182904-14819c35db37'), u('photo-1615971679758-627f40327060')],
+    images: [u('photo-1615529182904-14819c35db37')],
   },
   {
     name: 'Atrium Glass Door System',
@@ -244,7 +245,7 @@ const products: SeedProduct[] = [
     ],
     features: ['VVVF drive', 'LED lighting'],
     featured: false,
-    images: [u('photo-1520333789090-1afc82db536a')],
+    images: [u('photo-1753046047947-46640d539bea')],
   },
   {
     name: 'Nova Office Desk System',
@@ -283,8 +284,14 @@ const products: SeedProduct[] = [
 ];
 
 async function main() {
-  const email = process.env.SEED_ADMIN_EMAIL ?? 'admin@rivet.com';
-  const password = process.env.SEED_ADMIN_PASSWORD ?? 'Admin123!';
+  // Production seeds need explicit, strong admin credentials — see seed-admin.ts.
+  const admin = resolveSeedAdmin(process.env, process.env.NODE_ENV === 'production');
+  if (!admin.ok) {
+    throw new Error(
+      `${admin.problem} Set SEED_ADMIN_EMAIL and a strong SEED_ADMIN_PASSWORD before seeding production.`,
+    );
+  }
+  const { email, password } = admin;
   const passwordHash = await bcrypt.hash(password, 12);
 
   await prisma.user.upsert({
@@ -311,6 +318,9 @@ async function main() {
     {
       name: 'Passenger Elevators',
       slug: 'passenger-elevators',
+      description:
+        'Comfortable, quiet passenger elevators for residential buildings, offices and mixed-use developments.',
+      image: u('photo-1758448511533-e1502259fff6'),
       order: 1,
       items: [
         {
@@ -334,7 +344,7 @@ async function main() {
           slug: 'panoramic-elevators',
           description:
             'Glass-walled observation elevators that transform vertical transport into an architectural centrepiece.',
-          image: u('photo-1520333789090-1afc82db536a'),
+          image: u('photo-1758518731135-6d9af1849b25'),
           order: 3,
         },
       ],
@@ -342,6 +352,9 @@ async function main() {
     {
       name: 'Commercial Elevators',
       slug: 'commercial-elevators',
+      description:
+        'High-capacity elevators for offices, hotels and shopping centres, built for heavy daily traffic.',
+      image: u('photo-1758448721205-8465cebc26af'),
       order: 2,
       items: [
         {
@@ -357,7 +370,7 @@ async function main() {
           slug: 'hotel-elevators',
           description:
             'Elegant, ultra-quiet elevators with customisable interiors that complement five-star hospitality experiences.',
-          image: u('photo-1566073771259-6a8506099945'),
+          image: u('photo-1759038086454-5644437ccf4c'),
           order: 2,
         },
         {
@@ -365,7 +378,8 @@ async function main() {
           slug: 'shopping-mall-elevators',
           description:
             'High-capacity passenger elevators engineered for constant foot traffic in retail and mixed-use environments.',
-          image: u('photo-1519567241046-7f570a63b3e2'),
+          // Previous Unsplash photo was removed (404); falls back to the Elevators image.
+          image: null,
           order: 3,
         },
       ],
@@ -373,6 +387,9 @@ async function main() {
     {
       name: 'Service & Freight Elevators',
       slug: 'service-freight-elevators',
+      description:
+        'Durable service and goods lifts for hotels, hospitals, warehouses and industrial sites.',
+      image: u('photo-1547630824-eed1be6a27b0'),
       order: 3,
       items: [
         {
@@ -380,7 +397,7 @@ async function main() {
           slug: 'service-elevators',
           description:
             'Durable, back-of-house elevators built for staff, housekeeping, and light cargo movement.',
-          image: u('photo-1504307651254-35680f356dfd'),
+          image: u('photo-1719463814218-52e17f720e8a'),
           order: 1,
         },
         {
@@ -396,7 +413,7 @@ async function main() {
           slug: 'heavy-duty-elevators',
           description:
             'Industrial-grade lifts rated for extreme payloads — ideal for warehouses, factories, and construction sites.',
-          image: u('photo-1581094794329-c8112a89af12'),
+          image: u('photo-1758024264451-5cbfa9bee420'),
           order: 3,
         },
       ],
@@ -418,6 +435,8 @@ async function main() {
           slug: group.slug,
           parentId: elevatorsCat.id,
           order: group.order,
+          description: group.description,
+          image: group.image,
         },
       });
 

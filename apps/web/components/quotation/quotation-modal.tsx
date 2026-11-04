@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { api, ApiError } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { focusFirstInvalid } from '@/lib/form-a11y';
+import { useFocusTrap } from '@/lib/use-focus-trap';
 import type { QuotationOptions } from './quotation-modal-provider';
 import {
   CategoryMultiSelect,
@@ -81,35 +83,18 @@ export function QuotationModal({
       setTouched({});
       setStatus('idle');
       setSubmitError(null);
-      const prev = document.activeElement as HTMLElement | null;
-      requestAnimationFrame(() => closeBtnRef.current?.focus());
-      return () => prev?.focus?.();
     }
   }, [open, options.productInterest, options.productName, options.message]);
+
+  // Focus the first field on open (Escape / Close stay available), keep Tab
+  // inside the dialog, and return focus to the trigger when it closes.
+  useFocusTrap(dialogRef, open);
 
   React.useEffect(() => {
     if (!open) return;
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-        return;
-      }
-      if (e.key !== 'Tab' || !dialogRef.current) return;
-
-      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])',
-      );
-      if (focusable.length === 0) return;
-      const first = focusable[0]!;
-      const last = focusable[focusable.length - 1]!;
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
+      if (e.key === 'Escape') onClose();
     };
 
     window.addEventListener('keydown', onKey);
@@ -132,8 +117,9 @@ export function QuotationModal({
     setErrors(validate(fields));
   };
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
     const found = validate(fields);
     setErrors(found);
     setTouched({
@@ -144,7 +130,10 @@ export function QuotationModal({
       productName: true,
       quantity: true,
     });
-    if (Object.keys(found).length > 0) return;
+    if (Object.keys(found).length > 0) {
+      focusFirstInvalid(form);
+      return;
+    }
 
     setStatus('submitting');
     setSubmitError(null);
@@ -270,6 +259,7 @@ export function QuotationModal({
                     <Field
                       label="Full Name"
                       required
+                      autoComplete="name"
                       value={fields.fullName}
                       error={touched.fullName ? errors.fullName : undefined}
                       onChange={(v) => set('fullName', v)}
@@ -277,6 +267,7 @@ export function QuotationModal({
                     />
                     <Field
                       label="Company Name"
+                      autoComplete="organization"
                       value={fields.company}
                       onChange={(v) => set('company', v)}
                     />
@@ -285,6 +276,7 @@ export function QuotationModal({
                         label="Email Address"
                         type="email"
                         required
+                        autoComplete="email"
                         value={fields.email}
                         error={touched.email ? errors.email : undefined}
                         onChange={(v) => set('email', v)}
@@ -292,7 +284,9 @@ export function QuotationModal({
                       />
                       <Field
                         label="Phone Number"
+                        type="tel"
                         required
+                        autoComplete="tel"
                         value={fields.phone}
                         error={touched.phone ? errors.phone : undefined}
                         onChange={(v) => set('phone', v)}
@@ -341,6 +335,7 @@ export function QuotationModal({
                       <textarea
                         id="quotation-message"
                         rows={3}
+                        maxLength={5000}
                         value={fields.message}
                         onChange={(e) => set('message', e.target.value)}
                         className="w-full rounded-[12px] border border-border bg-surface px-4 py-3 text-[1rem] outline-none transition-colors focus:border-navy"
@@ -357,7 +352,9 @@ export function QuotationModal({
                       {status === 'submitting' ? 'Sending…' : 'Submit Quotation Request'}
                     </Button>
                     {submitError && (
-                      <p className="text-center text-[0.8125rem] text-error">{submitError}</p>
+                      <p className="text-center text-[0.8125rem] text-error" role="alert">
+                        {submitError}
+                      </p>
                     )}
                   </form>
                 </motion.div>
@@ -379,6 +376,7 @@ function Field({
   required,
   type = 'text',
   placeholder,
+  autoComplete,
 }: {
   label: string;
   value: string;
@@ -388,8 +386,10 @@ function Field({
   required?: boolean;
   type?: string;
   placeholder?: string;
+  autoComplete?: string;
 }) {
   const id = React.useId();
+  const errorId = `${id}-error`;
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-[0.875rem] font-medium text-ink">
@@ -400,6 +400,10 @@ function Field({
         type={type}
         value={value}
         placeholder={placeholder}
+        autoComplete={autoComplete}
+        aria-required={required || undefined}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={cn(
@@ -410,6 +414,7 @@ function Field({
       <AnimatePresence>
         {error && (
           <motion.p
+            id={errorId}
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}

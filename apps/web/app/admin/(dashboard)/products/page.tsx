@@ -48,6 +48,7 @@ export default function AdminProductsPage() {
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [loaded, setLoaded] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
 
   const load = React.useCallback(async () => {
@@ -57,7 +58,9 @@ export default function AdminProductsPage() {
   }, []);
 
   React.useEffect(() => {
-    load().catch((e: Error) => setError(e.message));
+    load()
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setLoaded(true));
   }, [load]);
 
   const startCreate = () => {
@@ -138,7 +141,11 @@ export default function AdminProductsPage() {
         description="Manage catalog items and imagery."
         actions={<AdminButton onClick={startCreate}>Add product</AdminButton>}
       />
-      {error && <p className="mb-4 text-[0.875rem] text-error">{error}</p>}
+      {error && (
+        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+          {error}
+        </p>
+      )}
 
       <AdminCard className="overflow-x-auto p-0">
         <table className="w-full min-w-[720px] text-left text-[0.875rem]">
@@ -148,14 +155,16 @@ export default function AdminProductsPage() {
               <th className="px-5 py-3 font-medium">Category</th>
               <th className="px-5 py-3 font-medium">Status</th>
               <th className="px-5 py-3 font-medium">Featured</th>
-              <th className="px-5 py-3 font-medium" />
+              <th className="px-5 py-3 font-medium">
+                <span className="sr-only">Actions</span>
+              </th>
             </tr>
           </thead>
           <tbody>
             {products.length === 0 && (
               <tr>
                 <td colSpan={5}>
-                  <EmptyState message="No products yet." />
+                  <EmptyState loading={!loaded} message="No products yet." />
                 </td>
               </tr>
             )}
@@ -203,7 +212,7 @@ export default function AdminProductsPage() {
         </table>
       </AdminCard>
 
-      <AdminModal open={open} onClose={() => setOpen(false)} className="max-w-2xl">
+      <AdminModal open={open} onClose={() => setOpen(false)} error={error} className="max-w-2xl">
         <form onSubmit={save}>
           <h2 className="text-[1.25rem] text-navy">
             {editingId ? 'Edit product' : 'New product'}

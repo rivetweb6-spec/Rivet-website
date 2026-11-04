@@ -197,6 +197,39 @@ router.post(
   }),
 );
 
+/**
+ * Reorder siblings: `ids` is every child of one parent (or every top-level
+ * department) in the desired order. Orders are rewritten to 1..n in a single
+ * transaction so the list can never end up half-sorted or with duplicates.
+ */
+router.patch(
+  '/reorder',
+  requireAuth,
+  requireRole('ADMIN', 'EDITOR'),
+  validate({ body: z.object({ ids: z.array(z.string().min(1)).min(1).max(500) }) }),
+  asyncHandler(async (req, res) => {
+    const { ids } = req.body as { ids: string[] };
+    if (new Set(ids).size !== ids.length) throw badRequest('Duplicate category ids.');
+
+    const found = await prisma.category.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, parentId: true },
+    });
+    if (found.length !== ids.length) throw badRequest('One or more categories were not found.');
+    const parentId = found[0]!.parentId;
+    if (found.some((c) => c.parentId !== parentId)) {
+      throw badRequest('Only categories with the same parent can be reordered together.');
+    }
+
+    await prisma.$transaction(
+      ids.map((id, index) =>
+        prisma.category.update({ where: { id }, data: { order: index + 1 } }),
+      ),
+    );
+    res.json({ ok: true });
+  }),
+);
+
 router.put(
   '/:id',
   requireAuth,

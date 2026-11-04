@@ -6,6 +6,7 @@ import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { api, ApiError } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { focusFirstInvalid } from '@/lib/form-a11y';
 
 type Fields = { name: string; email: string; phone: string; message: string };
 type Errors = Partial<Record<keyof Fields, string>>;
@@ -37,12 +38,16 @@ export function ContactForm() {
     if (touched[key]) setErrors(validate(next));
   };
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
     const found = validate(fields);
     setErrors(found);
     setTouched({ name: true, email: true, message: true });
-    if (Object.keys(found).length > 0) return;
+    if (Object.keys(found).length > 0) {
+      focusFirstInvalid(form);
+      return;
+    }
 
     setStatus('submitting');
     setSubmitError(null);
@@ -80,9 +85,10 @@ export function ContactForm() {
 
   return (
     <form
+      id="contact-form"
       onSubmit={submit}
       noValidate
-      className="space-y-4 rounded-[20px] border border-border bg-surface p-8 shadow-[var(--shadow-sm)]"
+      className="scroll-mt-28 space-y-4 rounded-[20px] border border-border bg-surface p-8 shadow-[var(--shadow-sm)]"
     >
       <Field
         label="Full Name"
@@ -128,7 +134,11 @@ export function ContactForm() {
         <textarea
           id="contact-message"
           rows={5}
+          maxLength={5000}
           value={fields.message}
+          aria-required
+          aria-invalid={touched.message && errors.message ? true : undefined}
+          aria-describedby={touched.message && errors.message ? 'contact-message-error' : undefined}
           onChange={(e) => set('message', e.target.value)}
           onBlur={() => {
             setTouched((t) => ({ ...t, message: true }));
@@ -142,6 +152,7 @@ export function ContactForm() {
         <AnimatePresence>
           {touched.message && errors.message && (
             <motion.p
+              id="contact-message-error"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -155,7 +166,11 @@ export function ContactForm() {
       <Button type="submit" variant="primary" size="lg" className="w-full" disabled={status === 'submitting'}>
         {status === 'submitting' ? 'Sending…' : 'Send message'}
       </Button>
-      {submitError && <p className="text-center text-[0.8125rem] text-error">{submitError}</p>}
+      {submitError && (
+        <p className="text-center text-[0.8125rem] text-error" role="alert">
+          {submitError}
+        </p>
+      )}
     </form>
   );
 }
