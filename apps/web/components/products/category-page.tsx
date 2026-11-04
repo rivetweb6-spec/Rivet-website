@@ -9,6 +9,7 @@ import { ProductCard, ProductEmptyState } from '@/components/products/category-g
 import type { Category, Product, Service } from '@/lib/api';
 import { getCategoryAncestors, parseFaqs } from '@/lib/seo';
 import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button-variants';
 
 export function CategoryPageView({
   category,
@@ -40,14 +41,23 @@ export function CategoryPageView({
         }))}
       />
 
-      <section className="bg-bg pt-28 pb-16 md:pt-32 md:pb-20">
+      <section className="border-b border-border bg-bg pt-28 pb-12 md:pt-32 md:pb-16">
         <Container>
-          {/* Category filter bar */}
+          <Breadcrumbs
+            items={[
+              { name: 'Home', path: '/' },
+              { name: 'Products', path: '/products' },
+              ...ancestors,
+              { name: category.name, path: `/products/${category.slug}` },
+            ]}
+          />
+
+          {/* Department filter */}
           {rootCategories.length > 0 && (
-            <div className="mb-8 flex flex-wrap gap-2">
+            <nav aria-label="Departments" className="mt-6 flex flex-wrap gap-2">
               <Link
                 href="/products"
-                className="rounded-full border border-border bg-surface px-4 py-2 text-[0.8125rem] font-medium text-ink transition-colors hover:border-gold hover:text-gold"
+                className="rounded-[6px] border px-4 py-2 text-[0.875rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 border-border bg-canvas text-ink hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold"
               >
                 All
               </Link>
@@ -61,36 +71,27 @@ export function CategoryPageView({
                     href={`/products/${c.slug}`}
                     aria-current={isActive ? 'page' : undefined}
                     className={cn(
-                      'rounded-full border px-4 py-2 text-[0.8125rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2',
+                      'rounded-[6px] border px-4 py-2 text-[0.875rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2',
                       isActive
-                        ? 'border-navy bg-navy text-white'
-                        : 'border-border bg-surface text-ink hover:border-gold hover:text-gold',
+                        ? 'border-navy bg-navy text-white dark:border-gold dark:bg-gold dark:text-[#002f54]'
+                        : 'border-border bg-canvas text-ink hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold',
                     )}
                   >
                     {c.name}
                   </Link>
                 );
               })}
-            </div>
+            </nav>
           )}
 
-          <Breadcrumbs
-            items={[
-              { name: 'Home', path: '/' },
-              { name: 'Products', path: '/products' },
-              ...ancestors,
-              { name: category.name, path: `/products/${category.slug}` },
-            ]}
-          />
-
-          <div className="mt-10 grid items-center gap-10 lg:mt-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+          <div className="mt-10 grid items-center gap-10 lg:mt-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
             <div>
               <Eyebrow>
                 {ancestors.length > 0
                   ? `Product category · ${ancestors.map((a) => a.name).join(' · ')}`
                   : 'Product category'}
               </Eyebrow>
-              <h1 className="mt-3 text-[2.25rem] sm:text-[2.75rem] lg:text-[3.25rem]">
+              <h1 className="headline-display mt-3 text-[2.25rem] sm:text-[2.75rem] lg:text-[3.25rem]">
                 {category.name}
               </h1>
               <p className="mt-4 max-w-xl text-[1.125rem] leading-relaxed text-muted">
@@ -101,20 +102,20 @@ export function CategoryPageView({
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
                   href="/request-quotation"
-                  className="inline-flex h-14 items-center justify-center rounded-[8px] bg-gold px-8 text-[1rem] font-medium text-navy shadow-[var(--shadow-md)] transition-all hover:brightness-110"
+                  className={buttonVariants({ variant: 'primary', size: 'lg' })}
                 >
                   Request a quotation
                 </Link>
                 <Link
                   href="/services"
-                  className="inline-flex h-14 items-center justify-center rounded-[8px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
+                  className={buttonVariants({ variant: 'outline', size: 'lg' })}
                 >
                   Related services
                 </Link>
               </div>
             </div>
             {category.image && (
-              <div className="relative aspect-[4/3] overflow-hidden rounded-[12px] bg-surface shadow-[var(--shadow-lg)] sm:aspect-[16/11]">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] border border-border bg-surface sm:aspect-[16/11]">
                 <RivetImage
                   src={category.image}
                   alt={`Premium ${category.name} supplied by Rivet in Ethiopia`}
@@ -154,13 +155,13 @@ export function CategoryPageView({
       <Section>
         <Container>
           <Eyebrow>Catalog</Eyebrow>
-          <h2 className="mt-3 text-[2rem]">
+          <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.25rem]">
             {products.length > 0
               ? `${category.name} products`
               : `Products in ${category.name}`}
           </h2>
           {products.length > 0 ? (
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
               {products.map((p) => (
                 <ProductCard key={p.id} product={p} categoryName={category.name} />
               ))}
@@ -177,16 +178,16 @@ export function CategoryPageView({
         <Section className="bg-surface">
           <Container>
             <Eyebrow>Support</Eyebrow>
-            <h2 className="mt-3 text-[2rem]">Relevant services</h2>
-            <ul className="mt-8 grid gap-4 md:grid-cols-3">
+            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.25rem]">Relevant services</h2>
+            <ul className="mt-8 grid gap-5 md:grid-cols-3">
               {relatedServices.map((s) => (
                 <li key={s.id}>
                   <Link
                     href={`/services/${s.slug}`}
-                    className="block rounded-[10px] border border-border bg-bg p-6 transition-colors hover:border-gold/40"
+                    className="luxury-card group block h-full rounded-[8px] bg-canvas p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
                   >
-                    <h3 className="text-[1.125rem]">{s.title}</h3>
-                    <p className="mt-2 line-clamp-3 text-[0.875rem] text-muted">
+                    <h3 className="text-[1.125rem] group-hover:underline group-hover:underline-offset-4">{s.title}</h3>
+                    <p className="mt-2 line-clamp-3 text-[0.9375rem] leading-relaxed text-muted">
                       {s.narrative}
                     </p>
                   </Link>

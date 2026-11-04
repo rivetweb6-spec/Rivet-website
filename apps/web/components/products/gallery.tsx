@@ -49,7 +49,7 @@ export function ProductGallery({ images, name }: { images: ProductImage[]; name:
         id={panelId}
         role={hasTabs ? 'tabpanel' : undefined}
         aria-labelledby={hasTabs ? tabId(active) : undefined}
-        className="relative aspect-[4/5] overflow-hidden rounded-[12px] bg-bg shadow-[var(--shadow-lg)]"
+        className="relative aspect-square overflow-hidden rounded-[8px] border border-border bg-bg"
       >
         <RivetImage
           key={current.id}
@@ -58,7 +58,7 @@ export function ProductGallery({ images, name }: { images: ProductImage[]; name:
           fill
           priority
           sizes="(max-width: 1024px) 100vw, 50vw"
-          className="object-cover transition-transform duration-700 hover:scale-[1.04]"
+          className="object-cover"
         />
       </div>
       {hasTabs && (
@@ -83,8 +83,8 @@ export function ProductGallery({ images, name }: { images: ProductImage[]; name:
               onClick={() => setActive(i)}
               onKeyDown={(e) => onKeyDown(e, i)}
               className={cn(
-                'relative h-20 w-20 shrink-0 overflow-hidden rounded-[8px] border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold',
-                i === active ? 'border-gold' : 'border-transparent opacity-70 hover:opacity-100',
+                'relative h-20 w-20 shrink-0 overflow-hidden rounded-[6px] border-2 bg-bg transition-[border-color,opacity] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2',
+                i === active ? 'border-navy dark:border-gold' : 'border-border opacity-75 hover:opacity-100',
               )}
             >
               <RivetImage src={img.url} alt="" fill sizes="80px" className="object-cover" />

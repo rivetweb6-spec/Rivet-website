@@ -9,6 +9,7 @@ import { Stagger, StaggerItem } from '@/components/motion/reveal';
 import { assets } from '@/lib/assets';
 import { buildProductAltText } from '@/lib/seo';
 import type { Category, Product } from '@/lib/api';
+import { buttonVariants } from '@/components/ui/button-variants';
 
 export type CategoryItemData = {
   id: string;
@@ -85,20 +86,20 @@ export function CategoryCard({
   return (
     <Link
       href={`/products/${category.slug}`}
-      className={`luxury-card group flex h-full flex-col overflow-hidden rounded-[10px] bg-canvas shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)] ${cardLinkFocus}`}
+      className={`luxury-card group flex h-full flex-col overflow-hidden rounded-[8px] bg-canvas ${cardLinkFocus}`}
     >
-      <div className="relative aspect-[3/2] overflow-hidden bg-pearl">
+      <div className="relative aspect-[3/2] overflow-hidden bg-bg">
         <RivetImage
           src={image}
           alt=""
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
         />
       </div>
 
       <div className="flex flex-1 flex-col p-6">
-        <h4 className="headline-display text-[1.25rem] leading-snug transition-colors group-hover:text-gold">
+        <h4 className="text-[1.1875rem] leading-snug group-hover:underline group-hover:underline-offset-4">
           {category.name}
         </h4>
         <p className="mt-2 flex-1 text-[0.875rem] leading-relaxed text-muted line-clamp-2">
@@ -106,9 +107,9 @@ export function CategoryCard({
             `Supplied and installed by Rivet for projects across Ethiopia.`}
         </p>
 
-        <div className="mt-5 flex items-center justify-between gap-3 border-t border-border/50 pt-4 text-[0.8125rem]">
+        <div className="mt-5 flex items-center justify-between gap-3 border-t border-border pt-4 text-[0.875rem]">
           <span className="text-muted">{productCountLabel(category._count?.products)}</span>
-          <span className="inline-flex items-center gap-1.5 font-semibold text-navy transition-colors group-hover:text-gold">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-navy">
             Explore
             <ArrowRight
               size={15}
@@ -141,7 +142,7 @@ export function CategoryGroup({
   return (
     <div>
       {showGroupHeader && (
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-border/60 pb-4">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-border pb-4">
           <div>
             <h3 className="headline-display text-[1.5rem] sm:text-[1.75rem]">{name}</h3>
             <p className="mt-1 text-[0.8125rem] text-muted">
@@ -151,7 +152,7 @@ export function CategoryGroup({
           {slug && (
             <Link
               href={`/products/${slug}`}
-              className="inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy transition-colors hover:text-gold"
+              className="inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 hover:underline"
             >
               View all<span className="sr-only"> {name}</span>
               <ArrowRight size={14} aria-hidden="true" />
@@ -160,7 +161,7 @@ export function CategoryGroup({
         </div>
       )}
 
-      <Stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <Stagger className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         {items.map((child) => (
           <StaggerItem key={child.id || child.slug}>
             <CategoryCard category={child} fallbackImage={fallbackImage} />
@@ -189,28 +190,28 @@ export function ProductCard({
     <Link
       key={product.id}
       href={`/products/${product.slug}`}
-      className="luxury-card group overflow-hidden rounded-[10px] bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)]"
+      className="luxury-card group flex h-full flex-col overflow-hidden rounded-[8px] bg-canvas focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
     >
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[4/3] overflow-hidden bg-bg">
         <RivetImage
           src={image}
           alt={alt}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
         />
       </div>
-      <div className="p-6">
-        <span className="eyebrow text-gold-ink text-[0.6875rem] uppercase tracking-wider font-medium">
+      <div className="flex flex-1 flex-col p-5 md:p-6">
+        <span className="eyebrow text-gold-ink">
           {cat}
         </span>
-        <h3 className="headline-display mt-2 text-[1.1875rem]">{product.name}</h3>
+        <h3 className="mt-2 text-[1.1875rem] leading-snug">{product.name}</h3>
         {product.shortDescription && (
-          <p className="mt-2 line-clamp-2 text-[0.875rem] text-muted">
+          <p className="mt-2 line-clamp-2 text-[0.9375rem] leading-relaxed text-muted">
             {product.shortDescription}
           </p>
         )}
-        <div className="mt-4 flex items-center text-[0.875rem] font-semibold text-gold-ink transition-colors group-hover:text-navy">
+        <div className="mt-auto flex items-center pt-5 text-[0.9375rem] font-semibold text-navy">
           View product
           <ArrowRight
             size={14}
@@ -260,16 +261,14 @@ export function CategoryHierarchySection({
     <Section className="bg-surface">
       <Container>
         <Eyebrow>{sectionEyebrow}</Eyebrow>
-        <h2 className="mt-3 text-[2rem] sm:text-[2.5rem]">
+        <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">
           {sectionTitle}
         </h2>
         <p className="mt-4 max-w-2xl text-[1.0625rem] leading-relaxed text-muted">
           {sectionDescription}
         </p>
 
-        <div className="gold-rule mt-10" aria-hidden="true" />
-
-        <div className="mt-14 space-y-20">
+        <div className="mt-12 space-y-16">
           {subGroups.length > 0 ? (
             <>
               {subGroups.map((group) => (
@@ -315,7 +314,7 @@ export function DepartmentGrid({ tree }: { tree: CategoryTreeNode[] }) {
     <section aria-labelledby="departments-heading" className="mb-20">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-border/60 pb-5">
         <div>
-          <span className="eyebrow text-gold-ink text-[0.6875rem] uppercase tracking-wider font-medium">
+          <span className="eyebrow text-navy-400 dark:text-gold">
             Departments
           </span>
           <h2 id="departments-heading" className="headline-display mt-1 text-[1.75rem] sm:text-[2rem]">
@@ -327,7 +326,7 @@ export function DepartmentGrid({ tree }: { tree: CategoryTreeNode[] }) {
         </span>
       </div>
 
-      <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         {tree.map((root) => {
           const productCount = countSubtreeProducts(root);
           const subs = root.children;
@@ -337,31 +336,31 @@ export function DepartmentGrid({ tree }: { tree: CategoryTreeNode[] }) {
           return (
             <li
               key={root.id}
-              className="luxury-card group relative flex flex-col overflow-hidden rounded-[12px] bg-canvas shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)] focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2 focus-within:ring-offset-bg"
+              className="luxury-card group relative flex flex-col overflow-hidden rounded-[8px] bg-canvas focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2 focus-within:ring-offset-bg"
             >
-              <div className="relative aspect-[16/10] overflow-hidden bg-pearl">
+              <div className="relative aspect-[16/10] overflow-hidden bg-bg">
                 <RivetImage
                   src={root.image || assets.categories.elevators}
                   alt=""
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                 />
                 <div
-                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy/55 via-navy/0 to-transparent"
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-deep/50 via-transparent to-transparent"
                   aria-hidden="true"
                 />
-                <span className="absolute bottom-4 left-5 rounded-full bg-white/95 px-3 py-1 text-[0.75rem] font-medium text-navy shadow-[var(--shadow-sm)]">
+                <span className="absolute bottom-4 left-5 rounded-[4px] bg-white px-2.5 py-1 text-[0.75rem] font-semibold text-[#002f54]">
                   {productCountLabel(productCount)}
                 </span>
               </div>
 
               <div className="flex flex-1 flex-col p-6">
-                <h3 className="headline-display text-[1.375rem] leading-snug">
+                <h3 className="text-[1.25rem] leading-snug">
                   {/* Stretched link: the whole tile opens the department. */}
                   <Link
                     href={`/products/${root.slug}`}
-                    className="transition-colors group-hover:text-gold focus-visible:outline-none after:absolute after:inset-0 after:content-['']"
+                    className="underline-offset-4 group-hover:underline focus-visible:outline-none after:absolute after:inset-0 after:content-['']"
                   >
                     {root.name}
                   </Link>
@@ -377,7 +376,7 @@ export function DepartmentGrid({ tree }: { tree: CategoryTreeNode[] }) {
                       <li key={sub.id}>
                         <Link
                           href={`/products/${sub.slug}`}
-                          className="inline-flex rounded-full border border-border bg-surface px-3 py-1 text-[0.75rem] font-medium text-ink transition-colors hover:border-gold hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                          className="inline-flex rounded-[4px] border border-border bg-bg px-2.5 py-1 text-[0.8125rem] font-medium text-ink transition-colors hover:border-navy hover:text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold dark:hover:border-gold dark:hover:text-gold"
                         >
                           {sub.name}
                         </Link>
@@ -392,13 +391,13 @@ export function DepartmentGrid({ tree }: { tree: CategoryTreeNode[] }) {
                 )}
 
                 <div className="mt-auto pt-5">
-                  <div className="flex items-center justify-between border-t border-border/50 pt-4 text-[0.8125rem]">
+                  <div className="flex items-center justify-between border-t border-border pt-4 text-[0.875rem]">
                     <span className="text-muted">
                       {subs.length > 0
                         ? `${subs.length} ${subs.length === 1 ? 'category' : 'categories'}`
                         : 'Full range'}
                     </span>
-                    <span className="inline-flex items-center gap-1.5 font-semibold text-navy transition-colors group-hover:text-gold">
+                    <span className="inline-flex items-center gap-1.5 font-semibold text-navy">
                       Explore
                       <ArrowRight
                         size={15}
@@ -420,9 +419,9 @@ export function DepartmentGrid({ tree }: { tree: CategoryTreeNode[] }) {
 /** Clean branded empty state for categories with no published products yet */
 export function ProductEmptyState({ categoryName }: { categoryName: string }) {
   return (
-    <div className="rounded-[10px] border border-dashed border-border/80 bg-surface/50 p-10 text-center">
-      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gold/10 text-gold mb-3">
-        <Package size={22} strokeWidth={1.5} />
+    <div className="rounded-[8px] border border-dashed border-border bg-surface p-8 text-center md:p-10">
+      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-[6px] bg-bg text-navy">
+        <Package size={22} strokeWidth={1.5} aria-hidden="true" />
       </div>
       <h3 className="text-[1.125rem] font-semibold text-ink">
         No published products in {categoryName} yet
@@ -433,20 +432,20 @@ export function ProductEmptyState({ categoryName }: { categoryName: string }) {
       <div className="mt-6 flex flex-wrap justify-center gap-3">
         <Link
           href="/request-quotation"
-          className="inline-flex h-11 items-center justify-center rounded-[6px] bg-gold px-6 text-[0.875rem] font-medium text-navy transition-all hover:brightness-110"
+          className={buttonVariants({ variant: 'primary', size: 'md' })}
         >
           Request a quotation
         </Link>
         <Link
           href="/contact"
-          className="inline-flex h-11 items-center justify-center rounded-[6px] border border-border px-6 text-[0.875rem] font-medium text-ink transition-colors hover:border-gold hover:text-gold"
+          className={buttonVariants({ variant: 'outline', size: 'md' })}
         >
           Contact our team
         </Link>
       </div>
       <Link
         href="/products"
-        className="mt-5 inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 transition-colors hover:text-gold hover:underline"
+        className="mt-5 inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline"
       >
         Browse all products
         <ArrowRight size={14} aria-hidden="true" />
