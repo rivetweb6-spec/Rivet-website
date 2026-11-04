@@ -23,6 +23,7 @@ const defaults = {
   introImage: assets.intro.image,
 };
 
+/** About-the-company teaser: image beside kicker, title and two paragraphs (CMS-driven). */
 export function Intro({ content }: { content?: IntroContent | null }) {
   const eyebrow = content?.introEyebrow?.trim() || defaults.introEyebrow;
   const title = content?.introTitle?.trim() || defaults.introTitle;
@@ -31,36 +32,32 @@ export function Intro({ content }: { content?: IntroContent | null }) {
   const image = content?.introImage?.trim() || defaults.introImage;
 
   return (
-    <Section id="intro" className="luxury-grain">
+    <Section id="intro">
       <Container>
-        <div className="grid items-center gap-16 lg:grid-cols-2 lg:gap-20">
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <FadeUp>
-            <div className="frame-offset relative ml-4 aspect-[4/5] overflow-hidden rounded-[4px] shadow-[var(--shadow-luxury)]">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] bg-bg">
               <RivetImage
                 src={image}
                 alt="RIVET showroom and imported architectural products in Ethiopia"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover transition-transform duration-[1.2s] ease-out hover:scale-[1.03]"
+                className="object-cover"
               />
             </div>
           </FadeUp>
-          <FadeUp delay={0.15}>
-            <div className="rivet-line lg:pl-8">
-              <Eyebrow>{eyebrow}</Eyebrow>
-              <h2 className="headline-display mt-5 text-[2.25rem] sm:text-[2.75rem] lg:text-[3rem]">
-                {title}
-              </h2>
-              <p className="mt-7 text-[1.0625rem] font-light leading-[1.8] text-muted">{body}</p>
-              <p className="mt-5 font-light leading-[1.8] text-muted">{bodySecondary}</p>
-              <Link
-                href="/company"
-                className="gold-underline mt-10 inline-flex items-center gap-3 text-[0.9375rem] font-medium tracking-wide text-navy"
-              >
-                Learn more about us
-                <ArrowRight size={16} className="text-gold" strokeWidth={1.5} />
-              </Link>
-            </div>
+          <FadeUp delay={0.08}>
+            <Eyebrow>{eyebrow}</Eyebrow>
+            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">{title}</h2>
+            <p className="mt-6 text-[1.0625rem] leading-relaxed text-ink/85">{body}</p>
+            <p className="mt-4 leading-relaxed text-muted">{bodySecondary}</p>
+            <Link
+              href="/company"
+              className="mt-8 inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline"
+            >
+              About River Company
+              <ArrowRight size={16} aria-hidden="true" />
+            </Link>
           </FadeUp>
         </div>
       </Container>

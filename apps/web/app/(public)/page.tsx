@@ -97,13 +97,13 @@ export default async function HomePage() {
   return (
     <>
       <Hero content={home} />
-      <Intro content={home} />
-      <ManagementMessages content={home} />
+      <Stats />
       <Categories items={categories} />
+      <Intro content={home} />
       <Featured products={featured} />
       <Services items={services} />
       <WhyChoose />
-      <Stats />
+      <ManagementMessages content={home} />
       <News articles={articles} />
       <QuotationCta />
     </>
