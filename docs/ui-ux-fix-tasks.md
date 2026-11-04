@@ -711,7 +711,7 @@ Use navy for default link text; reserve gold for hover/large accents, or darken 
 - Contrast check of updated link styles
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -929,7 +929,7 @@ Use ≥ `white/60`–`70` for secondary text on navy.
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -956,7 +956,7 @@ Darken badge text tokens; do not rely on color alone for meaning.
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 
@@ -983,7 +983,7 @@ Darken muted (~`#5b6470`) or avoid muted-on-bg pairings.
 - git diff --check
 
 ### Status
-Pending
+Completed
 
 ---
 

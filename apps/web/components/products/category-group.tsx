@@ -201,7 +201,7 @@ export function ProductCard({
         />
       </div>
       <div className="p-6">
-        <span className="eyebrow text-gold-muted text-[0.6875rem] uppercase tracking-wider font-medium">
+        <span className="eyebrow text-gold-ink text-[0.6875rem] uppercase tracking-wider font-medium">
           {cat}
         </span>
         <h3 className="headline-display mt-2 text-[1.1875rem]">{product.name}</h3>
@@ -210,7 +210,7 @@ export function ProductCard({
             {product.shortDescription}
           </p>
         )}
-        <div className="mt-4 flex items-center text-[0.875rem] font-semibold text-gold transition-colors group-hover:text-gold-soft">
+        <div className="mt-4 flex items-center text-[0.875rem] font-semibold text-gold-ink transition-colors group-hover:text-navy">
           View product
           <ArrowRight
             size={14}
@@ -315,7 +315,7 @@ export function DepartmentGrid({ tree }: { tree: CategoryTreeNode[] }) {
     <section aria-labelledby="departments-heading" className="mb-20">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-border/60 pb-5">
         <div>
-          <span className="eyebrow text-gold-muted text-[0.6875rem] uppercase tracking-wider font-medium">
+          <span className="eyebrow text-gold-ink text-[0.6875rem] uppercase tracking-wider font-medium">
             Departments
           </span>
           <h2 id="departments-heading" className="headline-display mt-1 text-[1.75rem] sm:text-[2rem]">

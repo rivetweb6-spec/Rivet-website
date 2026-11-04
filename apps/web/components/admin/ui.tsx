@@ -257,21 +257,21 @@ export function AdminSelect({
 
 export function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
-    PUBLISHED: 'bg-success/10 text-success',
-    DRAFT: 'bg-muted/15 text-muted',
+    PUBLISHED: 'bg-success/10 text-success-ink',
+    DRAFT: 'bg-muted/15 text-ink',
     NEW: 'bg-gold/15 text-navy',
-    OPEN: 'bg-success/10 text-success',
-    CLOSED: 'bg-muted/15 text-muted',
-    UNDER_REVIEW: 'bg-warning/15 text-warning',
+    OPEN: 'bg-success/10 text-success-ink',
+    CLOSED: 'bg-muted/15 text-ink',
+    UNDER_REVIEW: 'bg-warning/15 text-warning-ink',
     SHORTLISTED: 'bg-navy/10 text-navy',
     INTERVIEW: 'bg-navy/10 text-navy',
-    OFFERED: 'bg-success/10 text-success',
-    HIRED: 'bg-success/10 text-success',
+    OFFERED: 'bg-success/10 text-success-ink',
+    HIRED: 'bg-success/10 text-success-ink',
     CONTACTED: 'bg-navy/10 text-navy',
     QUOTATION_SENT: 'bg-navy/10 text-navy',
-    APPROVED: 'bg-success/10 text-success',
-    REJECTED: 'bg-error/10 text-error',
-    COMPLETED: 'bg-success/10 text-success',
+    APPROVED: 'bg-success/10 text-success-ink',
+    REJECTED: 'bg-error/10 text-error-ink',
+    COMPLETED: 'bg-success/10 text-success-ink',
   };
   const labels: Record<string, string> = {
     UNDER_REVIEW: 'Under Review',

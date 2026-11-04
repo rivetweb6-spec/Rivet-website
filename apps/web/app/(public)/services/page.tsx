@@ -62,7 +62,7 @@ export default async function ServicesPage() {
                       </span>
                       <h2 className="mt-6 text-[1.5rem]">{s.title}</h2>
                       <p className="mt-4 leading-relaxed text-muted">{s.narrative}</p>
-                      <p className="mt-6 text-[0.875rem] font-medium text-gold">Learn more →</p>
+                      <p className="mt-6 text-[0.875rem] font-medium text-gold-ink">Learn more →</p>
                     </article>
                   </Link>
                 </StaggerItem>

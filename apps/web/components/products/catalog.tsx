@@ -223,7 +223,7 @@ function SectionHeader({
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-border/60 pb-5">
       <div>
-        <span className="eyebrow text-gold-muted text-[0.6875rem] uppercase tracking-wider font-medium">
+        <span className="eyebrow text-gold-ink text-[0.6875rem] uppercase tracking-wider font-medium">
           {eyebrow}
         </span>
         <h2 id={id} className="headline-display mt-1 text-[1.75rem] sm:text-[2rem]">

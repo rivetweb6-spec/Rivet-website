@@ -130,15 +130,15 @@ export default function AdminCompanyPage() {
           />
           <p className="text-[0.8125rem] text-muted">
             Certificate images, titles, and portfolio projects are managed in{' '}
-            <Link href="/admin/certificates" className="text-gold hover:underline">
+            <Link href="/admin/certificates" className="font-medium text-navy underline-offset-4 hover:text-gold hover:underline">
               Certificate & Portfolio
             </Link>
             . Team profiles are in{' '}
-            <Link href="/admin/team" className="text-gold hover:underline">
+            <Link href="/admin/team" className="font-medium text-navy underline-offset-4 hover:text-gold hover:underline">
               Team
             </Link>
             . Company photos are in{' '}
-            <Link href="/admin/gallery" className="text-gold hover:underline">
+            <Link href="/admin/gallery" className="font-medium text-navy underline-offset-4 hover:text-gold hover:underline">
               Gallery
             </Link>
             .
