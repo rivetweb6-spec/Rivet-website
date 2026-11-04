@@ -12,17 +12,18 @@ test.describe('Admin CRUD — Categories', () => {
     await page.goto('/admin/categories');
     await expect(page.getByRole('heading', { name: 'Categories' })).toBeVisible();
 
-    await page.getByRole('button', { name: /add category/i }).click();
+    // Top-level categories are "departments" in the admin.
+    await page.getByRole('button', { name: /add department/i }).click();
     await page.getByLabel('Name').fill(name);
-    await page.getByRole('button', { name: /^save$/i }).click();
+    await page.getByRole('button', { name: /^create$/i }).click();
 
     const row = page.getByRole('row', { name: new RegExp(name) });
     await expect(row).toBeVisible({ timeout: 15_000 });
 
-    await row.getByRole('button', { name: /delete/i }).click();
-    const dialog = page.getByRole('dialog');
-    await expect(dialog.getByRole('heading', { name: /delete category/i })).toBeVisible();
-    await dialog.getByRole('button', { name: /^delete category$/i }).click();
+    await row.getByRole('button', { name: `Delete ${name}` }).click();
+    const dialog = page.getByRole('dialog', { name: `Delete ${name}` });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: /^delete$/i }).click();
 
     await expect(page.getByRole('row', { name: new RegExp(name) })).toHaveCount(0, {
       timeout: 15_000,

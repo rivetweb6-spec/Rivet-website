@@ -48,7 +48,11 @@ test.describe('Request a Quotation', () => {
     await page.goto('/products');
     const firstCard = page.locator('a.luxury-card[href^="/products/"]').first();
     await expect(firstCard).toBeVisible();
+    const href = await firstCard.getAttribute('href');
     await firstCard.click();
+    // Wait for the client-side navigation; otherwise the catalog's own <h1>
+    // can be read before the product page replaces it.
+    await expect(page).toHaveURL(new RegExp(`${href}$`));
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
     const heading = page.getByRole('heading', { level: 1 });
