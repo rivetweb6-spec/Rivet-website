@@ -158,13 +158,14 @@ export function Navbar() {
             key="mobile-nav-drawer"
             id="mobile-nav"
             aria-label="Mobile"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="fixed inset-x-0 top-[4.5rem] z-[45] max-h-[calc(100dvh-4.5rem)] overflow-y-auto border-b border-border bg-canvas shadow-[var(--shadow-lg)] lg:hidden"
+            // Side drawer that slides in from the left, below the header.
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ duration: 0.25, ease: [0.2, 0.7, 0.2, 1] }}
+            className="fixed bottom-0 left-0 top-[4.5rem] z-[45] w-[min(85vw,22rem)] overflow-y-auto border-r border-border bg-canvas shadow-[var(--shadow-lg)] lg:hidden"
           >
-            <div className="mx-auto max-w-[1280px] px-5 pt-2 pb-6 sm:px-6">
+            <div className="px-5 pt-2 pb-8 sm:px-6">
               {links.map((l) =>
                 'menu' in l && l.menu ? (
                   <CompanyMenu key={l.href} variant="mobile" onNavigate={() => setMenuOpen(false)} />
