@@ -89,7 +89,11 @@ pnpm --filter @rivet/api start           # node dist/server.js
   `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`. In production both are required and
   the password must be 12+ characters and not a known default (such as
   `Admin123!`); otherwise no admin is created and the log says what to set.
-- Optional sample content: `pnpm db:seed` (same admin rules apply).
+- Production starting content: `pnpm db:seed:production` — real categories, services,
+  company and homepage text only; no demo products, people, vacancies or placeholder
+  contacts, and existing records are never changed.
+- Development sample content: `pnpm db:seed` (demo products and placeholders — not for production).
+- VPS step-by-step guide: [Deployment-VPS.md](Deployment-VPS.md).
 - **Railway:** [`railway.json`](../railway.json) already runs the build and
   `prisma:deploy && start`; create a project + Postgres and set the env vars above.
 

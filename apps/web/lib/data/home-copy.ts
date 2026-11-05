@@ -1,7 +1,7 @@
 /**
  * Default homepage copy. Admin → Homepage overrides every field; these values
  * are shown when a field is left empty and pre-fill the admin form.
- * Keep in sync with the homepage seed in apps/api/prisma/seed.ts.
+ * Keep in sync with HOME_CONTENT in apps/api/prisma/seed-content.ts.
  */
 export const HOME_COPY = {
   eyebrow: 'RIVET COMPANY · Addis Ababa, Ethiopia',
