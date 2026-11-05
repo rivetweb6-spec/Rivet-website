@@ -675,8 +675,8 @@ async function main() {
       facebook: 'https://facebook.com',
       linkedin: 'https://linkedin.com',
       telegram: 'https://t.me/rivet',
-      mapLat: 9.0108,
-      mapLng: 38.7613,
+      mapLat: 8.9939223,
+      mapLng: 38.7943463,
     },
   });
 

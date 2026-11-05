@@ -1,11 +1,14 @@
 import type { Metadata } from 'next';
-import { Facebook, Linkedin, Mail, MapPin, MessageCircle, Phone, Send } from 'lucide-react';
+import { Facebook, Linkedin, Mail, MapPin, MessageCircle, Navigation, Phone, Send } from 'lucide-react';
 import { PageHero } from '@/components/site/page-hero';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { ContactForm } from '@/components/contact/contact-form';
 import { api } from '@/lib/api';
 import { contactSocials, mailtoHref, telHref } from '@/lib/contact';
 import { metadataForStaticPage } from '@/lib/page-seo';
+
+/** RIVET COMPANY office, Addis Ababa. Admin → Contact coordinates override these. */
+const OFFICE_COORDS = { lat: 8.9939223, lng: 38.7943463 };
 
 /** CMS-backed; skip static prerender so `next build` does not require a live API. */
 export const dynamic = 'force-dynamic';
@@ -16,10 +19,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactPage() {
   const { info } = await api.contactInfo();
-  const mapSrc =
-    info?.mapLat && info?.mapLng
-      ? `https://www.google.com/maps?q=${info.mapLat},${info.mapLng}&z=14&output=embed`
-      : 'https://www.google.com/maps?q=Addis+Ababa&z=12&output=embed';
+  const lat = info?.mapLat ?? OFFICE_COORDS.lat;
+  const lng = info?.mapLng ?? OFFICE_COORDS.lng;
+  // Interactive embed (pan/zoom) pinned on the office.
+  const mapSrc = `https://www.google.com/maps?q=${lat},${lng}&z=16&output=embed`;
+  const directionsHref = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
 
   const socialIcons = {
     Facebook,
@@ -100,13 +104,24 @@ export default async function ContactPage() {
 
               <div className="mt-10 overflow-hidden rounded-[8px] border border-border">
                 <iframe
-                  title="RIVET COMPANY office location in Addis Ababa"
+                  title="RIVET COMPANY office location in Addis Ababa (interactive map)"
                   src={mapSrc}
-                  className="h-64 w-full grayscale-[30%] contrast-[1.05] saturate-[0.7]"
+                  className="block h-64 w-full grayscale-[30%] contrast-[1.05] saturate-[0.7] sm:h-72"
                   loading="lazy"
+                  allowFullScreen
                   referrerPolicy="no-referrer-when-downgrade"
                 />
               </div>
+              <a
+                href={directionsHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center gap-2 py-1.5 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+              >
+                <Navigation size={16} aria-hidden="true" />
+                Get directions
+                <span className="sr-only"> (opens Google Maps in a new tab)</span>
+              </a>
             </div>
 
             <ContactForm />
