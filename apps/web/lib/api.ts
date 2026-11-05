@@ -206,7 +206,10 @@ export type Category = {
   parent?: ParentCategoryRef | null;
   children?: Category[] | null;
   description: string | null;
+  /** Cover image — always the first entry of `images` when a gallery is set. */
   image: string | null;
+  /** Gallery images, cover first. */
+  images?: string[];
   order: number;
   faqs?: FaqItem[] | null;
   updatedAt?: string;

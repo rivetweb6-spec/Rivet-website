@@ -307,10 +307,11 @@ async function main() {
         name: c.name,
         order: c.order,
         image: c.image,
+        images: [c.image],
         description: c.description,
         faqs: c.faqs ?? undefined,
       },
-      create: c,
+      create: { ...c, images: [c.image] },
     });
   }
 
@@ -437,6 +438,7 @@ async function main() {
           order: group.order,
           description: group.description,
           image: group.image,
+          images: [group.image],
         },
       });
 
@@ -448,6 +450,7 @@ async function main() {
             parentId: parent.id,
             description: item.description,
             image: item.image,
+            images: item.image ? [item.image] : [],
             order: item.order,
           },
           create: {
@@ -456,6 +459,7 @@ async function main() {
             parentId: parent.id,
             description: item.description,
             image: item.image,
+            images: item.image ? [item.image] : [],
             order: item.order,
           },
         });
@@ -671,8 +675,8 @@ async function main() {
       facebook: 'https://facebook.com',
       linkedin: 'https://linkedin.com',
       telegram: 'https://t.me/rivet',
-      mapLat: 9.0108,
-      mapLng: 38.7613,
+      mapLat: 8.9939223,
+      mapLng: 38.7943463,
     },
   });
 
