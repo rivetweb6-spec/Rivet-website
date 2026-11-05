@@ -90,6 +90,24 @@ export async function destroyCloudinaryRaw(publicId: string): Promise<void> {
   }
 }
 
+/**
+ * `https://res.cloudinary.com/{cloud}/raw/upload/v123/rivet/documents/x.pdf` → `rivet/documents/x.pdf`
+ * (raw public IDs keep their extension). Null for non-raw or non-Cloudinary URLs.
+ */
+export function cloudinaryRawPublicIdFromUrl(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (!parsed.hostname.endsWith('cloudinary.com')) return null;
+    const marker = '/raw/upload/';
+    const idx = parsed.pathname.indexOf(marker);
+    if (idx === -1) return null;
+    const rest = decodeURIComponent(parsed.pathname.slice(idx + marker.length)).replace(/^v\d+\//, '');
+    return rest || null;
+  } catch {
+    return null;
+  }
+}
+
 export function cloudinaryRawUrl(publicId: string): string {
   return cloudinary.url(publicId, { resource_type: 'raw', secure: true });
 }

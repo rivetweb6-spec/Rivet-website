@@ -1,17 +1,34 @@
 'use client';
 
 import * as React from 'react';
+import { FileText } from 'lucide-react';
 import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { ImageLightbox, allItemImages } from '@/components/company/image-lightbox';
 import type { Certificate } from '@/lib/api';
 
+function PdfLink({ href, label, className }: { href: string; label: string; className?: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`inline-flex items-center gap-1.5 text-[0.8125rem] font-semibold text-navy hover:text-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${className ?? ''}`}
+    >
+      <FileText size={16} strokeWidth={1.75} aria-hidden="true" />
+      {label}
+    </a>
+  );
+}
+
 export function CertificateGallery({ certificates }: { certificates: Certificate[] }) {
-  const items = certificates.filter((c) => c.image);
+  const cards = certificates.filter((c) => c.image || c.pdf);
+  /** Only certificates with an image can open in the lightbox. */
+  const items = cards.filter((c) => c.image);
   const [active, setActive] = React.useState<number | null>(null);
 
-  if (items.length === 0) return null;
+  if (cards.length === 0) return null;
 
   const lightboxItems = items.map((cert) => ({
     src: cert.image!,
@@ -33,25 +50,28 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
           </FadeUp>
 
           <Stagger className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((cert, index) => (
-              <StaggerItem key={cert.id}>
-                <button
-                  type="button"
-                  onClick={() => setActive(index)}
-                  className="luxury-card group flex h-full w-full flex-col rounded-[8px] bg-canvas p-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-                >
+            {cards.map((cert) => {
+              const index = items.indexOf(cert);
+              const body = (
+                <>
                   <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] bg-white">
                     <span
                       className="pointer-events-none absolute inset-2 z-10 border border-gold/25"
                       aria-hidden="true"
                     />
-                    <RivetImage
-                      src={cert.image!}
-                      alt={`${cert.title} — RIVET COMPANY certificate`}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-contain p-5"
-                    />
+                    {cert.image ? (
+                      <RivetImage
+                        src={cert.image}
+                        alt={`${cert.title} — RIVET COMPANY certificate`}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-contain p-5"
+                      />
+                    ) : (
+                      <div className="grid h-full place-items-center text-navy/70">
+                        <FileText size={56} strokeWidth={1} aria-hidden="true" />
+                      </div>
+                    )}
                   </div>
                   <h3 className="mt-5 text-[1.125rem] text-navy">{cert.title}</h3>
                   {cert.description && (
@@ -59,12 +79,37 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
                       {cert.description}
                     </p>
                   )}
-                  <span className="mt-4 text-[0.8125rem] font-semibold text-navy sm:opacity-0 sm:transition-opacity sm:duration-300 sm:group-hover:opacity-100">
-                    View certificate
-                  </span>
-                </button>
-              </StaggerItem>
-            ))}
+                </>
+              );
+              return (
+                <StaggerItem key={cert.id}>
+                  <div className="luxury-card group flex h-full w-full flex-col rounded-[8px] bg-canvas p-4">
+                    {cert.image ? (
+                      <button
+                        type="button"
+                        onClick={() => setActive(index)}
+                        className="flex flex-1 flex-col text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                      >
+                        {body}
+                        <span className="mt-4 text-[0.8125rem] font-semibold text-navy sm:opacity-0 sm:transition-opacity sm:duration-300 sm:group-hover:opacity-100">
+                          View certificate
+                        </span>
+                      </button>
+                    ) : (
+                      <a
+                        href={cert.pdf!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex flex-1 flex-col text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                      >
+                        {body}
+                      </a>
+                    )}
+                    {cert.pdf && <PdfLink href={cert.pdf} label="View PDF" className="mt-3" />}
+                  </div>
+                </StaggerItem>
+              );
+            })}
           </Stagger>
         </Container>
       </Section>
@@ -139,6 +184,9 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
                         <p className="mt-3 text-[1rem] leading-relaxed text-muted">
                           {project.description}
                         </p>
+                      )}
+                      {project.pdf && (
+                        <PdfLink href={project.pdf} label="View project PDF" className="mt-4" />
                       )}
                       {images.length > 1 && (
                         <div className="mt-5 flex gap-2 overflow-x-auto">

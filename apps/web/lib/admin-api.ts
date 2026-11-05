@@ -537,6 +537,26 @@ export const adminApi = {
         throw err;
       }
     },
+    uploadDocument: async (file: File) => {
+      type Result = { document: { url: string; publicId: string; name: string } };
+      const buildForm = () => {
+        const form = new FormData();
+        form.append('file', file);
+        return form;
+      };
+      try {
+        return await adminRequest<Result>('/uploads/document', {
+          method: 'POST',
+          body: buildForm(),
+          apiBase: getDirectApiUrl(),
+        });
+      } catch (err) {
+        if (err instanceof AdminApiError && err.status === 0 && getDirectApiUrl() !== getApiUrl()) {
+          return adminRequest<Result>('/uploads/document', { method: 'POST', body: buildForm() });
+        }
+        throw err;
+      }
+    },
     remove: (url: string) =>
       adminRequest<{ ok: boolean }>('/uploads', {
         method: 'DELETE',
@@ -656,6 +676,7 @@ export type AdminCertificate = {
   description: string | null;
   image: string | null;
   images: string[] | null;
+  pdf: string | null;
   kind: CertificateKind;
   order: number;
   status: string;
@@ -666,6 +687,7 @@ export type CertificateInput = {
   description?: string | null;
   image?: string | null;
   images?: string[] | null;
+  pdf?: string | null;
   kind?: CertificateKind;
   order?: number;
   status?: 'DRAFT' | 'PUBLISHED';

@@ -191,6 +191,7 @@ model Certificate {
   description String?
   image       String?
   images      Json? // string[] additional images (portfolio)
+  pdf         String? // optional PDF document (certificate scan / portfolio brochure)
   kind        CertificateKind @default(CERTIFICATE)
   order       Int             @default(0)
   status      ContentStatus   @default(PUBLISHED)
