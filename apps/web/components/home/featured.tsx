@@ -38,7 +38,7 @@ export function Featured({ products }: { products?: FeaturedProductCard[] }) {
           </Link>
         </div>
 
-        <Stagger className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        <Stagger className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:gap-6">
           {list.slice(0, list.length >= 6 ? 6 : list.length >= 3 ? 3 : list.length).map((p) => (
             <StaggerItem key={p.slug}>
               <ProductCard {...p} />

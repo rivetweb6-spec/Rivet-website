@@ -2,6 +2,7 @@ import { SmoothScroll } from '@/components/providers/smooth-scroll';
 import { QuotationModalProvider } from '@/components/quotation/quotation-modal-provider';
 import { Navbar } from '@/components/site/navbar';
 import { Footer } from '@/components/site/footer';
+import { MobileActionBar } from '@/components/site/mobile-action-bar';
 import { LocalBusinessJsonLd, OrganizationJsonLd, WebSiteJsonLd } from '@/components/seo/json-ld';
 import { api } from '@/lib/api';
 
@@ -59,6 +60,7 @@ export default async function PublicLayout({ children }: { children: React.React
           {children}
         </main>
         <Footer contact={contact} products={footerProducts} services={footerServices} />
+        <MobileActionBar phone={contact?.phone} whatsapp={contact?.whatsapp} />
       </QuotationModalProvider>
     </SmoothScroll>
   );

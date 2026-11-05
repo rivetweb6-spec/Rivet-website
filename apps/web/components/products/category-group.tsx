@@ -152,7 +152,7 @@ export function CategoryGroup({
           {slug && (
             <Link
               href={`/products/${slug}`}
-              className="inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 hover:underline"
+              className="inline-flex items-center gap-1.5 py-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 hover:underline"
             >
               View all<span className="sr-only"> {name}</span>
               <ArrowRight size={14} aria-hidden="true" />

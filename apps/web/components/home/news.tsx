@@ -16,6 +16,9 @@ function formatDate(iso: string | null) {
 }
 
 export function News({ articles }: { articles: NewsArticle[] }) {
+  // Hide the whole section until at least one article is published.
+  if (articles.length === 0) return null;
+
   return (
     <Section className="bg-surface">
       <Container>

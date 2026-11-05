@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
+import { ScrollNav } from '@/components/ui/scroll-nav';
 import { Breadcrumbs } from '@/components/seo/breadcrumbs';
 import { FaqSection } from '@/components/seo/faq-section';
 import { ProductGroupJsonLd } from '@/components/seo/json-ld';
@@ -54,10 +55,13 @@ export function CategoryPageView({
 
           {/* Department filter */}
           {rootCategories.length > 0 && (
-            <nav aria-label="Departments" className="mt-6 flex flex-wrap gap-2">
+            <ScrollNav
+              aria-label="Departments"
+              className="-mx-5 mt-6 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0"
+            >
               <Link
                 href="/products"
-                className="rounded-[6px] border px-4 py-2 text-[0.875rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 border-border bg-canvas text-ink hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold"
+                className="shrink-0 whitespace-nowrap rounded-[6px] border px-4 py-2 text-[0.875rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 border-border bg-canvas text-ink hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold"
               >
                 All
               </Link>
@@ -71,7 +75,7 @@ export function CategoryPageView({
                     href={`/products/${c.slug}`}
                     aria-current={isActive ? 'page' : undefined}
                     className={cn(
-                      'rounded-[6px] border px-4 py-2 text-[0.875rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2',
+                      'shrink-0 whitespace-nowrap rounded-[6px] border px-4 py-2 text-[0.875rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2',
                       isActive
                         ? 'border-navy bg-navy text-white dark:border-gold dark:bg-gold dark:text-[#002f54]'
                         : 'border-border bg-canvas text-ink hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold',
@@ -81,7 +85,7 @@ export function CategoryPageView({
                   </Link>
                 );
               })}
-            </nav>
+            </ScrollNav>
           )}
 
           <div className="mt-10 grid items-center gap-10 lg:mt-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
@@ -161,7 +165,7 @@ export function CategoryPageView({
               : `Products in ${category.name}`}
           </h2>
           {products.length > 0 ? (
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:gap-6">
               {products.map((p) => (
                 <ProductCard key={p.id} product={p} categoryName={category.name} />
               ))}

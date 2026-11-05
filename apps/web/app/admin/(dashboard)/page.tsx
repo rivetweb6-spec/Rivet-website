@@ -143,7 +143,7 @@ export default function AdminDashboardPage() {
             <h2 className="text-[1.125rem] text-navy">Recent quotation requests</h2>
             <Link
               href="/admin/quotation-requests"
-              className="text-[0.8125rem] font-medium text-navy underline-offset-4 hover:text-gold hover:underline"
+              className="inline-block py-1.5 text-[0.8125rem] font-medium text-navy underline-offset-4 hover:text-gold hover:underline"
             >
               View all<span className="sr-only"> quotation requests</span>
             </Link>

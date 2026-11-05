@@ -200,7 +200,7 @@ export default function AdminTeamPage() {
                           </button>
                           <button
                             type="button"
-                            className="text-navy hover:text-gold"
+                            className="py-1.5 text-navy hover:text-gold"
                             onClick={() => {
                               setEditingId(m.id);
                               setForm({
@@ -220,7 +220,7 @@ export default function AdminTeamPage() {
                           >
                             Edit
                           </button>
-                          <button type="button" className="text-error" onClick={() => void remove(m.id)}>
+                          <button type="button" className="py-1.5 text-error" onClick={() => void remove(m.id)}>
                             Delete
                           </button>
                         </div>

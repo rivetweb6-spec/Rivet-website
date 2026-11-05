@@ -193,14 +193,14 @@ export default function AdminProductsPage() {
                 <td className="px-5 py-3 text-right">
                   <button
                     type="button"
-                    className="mr-3 text-navy hover:text-gold"
+                    className="mr-3 py-1.5 text-navy hover:text-gold"
                     onClick={() => startEdit(p)}
                   >
                     Edit
                   </button>
                   <button
                     type="button"
-                    className="text-error hover:underline"
+                    className="py-1.5 text-error hover:underline"
                     onClick={() => remove(p.id)}
                   >
                     Delete

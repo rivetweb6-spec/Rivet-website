@@ -58,9 +58,11 @@ export function Footer({
 
   return (
     <footer className="border-t-4 border-gold bg-navy-deep text-white/70">
-      <Container className="py-14 md:py-20">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-14">
-          <div>
+      {/* Extra bottom space below lg so the mobile action bar never covers the copyright line. */}
+      <Container className="pt-14 pb-32 md:pt-20 lg:pb-20">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-14">
+          {/* Brand spans the full row on phones so the link columns sit two-up. */}
+          <div className="col-span-2 sm:col-span-1">
             <Logo light />
             <p className="mt-5 max-w-xs text-[0.9375rem] leading-relaxed">
               RIVET COMPANY supplies elevators, escalators, granite, doors, furniture, sanitary goods
@@ -92,12 +94,12 @@ export function Footer({
               <h2 className="text-[0.75rem] font-semibold uppercase tracking-[0.14em] text-gold">
                 {col.title}
               </h2>
-              <ul className="mt-5 space-y-3 text-[0.9375rem]">
+              <ul className="mt-4 space-y-1 text-[0.9375rem]">
                 {col.links.map((l) => (
                   <li key={l.label}>
                     <Link
                       href={l.href}
-                      className="transition-colors hover:text-white hover:underline hover:underline-offset-4"
+                      className="inline-block py-1.5 transition-colors hover:text-white hover:underline hover:underline-offset-4"
                     >
                       {l.label}
                     </Link>

@@ -360,6 +360,16 @@
   }
 }
 
+/* Slow "Ken Burns" push-in for the active home hero slide. */
+@keyframes heroZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
 /* Respect reduced motion globally */
 @media (prefers-reduced-motion: reduce) {
   *,

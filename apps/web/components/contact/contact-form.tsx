@@ -68,7 +68,7 @@ export function ContactForm() {
   if (status === 'success') {
     return (
       <motion.div
-        className="flex flex-col items-center rounded-[8px] border border-border bg-surface px-8 py-16 text-center"
+        className="flex flex-col items-center rounded-[8px] border border-border bg-surface px-5 py-12 text-center sm:px-8 sm:py-16"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
       >
@@ -88,7 +88,7 @@ export function ContactForm() {
       id="contact-form"
       onSubmit={submit}
       noValidate
-      className="scroll-mt-28 space-y-4 rounded-[8px] border border-border bg-surface p-8"
+      className="scroll-mt-28 space-y-4 rounded-[8px] border border-border bg-surface p-5 sm:p-8"
     >
       <Field
         label="Full Name"

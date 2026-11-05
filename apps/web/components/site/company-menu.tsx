@@ -94,7 +94,7 @@ function DesktopCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
         aria-controls="company-desktop-menu"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'gold-underline inline-flex items-center gap-1.5 text-[0.9375rem] font-medium transition-colors',
+          'gold-underline inline-flex items-center gap-1.5 whitespace-nowrap text-[0.875rem] font-medium transition-colors xl:text-[0.9375rem]',
           active ? 'text-navy' : 'text-ink/75 hover:text-navy',
         )}
       >

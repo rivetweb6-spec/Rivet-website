@@ -318,7 +318,7 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                 </Link>
               </p>
             )}
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:gap-6">
               {related.slice(0, 3).map((p) => (
                 <ProductCard key={p.id} product={p} categoryName={product.category?.name} />
               ))}

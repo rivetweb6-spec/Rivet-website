@@ -86,7 +86,7 @@ export function ProductsCatalog({
   return (
     <div className={cn('transition-opacity', pending && 'opacity-60')}>
       {/* Search */}
-      <div className="mb-12 flex flex-col gap-4 md:mb-14 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-12 flex flex-col gap-4 md:mb-14 lg:flex-row lg:items-center lg:justify-between">
         {mode === 'overview' ? (
           <p className="text-[0.9375rem] text-muted">
             Browse by department, or search the full catalog by product name, brand or category.
@@ -94,7 +94,7 @@ export function ProductsCatalog({
         ) : (
           <Link
             href="/products"
-            className="inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 hover:underline"
+            className="inline-flex items-center gap-1.5 py-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 hover:underline"
           >
             <ArrowLeft size={15} aria-hidden="true" />
             Browse by department
@@ -103,7 +103,7 @@ export function ProductsCatalog({
 
         <form
           role="search"
-          className="relative w-full sm:max-w-sm"
+          className="relative w-full lg:max-w-sm"
           onSubmit={(e) => {
             e.preventDefault();
             update({ search: searchValue.trim() || undefined });
@@ -155,7 +155,7 @@ export function ProductsCatalog({
                 action={
                   <Link
                     href="/products?view=all"
-                    className="inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 hover:underline"
+                    className="inline-flex items-center gap-1.5 py-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 hover:underline"
                   >
                     View all products
                     <ArrowRight size={15} aria-hidden="true" />
@@ -243,7 +243,7 @@ function fullRows<T>(items: T[]): T[] {
 
 function ProductGrid({ products }: { products: Product[] }) {
   return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+    <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:gap-6">
       {products.map((p) => (
         <ProductCard key={p.id} product={p} />
       ))}

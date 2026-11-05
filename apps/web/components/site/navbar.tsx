@@ -75,16 +75,17 @@ export function Navbar() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-canvas">
-        <div className="mx-auto flex h-[4.5rem] max-w-[1280px] items-center justify-between gap-6 px-5 sm:px-6 lg:px-10">
+        <div className="mx-auto flex h-[4.5rem] max-w-[1280px] items-center justify-between gap-4 px-5 sm:px-6 lg:px-8 xl:gap-6 xl:px-10">
           <Link
             href="/"
             aria-label="RIVET COMPANY home"
-            className="shrink-0 rounded-[4px] focus-visible:outline-offset-4"
+            // Mobile/tablet: logo sits on the right; desktop restores it to the left.
+            className="order-last flex h-11 shrink-0 items-center rounded-[4px] focus-visible:outline-offset-4 lg:order-none"
           >
             <Logo className="h-8 sm:h-9" />
           </Link>
 
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-5 lg:flex xl:gap-8" aria-label="Primary">
             {links.map((l) =>
               'menu' in l && l.menu ? (
                 <CompanyMenu key={l.href} variant="desktop" />
@@ -94,7 +95,7 @@ export function Navbar() {
                   href={l.href}
                   aria-current={isActivePath(pathname, l.href) ? 'page' : undefined}
                   className={cn(
-                    'gold-underline text-[0.9375rem] font-medium transition-colors',
+                    'gold-underline whitespace-nowrap text-[0.875rem] font-medium transition-colors xl:text-[0.9375rem]',
                     isActivePath(pathname, l.href)
                       ? 'text-navy'
                       : 'text-ink/75 hover:text-navy',
@@ -106,8 +107,10 @@ export function Navbar() {
             )}
           </nav>
 
-          <div className="flex items-center gap-1.5">
-            <ThemeToggle />
+          {/* Mobile/tablet: controls on the left as Menu · Search · Theme (· Quote);
+              desktop keeps Theme · Search · Quote on the right. */}
+          <div className="order-first flex shrink-0 items-center gap-1.5 lg:order-none">
+            <ThemeToggle className="order-1 lg:order-none" />
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
@@ -116,7 +119,7 @@ export function Navbar() {
             >
               <Search size={18} strokeWidth={1.75} aria-hidden="true" />
             </button>
-            <Button size="sm" className="ml-2 hidden sm:inline-flex" onClick={() => open()}>
+            <Button size="sm" className="order-2 ml-2 hidden sm:inline-flex lg:order-none" onClick={() => open()}>
               Request a Quotation
             </Button>
             <button
@@ -126,7 +129,7 @@ export function Navbar() {
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
-              className="grid h-10 w-10 place-items-center rounded-[6px] text-navy transition-colors hover:bg-bg lg:hidden"
+              className="order-first grid h-10 w-10 place-items-center rounded-[6px] text-navy transition-colors hover:bg-bg lg:hidden"
             >
               {menuOpen ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
             </button>

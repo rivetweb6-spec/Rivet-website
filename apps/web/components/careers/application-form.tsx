@@ -108,7 +108,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
 
   if (status === 'success') {
     return (
-      <div className="rounded-[8px] border border-border bg-surface p-8 text-center md:p-10">
+      <div className="rounded-[8px] border border-border bg-surface p-6 text-center sm:p-8 md:p-10">
         <div className="mx-auto grid h-16 w-16 place-items-center rounded-[8px] bg-bg text-success-ink">
           <Check size={30} />
         </div>
@@ -126,7 +126,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
       noValidate
       method="post"
       data-ready={ready ? 'true' : undefined}
-      className="space-y-4 rounded-[8px] border border-border bg-surface p-6 md:p-8"
+      className="space-y-4 rounded-[8px] border border-border bg-surface p-5 sm:p-6 md:p-8"
     >
       <div>
         <p className="eyebrow text-gold-ink">

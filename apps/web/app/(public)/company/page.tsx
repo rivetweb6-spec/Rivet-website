@@ -78,12 +78,12 @@ export default async function CompanyPage() {
               <Eyebrow>Principles</Eyebrow>
               <h2 className="headline-display mt-3 text-[2rem]">Core values</h2>
             </FadeUp>
-            <Stagger className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Stagger className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
               {values.map((v) => (
                 <StaggerItem key={v}>
-                  <div className="rounded-[8px] border border-border bg-canvas px-6 py-8 text-center">
+                  <div className="flex h-full flex-col items-center justify-center rounded-[8px] border border-border bg-canvas px-3 py-6 text-center sm:px-6 sm:py-8">
                     <div className="mx-auto h-[2px] w-8 bg-gold" />
-                    <h3 className="mt-5 text-[1.125rem]">{v}</h3>
+                    <h3 className="mt-4 text-[1rem] sm:mt-5 sm:text-[1.125rem]">{v}</h3>
                   </div>
                 </StaggerItem>
               ))}

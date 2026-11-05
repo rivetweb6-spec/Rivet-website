@@ -561,7 +561,7 @@ export default function AdminCategoriesPage() {
                             type="button"
                             onClick={() => openEdit(node)}
                             className={cn(
-                              'text-left text-navy transition-colors hover:text-gold focus-visible:outline-none focus-visible:underline',
+                              'py-1 text-left text-navy transition-colors hover:text-gold focus-visible:outline-none focus-visible:underline',
                               isRoot ? 'text-[0.9375rem] font-semibold' : 'font-medium',
                             )}
                           >

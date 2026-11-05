@@ -195,7 +195,7 @@ export default function AdminGalleryPage() {
                   <div className="mt-1 text-[0.8125rem]">
                     <button
                       type="button"
-                      className="mr-3 text-navy hover:text-gold"
+                      className="mr-3 py-1.5 text-navy hover:text-gold"
                       onClick={() => {
                         setEditingId(item.id);
                         setForm({
@@ -211,7 +211,7 @@ export default function AdminGalleryPage() {
                     >
                       Edit
                     </button>
-                    <button type="button" className="text-error" onClick={() => void remove(item.id)}>
+                    <button type="button" className="py-1.5 text-error" onClick={() => void remove(item.id)}>
                       Delete
                     </button>
                   </div>

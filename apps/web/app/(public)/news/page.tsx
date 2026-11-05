@@ -41,7 +41,7 @@ export default async function NewsPage() {
           {articles.length === 0 ? (
             <p className="rounded-[8px] border border-dashed border-border bg-surface p-10 text-center text-muted">No news articles have been published yet.</p>
           ) : (
-            <Stagger className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <Stagger className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:gap-6">
               {articles.map((n) => (
                 <StaggerItem key={n.id}>
                   <Link

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { companyNavLinks } from '@/lib/company-nav';
 import { Container } from '@/components/ui/container';
+import { ScrollNav } from '@/components/ui/scroll-nav';
 import { cn } from '@/lib/utils';
 
 export function CompanySubnav() {
@@ -12,7 +13,7 @@ export function CompanySubnav() {
   return (
     <div className="border-b border-border bg-canvas">
       <Container>
-        <nav
+        <ScrollNav
           aria-label="Company pages"
           className="-mb-px flex gap-6 overflow-x-auto md:gap-8"
         >
@@ -36,7 +37,7 @@ export function CompanySubnav() {
               </Link>
             );
           })}
-        </nav>
+        </ScrollNav>
       </Container>
     </div>
   );
