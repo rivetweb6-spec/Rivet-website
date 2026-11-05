@@ -11,7 +11,18 @@ import { assets } from '@/lib/assets';
  * the large image is their tab panel. Only the selected thumbnail is in the
  * Tab order; Left/Right/Home/End move between images.
  */
-export function ProductGallery({ images, name }: { images: ProductImage[]; name: string }) {
+export function ProductGallery({
+  images,
+  name,
+  aspectClassName = 'aspect-square',
+  sizes = '(max-width: 1024px) 100vw, 50vw',
+}: {
+  images: ProductImage[];
+  name: string;
+  /** Main image frame ratio (square for products, landscape for categories). */
+  aspectClassName?: string;
+  sizes?: string;
+}) {
   const list = images.length
     ? images
     : [{ id: 'fallback', url: assets.products.p1, alt: name, publicId: null, order: 0 }];
@@ -49,7 +60,7 @@ export function ProductGallery({ images, name }: { images: ProductImage[]; name:
         id={panelId}
         role={hasTabs ? 'tabpanel' : undefined}
         aria-labelledby={hasTabs ? tabId(active) : undefined}
-        className="relative aspect-square overflow-hidden rounded-[8px] border border-border bg-bg"
+        className={cn('relative overflow-hidden rounded-[8px] border border-border bg-bg', aspectClassName)}
       >
         <RivetImage
           key={current.id}
@@ -57,7 +68,7 @@ export function ProductGallery({ images, name }: { images: ProductImage[]; name:
           alt={current.alt ?? name}
           fill
           priority
-          sizes="(max-width: 1024px) 100vw, 50vw"
+          sizes={sizes}
           className="object-cover"
         />
       </div>

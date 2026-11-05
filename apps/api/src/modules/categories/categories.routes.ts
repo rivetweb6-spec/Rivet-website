@@ -17,6 +17,20 @@ import { imageRefSchema } from '../../utils/image-ref.js';
 
 const router = Router();
 
+/**
+ * Gallery list + cover. When a list is sent the cover is its first image;
+ * otherwise a single cover image becomes a one-item gallery.
+ */
+function coverAndGallery(image: string | null | undefined, images: string[] | undefined) {
+  const list = images !== undefined ? normalizeImages(images) : image ? [image] : [];
+  return { image: list[0] ?? null, images: list };
+}
+
+/** Trim, drop empties and duplicates, keep order. */
+function normalizeImages(list: string[]): string[] {
+  return [...new Set(list.map((u) => u.trim()).filter(Boolean))];
+}
+
 const upsertSchema = z
   .object({
     name: z.string().min(1),
@@ -24,6 +38,8 @@ const upsertSchema = z
     parentId: z.string().nullable().optional().or(z.literal('')),
     description: z.string().optional().nullable(),
     image: imageRefSchema.optional().nullable().or(z.literal('')),
+    /** Gallery images, cover first. When sent, `image` is set to the first one. */
+    images: z.array(imageRefSchema).max(20).optional(),
     order: z.number().int().optional(),
     faqs: z.array(faqItemSchema).optional().nullable(),
   })
@@ -160,6 +176,7 @@ router.post(
       noIndex,
       faqs,
       image,
+      images,
       parentId: rawParentId,
       ...data
     } = body;
@@ -187,7 +204,7 @@ router.post(
         ...data,
         parentId,
         slug,
-        image: image || null,
+        ...coverAndGallery(image, images),
         faqs: toPrismaFaqs(faqs),
         ...seo,
       },
@@ -249,6 +266,7 @@ router.put(
       noIndex,
       faqs,
       image,
+      images,
       parentId: rawParentId,
       ...data
     } = body;
@@ -290,7 +308,11 @@ router.put(
         ...data,
         ...(parentId !== undefined ? { parentId } : {}),
         ...(slug !== undefined ? { slug } : {}),
-        ...(image !== undefined ? { image: image || null } : {}),
+        ...(images !== undefined
+          ? coverAndGallery(image, images)
+          : image !== undefined
+            ? { image: image || null }
+            : {}),
         ...(faqs !== undefined ? { faqs: toPrismaFaqs(faqs) } : {}),
         ...seo,
       },

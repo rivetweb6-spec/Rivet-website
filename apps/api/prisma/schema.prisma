@@ -102,7 +102,8 @@ model Category {
   parent         Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
   children       Category[] @relation("CategoryHierarchy")
   description    String?
-  image          String?
+  image          String? // cover image (always images[0] when images is set)
+  images         String[]   @default([])
   order          Int        @default(0)
   faqs           Json? // [{ question, answer }]
   seoTitle       String?
