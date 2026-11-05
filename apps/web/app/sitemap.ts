@@ -2,6 +2,15 @@ import type { MetadataRoute } from 'next';
 import { api } from '@/lib/api';
 import { PAGE_SEO_DEFAULTS, type PageSeoKey } from '@/lib/page-seo-defaults';
 import { isIndexableSlug, SITE_URL } from '@/lib/seo';
+import { toAbsoluteMediaUrl } from '@/lib/media';
+
+/** Absolute, de-duplicated image URLs for Google Images (sitemap <image:image>). */
+function sitemapImages(urls: (string | null | undefined)[]): string[] | undefined {
+  const list = [...new Set(urls.filter((u): u is string => Boolean(u?.trim())))].map((u) =>
+    toAbsoluteMediaUrl(u, SITE_URL),
+  );
+  return list.length ? list : undefined;
+}
 
 /** CMS-backed; skip static prerender so `next build` does not require a live API. */
 export const dynamic = 'force-dynamic';
@@ -71,6 +80,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.7,
+        images: sitemapImages(p.images.map((i) => i.url)),
       }));
   } catch {
     /* API unavailable at build — static routes still ship */
@@ -85,6 +95,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: c.updatedAt ? new Date(c.updatedAt) : new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.75,
+        images: sitemapImages(c.images?.length ? c.images : [c.image]),
       }));
   } catch {
     /* ignore */

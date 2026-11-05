@@ -5,6 +5,7 @@ import { Footer } from '@/components/site/footer';
 import { MobileActionBar } from '@/components/site/mobile-action-bar';
 import { LocalBusinessJsonLd, OrganizationJsonLd, WebSiteJsonLd } from '@/components/seo/json-ld';
 import { api } from '@/lib/api';
+import { OFFICE_COORDS } from '@/lib/contact';
 
 /** Default ISR window for public marketing pages (overridable per route). */
 export const revalidate = 60;
@@ -48,8 +49,8 @@ export default async function PublicLayout({ children }: { children: React.React
           phone={contact?.phone}
           email={contact?.email}
           address={contact?.address}
-          latitude={contact?.mapLat}
-          longitude={contact?.mapLng}
+          latitude={contact?.mapLat ?? OFFICE_COORDS.lat}
+          longitude={contact?.mapLng ?? OFFICE_COORDS.lng}
           sameAs={sameAs}
         />
         <a href="#main-content" className="skip-link">
