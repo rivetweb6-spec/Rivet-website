@@ -25,7 +25,8 @@
     "lighthouse": "pnpm --filter @rivet/web lhci",
     "db:generate": "pnpm --filter @rivet/api prisma:generate",
     "db:migrate": "pnpm --filter @rivet/api prisma:migrate",
-    "db:seed": "pnpm --filter @rivet/api prisma:seed"
+    "db:seed": "pnpm --filter @rivet/api prisma:seed",
+    "db:seed:production": "pnpm --filter @rivet/api prisma:seed:production"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
