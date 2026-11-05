@@ -44,8 +44,8 @@ export function MobileActionBar({
         visible ? 'translate-y-0' : 'pointer-events-none translate-y-full',
       )}
     >
-      <div className="mx-auto flex max-w-[1280px] items-center gap-2 px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-6">
-        <Button size="lg" className="flex-1" tabIndex={visible ? 0 : -1} onClick={() => open()}>
+      <div className="mx-auto flex max-w-[1280px] items-center gap-2 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-6">
+        <Button size="lg" className="min-w-0 flex-1 px-3 sm:px-6" tabIndex={visible ? 0 : -1} onClick={() => open()}>
           Request a Quotation
         </Button>
         {phone && (
