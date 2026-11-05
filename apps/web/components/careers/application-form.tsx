@@ -108,8 +108,8 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
 
   if (status === 'success') {
     return (
-      <div className="rounded-[20px] border border-border bg-surface p-8 text-center md:p-10">
-        <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-gold/15 text-gold">
+      <div className="rounded-[8px] border border-border bg-surface p-6 text-center sm:p-8 md:p-10">
+        <div className="mx-auto grid h-16 w-16 place-items-center rounded-[8px] bg-bg text-success-ink">
           <Check size={30} />
         </div>
         <h2 className="mt-6 text-[1.75rem]">Application received</h2>
@@ -126,10 +126,10 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
       noValidate
       method="post"
       data-ready={ready ? 'true' : undefined}
-      className="space-y-4 rounded-[20px] border border-border bg-surface p-6 md:p-8"
+      className="space-y-4 rounded-[8px] border border-border bg-surface p-5 sm:p-6 md:p-8"
     >
       <div>
-        <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-gold">
+        <p className="eyebrow text-gold-ink">
           Apply
         </p>
         <h2 className="mt-2 text-[1.5rem]">Submit your CV</h2>
@@ -174,12 +174,12 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
           value={fields.coverLetter}
           onChange={(e) => set('coverLetter', e.target.value)}
           placeholder="Optional — a short note about why this role fits."
-          className="w-full rounded-[12px] border border-border bg-surface px-4 py-3 text-[1rem] outline-none placeholder:text-muted/60 focus:border-navy"
+          className="w-full rounded-[6px] border border-border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg py-3 text-[1rem] outline-none placeholder:text-muted focus:border-navy focus:ring-2 focus:ring-navy/15 dark:focus:border-gold dark:focus:ring-gold/25"
         />
       </div>
       <div>
         <p id={`${cvId}-label`} className="mb-1.5 text-[0.875rem] font-medium text-ink">
-          CV <span className="text-gold">*</span>
+          CV <span className="text-gold-ink">*</span>
         </p>
         {/*
           The file input is the one focusable, labelled control. It is visually
@@ -203,7 +203,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
           onChange={(e) => pickFile(e.target.files?.[0] ?? null)}
         />
         {cv ? (
-          <div className="flex items-center justify-between gap-3 rounded-[12px] border border-border bg-bg px-4 py-3 peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-2">
+          <div className="flex items-center justify-between gap-3 rounded-[8px] border border-border bg-bg px-4 py-3 peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-2">
             <p id={`${cvId}-file`} className="min-w-0 truncate text-[0.875rem]">
               <span className="sr-only">Selected file: </span>
               {cv.name}
@@ -224,12 +224,12 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
           <label
             htmlFor={cvId}
             className={cn(
-              'flex w-full cursor-pointer flex-col items-center gap-2 rounded-[12px] border border-dashed px-4 py-8 text-center transition-colors hover:border-gold hover:bg-gold/5',
+              'flex w-full cursor-pointer flex-col items-center gap-2 rounded-[8px] border border-dashed px-4 py-8 text-center transition-colors hover:border-navy hover:bg-bg dark:hover:border-gold',
               'peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-2',
-              cvError ? 'border-error/60' : 'border-border',
+              cvError ? 'border-error-ink' : 'border-border',
             )}
           >
-            <FileUp size={22} className="text-gold" strokeWidth={1.5} aria-hidden="true" />
+            <FileUp size={22} className="text-navy dark:text-gold" strokeWidth={1.5} aria-hidden="true" />
             <span className="text-[0.875rem] font-medium" aria-hidden="true">
               Upload your CV (PDF)
             </span>
@@ -239,7 +239,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
           </label>
         )}
         {cvError && (
-          <p id={`${cvId}-error`} className="mt-1.5 text-[0.75rem] text-error">
+          <p id={`${cvId}-error`} className="mt-1.5 text-[0.8125rem] text-error-ink">
             {cvError}
           </p>
         )}
@@ -254,7 +254,7 @@ export function ApplicationForm({ slug, title }: { slug: string; title: string }
         {status === 'submitting' ? 'Submitting…' : 'Submit application'}
       </Button>
       {submitError && (
-        <p className="text-center text-[0.8125rem] text-error" role="alert">
+        <p className="text-center text-[0.875rem] text-error-ink" role="alert">
           {submitError}
         </p>
       )}
@@ -286,7 +286,7 @@ function Field({
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-[0.875rem] font-medium text-ink">
-        {label} {required && <span className="text-gold">*</span>}
+        {label} {required && <span className="text-gold-ink">*</span>}
       </label>
       <input
         id={id}
@@ -299,12 +299,12 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={cn(
-          'h-12 w-full rounded-[12px] border bg-surface px-4 text-[1rem] outline-none placeholder:text-muted/60 focus:border-navy',
-          error ? 'border-error/60' : 'border-border',
+          'h-12 w-full rounded-[6px] border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg text-[1rem] outline-none placeholder:text-muted focus:border-navy focus:ring-2 focus:ring-navy/15 dark:focus:border-gold dark:focus:ring-gold/25',
+          error ? 'border-error-ink' : 'border-border',
         )}
       />
       {error && (
-        <p id={errorId} className="mt-1.5 text-[0.75rem] text-error">
+        <p id={errorId} className="mt-1.5 text-[0.8125rem] text-error-ink">
           {error}
         </p>
       )}

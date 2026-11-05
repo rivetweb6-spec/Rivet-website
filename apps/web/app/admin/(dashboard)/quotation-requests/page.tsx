@@ -204,7 +204,7 @@ export default function AdminQuotationRequestsPage() {
                 <td className="px-5 py-3 text-right">
                   <button
                     type="button"
-                    className="text-navy hover:text-gold"
+                    className="py-1.5 text-navy hover:text-gold"
                     onClick={() => open(r)}
                   >
                     Review

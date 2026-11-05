@@ -18,7 +18,7 @@ export default async function RequestQuotationPage() {
     <>
       <PageHero
         lead={
-          <div className="mb-8 text-white/70 [&_a]:text-white/70 [&_a:hover]:text-gold [&_[aria-current]]:text-white">
+          <div>
             <Breadcrumbs
               items={[
                 { name: 'Home', path: '/' },
@@ -27,36 +27,36 @@ export default async function RequestQuotationPage() {
             />
           </div>
         }
-        eyebrow="Project pricing"
+        eyebrow="Quotations"
         title="Request a quotation"
-        description="Tell us about your project. We prepare tailored quotations for elevators, granite, doors, furniture and building materials supplied in Ethiopia."
+        description="Tell us about your project and we will prepare a tailored quotation for elevators, escalators, granite, doors, furniture, sanitary goods or building materials."
       />
       <Section>
         <Container>
           <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-[0.85fr_1.15fr]">
             <div>
-              <h2 className="text-[1.5rem]">How it works</h2>
+              <h2 className="headline-display text-[1.5rem] sm:text-[1.75rem]">How it works</h2>
               <ol className="mt-6 space-y-4 text-[0.9375rem] leading-relaxed text-muted">
                 <li>
                   <strong className="text-ink">1. Share your needs</strong> — product category,
                   quantity, and project details.
                 </li>
                 <li>
-                  <strong className="text-ink">2. We review</strong> — a RIVET specialist matches
-                  supply options to your specification.
+                  <strong className="text-ink">2. We review</strong> — a RIVET COMPANY specialist
+                  matches supply options to your specification.
                 </li>
                 <li>
                   <strong className="text-ink">3. Receive a quotation</strong> — clear pricing and
-                  next steps for your build.
+                  next steps for your project.
                 </li>
               </ol>
               <p className="mt-8 text-[0.9375rem] text-muted">
                 Prefer to browse first?{' '}
-                <Link href="/products" className="text-navy underline-offset-2 hover:text-gold hover:underline">
+                <Link href="/products" className="text-navy font-semibold underline-offset-4 hover:underline">
                   Explore products
                 </Link>{' '}
                 or{' '}
-                <Link href="/contact" className="text-navy underline-offset-2 hover:text-gold hover:underline">
+                <Link href="/contact" className="text-navy font-semibold underline-offset-4 hover:underline">
                   contact our team
                 </Link>
                 .

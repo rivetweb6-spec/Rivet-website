@@ -10,31 +10,14 @@ import {
   AdminTextarea,
 } from '@/components/admin/ui';
 import { ImageUploadField } from '@/components/admin/image-upload-field';
+import { HOME_COPY } from '@/lib/data/home-copy';
 
 const defaults = {
-  eyebrow: 'River Company · Premium Imports',
-  headline: 'Engineering the architecture',
-  headlineAccent: 'of ambition.',
-  subheadline:
-    'Elevators, granite, doors and fine building materials — imported with precision, installed with mastery.',
+  ...HOME_COPY,
   heroImage: '',
-  introEyebrow: 'The River Company Standard',
-  introTitle: 'A flagship of imported precision.',
-  introBody:
-    "For nearly two decades, RIVET has brought the world's finest construction and architectural products to landmark projects — from machine-room-less elevators to full-slab granite and engineered building materials.",
-  introBodySecondary:
-    'We operate the way we build: with restraint, precision, and an obsession for the details that others overlook.',
   introImage: '',
-  gmName: 'General Manager',
-  gmPosition: 'General Manager',
   gmPhoto: '',
-  gmMessage:
-    'Every project we take on is a commitment — to specification, to craft, and to the people who will live and work in the spaces we help build.',
-  engName: 'Engineering Manager',
-  engPosition: 'Engineering Manager',
   engPhoto: '',
-  engMessage:
-    'Engineering is the quiet work behind a confident installation. We specify with care so that what arrives on site performs as promised.',
 };
 
 export default function AdminHomePage() {

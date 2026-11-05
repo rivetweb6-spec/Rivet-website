@@ -259,6 +259,7 @@ export type Certificate = {
   description: string | null;
   image: string | null;
   images: string[] | null;
+  pdf?: string | null;
   kind: CertificateKind;
   order: number;
 };

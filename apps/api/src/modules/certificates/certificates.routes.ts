@@ -25,6 +25,7 @@ const upsertSchema = z.object({
   description: z.string().optional().nullable(),
   image: imageRefSchema.optional().nullable().or(z.literal('')),
   images: z.array(imageRefSchema.or(z.literal(''))).optional().nullable(),
+  pdf: imageRefSchema.optional().nullable().or(z.literal('')),
   kind: kindEnum.optional(),
   order: z.number().int().optional(),
   status: z.enum(['DRAFT', 'PUBLISHED']).optional(),
@@ -70,12 +71,13 @@ router.post(
   validate({ body: upsertSchema }),
   asyncHandler(async (req, res) => {
     const body = req.body as z.infer<typeof upsertSchema>;
-    const { image, images, ...data } = body;
+    const { image, images, pdf, ...data } = body;
     const extras = extraImages(images);
     const certificate = await prisma.certificate.create({
       data: {
         ...data,
         image: image || null,
+        pdf: pdf || null,
         images: extras,
       },
     });
@@ -111,13 +113,14 @@ router.put(
     if (!existing) throw notFound('Certificate not found');
 
     const body = req.body as Partial<z.infer<typeof upsertSchema>>;
-    const { image, images, ...data } = body;
+    const { image, images, pdf, ...data } = body;
     const certificate = await prisma.certificate.update({
       where: { id },
       data: {
         ...data,
         ...(image !== undefined ? { image: image || null } : {}),
         ...(images !== undefined ? { images: extraImages(images) } : {}),
+        ...(pdf !== undefined ? { pdf: pdf || null } : {}),
       },
     });
     res.json({ certificate: serializeCertificate(certificate) });

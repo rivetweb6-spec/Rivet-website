@@ -1,8 +1,5 @@
 import type { Metadata } from 'next';
-import {
-  Cormorant_Garamond,
-  Inter,
-} from 'next/font/google';
+import { Inter, Manrope } from 'next/font/google';
 import {
   DEFAULT_DESCRIPTION,
   DEFAULT_OG_IMAGE,
@@ -21,11 +18,11 @@ const inter = Inter({
   display: 'swap',
 });
 
-const cormorant = Cormorant_Garamond({
+/** Headings: a precise, engineered sans that pairs with Inter body text. */
+const manrope = Manrope({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  style: ['normal', 'italic'],
-  variable: '--font-cormorant',
+  weight: ['500', '600', '700', '800'],
+  variable: '--font-manrope',
   display: 'swap',
 });
 
@@ -35,7 +32,7 @@ export const metadata: Metadata = {
     default: `${SITE_NAME} | ${SITE_TAGLINE}`,
     // Used only when a page passes a plain string title (e.g. admin).
     // Public pages use absolute titles via pageMetadata().
-    template: '%s | RIVET',
+    template: '%s | RIVET COMPANY',
   },
   description: DEFAULT_DESCRIPTION,
   keywords: SITE_KEYWORDS,
@@ -69,14 +66,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${cormorant.variable}`}
+      className={`${inter.variable} ${manrope.variable}`}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('rivet-theme');var d=t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark')}catch(e){}})()`,
+            __html: `(function(){try{var t=localStorage.getItem('rivet-theme');if(t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark')}catch(e){}})()`,
           }}
         />
       </head>

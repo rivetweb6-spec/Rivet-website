@@ -15,25 +15,25 @@ function resolveSiteUrl(): string {
 
 export const SITE_URL = resolveSiteUrl();
 
-export const SITE_NAME = 'RIVET — River Company';
+export const SITE_NAME = 'RIVET COMPANY';
 
-export const SITE_TAGLINE = 'Premium Construction & Architectural Products';
+export const SITE_TAGLINE = 'Elevators & Building Materials in Ethiopia';
 
 export const DEFAULT_DESCRIPTION =
-  'RIVET (River Company) imports premium elevators, granite, doors, sanitary ware and building materials for projects in Ethiopia. Request a quotation.';
+  'RIVET COMPANY supplies elevators, passenger lifts, escalators, granite, doors, furniture, sanitary goods and building materials in Ethiopia. Get a quotation.';
 
 export const SITE_KEYWORDS = [
-  'RIVET',
-  'River Company',
-  'elevators Ethiopia',
+  'RIVET COMPANY',
+  'elevators in Ethiopia',
   'passenger lifts',
-  'granite supplier',
-  'architectural doors',
-  'building materials import',
-  'construction products',
-  'sanitary ware',
+  'elevator solutions',
+  'building materials suppliers',
+  'escalators Ethiopia',
+  'granite Ethiopia',
+  'doors Ethiopia',
+  'sanitary goods',
   'office furniture',
-  'premium elevators',
+  'elevator installation',
   'request quotation',
   'Addis Ababa',
 ];
@@ -66,7 +66,7 @@ export function buildProductAltText(
   const parts = [name];
   if (category) parts.push(category);
   if (detail) parts.push(detail);
-  return `${parts.join(' — ')} supplied by Rivet in Ethiopia`;
+  return `${parts.join(' — ')} supplied by RIVET COMPANY in Ethiopia`;
 }
 
 export type CategoryAncestor = {
@@ -91,8 +91,8 @@ export function getCategoryAncestors(
 export function buildPersonAltText(name: string, role?: string | null): string {
   const rolePart = role?.trim();
   return rolePart
-    ? `${name}, ${rolePart} at River Company (RIVET)`
-    : `${name} — River Company (RIVET)`;
+    ? `${name}, ${rolePart} at RIVET COMPANY`
+    : `${name} — RIVET COMPANY`;
 }
 
 /** Keep meta descriptions in the typical SERP window without cutting mid-word. */
@@ -137,14 +137,14 @@ type PageSeoInput = {
   section?: string | null;
 };
 
-/** Append brand suffix only when the title does not already mention RIVET / River Company. */
+/** Append the brand suffix only when the title does not already mention RIVET. */
 export function withBrand(title: string): string {
   const trimmed = title.trim();
   if (!trimmed) return SITE_NAME;
-  if (/\bRIVET\b/i.test(trimmed) || /River Company/i.test(trimmed) || /\bRivet\b/.test(trimmed)) {
+  if (/\bRIVET\b/i.test(trimmed)) {
     return trimmed;
   }
-  return `${trimmed} | RIVET`;
+  return `${trimmed} | ${SITE_NAME}`;
 }
 
 /** Unique keywords preserving order (primary keyword first). */
@@ -193,7 +193,7 @@ export function pageMetadata({
   const socialDescription = truncateMetaDescription(ogDescription?.trim() || metaDescription);
 
   return {
-    // Absolute title bypasses the root `%s | RIVET` template (avoids “| Rivet | RIVET”).
+    // Absolute title bypasses the root `%s | RIVET COMPANY` template (avoids a doubled brand).
     title: { absolute: fullTitle },
     description: metaDescription,
     keywords,
@@ -302,7 +302,7 @@ export function productMetadata(product: Product): Metadata {
   const fallbackTitle = category ? `${product.name} in Ethiopia` : product.name;
   const fallbackDescription =
     product.shortDescription?.trim() ||
-    `Explore ${product.name}${category ? ` from our ${category} range` : ''} at Rivet. Request a quotation for premium construction and architectural products in Ethiopia.`;
+    `${product.name}${category ? ` from the ${category} range` : ''} at RIVET COMPANY. View specifications and request a quotation for your project in Ethiopia.`;
 
   return resolveSeo(product, {
     title: fallbackTitle,
@@ -317,10 +317,10 @@ export function productMetadata(product: Product): Metadata {
 }
 
 export function categoryMetadata(category: Category): Metadata {
-  const fallbackTitle = `Premium ${category.name} in Ethiopia`;
+  const fallbackTitle = `${category.name} in Ethiopia`;
   const fallbackDescription =
     category.description?.trim() ||
-    `Explore high-quality ${category.name.toLowerCase()} from Rivet. Request a quotation for durable, modern products supplied in Ethiopia.`;
+    `${category.name} supplied by RIVET COMPANY for residential and commercial projects in Ethiopia. Browse the range and request a quotation.`;
 
   return resolveSeo(category, {
     title: fallbackTitle,
@@ -338,14 +338,14 @@ export function serviceMetadata(service: Service): Metadata {
   const fallbackTitle = `${service.title} in Ethiopia`;
   const fallbackDescription =
     service.narrative.slice(0, 200) ||
-    `${service.title} from Rivet — quality elevators and building solutions in Ethiopia. Request a quotation today.`;
+    `${service.title} by RIVET COMPANY for projects in Ethiopia. See what is included and request a quotation.`;
 
   return resolveSeo(service, {
     title: fallbackTitle,
     description: fallbackDescription,
     path: `/services/${service.slug}`,
     image: service.ogImage || service.image || DEFAULT_OG_IMAGE,
-    keywords: mergeKeywords([service.title, 'Ethiopia', 'Rivet services'], SITE_KEYWORDS.slice(0, 5)),
+    keywords: mergeKeywords([service.title, `${service.title} Ethiopia`, 'RIVET COMPANY services'], SITE_KEYWORDS.slice(0, 5)),
   });
 }
 
@@ -357,7 +357,7 @@ export function articleMetadata(article: NewsArticle): Metadata {
     image: article.ogImage || article.coverImage || assets.news.n1,
     type: 'article',
     keywords: mergeKeywords(
-      [article.title, article.category ?? 'RIVET news'],
+      [article.title, article.category ?? 'RIVET COMPANY news'],
       SITE_KEYWORDS.slice(0, 4),
     ),
     publishedTime: article.publishedAt,
@@ -370,13 +370,13 @@ export function vacancyMetadata(vacancy: Vacancy): Metadata {
   const fromBody = stripHtml(vacancy.description).slice(0, 200);
   const fallbackDescription =
     fromBody ||
-    `Apply for ${vacancy.title} at River Company (RIVET) in Ethiopia. Review the role, requirements, and application deadline.`;
+    `Apply for the ${vacancy.title} role at RIVET COMPANY in Ethiopia. Review the responsibilities, requirements and application deadline.`;
   return resolveSeo(vacancy, {
     title: `${vacancy.title} | Careers`,
     description: fallbackDescription,
     path: `/careers/${vacancy.slug}`,
     keywords: mergeKeywords(
-      [vacancy.title, vacancy.department, 'jobs Ethiopia', 'Rivet vacancy'],
+      [vacancy.title, vacancy.department, 'jobs Ethiopia', 'RIVET COMPANY vacancy'],
       SITE_KEYWORDS.slice(0, 4),
     ),
   });

@@ -1,36 +1,43 @@
 import * as Icons from 'lucide-react';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
-import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
+import { Stagger, StaggerItem } from '@/components/motion/reveal';
 import { advantages } from '@/lib/data/content';
 
 export function WhyChoose() {
   return (
-    <Section>
+    <Section className="bg-surface">
       <Container>
-        <FadeUp>
-          <div className="mb-16 max-w-2xl rivet-line lg:pl-8">
-            <Eyebrow>Why River Company</Eyebrow>
-            <h2 className="headline-display mt-5 text-[2.25rem] sm:text-[2.75rem]">
-              The confidence of engineered quality.
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.6fr)] lg:gap-16">
+          <div>
+            <Eyebrow>Why RIVET COMPANY</Eyebrow>
+            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">
+              A dependable partner from specification to handover.
             </h2>
+            <p className="mt-4 leading-relaxed text-muted">
+              Developers, contractors and architects get one team that takes responsibility for
+              the product, the installation and the service that follows.
+            </p>
           </div>
-        </FadeUp>
 
-        <Stagger className="grid gap-x-12 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
-          {advantages.map((a) => {
-            const Icon = (Icons[a.icon as keyof typeof Icons] ?? Icons.Check) as Icons.LucideIcon;
-            return (
-              <StaggerItem key={a.title}>
-                <div className="group flex items-center gap-5 border-b border-divider py-7 transition-colors duration-500 hover:border-gold/40">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-border text-navy transition-all duration-500 group-hover:border-gold group-hover:text-gold">
-                    <Icon size={20} strokeWidth={1.25} />
-                  </span>
-                  <h3 className="text-[1.0625rem] font-medium tracking-wide text-ink">{a.title}</h3>
-                </div>
-              </StaggerItem>
-            );
-          })}
-        </Stagger>
+          <Stagger className="grid gap-x-8 sm:grid-cols-2">
+            {advantages.map((a) => {
+              const Icon = (Icons[a.icon as keyof typeof Icons] ?? Icons.Check) as Icons.LucideIcon;
+              return (
+                <StaggerItem key={a.title}>
+                  <div className="flex gap-4 border-b border-border py-5">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[6px] bg-bg text-navy">
+                      <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
+                    </span>
+                    <div>
+                      <h3 className="text-[1rem] font-semibold text-ink">{a.title}</h3>
+                      <p className="mt-1 text-[0.9375rem] leading-relaxed text-muted">{a.description}</p>
+                    </div>
+                  </div>
+                </StaggerItem>
+              );
+            })}
+          </Stagger>
+        </div>
       </Container>
     </Section>
   );

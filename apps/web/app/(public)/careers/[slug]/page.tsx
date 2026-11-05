@@ -55,9 +55,9 @@ export default async function VacancyPage({ params }: { params: Params }) {
         employmentType={vacancy.employmentType}
         location={vacancy.location}
       />
-      <section className="bg-navy pt-32 pb-16 md:pt-40">
+      <section className="border-b border-border bg-bg pt-28 pb-12 md:pt-32 md:pb-16">
         <Container>
-          <div className="text-white/70 [&_a]:text-white/70 [&_a:hover]:text-gold [&_[aria-current]]:text-white">
+          <div>
             <Breadcrumbs
               items={[
                 { name: 'Home', path: '/' },
@@ -66,27 +66,27 @@ export default async function VacancyPage({ params }: { params: Params }) {
               ]}
             />
           </div>
-          <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <div className="flex flex-wrap gap-x-3 gap-y-1 text-[0.75rem] uppercase tracking-[0.14em] text-gold/80">
+              <div className="flex flex-wrap gap-x-3 gap-y-1 eyebrow text-navy-400 dark:text-gold">
                 {vacancy.department && <span>{vacancy.department}</span>}
                 {vacancy.location && <span>{vacancy.location}</span>}
                 {vacancy.employmentType && <span>{vacancy.employmentType}</span>}
               </div>
-              <h1 className="mt-4 text-[2.25rem] text-white sm:text-[3rem]">{vacancy.title}</h1>
+              <h1 className="headline-display mt-3 text-[2.25rem] sm:text-[2.75rem] lg:text-[3.25rem]">{vacancy.title}</h1>
             </div>
-            <div className="border border-gold/40 bg-navy-deep px-5 py-4 text-white">
-              <p className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-gold">
+            <div className="rounded-[8px] border border-border bg-canvas px-5 py-4 text-ink lg:min-w-[12rem]">
+              <p className="eyebrow text-gold-ink">
                 Close
               </p>
-              <p className="mt-1 font-display text-[1.25rem]">{formatDeadline(vacancy.deadline)}</p>
+              <p className="mt-1 font-display text-[1.25rem] font-bold">{formatDeadline(vacancy.deadline)}</p>
               {accepting && remaining >= 0 && remaining <= 14 && (
-                <p className="mt-1 text-[0.75rem] text-white/60">
+                <p className="mt-1 text-[0.8125rem] text-muted">
                   {remaining === 0 ? 'Closes today' : `${remaining} day${remaining === 1 ? '' : 's'} left`}
                 </p>
               )}
               {!accepting && (
-                <p className="mt-1 text-[0.75rem] text-white/60">No longer accepting applications</p>
+                <p className="mt-1 text-[0.8125rem] text-muted">No longer accepting applications</p>
               )}
             </div>
           </div>
@@ -97,18 +97,18 @@ export default async function VacancyPage({ params }: { params: Params }) {
         <Container>
           <div className="grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
             <div>
-              <h2 className="text-[1.5rem]">The role</h2>
+              <h2 className="headline-display text-[1.5rem] sm:text-[1.75rem]">The role</h2>
               <RichText
-                className="prose prose-lg mt-5 max-w-none text-ink prose-headings:font-display prose-headings:text-navy prose-a:text-navy prose-li:marker:text-gold"
+                className="prose prose-lg mt-5 max-w-none text-ink prose-headings:font-display prose-headings:text-navy prose-a:text-navy dark:prose-invert dark:prose-headings:text-ink dark:prose-a:text-gold prose-li:marker:text-gold"
                 html={vacancy.description}
               />
-              <h2 className="mt-12 text-[1.5rem]">Requirements</h2>
+              <h2 className="headline-display mt-12 text-[1.5rem] sm:text-[1.75rem]">Requirements</h2>
               <RichText
-                className="prose prose-lg mt-5 max-w-none text-ink prose-headings:font-display prose-headings:text-navy prose-a:text-navy prose-li:marker:text-gold"
+                className="prose prose-lg mt-5 max-w-none text-ink prose-headings:font-display prose-headings:text-navy prose-a:text-navy dark:prose-invert dark:prose-headings:text-ink dark:prose-a:text-gold prose-li:marker:text-gold"
                 html={vacancy.requirements}
               />
               <p className="mt-12">
-                <Link href="/careers" className="text-[0.9375rem] font-medium text-navy hover:text-gold">
+                <Link href="/careers" className="text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline">
                   ← All vacancies
                 </Link>
               </p>
@@ -117,7 +117,7 @@ export default async function VacancyPage({ params }: { params: Params }) {
               {accepting ? (
                 <ApplicationForm slug={vacancy.slug} title={vacancy.title} />
               ) : (
-                <div className="rounded-[20px] border border-border bg-surface p-8">
+                <div className="rounded-[8px] border border-border bg-surface p-8">
                   <h2 className="text-[1.5rem]">Applications closed</h2>
                   <p className="mt-3 text-muted">
                     This vacancy is no longer accepting CVs. See other open roles, or check back
@@ -125,7 +125,7 @@ export default async function VacancyPage({ params }: { params: Params }) {
                   </p>
                   <Link
                     href="/careers"
-                    className="mt-6 inline-flex text-[0.9375rem] font-medium text-navy hover:text-gold"
+                    className="mt-6 inline-flex text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline"
                   >
                     View open vacancies →
                   </Link>

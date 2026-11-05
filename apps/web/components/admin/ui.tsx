@@ -35,7 +35,7 @@ export function AdminCard({
   return (
     <div
       className={cn(
-        'rounded-[16px] border border-border bg-surface p-5 shadow-[var(--shadow-sm)]',
+        'relative rounded-[16px] border border-border bg-surface p-5 shadow-[var(--shadow-sm)]',
         className,
       )}
     >

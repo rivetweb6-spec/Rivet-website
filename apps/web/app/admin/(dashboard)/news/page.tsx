@@ -144,7 +144,7 @@ export default function AdminNewsPage() {
                 <td className="px-5 py-3 text-right">
                   <button
                     type="button"
-                    className="mr-3 text-navy hover:text-gold"
+                    className="mr-3 py-1.5 text-navy hover:text-gold"
                     onClick={() => {
                       setEditingId(a.id);
                       setForm({
@@ -161,7 +161,7 @@ export default function AdminNewsPage() {
                   >
                     Edit
                   </button>
-                  <button type="button" className="text-error" onClick={() => remove(a.id)}>
+                  <button type="button" className="py-1.5 text-error" onClick={() => remove(a.id)}>
                     Delete
                   </button>
                 </td>

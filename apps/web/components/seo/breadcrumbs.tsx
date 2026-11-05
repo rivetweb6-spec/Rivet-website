@@ -25,7 +25,7 @@ export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
                     {item.name}
                   </span>
                 ) : (
-                  <Link href={item.path} className="hover:text-gold focus-visible:text-gold">
+                  <Link href={item.path} className="inline-block py-1 underline-offset-4 hover:text-navy hover:underline">
                     {item.name}
                   </Link>
                 )}

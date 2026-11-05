@@ -1,17 +1,17 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Check } from 'lucide-react';
+import { ArrowRight, Check } from 'lucide-react';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { ProductGallery } from '@/components/products/gallery';
 import { CategoryPageView } from '@/components/products/category-page';
 import { RequestQuotationButton } from '@/components/quotation/request-quotation-button';
 import { Breadcrumbs } from '@/components/seo/breadcrumbs';
 import { ProductJsonLd } from '@/components/seo/json-ld';
-import { RivetImage } from '@/components/ui/rivet-image';
+import { ProductCard } from '@/components/products/category-group';
+import { buttonVariants } from '@/components/ui/button-variants';
 import { productInterests } from '@/lib/data/content';
 import { api } from '@/lib/api';
-import { assets } from '@/lib/assets';
 import {
   buildProductAltText,
   categoryMetadata,
@@ -162,22 +162,17 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
         specs={specs}
       />
 
-      <section className="bg-bg pt-28 pb-6 md:pt-32">
+      <section className="border-b border-border bg-canvas pt-28 pb-16 md:pt-32 md:pb-20">
         <Container>
           <Breadcrumbs items={crumbs} />
-        </Container>
-      </section>
-
-      <Section className="bg-bg pt-6">
-        <Container>
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+          <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16">
             <ProductGallery images={galleryImages} name={product.name} />
 
             <div>
               {product.category && (
                 <Link
                   href={`/products/${product.category.slug}`}
-                  className="inline-block transition-colors hover:text-gold"
+                  className="inline-block rounded-[4px] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
                 >
                   <Eyebrow>
                     {[
@@ -187,34 +182,36 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                   </Eyebrow>
                 </Link>
               )}
-              <h1 className="mt-3 text-[2.25rem] sm:text-[2.75rem]">{product.name}</h1>
+              <h1 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem] lg:text-[2.75rem]">{product.name}</h1>
               {product.shortDescription && (
                 <p className="mt-4 text-[1.125rem] leading-relaxed text-muted">
                   {product.shortDescription}
                 </p>
               )}
 
-              <div className="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-[0.9375rem]">
-                {product.brand && (
-                  <p>
-                    <span className="text-muted">Brand</span>
-                    <span className="ml-2 font-medium text-ink">{product.brand}</span>
-                  </p>
-                )}
-                {product.countryOfOrigin && (
-                  <p>
-                    <span className="text-muted">Origin</span>
-                    <span className="ml-2 font-medium text-ink">{product.countryOfOrigin}</span>
-                  </p>
-                )}
-              </div>
+              {(product.brand || product.countryOfOrigin) && (
+                <dl className="mt-6 flex flex-wrap gap-x-10 gap-y-3 border-y border-border py-4 text-[0.9375rem]">
+                  {product.brand && (
+                    <div>
+                      <dt className="text-[0.8125rem] text-muted">Brand</dt>
+                      <dd className="mt-0.5 font-semibold text-ink">{product.brand}</dd>
+                    </div>
+                  )}
+                  {product.countryOfOrigin && (
+                    <div>
+                      <dt className="text-[0.8125rem] text-muted">Origin</dt>
+                      <dd className="mt-0.5 font-semibold text-ink">{product.countryOfOrigin}</dd>
+                    </div>
+                  )}
+                </dl>
+              )}
 
               {features.length > 0 && (
                 <ul className="mt-8 space-y-3">
                   {features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-[0.9375rem]">
+                    <li key={f} className="flex items-start gap-3 text-[0.9375rem] text-ink">
                       <span
-                        className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-gold/15 text-gold"
+                        className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-[4px] bg-bg text-navy"
                         aria-hidden="true"
                       >
                         <Check size={13} strokeWidth={2.5} />
@@ -235,31 +232,36 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                 />
                 <Link
                   href="/request-quotation"
-                  className="inline-flex h-14 items-center justify-center rounded-[12px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
+                  className={buttonVariants({ variant: 'outline', size: 'lg' })}
                 >
                   Open full quotation form
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex h-14 items-center justify-center rounded-[12px] border border-navy/20 px-8 text-[1rem] font-medium text-navy transition-all hover:border-gold hover:text-gold"
+                  className="inline-flex h-12 items-center gap-1.5 rounded-[6px] px-2 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
                 >
                   Contact us
+                  <ArrowRight size={16} aria-hidden="true" />
                 </Link>
               </div>
             </div>
           </div>
+        </Container>
+      </section>
 
-          {(product.description || specs.length > 0) && (
-            <div className="mt-20 grid gap-12 border-t border-divider pt-16 lg:grid-cols-2">
+      {(product.description || specs.length > 0) && (
+        <Section>
+          <Container>
+            <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
               {product.description && (
                 <div>
-                  <h2 className="text-[1.75rem]">Description</h2>
-                  <p className="mt-4 leading-relaxed text-muted">{product.description}</p>
+                  <h2 className="headline-display text-[1.5rem] sm:text-[1.75rem]">Description</h2>
+                  <p className="mt-4 whitespace-pre-line text-[1.0625rem] leading-relaxed text-muted">{product.description}</p>
                 </div>
               )}
               {specs.length > 0 && (
                 <div>
-                  <h2 className="text-[1.75rem]">Specifications</h2>
+                  <h2 className="headline-display text-[1.5rem] sm:text-[1.75rem]">Specifications</h2>
                   <dl className="mt-4 divide-y divide-divider border-y border-divider">
                     {specs.map((s) => (
                       <div
@@ -267,31 +269,31 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                         className="flex justify-between gap-6 py-3.5 text-[0.9375rem]"
                       >
                         <dt className="text-muted">{s.label}</dt>
-                        <dd className="font-medium text-ink">{s.value}</dd>
+                        <dd className="text-right font-medium text-ink">{s.value}</dd>
                       </div>
                     ))}
                   </dl>
                 </div>
               )}
             </div>
-          )}
-        </Container>
-      </Section>
+          </Container>
+        </Section>
+      )}
 
       {relatedServices.length > 0 && (
         <Section className="bg-surface">
           <Container>
             <Eyebrow>Services</Eyebrow>
-            <h2 className="mt-3 text-[2rem]">Relevant services</h2>
-            <ul className="mt-8 grid gap-4 md:grid-cols-3">
+            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.25rem]">Relevant services</h2>
+            <ul className="mt-8 grid gap-5 md:grid-cols-3">
               {relatedServices.map((s) => (
                 <li key={s.id}>
                   <Link
                     href={`/services/${s.slug}`}
-                    className="block rounded-[16px] border border-border bg-bg p-6 transition-colors hover:border-gold/40"
+                    className="luxury-card group block h-full rounded-[8px] bg-canvas p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
                   >
-                    <h3 className="text-[1.125rem]">{s.title}</h3>
-                    <p className="mt-2 line-clamp-3 text-[0.875rem] text-muted">{s.narrative}</p>
+                    <h3 className="text-[1.125rem] group-hover:underline group-hover:underline-offset-4">{s.title}</h3>
+                    <p className="mt-2 line-clamp-3 text-[0.9375rem] leading-relaxed text-muted">{s.narrative}</p>
                   </Link>
                 </li>
               ))}
@@ -304,45 +306,22 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
         <Section>
           <Container>
             <Eyebrow>Continue exploring</Eyebrow>
-            <h2 className="mt-3 text-[2rem]">Related products</h2>
+            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.25rem]">Related products</h2>
             {product.category && (
               <p className="mt-2 text-muted">
                 More from{' '}
                 <Link
                   href={`/products/${product.category.slug}`}
-                  className="text-navy underline-offset-2 hover:text-gold hover:underline"
+                  className="font-semibold text-navy underline underline-offset-4 hover:no-underline"
                 >
                   {product.category.name}
                 </Link>
               </p>
             )}
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {related.map((p) => {
-                const image = p.images[0]?.url ?? assets.products.p1;
-                const alt =
-                  p.images[0]?.alt ||
-                  buildProductAltText(p.name, product.category?.name, p.shortDescription);
-                return (
-                  <Link
-                    key={p.id}
-                    href={`/products/${p.slug}`}
-                    className="group overflow-hidden rounded-[16px] bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)]"
-                  >
-                    <div className="relative aspect-[4/3] overflow-hidden">
-                      <RivetImage
-                        src={image}
-                        alt={alt}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    </div>
-                    <div className="p-5">
-                      <h3 className="text-[1.0625rem]">{p.name}</h3>
-                    </div>
-                  </Link>
-                );
-              })}
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:gap-6">
+              {related.slice(0, 3).map((p) => (
+                <ProductCard key={p.id} product={p} categoryName={product.category?.name} />
+              ))}
             </div>
           </Container>
         </Section>

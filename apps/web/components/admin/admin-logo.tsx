@@ -16,7 +16,7 @@ export function AdminLogo({
   return (
     <Image
       src={light ? assets.logo.adminLight : assets.logo.admin}
-      alt="RIVET"
+      alt="RIVET COMPANY"
       width={797}
       height={179}
       priority

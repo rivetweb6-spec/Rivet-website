@@ -23,17 +23,17 @@ const SECTION_COPY: Record<
   LEADERSHIP: {
     eyebrow: 'Leadership',
     title: 'General management',
-    description: 'The people who set direction, hold the standard, and represent River Company.',
+    description: 'Leading RIVET COMPANY’s strategy, client relationships and day-to-day operations.',
   },
   ENGINEERING: {
     eyebrow: 'Engineering',
     title: 'Technical direction',
-    description: 'Specification, installation quality, and engineering support from survey to handover.',
+    description: 'Product specification, installation quality and technical support from site survey to handover.',
   },
   TEAM: {
     eyebrow: 'People',
     title: 'The wider team',
-    description: 'Colleagues across operations, showroom, and site who keep every project moving.',
+    description: 'Colleagues in operations, logistics and site work who keep every project on schedule.',
   },
 };
 
@@ -48,21 +48,21 @@ function MemberCard({ member, featured = false }: { member: TeamMember; featured
     <article
       className={
         featured
-          ? 'grid items-center gap-10 overflow-hidden rounded-[20px] border border-border bg-surface p-6 shadow-[var(--shadow-sm)] md:grid-cols-[minmax(0,0.9fr)_1.1fr] md:p-10'
-          : 'h-full overflow-hidden rounded-[16px] border border-border bg-surface shadow-[var(--shadow-sm)]'
+          ? 'grid items-center gap-10 overflow-hidden rounded-[8px] border border-border bg-surface p-6 md:grid-cols-[minmax(0,0.9fr)_1.1fr] md:p-10'
+          : 'h-full overflow-hidden rounded-[8px] border border-border bg-surface'
       }
     >
       <div
         className={
           featured
-            ? 'relative aspect-[4/5] overflow-hidden rounded-[12px] bg-navy/5'
-            : 'relative aspect-[4/5] overflow-hidden bg-navy/5'
+            ? 'relative aspect-[4/5] overflow-hidden rounded-[8px] bg-bg'
+            : 'relative aspect-[4/5] overflow-hidden bg-bg'
         }
       >
         {member.photo ? (
           <RivetImage
             src={member.photo}
-            alt={`${member.fullName}, ${member.position} at River Company (RIVET)`}
+            alt={`${member.fullName}, ${member.position} at RIVET COMPANY`}
             fill
             sizes={featured ? '(max-width: 768px) 100vw, 40vw' : '(max-width: 768px) 100vw, 33vw'}
             className="object-cover"
@@ -72,7 +72,7 @@ function MemberCard({ member, featured = false }: { member: TeamMember; featured
         )}
       </div>
       <div className={featured ? '' : 'p-6'}>
-        <p className="eyebrow text-gold">{member.position}</p>
+        <p className="eyebrow text-gold-ink">{member.position}</p>
         <h3 className={`mt-2 text-navy ${featured ? 'text-[2rem]' : 'text-[1.25rem]'}`}>
           {member.fullName}
         </h3>
@@ -90,7 +90,7 @@ function MemberCard({ member, featured = false }: { member: TeamMember; featured
                 target={href.startsWith('http') ? '_blank' : undefined}
                 rel={href.startsWith('http') ? 'noreferrer' : undefined}
                 aria-label={`${member.fullName} ${label}`}
-                className="grid h-10 w-10 place-items-center rounded-full border border-border text-navy transition-colors hover:border-gold hover:text-gold"
+                className="grid h-10 w-10 place-items-center rounded-[6px] border border-border text-navy transition-colors hover:border-navy hover:bg-bg dark:hover:border-gold"
               >
                 <Icon size={16} strokeWidth={1.5} />
               </a>
@@ -119,7 +119,7 @@ export default async function TeamPage() {
       <PageHero
         eyebrow="Company"
         title="Meet Our Team"
-        description="The people who specify, import, install, and stand behind River Company’s work in Ethiopia."
+        description="The people who plan, supply, install and support RIVET COMPANY projects in Ethiopia."
       />
       <CompanySubnav />
       <Container className="pt-8">
@@ -135,7 +135,7 @@ export default async function TeamPage() {
       {members.length === 0 ? (
         <Section>
           <Container>
-            <p className="text-center text-muted">Team profiles will appear here once they are published.</p>
+            <p className="text-center text-muted">Team profiles will be published here soon.</p>
           </Container>
         </Section>
       ) : (
@@ -145,7 +145,7 @@ export default async function TeamPage() {
               <Container>
                 <FadeUp>
                   <Eyebrow>{SECTION_COPY.LEADERSHIP.eyebrow}</Eyebrow>
-                  <h2 className="mt-3 text-[2rem]">{SECTION_COPY.LEADERSHIP.title}</h2>
+                  <h2 className="headline-display mt-3 text-[2rem]">{SECTION_COPY.LEADERSHIP.title}</h2>
                   <p className="mt-4 max-w-2xl text-muted">{SECTION_COPY.LEADERSHIP.description}</p>
                 </FadeUp>
                 <div className="mt-12 space-y-8">
@@ -164,7 +164,7 @@ export default async function TeamPage() {
               <Container>
                 <FadeUp>
                   <Eyebrow>{SECTION_COPY.ENGINEERING.eyebrow}</Eyebrow>
-                  <h2 className="mt-3 text-[2rem]">{SECTION_COPY.ENGINEERING.title}</h2>
+                  <h2 className="headline-display mt-3 text-[2rem]">{SECTION_COPY.ENGINEERING.title}</h2>
                   <p className="mt-4 max-w-2xl text-muted">{SECTION_COPY.ENGINEERING.description}</p>
                 </FadeUp>
                 <div className="mt-12 space-y-8">
@@ -183,7 +183,7 @@ export default async function TeamPage() {
               <Container>
                 <FadeUp>
                   <Eyebrow>{SECTION_COPY.TEAM.eyebrow}</Eyebrow>
-                  <h2 className="mt-3 text-[2rem]">{SECTION_COPY.TEAM.title}</h2>
+                  <h2 className="headline-display mt-3 text-[2rem]">{SECTION_COPY.TEAM.title}</h2>
                   <p className="mt-4 max-w-2xl text-muted">{SECTION_COPY.TEAM.description}</p>
                 </FadeUp>
                 <Stagger className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -32,42 +32,42 @@ export default async function NewsPage() {
   return (
     <>
       <PageHero
-        eyebrow="Journal"
-        title="News & insights"
-        description="Stories from the showroom, the factory floor, and the projects we supply."
+        eyebrow="News"
+        title="News & updates"
+        description="Company announcements, product updates and project news from RIVET COMPANY."
       />
       <Section>
         <Container>
           {articles.length === 0 ? (
-            <p className="text-center text-muted">No articles published yet.</p>
+            <p className="rounded-[8px] border border-dashed border-border bg-surface p-10 text-center text-muted">No news articles have been published yet.</p>
           ) : (
-            <Stagger className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <Stagger className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:gap-6">
               {articles.map((n) => (
                 <StaggerItem key={n.id}>
                   <Link
                     href={`/news/${n.slug}`}
-                    className="group block overflow-hidden rounded-[16px] bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[var(--shadow-lg)]"
+                    className="luxury-card group flex h-full flex-col overflow-hidden rounded-[8px] bg-canvas"
                   >
-                    <div className="relative aspect-[16/10] overflow-hidden">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-bg">
                       <RivetImage
                         src={n.coverImage ?? assets.news.n1}
-                        alt={`${n.title} — RIVET news`}
+                        alt={`${n.title} — RIVET COMPANY news`}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"
+                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                       />
                       {n.category && (
-                        <span className="absolute left-4 top-4 rounded-full bg-surface/90 px-3 py-1 text-[0.75rem] font-semibold text-navy backdrop-blur">
+                        <span className="absolute left-4 top-4 rounded-[4px] bg-navy px-2.5 py-1 text-[0.75rem] font-semibold text-white">
                           {n.category}
                         </span>
                       )}
                     </div>
-                    <div className="p-6">
-                      <time className="text-[0.75rem] uppercase tracking-[0.14em] text-muted">
+                    <div className="flex flex-1 flex-col p-5 md:p-6">
+                      <time className="text-[0.875rem] text-muted">
                         {formatDate(n.publishedAt)}
                       </time>
-                      <h2 className="mt-3 text-[1.25rem] leading-snug">{n.title}</h2>
-                      {n.excerpt && <p className="mt-2 text-[0.9375rem] text-muted">{n.excerpt}</p>}
+                      <h2 className="mt-2 text-[1.1875rem] leading-snug group-hover:underline group-hover:underline-offset-4">{n.title}</h2>
+                      {n.excerpt && <p className="mt-2 line-clamp-3 text-[0.9375rem] leading-relaxed text-muted">{n.excerpt}</p>}
                     </div>
                   </Link>
                 </StaggerItem>

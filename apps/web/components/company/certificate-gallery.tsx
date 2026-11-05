@@ -1,17 +1,34 @@
 'use client';
 
 import * as React from 'react';
+import { FileText } from 'lucide-react';
 import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { ImageLightbox, allItemImages } from '@/components/company/image-lightbox';
 import type { Certificate } from '@/lib/api';
 
+function PdfLink({ href, label, className }: { href: string; label: string; className?: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`inline-flex items-center gap-1.5 text-[0.8125rem] font-semibold text-navy hover:text-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${className ?? ''}`}
+    >
+      <FileText size={16} strokeWidth={1.75} aria-hidden="true" />
+      {label}
+    </a>
+  );
+}
+
 export function CertificateGallery({ certificates }: { certificates: Certificate[] }) {
-  const items = certificates.filter((c) => c.image);
+  const cards = certificates.filter((c) => c.image || c.pdf);
+  /** Only certificates with an image can open in the lightbox. */
+  const items = cards.filter((c) => c.image);
   const [active, setActive] = React.useState<number | null>(null);
 
-  if (items.length === 0) return null;
+  if (cards.length === 0) return null;
 
   const lightboxItems = items.map((cert) => ({
     src: cert.image!,
@@ -27,31 +44,34 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
             <Eyebrow>Credentials</Eyebrow>
             <h2 className="mt-3 max-w-xl text-[2rem] md:text-[2.5rem]">Certificates</h2>
             <p className="mt-4 max-w-2xl text-[1.0625rem] leading-relaxed text-muted">
-              Verified standards and partner credentials that underpin every Rivet supply and
-              installation.
+              Certificates and credentials published by RIVET COMPANY. Select a certificate to view
+              it in full.
             </p>
           </FadeUp>
 
           <Stagger className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((cert, index) => (
-              <StaggerItem key={cert.id}>
-                <button
-                  type="button"
-                  onClick={() => setActive(index)}
-                  className="group flex h-full w-full flex-col rounded-[16px] border border-border bg-surface p-4 text-left shadow-[var(--shadow-sm)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[var(--shadow-md)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-[12px] bg-white">
+            {cards.map((cert) => {
+              const index = items.indexOf(cert);
+              const body = (
+                <>
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] bg-white">
                     <span
                       className="pointer-events-none absolute inset-2 z-10 border border-gold/25"
                       aria-hidden="true"
                     />
-                    <RivetImage
-                      src={cert.image!}
-                      alt={`${cert.title} — River Company certificate`}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-contain p-5"
-                    />
+                    {cert.image ? (
+                      <RivetImage
+                        src={cert.image}
+                        alt={`${cert.title} — RIVET COMPANY certificate`}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-contain p-5"
+                      />
+                    ) : (
+                      <div className="grid h-full place-items-center text-navy/70">
+                        <FileText size={56} strokeWidth={1} aria-hidden="true" />
+                      </div>
+                    )}
                   </div>
                   <h3 className="mt-5 text-[1.125rem] text-navy">{cert.title}</h3>
                   {cert.description && (
@@ -59,12 +79,37 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
                       {cert.description}
                     </p>
                   )}
-                  <span className="mt-4 text-[0.8125rem] font-medium text-gold sm:opacity-0 sm:transition-opacity sm:duration-300 sm:group-hover:opacity-100">
-                    View certificate
-                  </span>
-                </button>
-              </StaggerItem>
-            ))}
+                </>
+              );
+              return (
+                <StaggerItem key={cert.id}>
+                  <div className="luxury-card group flex h-full w-full flex-col rounded-[8px] bg-canvas p-4">
+                    {cert.image ? (
+                      <button
+                        type="button"
+                        onClick={() => setActive(index)}
+                        className="flex flex-1 flex-col text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                      >
+                        {body}
+                        <span className="mt-4 text-[0.8125rem] font-semibold text-navy sm:opacity-0 sm:transition-opacity sm:duration-300 sm:group-hover:opacity-100">
+                          View certificate
+                        </span>
+                      </button>
+                    ) : (
+                      <a
+                        href={cert.pdf!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex flex-1 flex-col text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                      >
+                        {body}
+                      </a>
+                    )}
+                    {cert.pdf && <PdfLink href={cert.pdf} label="View PDF" className="mt-3" />}
+                  </div>
+                </StaggerItem>
+              );
+            })}
           </Stagger>
         </Container>
       </Section>
@@ -105,8 +150,7 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
             <Eyebrow>Work</Eyebrow>
             <h2 className="mt-3 max-w-xl text-[2rem] md:text-[2.5rem]">Portfolio</h2>
             <p className="mt-4 max-w-2xl text-[1.0625rem] leading-relaxed text-muted">
-              Selected projects and installations — the spaces, systems, and finishes River Company
-              has delivered.
+              Selected projects and installations completed by RIVET COMPANY.
             </p>
           </FadeUp>
 
@@ -115,21 +159,21 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
               const images = allItemImages(project);
               return (
                 <StaggerItem key={project.id}>
-                  <article className="group overflow-hidden rounded-[16px] border border-border bg-surface shadow-[var(--shadow-sm)] transition-all duration-500 hover:border-gold/40 hover:shadow-[var(--shadow-md)]">
+                  <article className="luxury-card group overflow-hidden rounded-[8px] bg-canvas">
                     <button
                       type="button"
                       onClick={() => setActive({ project: projectIndex, image: 0 })}
-                      className="relative block aspect-[16/10] w-full overflow-hidden bg-navy/5 text-left"
+                      className="relative block aspect-[16/10] w-full overflow-hidden bg-bg text-left"
                     >
                       <RivetImage
                         src={images[0]!}
-                        alt={`${project.title} — River Company project portfolio`}
+                        alt={`${project.title} — RIVET COMPANY project portfolio`}
                         fill
                         sizes="(max-width: 1024px) 100vw, 50vw"
                         className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"
                       />
                       {images.length > 1 && (
-                        <span className="absolute right-4 bottom-4 rounded-full bg-navy/80 px-3 py-1 text-[0.75rem] text-white backdrop-blur">
+                        <span className="absolute right-4 bottom-4 rounded-[4px] bg-navy px-2.5 py-1 text-[0.75rem] font-medium text-white">
                           {images.length} images
                         </span>
                       )}
@@ -141,6 +185,9 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
                           {project.description}
                         </p>
                       )}
+                      {project.pdf && (
+                        <PdfLink href={project.pdf} label="View project PDF" className="mt-4" />
+                      )}
                       {images.length > 1 && (
                         <div className="mt-5 flex gap-2 overflow-x-auto">
                           {images.slice(1, 5).map((src, imageIndex) => (
@@ -150,7 +197,7 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
                               onClick={() =>
                                 setActive({ project: projectIndex, image: imageIndex + 1 })
                               }
-                              className="relative h-16 w-20 shrink-0 overflow-hidden rounded-[8px] border border-border"
+                              className="relative h-16 w-20 shrink-0 overflow-hidden rounded-[6px] border border-border"
                             >
                               <RivetImage
                                 src={src}

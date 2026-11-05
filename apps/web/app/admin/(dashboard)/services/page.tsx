@@ -145,7 +145,7 @@ export default function AdminServicesPage() {
               <div className="shrink-0 text-[0.8125rem]">
                 <button
                   type="button"
-                  className="mr-3 text-navy hover:text-gold"
+                  className="mr-3 py-1.5 text-navy hover:text-gold"
                   onClick={() => {
                     setEditingId(s.id);
                     setForm({
@@ -163,7 +163,7 @@ export default function AdminServicesPage() {
                 >
                   Edit
                 </button>
-                <button type="button" className="text-error" onClick={() => remove(s.id)}>
+                <button type="button" className="py-1.5 text-error" onClick={() => remove(s.id)}>
                   Delete
                 </button>
               </div>
@@ -228,9 +228,9 @@ export default function AdminServicesPage() {
           <SeoFieldsPanel
             value={form}
             onChange={(seo) => setForm({ ...form, ...seo })}
-            fallbackTitle={`${form.title || 'Service'} in Ethiopia | Rivet`}
+            fallbackTitle={`${form.title || 'Service'} in Ethiopia | RIVET COMPANY`}
             fallbackDescription={
-              (form.narrative ?? '').slice(0, 160) || 'Rivet services in Ethiopia.'
+              (form.narrative ?? '').slice(0, 160) || 'RIVET COMPANY services in Ethiopia.'
             }
             fallbackImage={form.image ?? undefined}
             pathPreview={`/services/${form.slug || 'service-slug'}`}

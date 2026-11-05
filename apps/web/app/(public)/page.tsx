@@ -6,7 +6,7 @@ import { Categories } from '@/components/home/categories';
 import { Featured } from '@/components/home/featured';
 import { Services } from '@/components/home/services';
 import { WhyChoose } from '@/components/home/why-choose';
-import { Stats } from '@/components/home/stats';
+import { Highlights } from '@/components/home/stats';
 import { News } from '@/components/home/news';
 import { QuotationCta } from '@/components/home/quotation-cta';
 import { metadataForStaticPage } from '@/lib/page-seo';
@@ -97,13 +97,13 @@ export default async function HomePage() {
   return (
     <>
       <Hero content={home} />
-      <Intro content={home} />
-      <ManagementMessages content={home} />
+      <Highlights />
       <Categories items={categories} />
+      <Intro content={home} />
       <Featured products={featured} />
       <Services items={services} />
       <WhyChoose />
-      <Stats />
+      <ManagementMessages content={home} />
       <News articles={articles} />
       <QuotationCta />
     </>

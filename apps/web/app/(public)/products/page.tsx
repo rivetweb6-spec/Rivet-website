@@ -43,7 +43,7 @@ export async function generateMetadata({
   if (sp.search) {
     return pageMetadata({
       title: `Search results for “${sp.search}”`,
-      description: `Products matching “${sp.search}” at RIVET — premium construction and architectural products in Ethiopia.`,
+      description: `Products matching “${sp.search}” at RIVET COMPANY — elevators, escalators and building materials in Ethiopia.`,
       path: '/products',
       noIndex: true,
     });
@@ -55,7 +55,7 @@ export async function generateMetadata({
     const catName = cat?.name ?? sp.category;
     return pageMetadata({
       title: `${catName} — Products`,
-      description: `Browse premium ${catName.toLowerCase()} and architectural products from RIVET in Ethiopia.`,
+      description: `Browse ${catName.toLowerCase()} from RIVET COMPANY, supplier of elevators and building materials in Ethiopia.`,
       path: `/products/${encodeURIComponent(sp.category)}`,
     });
   }
@@ -63,7 +63,7 @@ export async function generateMetadata({
   if (catalogMode(sp) === 'all') {
     return pageMetadata({
       title: page > 1 ? `All products — Page ${page}` : 'All products',
-      description: `Browse ${page > 1 ? `page ${page} of ` : ''}RIVET’s full catalog of premium elevators, granite, doors, furniture and fine building materials in Ethiopia.`,
+      description: `Browse ${page > 1 ? `page ${page} of ` : ''}the full RIVET COMPANY catalog: elevators, escalators, granite, doors, furniture, sanitary goods and building materials in Ethiopia.`,
       path: page > 1 ? `/products?view=all&page=${page}` : '/products?view=all',
     });
   }
@@ -100,9 +100,9 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
   return (
     <>
       <PageHero
-        eyebrow="Catalog"
-        title="Elevators, granite, doors & materials"
-        description="A curated portfolio of imported elevators, natural stone, doors, furniture and fine building materials for projects in Ethiopia."
+        eyebrow="Products"
+        title="Elevators, escalators & building materials"
+        description="Browse elevators, passenger lifts, escalators, granite, doors, office furniture, sanitary goods and building materials supplied by RIVET COMPANY in Ethiopia."
       />
       <Section className="pt-14 md:pt-20">
         <Container>

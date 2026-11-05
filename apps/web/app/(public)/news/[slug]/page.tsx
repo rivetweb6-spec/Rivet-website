@@ -68,9 +68,9 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
         updatedAt={article.updatedAt}
         category={article.category}
       />
-      <section className="bg-navy pt-32 pb-16 md:pt-40">
+      <section className="border-b border-border bg-bg pt-28 pb-24 md:pt-32 md:pb-28">
         <Container className="max-w-3xl">
-          <div className="text-white/70 [&_a]:text-white/70 [&_a:hover]:text-gold [&_[aria-current]]:text-white">
+          <div>
             <Breadcrumbs
               items={[
                 { name: 'Home', path: '/' },
@@ -79,19 +79,19 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
               ]}
             />
           </div>
-          {article.category && <Eyebrow className="mt-8 block text-gold">{article.category}</Eyebrow>}
-          <h1 className="mt-4 text-[2.25rem] text-white sm:text-[3rem]">{article.title}</h1>
-          <time className="mt-5 block text-[0.875rem] text-white/70">
+          {article.category && <Eyebrow className="mt-8 block">{article.category}</Eyebrow>}
+          <h1 className="headline-display mt-3 text-[2.25rem] sm:text-[2.75rem]">{article.title}</h1>
+          <time className="mt-5 block text-[0.9375rem] text-muted">
             {formatDate(article.publishedAt)}
           </time>
         </Container>
       </section>
 
-      <div className="relative mx-auto -mt-8 max-w-[860px] px-6">
-        <div className="relative aspect-[16/9] overflow-hidden rounded-[20px] shadow-[var(--shadow-lg)]">
+      <div className="relative mx-auto -mt-16 max-w-[860px] px-5 sm:px-6">
+        <div className="relative aspect-[16/9] overflow-hidden rounded-[8px] border border-border bg-bg">
           <RivetImage
             src={cover}
-            alt={`${article.title} — RIVET news in Ethiopia`}
+            alt={`${article.title} — RIVET COMPANY news`}
             fill
             priority
             sizes="(max-width: 860px) 100vw, 860px"
@@ -106,12 +106,12 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
             <p className="text-[1.25rem] leading-relaxed text-muted">{article.excerpt}</p>
           )}
           <RichText
-            className="prose prose-lg mt-8 max-w-none text-ink prose-headings:font-display prose-headings:text-navy prose-a:text-navy prose-a:underline prose-a:decoration-gold prose-a:underline-offset-4"
+            className="prose prose-lg mt-8 max-w-none text-ink prose-headings:font-display prose-headings:text-navy prose-a:text-navy dark:prose-invert dark:prose-headings:text-ink dark:prose-a:text-gold prose-a:underline prose-a:decoration-gold prose-a:underline-offset-4"
             html={article.body}
           />
           <p className="mt-12">
-            <Link href="/news" className="text-[0.9375rem] font-medium text-navy hover:text-gold">
-              ← Back to journal
+            <Link href="/news" className="text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline">
+              ← All news
             </Link>
           </p>
         </Container>

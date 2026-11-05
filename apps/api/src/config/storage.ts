@@ -20,6 +20,18 @@ export const ALLOWED_MIME = new Map<string, string>([
 
 const ALLOWED_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif']);
 
+/** Public documents (certificate / portfolio PDFs) stored next to images. */
+const DOCUMENT_FILE_EXT = new Set(['.pdf']);
+
+/**
+ * Quick first filter for document uploads: PDF only. Some browsers send PDFs as
+ * application/octet-stream, so a .pdf filename is also accepted — the bytes are
+ * verified afterwards either way.
+ */
+export function isAllowedPdfFile(mime: string, originalName: string): boolean {
+  return mime === 'application/pdf' || path.extname(originalName).toLowerCase() === '.pdf';
+}
+
 export const MAX_CV_BYTES = 8 * 1024 * 1024;
 
 /**
@@ -173,7 +185,7 @@ export function localFilenameFromUrl(url: string): string | null {
   const filename = path.basename(raw);
   if (!filename || filename !== raw) return null;
   const ext = path.extname(filename).toLowerCase();
-  if (!ALLOWED_EXT.has(ext)) return null;
+  if (!ALLOWED_EXT.has(ext) && !DOCUMENT_FILE_EXT.has(ext)) return null;
   return filename;
 }
 
@@ -197,6 +209,21 @@ export async function saveLocalFile(
   await ensureUploadsDir();
   const dest = resolvedUploadPath(filename);
   if (!dest) throw badRequest('Could not store image');
+  await fs.writeFile(dest, file.buffer);
+  const base = publicBase.replace(/\/$/, '').replace(/\/api$/, '');
+  const url = `${base}/api/uploads/files/${filename}`;
+  return { url, publicId: `local:${filename}` };
+}
+
+/** Store a PDF whose bytes were already verified; served from /api/uploads/files/. */
+export async function saveLocalPdf(
+  file: Express.Multer.File,
+  publicBase: string,
+): Promise<{ url: string; publicId: string }> {
+  const filename = `${Date.now()}-${crypto.randomBytes(8).toString('hex')}.pdf`;
+  await ensureUploadsDir();
+  const dest = resolvedUploadPath(filename);
+  if (!dest) throw badRequest('Could not store document');
   await fs.writeFile(dest, file.buffer);
   const base = publicBase.replace(/\/$/, '').replace(/\/api$/, '');
   const url = `${base}/api/uploads/files/${filename}`;

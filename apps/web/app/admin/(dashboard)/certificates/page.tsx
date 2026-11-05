@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, FileText } from 'lucide-react';
 import {
   adminApi,
   revalidatePublicCache,
@@ -21,6 +21,7 @@ import {
   StatusBadge,
 } from '@/components/admin/ui';
 import { ImageUploadField } from '@/components/admin/image-upload-field';
+import { PdfUploadField } from '@/components/admin/pdf-upload-field';
 import { extraImages } from '@/components/company/image-lightbox';
 
 const TABS: { id: CertificateKind; label: string }[] = [
@@ -33,6 +34,7 @@ const emptyForm = (kind: CertificateKind, order = 1): CertificateInput => ({
   description: '',
   image: '',
   images: [],
+  pdf: '',
   kind,
   order,
   status: 'PUBLISHED',
@@ -79,6 +81,7 @@ export default function AdminCertificatesPage() {
         description: form.description?.trim() || null,
         image: form.image || null,
         images: extras,
+        pdf: form.pdf || null,
         kind,
         order: form.order,
         status: form.status,
@@ -128,8 +131,8 @@ export default function AdminCertificatesPage() {
   return (
     <div>
       <AdminPageHeader
-        title="Certificate & Portfolio"
-        description="Manage credentials and project work shown on the public Certificate & Portfolio page."
+        title="Certificates & Portfolio"
+        description="Manage credentials and project work shown on the public Certificates & Portfolio page."
         actions={
           <AdminButton
             onClick={() => {
@@ -192,8 +195,18 @@ export default function AdminCertificatesPage() {
                   {c.description && (
                     <p className="mt-1 line-clamp-2 text-[0.875rem] text-muted">{c.description}</p>
                   )}
-                  <div className="mt-3">
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
                     <StatusBadge status={c.status} />
+                    {c.pdf && (
+                      <a
+                        href={c.pdf}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[0.75rem] text-navy hover:text-gold"
+                      >
+                        <FileText size={14} /> PDF
+                      </a>
+                    )}
                   </div>
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
@@ -220,7 +233,7 @@ export default function AdminCertificatesPage() {
                   <div className="mt-1 text-[0.8125rem]">
                     <button
                       type="button"
-                      className="mr-3 text-navy hover:text-gold"
+                      className="mr-3 py-1.5 text-navy hover:text-gold"
                       onClick={() => {
                         setEditingId(c.id);
                         setForm({
@@ -228,6 +241,7 @@ export default function AdminCertificatesPage() {
                           description: c.description ?? '',
                           image: c.image ?? '',
                           images: extraImages(c.images),
+                          pdf: c.pdf ?? '',
                           kind: (c.kind as CertificateKind) ?? kind,
                           order: c.order,
                           status: (c.status as 'DRAFT' | 'PUBLISHED') ?? 'PUBLISHED',
@@ -237,7 +251,7 @@ export default function AdminCertificatesPage() {
                     >
                       Edit
                     </button>
-                    <button type="button" className="text-error" onClick={() => void remove(c.id)}>
+                    <button type="button" className="py-1.5 text-error" onClick={() => void remove(c.id)}>
                       Delete
                     </button>
                   </div>
@@ -288,6 +302,12 @@ export default function AdminCertificatesPage() {
               onError={setError}
             />
           )}
+          <PdfUploadField
+            label={isPortfolio ? 'Project PDF (optional)' : 'Certificate PDF (optional)'}
+            value={form.pdf ?? ''}
+            onChange={(pdf) => setForm({ ...form, pdf })}
+            onError={setError}
+          />
           <div className="grid grid-cols-2 gap-4">
             <AdminInput
               label="Order"

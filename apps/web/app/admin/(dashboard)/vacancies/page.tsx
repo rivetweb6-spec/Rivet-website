@@ -331,7 +331,7 @@ export default function AdminVacanciesPage() {
                   <td className="px-5 py-3 text-right whitespace-nowrap">
                     <button
                       type="button"
-                      className="mr-3 text-navy hover:text-gold"
+                      className="mr-3 py-1.5 text-navy hover:text-gold"
                       onClick={() => {
                         setVacancyFilter(v.id);
                         setTab('applications');
@@ -341,7 +341,7 @@ export default function AdminVacanciesPage() {
                     </button>
                     <button
                       type="button"
-                      className="mr-3 text-navy hover:text-gold"
+                      className="mr-3 py-1.5 text-navy hover:text-gold"
                       onClick={() => {
                         setEditingId(v.id);
                         setForm({
@@ -363,13 +363,13 @@ export default function AdminVacanciesPage() {
                     {v.status !== 'CLOSED' && (
                       <button
                         type="button"
-                        className="mr-3 text-navy hover:text-gold"
+                        className="mr-3 py-1.5 text-navy hover:text-gold"
                         onClick={() => closeVacancy(v.id)}
                       >
                         Close
                       </button>
                     )}
-                    <button type="button" className="text-error" onClick={() => removeVacancy(v.id)}>
+                    <button type="button" className="py-1.5 text-error" onClick={() => removeVacancy(v.id)}>
                       Delete
                     </button>
                   </td>
@@ -463,7 +463,7 @@ export default function AdminVacanciesPage() {
                       {a.hasCv && (
                         <button
                           type="button"
-                          className="mr-3 text-navy hover:text-gold"
+                          className="mr-3 py-1.5 text-navy hover:text-gold"
                           onClick={() => downloadCv(a)}
                         >
                           Download CV
@@ -471,7 +471,7 @@ export default function AdminVacanciesPage() {
                       )}
                       <button
                         type="button"
-                        className="text-navy hover:text-gold"
+                        className="py-1.5 text-navy hover:text-gold"
                         onClick={() => openApplication(a)}
                       >
                         Review
@@ -563,7 +563,7 @@ export default function AdminVacanciesPage() {
             value={form}
             onChange={(seo) => setForm({ ...form, ...seo })}
             fallbackTitle={form.title || 'Vacancy'}
-            fallbackDescription="Open role at River Company (RIVET)."
+            fallbackDescription="Open role at RIVET COMPANY in Ethiopia."
             pathPreview={`/careers/${form.slug || 'role-slug'}`}
           />
           <div className="flex justify-end gap-3">

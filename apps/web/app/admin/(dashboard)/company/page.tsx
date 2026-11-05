@@ -131,7 +131,7 @@ export default function AdminCompanyPage() {
           <p className="text-[0.8125rem] text-muted">
             Certificate images, titles, and portfolio projects are managed in{' '}
             <Link href="/admin/certificates" className="font-medium text-navy underline-offset-4 hover:text-gold hover:underline">
-              Certificate & Portfolio
+              Certificates & Portfolio
             </Link>
             . Team profiles are in{' '}
             <Link href="/admin/team" className="font-medium text-navy underline-offset-4 hover:text-gold hover:underline">

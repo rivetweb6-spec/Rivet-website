@@ -37,7 +37,7 @@ const nav = [
   { href: '/admin/products', label: 'Products', icon: Package },
   { href: '/admin/categories', label: 'Categories', icon: Tags },
   { href: '/admin/services', label: 'Services', icon: Wrench },
-  { href: '/admin/certificates', label: 'Certificate & Portfolio', icon: Award },
+  { href: '/admin/certificates', label: 'Certificates & Portfolio', icon: Award },
   { href: '/admin/news', label: 'News', icon: FileText },
   { href: '/admin/site-seo', label: 'Site SEO', icon: Search },
   { href: '/admin/quotation-requests', label: 'Quotation Requests', icon: Inbox },

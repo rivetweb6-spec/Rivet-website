@@ -193,14 +193,14 @@ export default function AdminProductsPage() {
                 <td className="px-5 py-3 text-right">
                   <button
                     type="button"
-                    className="mr-3 text-navy hover:text-gold"
+                    className="mr-3 py-1.5 text-navy hover:text-gold"
                     onClick={() => startEdit(p)}
                   >
                     Edit
                   </button>
                   <button
                     type="button"
-                    className="text-error hover:underline"
+                    className="py-1.5 text-error hover:underline"
                     onClick={() => remove(p.id)}
                   >
                     Delete
@@ -318,10 +318,10 @@ export default function AdminProductsPage() {
           <SeoFieldsPanel
             value={form}
             onChange={(seo) => setForm({ ...form, ...seo })}
-            fallbackTitle={`${form.name || 'Product'} in Ethiopia | Rivet`}
+            fallbackTitle={`${form.name || 'Product'} in Ethiopia | RIVET COMPANY`}
             fallbackDescription={
               form.shortDescription ||
-              `Explore ${form.name || 'this product'} from Rivet. Request a quotation for premium products in Ethiopia.`
+              `${form.name || 'This product'} at RIVET COMPANY. View specifications and request a quotation for your project in Ethiopia.`
             }
             fallbackImage={form.imageUrls.split('\n').map((s) => s.trim()).find(Boolean)}
             pathPreview={`/products/${form.slug || 'product-slug'}`}

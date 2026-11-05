@@ -79,7 +79,7 @@ export default function AdminDashboardPage() {
     { label: 'Products', value: data.cards.products, href: '/admin/products' },
     { label: 'Categories', value: data.cards.categories, href: '/admin/categories' },
     { label: 'Services', value: data.cards.services, href: '/admin/services' },
-    { label: 'Certificate & Portfolio', value: data.cards.certificates, href: '/admin/certificates' },
+    { label: 'Certificates & Portfolio', value: data.cards.certificates, href: '/admin/certificates' },
     { label: 'Team', value: data.cards.team ?? 0, href: '/admin/team' },
     { label: 'Gallery', value: data.cards.gallery ?? 0, href: '/admin/gallery' },
     { label: 'News', value: data.cards.news, href: '/admin/news' },
@@ -143,7 +143,7 @@ export default function AdminDashboardPage() {
             <h2 className="text-[1.125rem] text-navy">Recent quotation requests</h2>
             <Link
               href="/admin/quotation-requests"
-              className="text-[0.8125rem] font-medium text-navy underline-offset-4 hover:text-gold hover:underline"
+              className="inline-block py-1.5 text-[0.8125rem] font-medium text-navy underline-offset-4 hover:text-gold hover:underline"
             >
               View all<span className="sr-only"> quotation requests</span>
             </Link>

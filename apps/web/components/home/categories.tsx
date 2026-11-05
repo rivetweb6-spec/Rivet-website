@@ -1,7 +1,8 @@
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
-import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
+import { Stagger, StaggerItem } from '@/components/motion/reveal';
 import { categories as fallbackCategories } from '@/lib/data/content';
 import { assets } from '@/lib/assets';
 
@@ -23,6 +24,7 @@ const FALLBACK_IMAGES: Record<string, string> = {
   'building-materials': assets.categories.materials,
 };
 
+/** Department entry points: photo tiles with the department name on a bottom scrim. */
 export function Categories({ items }: { items?: CategoryCard[] }) {
   // `undefined` = API unreachable (dev fallback OK). `[]` = API empty — do not invent links.
   const list =
@@ -33,41 +35,53 @@ export function Categories({ items }: { items?: CategoryCard[] }) {
   if (list.length === 0) return null;
 
   return (
-    <Section className="bg-pearl">
+    <Section className="bg-surface">
       <Container>
-        <FadeUp>
-          <div className="mb-16 max-w-2xl">
-            <Eyebrow>Shop by Department</Eyebrow>
-            <h2 className="headline-display mt-5 text-[2.25rem] sm:text-[2.75rem]">
-              Product categories
-            </h2>
-            <p className="mt-5 font-light leading-relaxed text-muted">
-              A curated portfolio spanning vertical transportation, natural stone, and architectural
-              essentials.
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-12">
+          <div className="max-w-2xl">
+            <Eyebrow>Product departments</Eyebrow>
+            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">Elevator solutions and building products</h2>
+            <p className="mt-4 leading-relaxed text-muted">
+              Elevators, passenger lifts and escalators alongside granite, doors, furniture, sanitary
+              goods and building materials — sourced for projects in Ethiopia.
             </p>
           </div>
-        </FadeUp>
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline"
+          >
+            View all products
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
 
-        <Stagger className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
+        <Stagger className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {list.map((c) => (
             <StaggerItem key={c.slug}>
               <Link
                 href={`/products/${c.slug}`}
-                className="group relative block aspect-[4/3] overflow-hidden rounded-[4px]"
+                className="group relative block aspect-[4/3] overflow-hidden rounded-[8px] bg-navy-deep"
               >
                 <RivetImage
                   src={c.image || FALLBACK_IMAGES[c.slug] || assets.categories.materials}
-                  alt={`Premium ${c.name} supplied by Rivet in Ethiopia`}
+                  alt=""
                   fill
-                  sizes="(max-width: 768px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
+                  sizes="(max-width: 1024px) 50vw, 25vw"
+                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-deep/90 via-navy/25 to-navy/5 transition-all duration-700 group-hover:from-navy-deep/95" />
-                <div className="absolute inset-x-0 bottom-0 p-6 md:p-7">
-                  <span className="inline-block h-px w-10 bg-gold transition-all duration-700 group-hover:w-16" />
-                  <h3 className="headline-display mt-3 text-[1.25rem] text-white md:text-[1.375rem]">
+                <div
+                  className="absolute inset-0 bg-gradient-to-t from-navy-deep/85 via-navy-deep/20 to-transparent"
+                  aria-hidden="true"
+                />
+                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4 md:p-5">
+                  <h3 className="text-[1rem] font-semibold text-white md:text-[1.125rem]">
                     {c.name}
                   </h3>
+                  <ArrowRight
+                    size={18}
+                    className="mb-0.5 shrink-0 text-white/80 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-gold"
+                    aria-hidden="true"
+                  />
                 </div>
               </Link>
             </StaggerItem>

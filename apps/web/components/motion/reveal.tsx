@@ -1,9 +1,20 @@
 'use client';
 
-import { motion, useReducedMotion, type Variants } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import * as React from 'react';
 
-const ease = [0.16, 1, 0.3, 1] as const;
+/*
+ * Subtle scroll reveals. Content is always fully opaque (nothing waits on
+ * JavaScript to become visible) and only shifts a few pixels into place.
+ *
+ * The same element is rendered on the server and the client for everyone;
+ * reduced-motion users are handled by <MotionConfig reducedMotion="user">
+ * (components/providers/motion-provider), which skips the movement.
+ * Branching on useReducedMotion() here caused hydration mismatches.
+ */
+
+const ease = [0.2, 0.7, 0.2, 1] as const;
+const OFFSET = 12;
 
 export function FadeUp({
   children,
@@ -16,21 +27,14 @@ export function FadeUp({
   className?: string;
   as?: 'div' | 'span' | 'li';
 }) {
-  const reduce = useReducedMotion();
   const MotionTag = motion[as];
-
-  if (reduce) {
-    const Tag = as;
-    return <Tag className={className}>{children}</Tag>;
-  }
-
   return (
     <MotionTag
       className={className}
-      initial={{ opacity: 1, y: 20 }}
+      initial={{ opacity: 1, y: OFFSET }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.7, ease, delay }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.5, ease, delay }}
     >
       {children}
     </MotionTag>
@@ -39,12 +43,12 @@ export function FadeUp({
 
 const staggerParent: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
+  show: { transition: { staggerChildren: 0.06, delayChildren: 0.04 } },
 };
 
 const staggerChild: Variants = {
-  hidden: { opacity: 1, y: 18 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
+  hidden: { opacity: 1, y: OFFSET },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease } },
 };
 
 export function Stagger({
@@ -54,19 +58,13 @@ export function Stagger({
   children: React.ReactNode;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
-
-  if (reduce) {
-    return <div className={className}>{children}</div>;
-  }
-
   return (
     <motion.div
       className={className}
       variants={staggerParent}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, margin: '-80px' }}
+      viewport={{ once: true, margin: '-60px' }}
     >
       {children}
     </motion.div>
@@ -80,12 +78,6 @@ export function StaggerItem({
   children: React.ReactNode;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
-
-  if (reduce) {
-    return <div className={className}>{children}</div>;
-  }
-
   return (
     <motion.div className={className} variants={staggerChild}>
       {children}

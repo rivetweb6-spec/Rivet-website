@@ -2,9 +2,10 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
+import { buildPersonAltText } from '@/lib/seo';
 import { FadeUp } from '@/components/motion/reveal';
 import { assets } from '@/lib/assets';
-import { cn } from '@/lib/utils';
+import { HOME_COPY } from '@/lib/data/home-copy';
 
 export type ManagementMessagesContent = {
   gmName?: string | null;
@@ -18,16 +19,14 @@ export type ManagementMessagesContent = {
 };
 
 const defaults = {
-  gmName: 'General Manager',
-  gmPosition: 'General Manager',
+  gmName: HOME_COPY.gmName,
+  gmPosition: HOME_COPY.gmPosition,
   gmPhoto: assets.management.generalManager,
-  gmMessage:
-    'Every project we take on is a commitment — to specification, to craft, and to the people who will live and work in the spaces we help build.',
-  engName: 'Engineering Manager',
-  engPosition: 'Engineering Manager',
+  gmMessage: HOME_COPY.gmMessage,
+  engName: HOME_COPY.engName,
+  engPosition: HOME_COPY.engPosition,
   engPhoto: assets.management.engineeringManager,
-  engMessage:
-    'Engineering is the quiet work behind a confident installation. We specify with care so that what arrives on site performs as promised.',
+  engMessage: HOME_COPY.engMessage,
 };
 
 type Message = {
@@ -46,70 +45,36 @@ function initials(name: string) {
     .join('');
 }
 
-function MessageCard({
-  person,
-  photoRight = false,
-}: {
-  person: Message;
-  photoRight?: boolean;
-}) {
+function MessageCard({ person }: { person: Message }) {
   return (
-    <article className="grid items-center gap-8 lg:grid-cols-[minmax(0,0.82fr)_1.18fr] lg:gap-12">
-      <div className={cn('relative mx-auto w-full max-w-sm lg:mx-0', photoRight && 'lg:order-2')}>
-        <div className="frame-offset relative aspect-[4/5] overflow-hidden rounded-[4px] bg-navy/5 shadow-[var(--shadow-luxury)]">
-          {person.photo ? (
-            <RivetImage
-              src={person.photo}
-              alt={`${person.name}, ${person.position} at River Company (RIVET)`}
-              fill
-              sizes="(max-width: 1024px) 80vw, 32vw"
-              className="object-cover object-top"
-            />
-          ) : (
-            <div className="grid h-full place-items-center bg-navy text-gold">
-              <span className="headline-display text-[3.5rem] tracking-[0.08em]">
-                {initials(person.name) || '—'}
-              </span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <blockquote className={cn('relative', photoRight ? 'lg:order-1 lg:text-right' : '')}>
-        <span
-          aria-hidden="true"
-          className={cn(
-            'headline-display pointer-events-none absolute -top-8 select-none text-[6.5rem] leading-none text-gold/25',
-            photoRight ? 'right-0 lg:-right-3' : 'left-0 lg:-left-3',
-          )}
-        >
-          “
-        </span>
-        <p
-          className={cn(
-            'relative text-[1.125rem] font-light leading-[1.85] tracking-wide text-ink sm:text-[1.1875rem]',
-            photoRight && 'lg:ml-auto',
-          )}
-        >
-          {person.message}
-        </p>
-        <footer className={cn('mt-8', photoRight && 'lg:ml-auto lg:flex lg:flex-col lg:items-end')}>
-          <div
-            className={cn(
-              'h-px w-16 bg-gradient-to-r from-gold to-transparent',
-              photoRight && 'lg:bg-gradient-to-l',
-            )}
-            aria-hidden="true"
+    <figure className="flex h-full flex-col rounded-[8px] border border-border bg-canvas p-6 sm:flex-row sm:gap-6 md:p-7">
+      <div className="relative mb-5 aspect-square w-24 shrink-0 overflow-hidden rounded-[6px] bg-bg sm:mb-0 sm:w-28">
+        {person.photo ? (
+          <RivetImage
+            src={person.photo}
+            alt={buildPersonAltText(person.name, person.position)}
+            fill
+            sizes="112px"
+            className="object-cover object-top"
           />
-          <cite className="mt-4 block not-italic">
-            <span className="headline-display block text-[1.5rem] text-navy">{person.name}</span>
-            <span className="mt-1 block text-[0.75rem] font-medium uppercase tracking-[0.22em] text-gold">
-              {person.position}
-            </span>
-          </cite>
-        </footer>
-      </blockquote>
-    </article>
+        ) : (
+          <div className="grid h-full place-items-center bg-navy text-[1.5rem] font-bold text-gold">
+            {initials(person.name) || '—'}
+          </div>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col">
+        <blockquote className="text-[1.0625rem] leading-relaxed text-ink">
+          <p>&ldquo;{person.message}&rdquo;</p>
+        </blockquote>
+        <figcaption className="mt-auto pt-5">
+          <span className="block font-semibold text-navy">{person.name}</span>
+          {person.position !== person.name && (
+            <span className="block text-[0.875rem] text-muted">{person.position}</span>
+          )}
+        </figcaption>
+      </div>
+    </figure>
   );
 }
 
@@ -128,41 +93,33 @@ export function ManagementMessages({ content }: { content?: ManagementMessagesCo
   };
 
   return (
-    <Section className="bg-pearl luxury-grain">
+    <Section>
       <Container>
-        <FadeUp>
-          <div className="mb-16 max-w-2xl rivet-line lg:pl-8">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-12">
+          <div className="max-w-2xl">
             <Eyebrow>Leadership</Eyebrow>
-            <h2 className="headline-display mt-5 text-[2.25rem] sm:text-[2.75rem]">
-              A word from management
-            </h2>
-            <p className="mt-5 font-light leading-[1.8] text-muted">
-              Short notes from the people who set the standard — and stand behind every specification.
+            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">A message from our management</h2>
+            <p className="mt-4 leading-relaxed text-muted">
+              How RIVET COMPANY approaches every supply, installation and client relationship.
             </p>
           </div>
-        </FadeUp>
+          <Link
+            href="/company/team"
+            className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline"
+          >
+            Meet our team
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
 
-        <div className="space-y-20 lg:space-y-24">
+        <div className="grid gap-5 lg:grid-cols-2 lg:gap-6">
           <FadeUp>
             <MessageCard person={generalManager} />
           </FadeUp>
-          <div className="gold-rule opacity-40" aria-hidden="true" />
-          <FadeUp delay={0.1}>
-            <MessageCard person={engineeringManager} photoRight />
+          <FadeUp delay={0.06}>
+            <MessageCard person={engineeringManager} />
           </FadeUp>
         </div>
-
-        <FadeUp delay={0.15}>
-          <div className="mt-16 text-center">
-            <Link
-              href="/company/team"
-              className="gold-underline inline-flex items-center gap-3 text-[0.9375rem] font-medium tracking-wide text-navy"
-            >
-              Meet the wider team
-              <ArrowRight size={16} className="text-gold" strokeWidth={1.5} />
-            </Link>
-          </div>
-        </FadeUp>
       </Container>
     </Section>
   );

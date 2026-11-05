@@ -39,7 +39,7 @@ export function CategoryMultiSelect({
   return (
     <div>
       <p id={`${id}-label`} className="mb-1.5 block text-[0.875rem] font-medium text-ink">
-        Product Category <span className="text-gold">*</span>
+        Product Category <span className="text-gold-ink">*</span>
       </p>
       <p className="mb-3 text-[0.75rem] text-muted">Select one or more categories.</p>
       <div
@@ -50,8 +50,8 @@ export function CategoryMultiSelect({
           if (!e.currentTarget.contains(e.relatedTarget as Node | null)) onBlur?.();
         }}
         className={cn(
-          'grid grid-cols-2 gap-2 rounded-[12px] border p-3 sm:grid-cols-3',
-          error ? 'border-error/60' : 'border-border',
+          'grid grid-cols-2 gap-2 rounded-[8px] border p-3 sm:grid-cols-3',
+          error ? 'border-error-ink' : 'border-border',
         )}
         aria-invalid={error ? true : undefined}
       >
@@ -63,7 +63,7 @@ export function CategoryMultiSelect({
               key={interest}
               htmlFor={optionId}
               className={cn(
-                'flex cursor-pointer items-center gap-2 rounded-[10px] px-2.5 py-2 text-[0.875rem] transition-colors',
+                'flex cursor-pointer items-center gap-2 rounded-[6px] px-2.5 py-2 text-[0.875rem] transition-colors',
                 checked ? 'bg-navy/8 text-navy' : 'text-ink hover:bg-bg',
               )}
             >
@@ -80,7 +80,7 @@ export function CategoryMultiSelect({
         })}
       </div>
       {error && (
-        <p id={`${id}-error`} className="mt-1.5 text-[0.75rem] text-error">
+        <p id={`${id}-error`} className="mt-1.5 text-[0.8125rem] text-error-ink">
           {error}
         </p>
       )}

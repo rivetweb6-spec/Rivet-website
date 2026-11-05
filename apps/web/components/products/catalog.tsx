@@ -86,15 +86,15 @@ export function ProductsCatalog({
   return (
     <div className={cn('transition-opacity', pending && 'opacity-60')}>
       {/* Search */}
-      <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-12 flex flex-col gap-4 md:mb-14 lg:flex-row lg:items-center lg:justify-between">
         {mode === 'overview' ? (
           <p className="text-[0.9375rem] text-muted">
-            Choose a department, or search the full catalog.
+            Browse by department, or search the full catalog by product name, brand or category.
           </p>
         ) : (
           <Link
             href="/products"
-            className="inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy transition-colors hover:text-gold"
+            className="inline-flex items-center gap-1.5 py-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 hover:underline"
           >
             <ArrowLeft size={15} aria-hidden="true" />
             Browse by department
@@ -103,7 +103,7 @@ export function ProductsCatalog({
 
         <form
           role="search"
-          className="relative w-full sm:max-w-sm"
+          className="relative w-full lg:max-w-sm"
           onSubmit={(e) => {
             e.preventDefault();
             update({ search: searchValue.trim() || undefined });
@@ -124,7 +124,7 @@ export function ProductsCatalog({
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             placeholder="Search by name, brand, category…"
-            className="h-12 w-full rounded-[12px] border border-border bg-surface pl-11 pr-4 text-[0.9375rem] outline-none transition-colors focus:border-navy focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+            className="h-12 w-full rounded-[6px] border border-border bg-canvas pl-11 pr-4 text-[0.9375rem] text-ink placeholder:text-muted outline-none transition-colors hover:border-navy/40 focus:border-navy focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:bg-surface dark:focus:border-gold"
           />
         </form>
       </div>
@@ -155,14 +155,14 @@ export function ProductsCatalog({
                 action={
                   <Link
                     href="/products?view=all"
-                    className="inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-navy transition-colors hover:text-gold"
+                    className="inline-flex items-center gap-1.5 py-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 hover:underline"
                   >
                     View all products
                     <ArrowRight size={15} aria-hidden="true" />
                   </Link>
                 }
               />
-              <ProductGrid products={products} />
+              <ProductGrid products={fullRows(products)} />
             </section>
           )}
         </>
@@ -195,7 +195,7 @@ export function ProductsCatalog({
             disabled={pagination.page <= 1}
             label="Previous"
           />
-          <span className="text-[0.875rem] text-muted">
+          <span className="px-2 text-[0.875rem] text-muted" aria-current="page">
             Page {pagination.page} of {pagination.pages}
           </span>
           <PagerLink
@@ -221,12 +221,12 @@ function SectionHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-border/60 pb-5">
+    <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-border pb-5">
       <div>
-        <span className="eyebrow text-gold-ink text-[0.6875rem] uppercase tracking-wider font-medium">
+        <span className="eyebrow text-navy-400 dark:text-gold">
           {eyebrow}
         </span>
-        <h2 id={id} className="headline-display mt-1 text-[1.75rem] sm:text-[2rem]">
+        <h2 id={id} className="headline-display mt-2 text-[1.75rem] sm:text-[2rem]">
           {title}
         </h2>
       </div>
@@ -235,9 +235,15 @@ function SectionHeader({
   );
 }
 
+/** The overview is a short teaser: trim it to complete rows of three (at least one row). */
+function fullRows<T>(items: T[]): T[] {
+  if (items.length <= 3) return items;
+  return items.slice(0, items.length - (items.length % 3));
+}
+
 function ProductGrid({ products }: { products: Product[] }) {
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:gap-6">
       {products.map((p) => (
         <ProductCard key={p.id} product={p} />
       ))}
@@ -287,7 +293,7 @@ function SearchResults({
           <Link
             key={c.slug}
             href={`/products/${c.slug}`}
-            className="rounded-full border border-border bg-surface px-4 py-2 text-[0.8125rem] font-medium text-ink transition-colors hover:border-gold hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+            className="rounded-[6px] border px-4 py-2 text-[0.875rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 border-border bg-canvas text-ink hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold"
           >
             {c.name}
           </Link>
@@ -296,7 +302,7 @@ function SearchResults({
       <button
         type="button"
         onClick={onClear}
-        className="mt-8 text-[0.875rem] font-medium text-navy underline-offset-4 hover:text-gold hover:underline"
+        className="mt-8 text-[0.9375rem] font-semibold text-navy underline underline-offset-4 hover:no-underline"
       >
         Clear search
       </button>
@@ -314,7 +320,7 @@ function PagerLink({
   disabled: boolean;
 }) {
   const className =
-    'rounded-[12px] border border-border px-4 py-2 text-[0.875rem] transition-colors hover:border-gold hover:text-gold';
+    'inline-flex h-10 items-center rounded-[6px] border border-border bg-canvas px-4 text-[0.875rem] font-medium text-ink transition-colors hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold';
   if (disabled) {
     return (
       <span className={cn(className, 'pointer-events-none opacity-40')} aria-disabled="true">

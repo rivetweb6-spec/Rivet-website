@@ -34,8 +34,8 @@ export default async function CertificatePortfolioPage() {
     <>
       <PageHero
         eyebrow="Company"
-        title="Certificate & Portfolio"
-        description="Credentials that stand behind every supply, and the projects that show how those standards look on site."
+        title="Certificates & Portfolio"
+        description="Certificates and selected project work from RIVET COMPANY."
       />
       <CompanySubnav />
       <Container className="pt-8">
@@ -43,7 +43,7 @@ export default async function CertificatePortfolioPage() {
           items={[
             { name: 'Home', path: '/' },
             { name: 'Company', path: '/company' },
-            { name: 'Certificate & Portfolio', path: '/company/certificate-portfolio' },
+            { name: 'Certificates & Portfolio', path: '/company/certificate-portfolio' },
           ]}
         />
       </Container>
@@ -51,7 +51,7 @@ export default async function CertificatePortfolioPage() {
         <Section>
           <Container>
             <p className="text-center text-muted">
-              Certificates and portfolio items will appear here once they are published.
+              Certificates and portfolio projects will be published here soon.
             </p>
           </Container>
         </Section>

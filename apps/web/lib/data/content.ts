@@ -1,7 +1,7 @@
 /**
- * Local, typed content that mirrors the shape of future API responses.
- * When the Express API is live, replace these arrays with fetch() calls —
- * the component contracts (types) stay identical, so no UI changes are needed.
+ * Local fallback content. The live site reads categories, products and
+ * services from the API; these arrays are only shown when the API is
+ * unreachable (local development), so they mirror the seed data.
  */
 import { assets } from '@/lib/assets';
 
@@ -29,13 +29,13 @@ export type Service = {
 
 export type Advantage = {
   title: string;
+  description: string;
   icon: string;
 };
 
-export type Stat = {
-  label: string;
-  value: number;
-  suffix?: string;
+export type Highlight = {
+  title: string;
+  detail: string;
 };
 
 export const categories: Category[] = [
@@ -55,7 +55,7 @@ export const featuredProducts: Product[] = [
     slug: 'meridian-passenger-elevator',
     name: 'Meridian Passenger Elevator',
     category: 'Elevators',
-    description: 'Machine-room-less traction system with brushed-steel cabin finishing.',
+    description: 'Machine-room-less passenger elevator with gearless traction and a brushed-steel cabin.',
     image: assets.products.p1,
     featured: true,
   },
@@ -63,7 +63,7 @@ export const featuredProducts: Product[] = [
     slug: 'obsidian-granite-slab',
     name: 'Obsidian Granite Slab',
     category: 'Granite',
-    description: 'Full-bleed veined granite, precision-cut for architectural surfaces.',
+    description: 'Polished or honed granite slabs, cut to size for countertops, cladding and flooring.',
     image: assets.products.p2,
     featured: true,
   },
@@ -71,48 +71,108 @@ export const featuredProducts: Product[] = [
     slug: 'atrium-glass-door',
     name: 'Atrium Glass Door System',
     category: 'Doors',
-    description: 'Frameless tempered glass entry with concealed automatic drive.',
+    description: 'Frameless tempered-glass entrance with a concealed automatic drive.',
     image: assets.products.p3,
   },
   {
     slug: 'executive-lounge-chair',
     name: 'Executive Lounge Chair',
     category: 'Chairs',
-    description: 'Ergonomic seating in full-grain leather and cast aluminium.',
+    description: 'Executive lounge chair in full-grain leather on a cast-aluminium frame.',
     image: assets.products.p4,
   },
   {
     slug: 'lumina-sanitary-suite',
     name: 'Lumina Sanitary Suite',
     category: 'Sanitary Goods',
-    description: 'Rimless ceramic ware with matte-gold precision fittings.',
+    description: 'Rimless vitreous-china sanitary suite with matte-gold fittings.',
     image: assets.products.p5,
   },
 ];
 
 export const services: Service[] = [
-  { slug: 'product-import', title: 'Product Import', statement: 'Sourcing certified premium products from world-class manufacturers.', icon: 'Ship' },
-  { slug: 'elevator-installation', title: 'Elevator Installation', statement: 'Precision installation engineered to international safety standards.', icon: 'Wrench' },
-  { slug: 'elevator-maintenance', title: 'Elevator Maintenance', statement: 'Preventive maintenance programs that keep systems flawless.', icon: 'ShieldCheck' },
-  { slug: 'granite-supply', title: 'Granite Supply', statement: 'Full-slab granite supply cut to architectural specification.', icon: 'Layers' },
-  { slug: 'building-material-supply', title: 'Building Material Supply', statement: 'Reliable supply of fine building materials at project scale.', icon: 'Package' },
-  { slug: 'construction-consultation', title: 'Construction Consultation', statement: 'Engineering guidance from concept through commissioning.', icon: 'Compass' },
+  {
+    slug: 'product-import',
+    title: 'Product Import',
+    statement:
+      'Sourcing from international manufacturers, with shipping, customs clearance and site delivery managed for you.',
+    icon: 'Ship',
+  },
+  {
+    slug: 'elevator-installation',
+    title: 'Elevator Installation',
+    statement:
+      'Passenger, commercial and freight elevators installed to manufacturer and safety standards, through to commissioning.',
+    icon: 'Wrench',
+  },
+  {
+    slug: 'elevator-maintenance',
+    title: 'Elevator Maintenance',
+    statement:
+      'Scheduled preventive maintenance and repairs that keep elevators and escalators safe and in daily service.',
+    icon: 'ShieldCheck',
+  },
+  {
+    slug: 'granite-supply',
+    title: 'Granite Supply',
+    statement: 'Granite slabs cut to your drawings, polished or honed for cladding, flooring and countertops.',
+    icon: 'Layers',
+  },
+  {
+    slug: 'building-material-supply',
+    title: 'Building Material Supply',
+    statement:
+      'Structural glass, stone, fittings and finishes supplied at project scale and timed to your construction schedule.',
+    icon: 'Package',
+  },
+  {
+    slug: 'construction-consultation',
+    title: 'Construction Consultation',
+    statement:
+      'Technical guidance from design to commissioning, so every part of the building gets the right product.',
+    icon: 'Compass',
+  },
 ];
 
 export const advantages: Advantage[] = [
-  { title: 'Premium Imported Products', icon: 'Globe' },
-  { title: 'Professional Team', icon: 'Users' },
-  { title: 'High Quality', icon: 'Gem' },
-  { title: 'Reliable Service', icon: 'Clock' },
-  { title: 'Engineering Expertise', icon: 'Ruler' },
-  { title: 'Excellent Customer Support', icon: 'Headset' },
+  {
+    title: 'Internationally sourced products',
+    description: 'Elevators and building products from established international manufacturers.',
+    icon: 'Globe',
+  },
+  {
+    title: 'Supply and installation together',
+    description: 'One team responsible from the purchase order to the handover.',
+    icon: 'Wrench',
+  },
+  {
+    title: 'Specification support',
+    description: 'Products matched to your drawings, capacity and budget before you order.',
+    icon: 'Ruler',
+  },
+  {
+    title: 'Clear quotations',
+    description: 'Itemised quotations covering supply, delivery and installation.',
+    icon: 'FileText',
+  },
+  {
+    title: 'After-sales maintenance',
+    description: 'Preventive maintenance and repair to keep equipment in service.',
+    icon: 'ShieldCheck',
+  },
+  {
+    title: 'Responsive local team',
+    description: 'Based in Addis Ababa and available for site visits and follow-up.',
+    icon: 'Headset',
+  },
 ];
 
-export const stats: Stat[] = [
-  { label: 'Years of Experience', value: 18, suffix: '+' },
-  { label: 'Projects Completed', value: 640, suffix: '+' },
-  { label: 'Products Imported', value: 1200, suffix: '+' },
-  { label: 'Happy Clients', value: 380, suffix: '+' },
+/** Capability band under the homepage hero (no unverified figures). */
+export const highlights: Highlight[] = [
+  { title: 'Elevators & escalators', detail: 'Supply, installation and maintenance' },
+  { title: 'Granite & natural stone', detail: 'Cut to your project specification' },
+  { title: 'Doors, furniture & sanitary goods', detail: 'For commercial and residential projects' },
+  { title: 'Project quotations', detail: 'Prepared to your drawings and quantities' },
 ];
 
 export const productInterests = [
@@ -126,94 +186,4 @@ export const productInterests = [
   'Sanitary Goods',
   'Building Materials',
   'Other',
-];
-
-/* ── Elevator sub-categories ──────────────────────────────────────────── */
-
-export type ElevatorSubCategory = {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  group: string;
-};
-
-export const elevatorSubCategories: ElevatorSubCategory[] = [
-  /* Passenger Elevators */
-  {
-    id: 'standard-passenger',
-    name: 'Standard Passenger Elevators',
-    description:
-      'Reliable traction and machine-room-less systems engineered for mid-rise residential and commercial buildings.',
-    image: assets.elevatorSolutions.standardPassenger,
-    group: 'Passenger Elevators',
-  },
-  {
-    id: 'premium-passenger',
-    name: 'Premium Passenger Elevators',
-    description:
-      'Luxury cabin finishes, whisper-quiet drives, and smart destination-dispatch technology for high-end developments.',
-    image: assets.elevatorSolutions.premiumPassenger,
-    group: 'Passenger Elevators',
-  },
-  {
-    id: 'panoramic',
-    name: 'Panoramic Elevators',
-    description:
-      'Glass-walled observation elevators that transform vertical transport into an architectural centrepiece.',
-    image: assets.elevatorSolutions.panoramic,
-    group: 'Passenger Elevators',
-  },
-
-  /* Commercial Elevators */
-  {
-    id: 'office-building',
-    name: 'Office Building Elevators',
-    description:
-      'High-traffic, energy-efficient elevator systems designed for peak-hour performance in commercial towers.',
-    image: assets.elevatorSolutions.officeBuilding,
-    group: 'Commercial Elevators',
-  },
-  {
-    id: 'hotel',
-    name: 'Hotel Elevators',
-    description:
-      'Elegant, ultra-quiet elevators with customisable interiors that complement five-star hospitality experiences.',
-    image: assets.elevatorSolutions.hotel,
-    group: 'Commercial Elevators',
-  },
-  {
-    id: 'shopping-mall',
-    name: 'Shopping Mall Elevators',
-    description:
-      'High-capacity passenger elevators engineered for constant foot traffic in retail and mixed-use environments.',
-    image: assets.elevatorSolutions.shoppingMall,
-    group: 'Commercial Elevators',
-  },
-
-  /* Service & Freight Elevators */
-  {
-    id: 'service',
-    name: 'Service Elevators',
-    description:
-      'Durable, back-of-house elevators built for staff, housekeeping, and light cargo movement.',
-    image: assets.elevatorSolutions.service,
-    group: 'Service & Freight Elevators',
-  },
-  {
-    id: 'freight',
-    name: 'Freight Elevators',
-    description:
-      'Heavy-platform lifts with reinforced cabins and wide door openings for palletised goods and equipment.',
-    image: assets.elevatorSolutions.freight,
-    group: 'Service & Freight Elevators',
-  },
-  {
-    id: 'heavy-duty',
-    name: 'Heavy-Duty Elevators',
-    description:
-      'Industrial-grade lifts rated for extreme payloads — ideal for warehouses, factories, and construction sites.',
-    image: assets.elevatorSolutions.heavyDuty,
-    group: 'Service & Freight Elevators',
-  },
 ];
