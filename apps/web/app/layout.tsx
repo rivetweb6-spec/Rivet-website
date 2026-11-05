@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Manrope } from 'next/font/google';
+import localFont from 'next/font/local';
 import {
   DEFAULT_DESCRIPTION,
   DEFAULT_OG_IMAGE,
@@ -12,16 +12,22 @@ import { ThemeProvider } from '@/components/providers/theme-provider';
 import { MotionProvider } from '@/components/providers/motion-provider';
 import './globals.css';
 
-const inter = Inter({
-  subsets: ['latin'],
+/*
+ * Fonts are self-hosted (latin subset, variable weight) rather than loaded via
+ * next/font/google: fetching from Google at build time made Turbopack builds
+ * fail intermittently in CI ("next/font/google queries have exactly one entry").
+ */
+const inter = localFont({
+  src: './fonts/inter-latin-var.woff2',
+  weight: '100 900',
   variable: '--font-inter',
   display: 'swap',
 });
 
 /** Headings: a precise, engineered sans that pairs with Inter body text. */
-const manrope = Manrope({
-  subsets: ['latin'],
-  weight: ['500', '600', '700', '800'],
+const manrope = localFont({
+  src: './fonts/manrope-latin-var.woff2',
+  weight: '200 800',
   variable: '--font-manrope',
   display: 'swap',
 });
@@ -55,6 +61,15 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} | ${SITE_TAGLINE}`,
     description: DEFAULT_DESCRIPTION,
     images: [DEFAULT_OG_IMAGE],
+  },
+  // Set these env vars to the codes from Google Search Console / Bing Webmaster Tools.
+  verification: {
+    ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+      : {}),
+    ...(process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION
+      ? { other: { 'msvalidate.01': process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION } }
+      : {}),
   },
   robots: {
     index: true,

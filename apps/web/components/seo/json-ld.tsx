@@ -1,4 +1,29 @@
-import { SITE_NAME, SITE_URL, DEFAULT_DESCRIPTION, LOGO_URL } from '@/lib/seo';
+import {
+  SITE_NAME,
+  SITE_URL,
+  SITE_ALTERNATE_NAMES,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_OG_IMAGE,
+  LOGO_URL,
+  ORGANIZATION_ID,
+  LOCAL_BUSINESS_ID,
+  WEBSITE_ID,
+} from '@/lib/seo';
+import { isProfileUrl } from '@/lib/contact';
+
+/** What RIVET COMPANY supplies — helps search engines understand the business. */
+const KNOWS_ABOUT = [
+  'Elevators',
+  'Passenger lifts',
+  'Escalators',
+  'Elevator installation',
+  'Elevator maintenance',
+  'Granite',
+  'Doors',
+  'Office furniture',
+  'Sanitary goods',
+  'Building materials',
+];
 import type { FaqItem } from '@/lib/seo';
 
 type JsonLdProps = { data: Record<string, unknown> | Record<string, unknown>[] };
@@ -40,19 +65,35 @@ export function OrganizationJsonLd({
   address?: string | null;
   sameAs?: (string | null | undefined)[];
 }) {
-  const socials = sameAs.filter((s): s is string => Boolean(s));
+  const socials = sameAs.filter(isProfileUrl);
 
   return (
     <JsonLd
       data={{
         '@context': 'https://schema.org',
         '@type': 'Organization',
+        '@id': ORGANIZATION_ID,
         name: SITE_NAME,
+        alternateName: SITE_ALTERNATE_NAMES,
         url: SITE_URL,
         description: DEFAULT_DESCRIPTION,
-        logo: LOGO_URL,
+        logo: { '@type': 'ImageObject', url: LOGO_URL },
+        image: DEFAULT_OG_IMAGE,
+        knowsAbout: KNOWS_ABOUT,
+        areaServed: { '@type': 'Country', name: 'Ethiopia' },
         ...(phone ? { telephone: phone } : {}),
         ...(email ? { email } : {}),
+        ...(phone || email
+          ? {
+              contactPoint: {
+                '@type': 'ContactPoint',
+                contactType: 'sales',
+                areaServed: 'ET',
+                ...(phone ? { telephone: phone } : {}),
+                ...(email ? { email } : {}),
+              },
+            }
+          : {}),
         ...(address
           ? {
               address: {
@@ -83,18 +124,25 @@ export function LocalBusinessJsonLd({
   longitude?: number | null;
   sameAs?: (string | null | undefined)[];
 }) {
-  const socials = sameAs.filter((s): s is string => Boolean(s));
+  const socials = sameAs.filter(isProfileUrl);
 
   return (
     <JsonLd
       data={{
         '@context': 'https://schema.org',
-        '@type': 'LocalBusiness',
+        '@type': ['LocalBusiness', 'HomeAndConstructionBusiness'],
+        '@id': LOCAL_BUSINESS_ID,
         name: SITE_NAME,
+        alternateName: SITE_ALTERNATE_NAMES,
         url: SITE_URL,
         description: DEFAULT_DESCRIPTION,
         logo: LOGO_URL,
-        image: LOGO_URL,
+        image: [DEFAULT_OG_IMAGE, LOGO_URL],
+        parentOrganization: { '@id': ORGANIZATION_ID },
+        knowsAbout: KNOWS_ABOUT,
+        ...(latitude != null && longitude != null
+          ? { hasMap: `https://www.google.com/maps?q=${latitude},${longitude}` }
+          : {}),
         ...(phone ? { telephone: phone } : {}),
         ...(email ? { email } : {}),
         ...(address
@@ -362,14 +410,13 @@ export function WebSiteJsonLd() {
       data={{
         '@context': 'https://schema.org',
         '@type': 'WebSite',
+        '@id': WEBSITE_ID,
         name: SITE_NAME,
+        alternateName: SITE_ALTERNATE_NAMES,
         url: SITE_URL,
         description: DEFAULT_DESCRIPTION,
-        publisher: {
-          '@type': 'Organization',
-          name: SITE_NAME,
-          logo: { '@type': 'ImageObject', url: LOGO_URL },
-        },
+        inLanguage: 'en',
+        publisher: { '@id': ORGANIZATION_ID },
         potentialAction: {
           '@type': 'SearchAction',
           target: {

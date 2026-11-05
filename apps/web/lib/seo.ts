@@ -10,12 +10,21 @@ function resolveSiteUrl(): string {
   if (explicit) return explicit;
   const vercelProd = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim().replace(/\/$/, '');
   if (vercelProd) return `https://${vercelProd.replace(/^https?:\/\//, '')}`;
-  return 'https://rivet.example.com';
+  // Production domain — used when NEXT_PUBLIC_SITE_URL is not set.
+  return 'https://rivetplc.com';
 }
 
 export const SITE_URL = resolveSiteUrl();
 
 export const SITE_NAME = 'RIVET COMPANY';
+
+/** Other names people search for (domain and email use "RIVET PLC"). */
+export const SITE_ALTERNATE_NAMES = ['RIVET', 'RIVET PLC', 'Rivet Company', 'rivetplc'];
+
+/** Stable schema.org ids so Organization, LocalBusiness and WebSite link up. */
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+export const LOCAL_BUSINESS_ID = `${SITE_URL}/#localbusiness`;
+export const WEBSITE_ID = `${SITE_URL}/#website`;
 
 export const SITE_TAGLINE = 'Elevators & Building Materials in Ethiopia';
 
@@ -24,6 +33,8 @@ export const DEFAULT_DESCRIPTION =
 
 export const SITE_KEYWORDS = [
   'RIVET COMPANY',
+  'RIVET PLC',
+  'rivetplc',
   'elevators in Ethiopia',
   'passenger lifts',
   'elevator solutions',
@@ -38,7 +49,8 @@ export const SITE_KEYWORDS = [
   'Addis Ababa',
 ];
 
-export const DEFAULT_OG_IMAGE = assets.hero.poster;
+/** Branded 1200×630 share image (public/images), cropped from the homepage hero photo. */
+export const DEFAULT_OG_IMAGE = `${SITE_URL}/images/og-rivet.jpg`;
 
 export const LOGO_URL = `${SITE_URL}/logo.png`;
 

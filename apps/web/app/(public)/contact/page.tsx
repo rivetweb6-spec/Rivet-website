@@ -4,11 +4,8 @@ import { PageHero } from '@/components/site/page-hero';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { ContactForm } from '@/components/contact/contact-form';
 import { api } from '@/lib/api';
-import { contactSocials, mailtoHref, telHref } from '@/lib/contact';
+import { contactSocials, mailtoHref, OFFICE_COORDS, telHref } from '@/lib/contact';
 import { metadataForStaticPage } from '@/lib/page-seo';
-
-/** RIVET COMPANY office, Addis Ababa. Admin → Contact coordinates override these. */
-const OFFICE_COORDS = { lat: 8.9939223, lng: 38.7943463 };
 
 /** CMS-backed; skip static prerender so `next build` does not require a live API. */
 export const dynamic = 'force-dynamic';
