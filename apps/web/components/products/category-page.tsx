@@ -6,6 +6,7 @@ import { FaqSection } from '@/components/seo/faq-section';
 import { ProductGroupJsonLd } from '@/components/seo/json-ld';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { ElevatorSolutions } from '@/components/products/elevator-solutions';
+import { ProductGallery } from '@/components/products/gallery';
 import { ProductCard, ProductEmptyState } from '@/components/products/category-group';
 import type { Category, Product, Service } from '@/lib/api';
 import { getCategoryAncestors, parseFaqs } from '@/lib/seo';
@@ -27,6 +28,12 @@ export function CategoryPageView({
   const relatedServices = services.slice(0, 3);
   const ancestors = getCategoryAncestors(category.parent);
   const rootCategories = allCategories.filter((c) => !c.parentId);
+  // Gallery: every category image (cover first); falls back to the single cover.
+  const gallery = category.images?.length
+    ? category.images
+    : category.image
+      ? [category.image]
+      : [];
 
   return (
     <>
@@ -118,7 +125,20 @@ export function CategoryPageView({
                 </Link>
               </div>
             </div>
-            {category.image && (
+            {gallery.length > 1 ? (
+              <ProductGallery
+                name={category.name}
+                aspectClassName="aspect-[4/3] sm:aspect-[16/11]"
+                sizes="(max-width: 1024px) 100vw, 45vw"
+                images={gallery.map((url, i) => ({
+                  id: `${category.id}-${i}`,
+                  url,
+                  alt: `${category.name} supplied by RIVET COMPANY in Ethiopia — photo ${i + 1}`,
+                  publicId: null,
+                  order: i,
+                }))}
+              />
+            ) : category.image ? (
               <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] border border-border bg-surface sm:aspect-[16/11]">
                 <RivetImage
                   src={category.image}
@@ -129,7 +149,7 @@ export function CategoryPageView({
                   className="object-cover"
                 />
               </div>
-            )}
+            ) : null}
           </div>
         </Container>
       </section>

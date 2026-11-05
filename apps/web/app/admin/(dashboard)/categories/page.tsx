@@ -50,6 +50,7 @@ type CategoryForm = {
   name: string;
   parentId: string;
   description: string;
+  /** Newline-separated image URLs; the first one is the cover. */
   image: string;
   faqsText: string;
 } & SeoFieldsInput;
@@ -296,7 +297,7 @@ export default function AdminCategoriesPage() {
       name: c.name,
       parentId: c.parentId ?? '',
       description: c.description ?? '',
-      image: c.image ?? '',
+      image: (c.images?.length ? c.images : c.image ? [c.image] : []).join('\n'),
       faqsText: faqsToText(c.faqs),
       ...pickSeoFields(c),
     });
@@ -318,6 +319,7 @@ export default function AdminCategoriesPage() {
       const newSiblings = parentId ? (nodeById.get(parentId)?.childrenNodes ?? []) : roots;
       const faqs = textToFaqs(form.faqsText);
       const seo = seoPayload(pickSeoFields(form));
+      const images = imageList(form.image);
 
       const payload: Partial<Category> & { name: string } = {
         ...seo,
@@ -325,7 +327,8 @@ export default function AdminCategoriesPage() {
         slug: form.slug?.trim() || undefined,
         parentId,
         description: form.description.trim() || null,
-        image: form.image || null,
+        image: images[0] ?? null,
+        images,
         faqs: faqs.length ? faqs : null,
         // New items and moved items go to the end of their new list.
         ...(parentChanged ? { order: newSiblings.length + 1 } : {}),
@@ -719,13 +722,16 @@ export default function AdminCategoriesPage() {
 
           <div>
             <ImageUploadField
-              label="Cover image"
+              label="Category images"
+              multiple
               value={form.image}
               onChange={(image) => setForm({ ...form, image })}
               onError={setFormError}
             />
             <p className="mt-1 text-[0.75rem] text-muted">
-              Use a real product or installation photo in landscape format, at least 1600px wide.
+              Add as many photos as you like. The first image is the cover (category card and page
+              header); the others appear in a gallery on the category page. Use landscape photos at
+              least 1600px wide.
             </p>
           </div>
 
@@ -751,7 +757,7 @@ export default function AdminCategoriesPage() {
                 form.description ||
                 `${form.name || 'Products'} supplied by RIVET COMPANY for projects in Ethiopia.`
               }
-              fallbackImage={form.image}
+              fallbackImage={imageList(form.image)[0]}
               pathPreview={`/products/${form.slug || 'category-slug'}`}
             />
           </Disclosure>
@@ -864,6 +870,14 @@ function Stat({ label, value }: { label: string; value: number }) {
       <span className="mt-1 block text-[1.5rem] font-semibold text-navy">{value}</span>
     </div>
   );
+}
+
+/** Newline-separated URLs from the image field, trimmed, without blanks. */
+function imageList(value: string): string[] {
+  return value
+    .split('\n')
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 /** Ask the image CDN for a small rendition — the stored URLs are 1600px wide. */
