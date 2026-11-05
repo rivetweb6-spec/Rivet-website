@@ -39,7 +39,7 @@ export function Hero({ content }: { content?: HeroContent | null }) {
   return (
     <section
       aria-labelledby="hero-title"
-      className="relative isolate flex min-h-[560px] items-center overflow-hidden bg-navy-deep pt-[4.5rem] md:h-[min(85vh,760px)]"
+      className="relative isolate flex min-h-[560px] items-center overflow-hidden bg-navy-deep pt-[4.5rem] md:min-h-[min(85vh,760px)]"
     >
       {/* Full-bleed on mobile/tablet; on desktop the photo is anchored right and its
           left edge fades into the navy so the elevator sits beside the text. */}
@@ -47,6 +47,7 @@ export function Hero({ content }: { content?: HeroContent | null }) {
         className="absolute inset-y-0 right-0 -z-10 w-full lg:w-[78%] lg:[mask-image:linear-gradient(to_right,transparent,#000_30%)]"
         aria-hidden="true"
       >
+        {/* Single static photo (no slideshow). */}
         <RivetImage
           src={heroImage}
           alt=""
@@ -75,14 +76,15 @@ export function Hero({ content }: { content?: HeroContent | null }) {
             {subheadline}
           </p>
 
-          <div className="mt-9 flex flex-wrap items-center gap-3 sm:gap-4">
+          {/* Phones: full-width stacked buttons; sm+: inline row. */}
+          <div className="mt-9 grid gap-3 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
             <RequestQuotationButton />
             <Link href="/products" className={buttonVariants({ variant: 'ghost', size: 'lg' })}>
               Explore products
             </Link>
             <Link
               href="/contact"
-              className="ml-1 inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold text-white/90 underline-offset-[6px] hover:text-white hover:underline"
+              className="inline-flex items-center justify-center gap-1.5 py-2 text-[0.9375rem] sm:ml-1 sm:py-0 font-semibold text-white/90 underline-offset-[6px] hover:text-white hover:underline"
             >
               Contact us
               <ArrowRight size={16} aria-hidden="true" />

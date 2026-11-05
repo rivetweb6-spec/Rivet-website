@@ -7,7 +7,11 @@ import { highlights } from '@/lib/data/content';
  */
 export function Highlights() {
   return (
-    <section aria-label="What RIVET COMPANY provides" className="border-b border-border bg-canvas">
+    // Hidden on phones (below md); shown on tablet and desktop.
+    <section
+      aria-label="What RIVET COMPANY provides"
+      className="hidden border-b border-border bg-canvas md:block"
+    >
       <Container>
         <dl className="grid grid-cols-1 divide-y divide-border sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
           {highlights.map((h) => (
