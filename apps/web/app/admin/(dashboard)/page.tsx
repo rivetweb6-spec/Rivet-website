@@ -40,7 +40,7 @@ export default function AdminDashboardPage() {
     return (
       <div>
         {header}
-        <div role="alert" className="rounded-2xl border border-error/20 bg-error/10 p-5">
+        <div role="alert" className="rounded-lg border border-error/20 bg-error/10 p-5">
           <p className="text-sm text-error">Could not load the dashboard: {error}</p>
           <button
             type="button"
@@ -49,7 +49,7 @@ export default function AdminDashboardPage() {
               setData(null);
               load();
             }}
-            className="mt-3 inline-flex h-10 items-center rounded-xl bg-navy px-4 text-xs font-medium text-white hover:bg-navy-600"
+            className="mt-3 inline-flex h-10 items-center rounded-md bg-navy px-4 text-xs font-medium text-white hover:bg-navy-600"
           >
             Try again
           </button>
@@ -67,7 +67,7 @@ export default function AdminDashboardPage() {
             <div
               key={i}
               aria-hidden="true"
-              className="h-28 animate-pulse rounded-2xl bg-surface shadow-[var(--shadow-sm)]"
+              className="h-28 animate-pulse rounded-lg bg-surface shadow-[var(--shadow-sm)]"
             />
           ))}
         </div>

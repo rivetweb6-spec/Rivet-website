@@ -438,7 +438,7 @@ export default function AdminCategoriesPage() {
           onClick={() => setAttentionOnly((v) => !v)}
           aria-pressed={attentionOnly}
           className={cn(
-            'rounded-2xl border p-4 text-left transition-colors ',
+            'rounded-lg border p-4 text-left transition-colors ',
             attentionOnly
               ? 'border-warning bg-warning/10'
               : 'border-border bg-surface hover:border-warning/60',
@@ -473,7 +473,7 @@ export default function AdminCategoriesPage() {
             placeholder="Search by name or URL…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-10 w-full rounded-lg border border-border bg-surface pl-9 pr-3 text-xs text-ink placeholder:text-muted/70 focus:border-gold "
+            className="h-10 w-full rounded-md border border-border bg-surface pl-9 pr-3 text-xs text-ink placeholder:text-muted/70 focus:border-gold "
           />
         </label>
         {expandableIds.length > 0 && (
@@ -863,7 +863,7 @@ export default function AdminCategoriesPage() {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-2xl border border-border bg-surface p-4">
+    <div className="rounded-lg border border-border bg-surface p-4">
       <span className="block text-3xs font-medium uppercase tracking-wider text-muted">
         {label}
       </span>
@@ -943,7 +943,7 @@ function IconAction({
   children: React.ReactNode;
 }) {
   const className = cn(
-    'inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors disabled:pointer-events-none disabled:opacity-30',
+    'inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors disabled:pointer-events-none disabled:opacity-30',
     tone === 'danger' ? 'hover:bg-error/10 hover:text-error' : 'hover:bg-pearl hover:text-navy',
   );
   if (href) {
@@ -984,7 +984,7 @@ function Disclosure({
   children: React.ReactNode;
 }) {
   return (
-    <details className="group rounded-xl border border-border">
+    <details className="group rounded-lg border border-border">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
         <span>
           <span className="block text-xs font-semibold text-navy">{title}</span>

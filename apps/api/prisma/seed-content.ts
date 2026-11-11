@@ -144,7 +144,8 @@ export const elevatorGroups = [
         slug: 'standard-passenger-elevators',
         description:
           'Traction and machine-room-less passenger elevators for mid-rise residential and commercial buildings.',
-        image: u('photo-1541888946425-d81bb19240f5'),
+        // Previous photo showed a construction site, not an elevator; falls back to the Passenger Elevators image.
+        image: null,
         order: 1,
       },
       {
@@ -152,7 +153,8 @@ export const elevatorGroups = [
         slug: 'premium-passenger-elevators',
         description:
           'Upgraded cabin finishes, quiet drives and destination-dispatch control for high-end residential and office buildings.',
-        image: u('photo-1486406146926-c627a92ad1ab'),
+        // Previous photo was a building exterior (same as the Elevators department); falls back to the Passenger Elevators image.
+        image: null,
         order: 2,
       },
       {

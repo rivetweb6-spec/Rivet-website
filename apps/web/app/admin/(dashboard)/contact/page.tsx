@@ -162,7 +162,7 @@ export default function AdminContactPage() {
           ) : (
             <ul className="max-h-[32rem] space-y-4 overflow-y-auto">
               {messages.map((m) => (
-                <li key={m.id} className="rounded-xl border border-border p-4">
+                <li key={m.id} className="rounded-lg border border-border p-4">
                   <div className="flex justify-between gap-2">
                     <p className="font-medium text-ink">{m.name}</p>
                     <time className="text-3xs text-muted">

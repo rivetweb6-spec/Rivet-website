@@ -285,7 +285,7 @@ export default function AdminVacanciesPage() {
             aria-pressed={tab === value}
             onClick={() => setTab(value)}
             className={cn(
-              'rounded-xl px-4 py-2 text-xs font-medium',
+              'rounded-md px-4 py-2 text-xs font-medium',
               tab === value ? 'bg-navy text-white' : 'bg-surface text-ink hover:bg-bg',
             )}
           >
@@ -595,7 +595,7 @@ export default function AdminVacanciesPage() {
               </p>
             </div>
             {selected.coverLetter && (
-              <p className="rounded-xl bg-bg p-3 text-xs text-muted whitespace-pre-wrap">
+              <p className="rounded-lg bg-bg p-3 text-xs text-muted whitespace-pre-wrap">
                 {selected.coverLetter}
               </p>
             )}

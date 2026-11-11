@@ -96,7 +96,7 @@ export default function AdminSiteSeoPage() {
                 key={p.key}
                 type="button"
                 onClick={() => setActiveKey(p.key)}
-                className={`block w-full rounded-lg px-3 py-2.5 text-left text-xs transition-colors ${
+                className={`block w-full rounded-md px-3 py-2.5 text-left text-xs transition-colors ${
                   activeKey === p.key
                     ? 'bg-navy text-white'
                     : 'text-ink hover:bg-bg'

@@ -150,7 +150,7 @@ export function ImageUploadField({
           void handleFiles(e.dataTransfer.files);
         }}
         className={cn(
-          'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 transition-colors',
+          'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed px-4 py-6 transition-colors',
           dragOver ? 'border-gold bg-gold/5' : 'border-border hover:border-gold/50 hover:bg-bg/50',
           // The real file input is visually hidden; show its keyboard focus on the drop zone.
           'focus-ring-within',
@@ -192,7 +192,7 @@ export function ImageUploadField({
             value={value}
             placeholder={urlPlaceholder ?? 'https://…'}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm focus:border-navy "
+            className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-sm focus:border-navy "
           />
         ) : (
           <input
@@ -201,7 +201,7 @@ export function ImageUploadField({
             value={value}
             placeholder={urlPlaceholder ?? 'https://…'}
             onChange={(e) => onChange(e.target.value)}
-            className="h-11 w-full rounded-xl border border-border bg-surface px-3 text-sm focus:border-navy "
+            className="h-11 w-full rounded-md border border-border bg-surface px-3 text-sm focus:border-navy "
           />
         )}
       </label>

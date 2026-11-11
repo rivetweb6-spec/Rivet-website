@@ -182,7 +182,7 @@ export default function AdminTeamPage() {
                         <div className="mt-3 flex items-center gap-2 text-2xs">
                           <button
                             type="button"
-                            className="grid h-7 w-7 place-items-center rounded-lg text-navy hover:bg-bg disabled:opacity-30"
+                            className="grid h-7 w-7 place-items-center rounded-md text-navy hover:bg-bg disabled:opacity-30"
                             aria-label="Move up"
                             disabled={index === 0}
                             onClick={() => void move(section.id, index, -1)}
@@ -191,7 +191,7 @@ export default function AdminTeamPage() {
                           </button>
                           <button
                             type="button"
-                            className="grid h-7 w-7 place-items-center rounded-lg text-navy hover:bg-bg disabled:opacity-30"
+                            className="grid h-7 w-7 place-items-center rounded-md text-navy hover:bg-bg disabled:opacity-30"
                             aria-label="Move down"
                             disabled={index === group.length - 1}
                             onClick={() => void move(section.id, index, 1)}

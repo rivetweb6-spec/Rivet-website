@@ -154,7 +154,7 @@ export default function AdminGalleryPage() {
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {images.map((item, index) => (
             <AdminCard key={item.id} className="flex flex-col">
-              <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-xl border border-border bg-bg">
+              <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-lg border border-border bg-bg">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={item.image} alt="" className="h-full w-full object-cover" />
               </div>
@@ -175,7 +175,7 @@ export default function AdminGalleryPage() {
                   <div className="flex gap-1">
                     <button
                       type="button"
-                      className="grid h-8 w-8 place-items-center rounded-lg text-navy hover:bg-bg disabled:opacity-30"
+                      className="grid h-8 w-8 place-items-center rounded-md text-navy hover:bg-bg disabled:opacity-30"
                       aria-label="Move up"
                       disabled={index === 0}
                       onClick={() => void move(index, -1)}
@@ -184,7 +184,7 @@ export default function AdminGalleryPage() {
                     </button>
                     <button
                       type="button"
-                      className="grid h-8 w-8 place-items-center rounded-lg text-navy hover:bg-bg disabled:opacity-30"
+                      className="grid h-8 w-8 place-items-center rounded-md text-navy hover:bg-bg disabled:opacity-30"
                       aria-label="Move down"
                       disabled={index === images.length - 1}
                       onClick={() => void move(index, 1)}

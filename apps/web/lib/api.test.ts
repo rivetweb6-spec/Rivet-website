@@ -180,3 +180,65 @@ describe('api.quotationRequest cold-start retry', () => {
     );
   });
 });
+
+describe('GET retry on transient failures', () => {
+  let api: typeof import('./api')['api'];
+  let ApiError: typeof import('./api')['ApiError'];
+
+  beforeEach(async () => {
+    vi.resetModules();
+    const mod = await import('./api');
+    api = mod.api;
+    ApiError = mod.ApiError;
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it('retries once after a dropped connection and returns the data', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockRejectedValueOnce(new TypeError('fetch failed'))
+      .mockResolvedValueOnce(jsonResponse(200, { categories: [] }));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(api.categories.list()).resolves.toEqual({ categories: [] });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([502, 503, 504])('retries once after a %i gateway response', async (status) => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse(status, { error: 'gateway' }))
+      .mockResolvedValueOnce(jsonResponse(200, { categories: [] }));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(api.categories.list()).resolves.toEqual({ categories: [] });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not retry a 404, so detail pages still resolve to not found', async () => {
+    const fetchMock = vi.fn(async () => jsonResponse(404, { error: 'Not found' }));
+    vi.stubGlobal('fetch', fetchMock);
+    const err = await api.categories.bySlug('missing').catch((e) => e);
+    expect(err).toBeInstanceOf(ApiError);
+    expect(err.status).toBe(404);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not retry a 429 rate-limit response', async () => {
+    const fetchMock = vi.fn(async () => jsonResponse(429, { error: 'Too many requests' }));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(api.categories.list()).rejects.toMatchObject({ status: 429 });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('gives up after one retry', async () => {
+    const fetchMock = vi.fn(async () => {
+      throw new TypeError('fetch failed');
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(api.categories.list()).rejects.toMatchObject({ status: 0 });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});

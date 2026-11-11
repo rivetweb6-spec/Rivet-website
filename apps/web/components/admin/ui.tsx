@@ -35,7 +35,7 @@ export function AdminCard({
   return (
     <div
       className={cn(
-        'relative rounded-2xl border border-border bg-surface p-5 shadow-[var(--shadow-sm)]',
+        'relative rounded-lg border border-border bg-surface p-5 shadow-[var(--shadow-sm)]',
         className,
       )}
     >
@@ -57,7 +57,7 @@ export function AdminButton({
     <button
       type={type}
       className={cn(
-        'inline-flex h-10 items-center justify-center gap-2 rounded-xl px-4 text-xs font-medium transition-colors disabled:opacity-50',
+        'inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-xs font-medium transition-colors disabled:opacity-50',
         variant === 'primary' && 'bg-gold text-navy hover:brightness-105',
         variant === 'secondary' && 'bg-navy text-white hover:bg-navy-600',
         variant === 'danger' && 'bg-error text-white hover:brightness-110',
@@ -176,7 +176,7 @@ function ModalFrame({
       <div
         ref={panelRef}
         className={cn(
-          'relative z-10 max-h-[90dvh] w-full overflow-y-auto rounded-2xl bg-surface p-6 shadow-[var(--shadow-bloom)]',
+          'relative z-10 max-h-[90dvh] w-full overflow-y-auto rounded-xl bg-surface p-6 shadow-[var(--shadow-bloom)]',
           className,
         )}
         onClick={(e) => e.stopPropagation()}
@@ -205,7 +205,7 @@ export function AdminInput({
       {label && <span className="mb-1.5 block text-2xs font-medium text-ink">{label}</span>}
       <input
         className={cn(
-          'h-11 w-full rounded-xl border border-border bg-surface px-3 text-sm focus:border-navy ',
+          'h-11 w-full rounded-md border border-border bg-surface px-3 text-sm focus:border-navy ',
           className,
         )}
         {...props}
@@ -224,7 +224,7 @@ export function AdminTextarea({
       {label && <span className="mb-1.5 block text-2xs font-medium text-ink">{label}</span>}
       <textarea
         className={cn(
-          'w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm focus:border-navy ',
+          'w-full rounded-md border border-border bg-surface px-3 py-2.5 text-sm focus:border-navy ',
           className,
         )}
         {...props}
@@ -244,7 +244,7 @@ export function AdminSelect({
       {label && <span className="mb-1.5 block text-2xs font-medium text-ink">{label}</span>}
       <select
         className={cn(
-          'h-11 w-full rounded-xl border border-border bg-surface px-3 text-sm focus:border-navy ',
+          'h-11 w-full rounded-md border border-border bg-surface px-3 text-sm focus:border-navy ',
           className,
         )}
         {...props}

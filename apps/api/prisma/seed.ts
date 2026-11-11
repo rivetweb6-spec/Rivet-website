@@ -46,7 +46,8 @@ const products: SeedProduct[] = [
     ],
     features: ['Regenerative drive', 'Destination dispatch', 'Emergency battery lowering'],
     featured: true,
-    images: [u('photo-1621905252507-b35492cc74b4'), u('photo-1486406146926-c627a92ad1ab')],
+    // Previous photos showed a technician and a building exterior, not the elevator. Add real product photos in the admin.
+    images: [],
   },
   {
     name: 'Obsidian Granite Slab',
@@ -63,7 +64,8 @@ const products: SeedProduct[] = [
     ],
     features: ['Sealed surface', 'Custom cut-to-size'],
     featured: true,
-    images: [u('photo-1615529182904-14819c35db37')],
+    // Previous photo showed a living room, not granite. Add real product photos in the admin.
+    images: [],
   },
   {
     name: 'Atrium Glass Door System',
@@ -165,7 +167,8 @@ const products: SeedProduct[] = [
     ],
     features: ['CE marked', 'Custom sizes'],
     featured: false,
-    images: [u('photo-1541888946425-d81bb19240f5')],
+    // Previous photo showed a construction site, not structural glass. Add real product photos in the admin.
+    images: [],
   },
 ];
 

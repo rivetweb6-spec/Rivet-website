@@ -232,7 +232,7 @@ export default function AdminQuotationRequestsPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-4 rounded-xl border border-border bg-bg p-3">
+            <div className="flex items-center gap-4 rounded-lg border border-border bg-bg p-3">
               {selected.productImage && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -251,7 +251,7 @@ export default function AdminQuotationRequestsPage() {
             </div>
 
             {selected.message && (
-              <p className="rounded-xl bg-bg p-3 text-xs text-muted">
+              <p className="rounded-lg bg-bg p-3 text-xs text-muted">
                 {selected.message}
               </p>
             )}

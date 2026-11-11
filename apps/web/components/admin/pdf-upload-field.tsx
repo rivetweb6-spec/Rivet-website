@@ -88,7 +88,7 @@ export function PdfUploadField({ label, value, onChange, onError, className }: P
       <legend className="mb-3 block text-2xs font-medium text-ink">{label}</legend>
 
       {current && (
-        <div className="flex items-center gap-3 rounded-xl border border-border bg-bg px-3 py-2.5">
+        <div className="flex items-center gap-3 rounded-lg border border-border bg-bg px-3 py-2.5">
           <FileText size={20} className="shrink-0 text-navy" strokeWidth={1.5} />
           <a
             href={current}
@@ -121,7 +121,7 @@ export function PdfUploadField({ label, value, onChange, onError, className }: P
           void handleFiles(e.dataTransfer.files);
         }}
         className={cn(
-          'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 transition-colors',
+          'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed px-4 py-6 transition-colors',
           dragOver ? 'border-gold bg-gold/5' : 'border-border hover:border-gold/50 hover:bg-bg/50',
           'focus-ring-within',
           uploading && 'pointer-events-none opacity-60',

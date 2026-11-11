@@ -78,7 +78,7 @@ export function SeoFieldsPanel({
     onChange({ ...fields, [key]: v });
 
   return (
-    <div className="mt-6 space-y-4 rounded-xl border border-border bg-bg/50 p-4">
+    <div className="mt-6 space-y-4 rounded-lg border border-border bg-bg/50 p-4">
       <div>
         <h3 className="text-sm font-semibold text-navy">SEO & social sharing</h3>
         <p className="mt-1 text-2xs text-muted">
