@@ -5,6 +5,7 @@ import { PageHero } from '@/components/site/page-hero';
 import { Container, Section } from '@/components/ui/container';
 import { ProductsCatalog, type CatalogMode } from '@/components/products/catalog';
 import { CatalogSkeleton } from '@/components/products/catalog-skeleton';
+import { CatalogSearch } from '@/components/products/catalog-search';
 import { api } from '@/lib/api';
 import { pageMetadata } from '@/lib/seo';
 import { metadataForStaticPage } from '@/lib/page-seo';
@@ -86,8 +87,13 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
         eyebrow="Products"
         title="Elevators, escalators & building materials"
         description="Browse elevators, passenger lifts, escalators, granite, doors, office furniture, sanitary goods and building materials supplied by RIVET COMPANY in Ethiopia."
-      />
-      <Section className="pt-14 md:pt-20">
+      >
+        {/* Finding a product is the page's main task, so search sits in the header. */}
+        <Suspense fallback={<div className="h-14 w-full max-w-xl rounded-md border border-border bg-canvas" />}>
+          <CatalogSearch />
+        </Suspense>
+      </PageHero>
+      <Section className="pt-12 md:pt-16">
         <Container>
           {/* The header shows at once; the catalog streams in behind a skeleton.
               (A route-level loading.tsx is avoided on purpose: it would make

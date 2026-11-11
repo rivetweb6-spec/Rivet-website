@@ -67,7 +67,7 @@ export default async function NewsPage() {
                         alt={`${n.title} — RIVET COMPANY news`}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                        className="object-cover"
                       />
                       {n.category && (
                         <span className="absolute left-4 top-4 rounded-sm bg-navy px-2.5 py-1 text-3xs font-semibold text-white">

@@ -357,20 +357,25 @@
     color: var(--color-gold);
   }
 
-  /* Card frame — quiet lift and border tint on hover */
+  /*
+   * Card frame — the border darkens on hover; no lift or shadow bloom (a
+   * moving card on every hover reads as decoration, not feedback).
+   * `.card-frame` is the current name; `.luxury-card` is kept as an alias.
+   */
+  .card-frame,
   .luxury-card {
     position: relative;
     overflow: hidden;
     border: 1px solid var(--color-border);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    transition: border-color 0.2s ease;
   }
+  .card-frame:hover,
   .luxury-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-    border-color: color-mix(in srgb, var(--color-navy) 25%, var(--color-border));
+    border-color: color-mix(in srgb, var(--color-navy) 45%, var(--color-border));
   }
+  .dark .card-frame:hover,
   .dark .luxury-card:hover {
-    border-color: color-mix(in srgb, var(--color-gold) 35%, var(--color-border));
+    border-color: color-mix(in srgb, var(--color-gold) 45%, var(--color-border));
   }
 
   /* Image frame — formerly an offset gold outline; now a plain image block */

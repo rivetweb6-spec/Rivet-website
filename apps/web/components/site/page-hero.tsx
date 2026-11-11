@@ -10,12 +10,15 @@ export function PageHero({
   title,
   description,
   lead,
+  children,
 }: {
   eyebrow: string;
   title: string;
   description?: string;
   /** Optional content above the eyebrow (e.g. breadcrumbs). */
   lead?: ReactNode;
+  /** Optional content below the description (e.g. the catalog search). */
+  children?: ReactNode;
 }) {
   return (
     <section className="border-b border-border bg-bg pt-28 pb-12 md:pt-32 md:pb-16">
@@ -31,6 +34,7 @@ export function PageHero({
               {description}
             </p>
           )}
+          {children && <div className="mt-8">{children}</div>}
         </div>
       </Container>
     </section>

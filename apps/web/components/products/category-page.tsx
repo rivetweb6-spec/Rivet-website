@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Container, Eyebrow, Section } from '@/components/ui/container';
+import { Container, Section } from '@/components/ui/container';
 import { ScrollNav } from '@/components/ui/scroll-nav';
 import { Breadcrumbs } from '@/components/seo/breadcrumbs';
 import { FaqSection } from '@/components/seo/faq-section';
@@ -7,7 +7,7 @@ import { ProductGroupJsonLd } from '@/components/seo/json-ld';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { ElevatorSolutions } from '@/components/products/elevator-solutions';
 import { ProductGallery } from '@/components/products/gallery';
-import { ProductCard, ProductEmptyState } from '@/components/products/category-group';
+import { ProductEmptyState, ProductGrid } from '@/components/products/category-group';
 import type { Category, Product, Service } from '@/lib/api';
 import { getCategoryAncestors, parseFaqs } from '@/lib/seo';
 import { cn } from '@/lib/utils';
@@ -71,7 +71,8 @@ export function CategoryPageView({
           {rootCategories.length > 0 && (
             <ScrollNav
               aria-label="Departments"
-              className="-mx-5 mt-6 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0"
+              // py-1: room for the focus outline inside the phone scroll strip.
+              className="-mx-5 mt-5 flex gap-2 overflow-x-auto px-5 py-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
             >
               <Link
                 href="/products"
@@ -104,12 +105,8 @@ export function CategoryPageView({
 
           <div className="mt-10 grid items-center gap-10 lg:mt-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
             <div>
-              <Eyebrow>
-                {ancestors.length > 0
-                  ? `Product category · ${ancestors.map((a) => a.name).join(' · ')}`
-                  : 'Product category'}
-              </Eyebrow>
-              <h1 className="headline-display mt-3 text-5xl sm:text-7xl lg:text-8xl">
+              {/* The breadcrumb above already shows where this category sits. */}
+              <h1 className="headline-display text-5xl sm:text-7xl lg:text-8xl">
                 {category.name}
               </h1>
               <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted">
@@ -183,17 +180,18 @@ export function CategoryPageView({
       {(products.length > 0 || !hasChildren) && (
       <Section>
         <Container>
-          <Eyebrow>Catalog</Eyebrow>
-          <h2 className="headline-display mt-3 text-4xl sm:text-5xl">
-            {products.length > 0
-              ? `${category.name} products`
-              : `Products in ${category.name}`}
-          </h2>
+          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+            <h2 className="headline-display text-4xl sm:text-5xl">Products in {category.name}</h2>
+            {products.length > 0 && (
+              <p className="text-xs text-muted">
+                {products.length} product{products.length === 1 ? '' : 's'}
+              </p>
+            )}
+          </div>
           {products.length > 0 ? (
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:gap-6">
-              {products.map((p) => (
-                <ProductCard key={p.id} product={p} categoryName={category.name} />
-              ))}
+            <div className="mt-8 md:mt-10">
+              {/* Every card is in this category, so the cards don't repeat its name. */}
+              <ProductGrid products={products} categoryName={category.name} showCategory={false} />
             </div>
           ) : (
             <div className="mt-8">
@@ -207,14 +205,13 @@ export function CategoryPageView({
       {relatedServices.length > 0 && (
         <Section className="bg-surface">
           <Container>
-            <Eyebrow>Support</Eyebrow>
-            <h2 className="headline-display mt-3 text-4xl sm:text-5xl">Relevant services</h2>
+            <h2 className="headline-display text-4xl sm:text-5xl">Related services</h2>
             <ul className="mt-8 grid gap-5 md:grid-cols-3">
               {relatedServices.map((s) => (
                 <li key={s.id}>
                   <Link
                     href={`/services/${s.slug}`}
-                    className="luxury-card group block h-full rounded-lg bg-canvas p-6 "
+                    className="card-frame group block h-full rounded-lg bg-canvas p-6"
                   >
                     <h3 className="text-lg group-hover:underline group-focus-visible:underline group-hover:underline-offset-4">{s.title}</h3>
                     <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted">

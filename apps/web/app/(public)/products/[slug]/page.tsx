@@ -2,13 +2,13 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Check } from 'lucide-react';
-import { Container, Eyebrow, Section } from '@/components/ui/container';
+import { Container, Section } from '@/components/ui/container';
 import { ProductGallery } from '@/components/products/gallery';
 import { CategoryPageView } from '@/components/products/category-page';
 import { RequestQuotationButton } from '@/components/quotation/request-quotation-button';
 import { Breadcrumbs } from '@/components/seo/breadcrumbs';
 import { ProductJsonLd } from '@/components/seo/json-ld';
-import { ProductCard } from '@/components/products/category-group';
+import { ProductGrid } from '@/components/products/category-group';
 import { buttonVariants } from '@/components/ui/button-variants';
 import { api, ApiError } from '@/lib/api';
 import { matchProductInterest } from '@/lib/product-interest';
@@ -158,20 +158,16 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
             <ProductGallery images={galleryImages} name={product.name} />
 
             <div>
+              {/* The breadcrumb shows the full lineage; this links to the nearest category. */}
               {product.category && (
                 <Link
                   href={`/products/${product.category.slug}`}
-                  className="inline-block rounded-sm underline-offset-4 hover:underline "
+                  className="inline-block rounded-sm text-xs font-semibold text-navy-400 underline-offset-4 hover:underline dark:text-gold"
                 >
-                  <Eyebrow>
-                    {[
-                      ...getCategoryAncestors(product.category.parent).map((a) => a.name),
-                      product.category.name,
-                    ].join(' · ')}
-                  </Eyebrow>
+                  {product.category.name}
                 </Link>
               )}
-              <h1 className="headline-display mt-3 text-4xl sm:text-6xl lg:text-7xl">{product.name}</h1>
+              <h1 className="headline-display mt-2 text-4xl sm:text-6xl lg:text-7xl">{product.name}</h1>
               {product.shortDescription && (
                 <p className="mt-4 text-lg leading-relaxed text-muted">
                   {product.shortDescription}
@@ -247,7 +243,8 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
               {product.description && (
                 <div>
                   <h2 className="headline-display text-2xl sm:text-3xl">Description</h2>
-                  <p className="mt-4 whitespace-pre-line text-md leading-relaxed text-muted">{product.description}</p>
+                  {/* Main reading text: ink, not the secondary grey used for summaries. */}
+                  <p className="mt-4 max-w-prose whitespace-pre-line text-md leading-relaxed text-ink/85">{product.description}</p>
                 </div>
               )}
               {specs.length > 0 && (
@@ -274,14 +271,13 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
       {relatedServices.length > 0 && (
         <Section className="bg-surface">
           <Container>
-            <Eyebrow>Services</Eyebrow>
-            <h2 className="headline-display mt-3 text-4xl sm:text-5xl">Relevant services</h2>
+            <h2 className="headline-display text-4xl sm:text-5xl">Related services</h2>
             <ul className="mt-8 grid gap-5 md:grid-cols-3">
               {relatedServices.map((s) => (
                 <li key={s.id}>
                   <Link
                     href={`/services/${s.slug}`}
-                    className="luxury-card group block h-full rounded-lg bg-canvas p-6 "
+                    className="card-frame group block h-full rounded-lg bg-canvas p-6"
                   >
                     <h3 className="text-lg group-hover:underline group-focus-visible:underline group-hover:underline-offset-4">{s.title}</h3>
                     <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted">{s.narrative}</p>
@@ -296,8 +292,7 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
       {related.length > 0 && (
         <Section>
           <Container>
-            <Eyebrow>Continue exploring</Eyebrow>
-            <h2 className="headline-display mt-3 text-4xl sm:text-5xl">Related products</h2>
+            <h2 className="headline-display text-4xl sm:text-5xl">Related products</h2>
             {product.category && (
               <p className="mt-2 text-muted">
                 More from{' '}
@@ -309,10 +304,8 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                 </Link>
               </p>
             )}
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:gap-6">
-              {related.slice(0, 3).map((p) => (
-                <ProductCard key={p.id} product={p} categoryName={product.category?.name} />
-              ))}
+            <div className="mt-8 md:mt-10">
+              <ProductGrid products={related.slice(0, 3)} categoryName={product.category?.name} />
             </div>
           </Container>
         </Section>

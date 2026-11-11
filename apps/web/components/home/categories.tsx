@@ -69,7 +69,7 @@ export function Categories({ items }: { items?: CategoryCard[] }) {
                     alt=""
                     fill
                     sizes="(max-width: 1024px) 50vw, 25vw"
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                    className="object-cover"
                   />
                 ) : (
                   <ImagePlaceholder />
