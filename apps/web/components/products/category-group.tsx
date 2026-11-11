@@ -6,7 +6,8 @@ import { ArrowRight, Package } from 'lucide-react';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { Stagger, StaggerItem } from '@/components/motion/reveal';
-import { assets } from '@/lib/assets';
+import { ImagePlaceholder } from '@/components/ui/image-placeholder';
+import { RequestQuotationButton } from '@/components/quotation/request-quotation-button';
 import { buildProductAltText } from '@/lib/seo';
 import type { Category, Product } from '@/lib/api';
 import { buttonVariants } from '@/components/ui/button-variants';
@@ -81,7 +82,8 @@ export function CategoryCard({
   category: CategoryItemData;
   fallbackImage?: string;
 }) {
-  const image = category.image || fallbackImage || assets.categories.elevators;
+  // The parent's photo is an acceptable stand-in; an unrelated stock photo is not.
+  const image = category.image || fallbackImage;
 
   return (
     <Link
@@ -89,13 +91,17 @@ export function CategoryCard({
       className={`luxury-card group flex h-full flex-col overflow-hidden rounded-[8px] bg-canvas ${cardLinkFocus}`}
     >
       <div className="relative aspect-[3/2] overflow-hidden bg-bg">
-        <RivetImage
-          src={image}
-          alt=""
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-        />
+        {image ? (
+          <RivetImage
+            src={image}
+            alt=""
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+          />
+        ) : (
+          <ImagePlaceholder />
+        )}
       </div>
 
       <div className="flex flex-1 flex-col p-6">
@@ -180,7 +186,7 @@ export function ProductCard({
   product: Product;
   categoryName?: string;
 }) {
-  const image = product.images?.[0]?.url ?? assets.products.p1;
+  const image = product.images?.[0]?.url;
   const cat = categoryName || product.category?.name || 'Product';
   const alt =
     product.images?.[0]?.alt ||
@@ -193,13 +199,17 @@ export function ProductCard({
       className="luxury-card group flex h-full flex-col overflow-hidden rounded-[8px] bg-canvas focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-bg">
-        <RivetImage
-          src={image}
-          alt={alt}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-        />
+        {image ? (
+          <RivetImage
+            src={image}
+            alt={alt}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+          />
+        ) : (
+          <ImagePlaceholder />
+        )}
       </div>
       <div className="flex flex-1 flex-col p-5 md:p-6">
         <span className="eyebrow text-gold-ink">
@@ -339,13 +349,17 @@ export function DepartmentGrid({ tree }: { tree: CategoryTreeNode[] }) {
               className="luxury-card group relative flex flex-col overflow-hidden rounded-[8px] bg-canvas focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2 focus-within:ring-offset-bg"
             >
               <div className="relative aspect-[16/10] overflow-hidden bg-bg">
-                <RivetImage
-                  src={root.image || assets.categories.elevators}
-                  alt=""
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-                />
+                {root.image ? (
+                  <RivetImage
+                    src={root.image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                  />
+                ) : (
+                  <ImagePlaceholder />
+                )}
                 <div
                   className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-deep/50 via-transparent to-transparent"
                   aria-hidden="true"
@@ -417,7 +431,14 @@ export function DepartmentGrid({ tree }: { tree: CategoryTreeNode[] }) {
 }
 
 /** Clean branded empty state for categories with no published products yet */
-export function ProductEmptyState({ categoryName }: { categoryName: string }) {
+export function ProductEmptyState({
+  categoryName,
+  productInterest,
+}: {
+  categoryName: string;
+  /** Prefills the quotation form's product category. */
+  productInterest?: string;
+}) {
   return (
     <div className="rounded-[8px] border border-dashed border-border bg-surface p-8 text-center md:p-10">
       <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-[6px] bg-bg text-navy">
@@ -430,12 +451,7 @@ export function ProductEmptyState({ categoryName }: { categoryName: string }) {
         Our team can still source products in this category for your project. Request a quotation with your specification, or contact us to discuss the options.
       </p>
       <div className="mt-6 flex flex-wrap justify-center gap-3">
-        <Link
-          href="/request-quotation"
-          className={buttonVariants({ variant: 'primary', size: 'md' })}
-        >
-          Request a quotation
-        </Link>
+        <RequestQuotationButton size="md" productInterest={productInterest} />
         <Link
           href="/contact"
           className={buttonVariants({ variant: 'outline', size: 'md' })}

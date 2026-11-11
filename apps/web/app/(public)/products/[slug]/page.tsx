@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { ArrowRight, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { ProductGallery } from '@/components/products/gallery';
 import { CategoryPageView } from '@/components/products/category-page';
@@ -10,8 +10,9 @@ import { Breadcrumbs } from '@/components/seo/breadcrumbs';
 import { ProductJsonLd } from '@/components/seo/json-ld';
 import { ProductCard } from '@/components/products/category-group';
 import { buttonVariants } from '@/components/ui/button-variants';
-import { productInterests } from '@/lib/data/content';
-import { api } from '@/lib/api';
+import { api, ApiError } from '@/lib/api';
+import { matchProductInterest } from '@/lib/product-interest';
+import { relatedServices as findRelatedServices } from '@/lib/related-services';
 import {
   buildProductAltText,
   categoryMetadata,
@@ -21,6 +22,8 @@ import {
 } from '@/lib/seo';
 
 type Params = Promise<{ slug: string }>;
+
+const isNotFound = (error: unknown) => error instanceof ApiError && error.status === 404;
 
 export const revalidate = 60;
 /** Allow CMS slugs added after build (empty generateStaticParams at Vercel build is OK). */
@@ -68,67 +71,53 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
 
   // Category-first resolver (shared /products/[slug] namespace). Fetch data
   // first so JSX is not returned from inside try/catch.
-  let categoryPage: {
-    category: Awaited<ReturnType<typeof api.categories.bySlug>>['category'];
-    allCategories: Awaited<ReturnType<typeof api.categories.list>>['categories'];
-    products: Awaited<ReturnType<typeof api.products.list>>['products'];
-    services: Awaited<ReturnType<typeof api.services.list>>['services'];
-  } | null = null;
-  try {
-    const [{ category }, { categories }, { products }, { services }] = await Promise.all([
-      api.categories.bySlug(slug),
-      api.categories.list(),
-      api.products.list({ category: slug, pageSize: 48 }),
-      api.services.list(),
-    ]);
-    categoryPage = { category, allCategories: categories, products, services };
-  } catch {
-    /* Not a category slug — resolve as a product instead. */
-  }
+  // Only a 404 means "this slug is not a category". Any other failure (API
+  // down, 5xx) is rethrown so the error boundary says the catalog is
+  // unavailable instead of wrongly reporting "not found".
+  const [categoryRes, categoriesRes, productsRes, servicesRes] = await Promise.allSettled([
+    api.categories.bySlug(slug),
+    api.categories.list(),
+    api.products.list({ category: slug, pageSize: 48 }),
+    api.services.list(),
+  ]);
 
-  if (categoryPage) {
+  if (categoryRes.status === 'fulfilled') {
+    // Products are the point of the page, so their failure is an error; the
+    // department filter and related services are optional extras.
+    if (productsRes.status === 'rejected') throw productsRes.reason;
     return (
       <CategoryPageView
-        category={categoryPage.category}
-        allCategories={categoryPage.allCategories}
-        products={categoryPage.products}
-        services={categoryPage.services}
+        category={categoryRes.value.category}
+        allCategories={categoriesRes.status === 'fulfilled' ? categoriesRes.value.categories : []}
+        products={productsRes.value.products}
+        services={servicesRes.status === 'fulfilled' ? servicesRes.value.services : []}
       />
     );
   }
+  if (!isNotFound(categoryRes.reason)) throw categoryRes.reason;
 
   let data;
   try {
     data = await api.products.bySlug(slug);
-  } catch {
-    notFound();
+  } catch (error) {
+    if (isNotFound(error)) notFound();
+    throw error;
   }
 
   const { product, related } = data;
   const specs = Array.isArray(product.specs) ? product.specs : [];
   const features = Array.isArray(product.features) ? product.features : [];
   const primaryImage = product.images[0]?.url ?? null;
-  const candidateCategoryNames = [
+  // Most specific first: the product's category, then its ancestors.
+  const categoryLineage = [
     product.category?.name,
     ...getCategoryAncestors(product.category?.parent).map((a) => a.name).reverse(),
-  ].filter(Boolean) as string[];
+  ];
+  const productInterest = matchProductInterest(categoryLineage);
 
-  const matchedInterest = candidateCategoryNames.find((catName) =>
-    productInterests.some((interest) => interest.toLowerCase() === catName.toLowerCase()),
-  );
-
-  const productInterest =
-    productInterests.find(
-      (interest) => interest.toLowerCase() === matchedInterest?.toLowerCase(),
-    ) ?? (product.category?.name ? 'Other' : undefined);
-
-  let services: Awaited<ReturnType<typeof api.services.list>>['services'] = [];
-  try {
-    ({ services } = await api.services.list());
-  } catch {
-    /* optional */
-  }
-  const relatedServices = services.slice(0, 3);
+  // Services were fetched alongside the category lookup above (optional).
+  const services = servicesRes.status === 'fulfilled' ? servicesRes.value.services : [];
+  const relatedServices = findRelatedServices(services, categoryLineage);
 
   const galleryImages = product.images.map((img) => ({
     ...img,
@@ -231,19 +220,21 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                   productImage={primaryImage ?? undefined}
                 />
                 <Link
-                  href="/request-quotation"
+                  href="/contact"
                   className={buttonVariants({ variant: 'outline', size: 'lg' })}
                 >
-                  Open full quotation form
-                </Link>
-                <Link
-                  href="/contact"
-                  className="inline-flex h-12 items-center gap-1.5 rounded-[6px] px-2 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
-                >
                   Contact us
-                  <ArrowRight size={16} aria-hidden="true" />
                 </Link>
               </div>
+              <p className="mt-4 text-[0.875rem] text-muted">
+                Prefer a full page?{' '}
+                <Link
+                  href="/request-quotation"
+                  className="font-semibold text-navy underline underline-offset-4 hover:no-underline"
+                >
+                  Use the quotation form
+                </Link>
+              </p>
             </div>
           </div>
         </Container>

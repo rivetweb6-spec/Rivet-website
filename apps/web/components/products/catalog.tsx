@@ -54,7 +54,7 @@ export function ProductsCatalog({
   }, [search]);
 
   const update = useCallback(
-    (patch: Record<string, string | undefined>) => {
+    (patch: Record<string, string | undefined>, { replace = false }: { replace?: boolean } = {}) => {
       const next = new URLSearchParams(params.toString());
       Object.entries(patch).forEach(([k, v]) => {
         if (!v) next.delete(k);
@@ -62,19 +62,24 @@ export function ProductsCatalog({
       });
       if (!('page' in patch)) next.delete('page');
       const qs = next.toString();
+      const href = qs ? `/products?${qs}` : '/products';
       startTransition(() => {
-        router.push(qs ? `/products?${qs}` : '/products');
+        if (replace) router.replace(href);
+        else router.push(href);
       });
     },
     [params, router],
   );
 
   // Search as you type (debounced) — Enter still submits immediately.
+  // The first query pushes (so Back returns to the page you searched from);
+  // refining an existing query replaces it, so Back doesn't step through
+  // every partial query. Enter / Clear always push.
   useEffect(() => {
     const trimmed = searchValue.trim();
     if (trimmed === (search ?? '')) return;
     const timer = window.setTimeout(() => {
-      update({ search: trimmed || undefined });
+      update({ search: trimmed || undefined }, { replace: Boolean(search) });
     }, 450);
     return () => window.clearTimeout(timer);
   }, [searchValue, search, update]);

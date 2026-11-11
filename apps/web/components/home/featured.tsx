@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
+import { ImagePlaceholder } from '@/components/ui/image-placeholder';
 import { Stagger, StaggerItem } from '@/components/motion/reveal';
 import { featuredProducts as fallbackProducts } from '@/lib/data/content';
 import { buildProductAltText } from '@/lib/seo';
@@ -11,7 +12,8 @@ export type FeaturedProductCard = {
   name: string;
   category: string;
   description: string;
-  image: string;
+  /** null when the product has no photo yet (shows a neutral placeholder). */
+  image: string | null;
 };
 
 /** Featured products — same card language as the catalog. */
@@ -57,13 +59,17 @@ function ProductCard({ slug, name, category, description, image }: FeaturedProdu
       className="luxury-card group flex h-full flex-col overflow-hidden rounded-[8px] bg-canvas"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-bg">
-        <RivetImage
-          src={image}
-          alt={buildProductAltText(name, category, description)}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-        />
+        {image ? (
+          <RivetImage
+            src={image}
+            alt={buildProductAltText(name, category, description)}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+          />
+        ) : (
+          <ImagePlaceholder />
+        )}
       </div>
       <div className="flex flex-1 flex-col p-5 md:p-6">
         <span className="eyebrow text-gold-ink">{category}</span>

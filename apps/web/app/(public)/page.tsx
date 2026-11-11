@@ -11,7 +11,6 @@ import { News } from '@/components/home/news';
 import { QuotationCta } from '@/components/home/quotation-cta';
 import { metadataForStaticPage } from '@/lib/page-seo';
 import { api } from '@/lib/api';
-import { assets } from '@/lib/assets';
 import { sortNewsNewestFirst } from '@/lib/news';
 
 /** CMS-backed; skip static prerender so `next build` does not require a live API. */
@@ -55,7 +54,7 @@ export default async function HomePage() {
         name: string;
         category: string;
         description: string;
-        image: string;
+        image: string | null;
       }[]
     | undefined =
     featuredResult.status === 'fulfilled'
@@ -64,7 +63,7 @@ export default async function HomePage() {
           name: p.name,
           category: p.category?.name ?? 'Product',
           description: p.shortDescription ?? '',
-          image: p.images[0]?.url ?? assets.products.p1,
+          image: p.images[0]?.url ?? null,
         }))
       : undefined;
 
@@ -76,7 +75,7 @@ export default async function HomePage() {
         name: p.name,
         category: p.category?.name ?? 'Product',
         description: p.shortDescription ?? '',
-        image: p.images[0]?.url ?? assets.products.p1,
+        image: p.images[0]?.url ?? null,
       }));
     } catch {
       /* leave undefined so Featured can use local demo fallbacks when API is down */

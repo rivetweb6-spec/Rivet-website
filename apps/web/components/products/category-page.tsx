@@ -12,6 +12,9 @@ import type { Category, Product, Service } from '@/lib/api';
 import { getCategoryAncestors, parseFaqs } from '@/lib/seo';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button-variants';
+import { RequestQuotationButton } from '@/components/quotation/request-quotation-button';
+import { matchProductInterest } from '@/lib/product-interest';
+import { relatedServices as findRelatedServices } from '@/lib/related-services';
 
 export function CategoryPageView({
   category,
@@ -25,8 +28,12 @@ export function CategoryPageView({
   services: Service[];
 }) {
   const faqs = parseFaqs(category.faqs);
-  const relatedServices = services.slice(0, 3);
   const ancestors = getCategoryAncestors(category.parent);
+  // Most specific first: this category, then its ancestors.
+  const lineage = [category.name, ...ancestors.map((a) => a.name).reverse()];
+  const relatedServices = findRelatedServices(services, lineage);
+  const productInterest = matchProductInterest(lineage);
+  const hasChildren = Boolean(category.children?.length);
   const rootCategories = allCategories.filter((c) => !c.parentId);
   // Gallery: every category image (cover first); falls back to the single cover.
   const gallery = category.images?.length
@@ -111,12 +118,7 @@ export function CategoryPageView({
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  href="/request-quotation"
-                  className={buttonVariants({ variant: 'primary', size: 'lg' })}
-                >
-                  Request a quotation
-                </Link>
+                <RequestQuotationButton productInterest={productInterest} />
                 <Link
                   href="/services"
                   className={buttonVariants({ variant: 'outline', size: 'lg' })}
@@ -154,7 +156,7 @@ export function CategoryPageView({
         </Container>
       </section>
 
-      {category.children && category.children.length > 0 ? (
+      {hasChildren ? (
         <ElevatorSolutions
           category={category}
           eyebrow={
@@ -176,6 +178,9 @@ export function CategoryPageView({
         />
       ) : null}
 
+      {/* A parent category with no products of its own is browsed through its
+          ranges above; an "empty" notice here would contradict that grid. */}
+      {(products.length > 0 || !hasChildren) && (
       <Section>
         <Container>
           <Eyebrow>Catalog</Eyebrow>
@@ -192,11 +197,12 @@ export function CategoryPageView({
             </div>
           ) : (
             <div className="mt-8">
-              <ProductEmptyState categoryName={category.name} />
+              <ProductEmptyState categoryName={category.name} productInterest={productInterest} />
             </div>
           )}
         </Container>
       </Section>
+      )}
 
       {relatedServices.length > 0 && (
         <Section className="bg-surface">

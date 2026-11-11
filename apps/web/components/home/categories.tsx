@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
+import { ImagePlaceholder } from '@/components/ui/image-placeholder';
 import { Stagger, StaggerItem } from '@/components/motion/reveal';
 import { categories as fallbackCategories } from '@/lib/data/content';
 import { assets } from '@/lib/assets';
@@ -62,13 +63,17 @@ export function Categories({ items }: { items?: CategoryCard[] }) {
                 href={`/products/${c.slug}`}
                 className="group relative block aspect-[4/3] overflow-hidden rounded-[8px] bg-navy-deep"
               >
-                <RivetImage
-                  src={c.image || FALLBACK_IMAGES[c.slug] || assets.categories.materials}
-                  alt=""
-                  fill
-                  sizes="(max-width: 1024px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
-                />
+                {c.image || FALLBACK_IMAGES[c.slug] ? (
+                  <RivetImage
+                    src={(c.image || FALLBACK_IMAGES[c.slug])!}
+                    alt=""
+                    fill
+                    sizes="(max-width: 1024px) 50vw, 25vw"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                  />
+                ) : (
+                  <ImagePlaceholder />
+                )}
                 <div
                   className="absolute inset-0 bg-gradient-to-t from-navy-deep/85 via-navy-deep/20 to-transparent"
                   aria-hidden="true"
