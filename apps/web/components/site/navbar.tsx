@@ -7,11 +7,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, Menu, Search, X } from 'lucide-react';
 import { Logo } from './logo';
 import { CompanyMenu } from './company-menu';
+import { mobileNavItemClass } from './nav-styles';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useQuotationModal } from '@/components/quotation/quotation-modal-provider';
 import { api, type SearchSuggestion } from '@/lib/api';
 import { RivetImage } from '@/components/ui/rivet-image';
+import { ImagePlaceholder } from '@/components/ui/image-placeholder';
 import { useFocusTrap } from '@/lib/use-focus-trap';
 import { cn } from '@/lib/utils';
 
@@ -79,8 +81,7 @@ export function Navbar() {
           <Link
             href="/"
             aria-label="RIVET COMPANY home"
-            // Mobile/tablet: logo sits on the right; desktop restores it to the left.
-            className="order-last flex h-11 shrink-0 items-center rounded-sm focus-visible:outline-offset-4 lg:order-none"
+            className="flex h-11 shrink-0 items-center rounded-sm focus-visible:outline-offset-4"
           >
             <Logo className="h-8 sm:h-9" />
           </Link>
@@ -107,19 +108,20 @@ export function Navbar() {
             )}
           </nav>
 
-          {/* Mobile/tablet: controls on the left as Menu · Search · Theme (· Quote);
-              desktop keeps Theme · Search · Quote on the right. */}
-          <div className="order-first flex shrink-0 items-center gap-1.5 lg:order-none">
-            <ThemeToggle className="order-1 lg:order-none" />
+          {/* Logo left, actions right at every size. Phones/tablets: Search ·
+              (Quote from sm) · Menu, with the theme switch inside the menu.
+              Desktop: Theme · Search · Quote. */}
+          <div className="flex shrink-0 items-center gap-1.5">
+            <ThemeToggle className="hidden lg:grid" />
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
               aria-label="Search products"
-              className="grid h-10 w-10 place-items-center rounded-md text-ink/75 transition-colors hover:bg-bg hover:text-navy"
+              className="grid h-11 w-11 place-items-center rounded-md text-ink/75 transition-colors hover:bg-bg hover:text-navy lg:h-10 lg:w-10"
             >
               <Search size={18} strokeWidth={1.75} aria-hidden="true" />
             </button>
-            <Button size="sm" className="order-2 ml-2 hidden sm:inline-flex lg:order-none" onClick={() => open()}>
+            <Button size="sm" className="ml-1 hidden sm:inline-flex lg:ml-2" onClick={() => open()}>
               Request a Quotation
             </Button>
             <button
@@ -129,7 +131,7 @@ export function Navbar() {
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
-              className="order-first grid h-10 w-10 place-items-center rounded-md text-navy transition-colors hover:bg-bg lg:hidden"
+              className="-mr-1.5 grid h-11 w-11 place-items-center rounded-md text-navy transition-colors hover:bg-bg sm:ml-1 lg:hidden"
             >
               {menuOpen ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
             </button>
@@ -161,14 +163,15 @@ export function Navbar() {
             key="mobile-nav-drawer"
             id="mobile-nav"
             aria-label="Mobile"
-            // Side drawer that slides in from the left, below the header.
-            initial={{ x: '-100%' }}
+            // Side drawer that slides in from the right (where the menu button
+            // is), below the header.
+            initial={{ x: '100%' }}
             animate={{ x: 0 }}
-            exit={{ x: '-100%' }}
+            exit={{ x: '100%' }}
             transition={{ duration: 0.25, ease: [0.2, 0.7, 0.2, 1] }}
-            className="fixed bottom-0 left-0 top-[4.5rem] z-[45] w-[min(85vw,22rem)] overflow-y-auto border-r border-border bg-canvas shadow-[var(--shadow-lg)] lg:hidden"
+            className="fixed bottom-0 right-0 top-[4.5rem] z-[45] flex w-[min(85vw,22rem)] flex-col overflow-y-auto border-l border-border bg-canvas shadow-[var(--shadow-lg)] lg:hidden"
           >
-            <div className="px-5 pt-2 pb-8 sm:px-6">
+            <div className="px-5 pt-2 sm:px-6">
               {links.map((l) =>
                 'menu' in l && l.menu ? (
                   <CompanyMenu key={l.href} variant="mobile" onNavigate={() => setMenuOpen(false)} />
@@ -178,10 +181,7 @@ export function Navbar() {
                     href={l.href}
                     onClick={() => setMenuOpen(false)}
                     aria-current={isActivePath(pathname, l.href) ? 'page' : undefined}
-                    className={cn(
-                      'flex min-h-12 items-center border-b border-border text-base font-medium transition-colors',
-                      isActivePath(pathname, l.href) ? 'text-navy' : 'text-ink hover:text-navy',
-                    )}
+                    className={mobileNavItemClass(isActivePath(pathname, l.href))}
                   >
                     {l.label}
                   </Link>
@@ -197,6 +197,9 @@ export function Navbar() {
               >
                 Request a Quotation
               </Button>
+            </div>
+            <div className="mt-auto border-t border-border px-5 py-4 sm:px-6">
+              <ThemeToggle withLabel />
             </div>
           </motion.nav>
         )}
@@ -296,6 +299,25 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
   };
 
   const showNoResults = searched && !loading && !error && products.length === 0;
+  const allResultsHref = `/products?search=${encodeURIComponent(query.trim())}`;
+
+  // Arrow keys move between the input and the result links (Tab still works).
+  const onPanelKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    const items = Array.from(
+      e.currentTarget.querySelectorAll<HTMLElement>('[data-search-item]'),
+    );
+    if (items.length === 0) return;
+    const index = items.indexOf(document.activeElement as HTMLElement);
+    e.preventDefault();
+    if (e.key === 'ArrowDown') {
+      items[index < 0 ? 0 : Math.min(index + 1, items.length - 1)]?.focus();
+    } else if (index <= 0) {
+      inputRef.current?.focus();
+    } else {
+      items[index - 1]?.focus();
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -316,6 +338,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
             aria-hidden="true"
           />
           <motion.div
+            onKeyDown={onPanelKeyDown}
             className="relative z-10 w-full max-w-2xl rounded-lg border border-border bg-canvas p-5 shadow-[var(--shadow-bloom)] sm:p-6"
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -331,7 +354,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
                   placeholder="Search products by name, brand, category…"
                   aria-label="Search products"
                   autoComplete="off"
-                  className="w-full bg-transparent text-lg font-medium text-ink placeholder:text-muted/80 sm:text-4xl"
+                  className="w-full rounded-sm bg-transparent text-lg font-medium text-ink placeholder:text-muted/80 sm:text-2xl"
                 />
                 <button
                   type="button"
@@ -339,7 +362,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
                   aria-label="Close search"
                   className="grid h-10 w-10 shrink-0 place-items-center rounded-md text-muted transition-colors hover:bg-bg hover:text-navy"
                 >
-                  <X size={22} />
+                  <X size={22} aria-hidden="true" />
                 </button>
               </div>
             </form>
@@ -356,80 +379,92 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
               </p>
             )}
 
+            {/* Result count for screen readers (suggestions appear without focus moving). */}
+            <p className="sr-only" role="status">
+              {searched && !loading && !error
+                ? products.length > 0
+                  ? `${products.length} suggestion${products.length === 1 ? '' : 's'}. Use the arrow keys to move through them.`
+                  : `No products found for ${query.trim()}`
+                : ''}
+            </p>
+
+            {/* Results are real links (open in a new tab, prefetch) and are reachable
+                from the input with the arrow keys as well as Tab. */}
             {products.length > 0 && (
               <ul className="mt-4 overflow-hidden rounded-lg border border-border">
                 {products.map((p) => (
                   <li key={p.id}>
-                    <button
-                      type="button"
-                      onClick={() => go(`/products/${p.slug}`)}
-                      className="flex w-full items-center gap-4 px-4 py-3 text-left transition-colors hover:bg-bg"
+                    <Link
+                      href={`/products/${p.slug}`}
+                      onClick={onClose}
+                      data-search-item
+                      className="flex w-full items-center gap-4 px-4 py-3 text-left transition-colors hover:bg-bg focus-visible:bg-bg focus-visible:outline-offset-[-2px]"
                     >
                       <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-md bg-bg">
-                        {p.image && (
-                          <RivetImage src={p.image} alt={p.name} fill sizes="44px" className="object-cover" />
+                        {p.image ? (
+                          <RivetImage src={p.image} alt="" fill sizes="44px" className="object-cover" />
+                        ) : (
+                          <ImagePlaceholder compact />
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-medium text-ink">{p.name}</p>
-                        {p.category && (
-                          <p className="text-2xs text-muted">{p.category}</p>
-                        )}
+                        {p.category && <p className="text-2xs text-muted">{p.category}</p>}
                       </div>
                       <ArrowUpRight size={16} className="shrink-0 text-muted" aria-hidden="true" />
-                    </button>
+                    </Link>
                   </li>
                 ))}
                 <li className="border-t border-border">
-                  <button
-                    type="button"
-                    onClick={() => submit()}
-                    className="w-full px-4 py-3 text-left text-xs font-semibold text-navy transition-colors hover:bg-bg"
+                  <Link
+                    href={allResultsHref}
+                    onClick={onClose}
+                    data-search-item
+                    className="block w-full px-4 py-3 text-left text-xs font-semibold text-navy transition-colors hover:bg-bg focus-visible:bg-bg focus-visible:outline-offset-[-2px]"
                   >
                     See all results for “{query.trim()}”
-                  </button>
+                  </Link>
                 </li>
               </ul>
             )}
 
             {showNoResults && (
               <div className="mt-4 rounded-lg border border-border bg-bg px-5 py-6">
-                <p className="text-sm text-ink">
-                  No products found for “{query.trim()}”.
-                </p>
+                <p className="text-sm text-ink">No products match “{query.trim()}”.</p>
                 {categories.length > 0 ? (
                   <>
-                    <p className="mt-3 text-3xs font-semibold uppercase tracking-[0.12em] text-muted">
-                      Try these categories
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <p className="mt-3 text-xs text-muted">Try one of these categories:</p>
+                    <ul className="mt-3 flex flex-wrap gap-2">
                       {categories.map((c) => (
-                        <button
-                          key={c.slug}
-                          type="button"
-                          onClick={() => go(`/products/${c.slug}`)}
-                          className="rounded-md border border-border bg-canvas px-3.5 py-1.5 text-xs text-ink transition-colors hover:border-navy hover:text-navy"
-                        >
-                          {c.name}
-                        </button>
+                        <li key={c.slug}>
+                          <Link
+                            href={`/products/${c.slug}`}
+                            onClick={onClose}
+                            data-search-item
+                            className="inline-flex rounded-md border border-border bg-canvas px-3.5 py-1.5 text-xs text-ink transition-colors hover:border-navy hover:text-navy"
+                          >
+                            {c.name}
+                          </Link>
+                        </li>
                       ))}
-                    </div>
+                    </ul>
                   </>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => go('/products')}
-                    className="mt-3 text-xs font-semibold text-navy hover:underline"
+                  <Link
+                    href="/products"
+                    onClick={onClose}
+                    data-search-item
+                    className="mt-3 inline-flex text-xs font-semibold text-navy hover:underline"
                   >
                     Browse all products
-                  </button>
+                  </Link>
                 )}
               </div>
             )}
 
             {!searched && !loading && !error && (
               <p className="mt-4 text-xs text-muted">
-                Start typing for suggestions, or press Enter to search. Esc to close.
+                Type at least two letters for suggestions, or press Enter to search all products.
               </p>
             )}
           </motion.div>

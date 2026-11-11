@@ -31,22 +31,49 @@ import { useQuotationNotifications } from './notifications';
 import { cn } from '@/lib/utils';
 import { useFocusTrap } from '@/lib/use-focus-trap';
 
-const nav = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-  { href: '/admin/home', label: 'Homepage', icon: Home },
-  { href: '/admin/products', label: 'Products', icon: Package },
-  { href: '/admin/categories', label: 'Categories', icon: Tags },
-  { href: '/admin/services', label: 'Services', icon: Wrench },
-  { href: '/admin/certificates', label: 'Certificates & Portfolio', icon: Award },
-  { href: '/admin/news', label: 'News', icon: FileText },
-  { href: '/admin/site-seo', label: 'Site SEO', icon: Search },
-  { href: '/admin/quotation-requests', label: 'Quotation Requests', icon: Inbox },
-  { href: '/admin/vacancies', label: 'Vacancies', icon: Briefcase },
-  { href: '/admin/company', label: 'Company', icon: Building2 },
-  { href: '/admin/team', label: 'Team', icon: Users },
-  { href: '/admin/gallery', label: 'Gallery', icon: Images },
-  { href: '/admin/contact', label: 'Contact', icon: Phone },
-  { href: '/admin/profile', label: 'Profile', icon: User },
+type NavItem = { href: string; label: string; icon: typeof Home; exact?: boolean };
+
+/**
+ * Grouped by job. Leads come first: answering quotation requests and job
+ * applications is the daily task; the rest is occasional content upkeep.
+ * (Same 15 destinations as before — only order and grouping changed.)
+ */
+const navGroups: { label: string; items: NavItem[] }[] = [
+  {
+    label: 'Leads',
+    items: [
+      { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+      { href: '/admin/quotation-requests', label: 'Quotation Requests', icon: Inbox },
+      { href: '/admin/vacancies', label: 'Vacancies', icon: Briefcase },
+    ],
+  },
+  {
+    label: 'Catalog',
+    items: [
+      { href: '/admin/products', label: 'Products', icon: Package },
+      { href: '/admin/categories', label: 'Categories', icon: Tags },
+      { href: '/admin/services', label: 'Services', icon: Wrench },
+    ],
+  },
+  {
+    label: 'Website content',
+    items: [
+      { href: '/admin/home', label: 'Homepage', icon: Home },
+      { href: '/admin/news', label: 'News', icon: FileText },
+      { href: '/admin/certificates', label: 'Certificates & Portfolio', icon: Award },
+      { href: '/admin/gallery', label: 'Gallery', icon: Images },
+      { href: '/admin/team', label: 'Team', icon: Users },
+    ],
+  },
+  {
+    label: 'Settings',
+    items: [
+      { href: '/admin/company', label: 'Company', icon: Building2 },
+      { href: '/admin/contact', label: 'Contact', icon: Phone },
+      { href: '/admin/site-seo', label: 'Site SEO', icon: Search },
+      { href: '/admin/profile', label: 'Profile', icon: User },
+    ],
+  },
 ];
 
 function plural(n: number, one: string, many: string) {
@@ -87,48 +114,61 @@ function AdminSidebar({
             type="button"
             onClick={onClose}
             aria-label="Close menu"
-            className="ml-auto grid h-10 w-10 place-items-center rounded-xl text-white/80 hover:bg-white/10 hover:text-white"
+            className="ml-auto grid h-10 w-10 place-items-center rounded-md text-white/80 hover:bg-white/10 hover:text-white"
           >
             <X size={20} aria-hidden="true" />
           </button>
         )}
       </div>
-      <nav aria-label="Admin" className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        {nav.map((item) => {
-          const active = item.exact
-            ? pathname === item.href
-            : pathname === item.href || pathname.startsWith(`${item.href}/`);
-          const Icon = item.icon;
-          const isQuotations = item.href === '/admin/quotation-requests';
-          const isVacancies = item.href === '/admin/vacancies';
+      <nav aria-label="Admin" className="flex-1 space-y-5 overflow-y-auto px-3 py-4">
+        {navGroups.map((group) => {
+          const groupId = `admin-nav-${group.label.toLowerCase().replace(/\W+/g, '-')}${onClose ? '-drawer' : ''}`;
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onNavigate}
-              aria-current={active ? 'page' : undefined}
-              className={cn(
-                'relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs transition-colors',
-                active
-                  ? 'bg-white/10 text-white'
-                  : 'text-white/75 hover:bg-white/5 hover:text-white',
-              )}
-            >
-              {active && (
-                <span
-                  className="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r bg-gold"
-                  aria-hidden="true"
-                />
-              )}
-              <Icon size={18} strokeWidth={1.75} aria-hidden="true" />
-              <span className="flex-1">{item.label}</span>
-              {isQuotations && unreadCount > 0 && !active && (
-                <CountBadge count={unreadCount} what="unread" />
-              )}
-              {isVacancies && applicationUnread > 0 && !active && (
-                <CountBadge count={applicationUnread} what="new applications" />
-              )}
-            </Link>
+            <div key={group.label}>
+              <p id={groupId} className="px-3 pb-1.5 text-2xs font-medium text-white/65">
+                {group.label}
+              </p>
+              <ul aria-labelledby={groupId} className="space-y-0.5">
+                {group.items.map((item) => {
+                  const active = item.exact
+                    ? pathname === item.href
+                    : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  const Icon = item.icon;
+                  const isQuotations = item.href === '/admin/quotation-requests';
+                  const isVacancies = item.href === '/admin/vacancies';
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        onClick={onNavigate}
+                        aria-current={active ? 'page' : undefined}
+                        className={cn(
+                          'relative flex items-center gap-3 rounded-md px-3 py-2.5 text-xs transition-colors',
+                          active
+                            ? 'bg-white/10 font-medium text-white'
+                            : 'text-white/75 hover:bg-white/5 hover:text-white',
+                        )}
+                      >
+                        {active && (
+                          <span
+                            className="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r bg-gold"
+                            aria-hidden="true"
+                          />
+                        )}
+                        <Icon size={18} strokeWidth={1.75} aria-hidden="true" />
+                        <span className="flex-1">{item.label}</span>
+                        {isQuotations && unreadCount > 0 && !active && (
+                          <CountBadge count={unreadCount} what="unread" />
+                        )}
+                        {isVacancies && applicationUnread > 0 && !active && (
+                          <CountBadge count={applicationUnread} what="new applications" />
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           );
         })}
       </nav>
@@ -226,7 +266,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-surface/90 px-4 backdrop-blur md:px-8">
           <button
             type="button"
-            className="grid h-10 w-10 place-items-center rounded-xl text-navy lg:hidden"
+            className="grid h-10 w-10 place-items-center rounded-md text-navy lg:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
