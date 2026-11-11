@@ -1,3 +1,4 @@
+import { MapFrame } from '@/components/contact/map-frame';
 import type { Metadata } from 'next';
 import { Facebook, Linkedin, Mail, MapPin, MessageCircle, Navigation, Phone, Send } from 'lucide-react';
 import { PageHero } from '@/components/site/page-hero';
@@ -99,7 +100,9 @@ export default async function ContactPage() {
                 </div>
               )}
 
-              <div className="mt-10 overflow-hidden rounded-lg border border-border">
+              {/* MapFrame shows the focus outline while the embedded map has
+                  keyboard focus (CSS can't detect focus inside an iframe). */}
+              <MapFrame className="mt-10 overflow-hidden rounded-lg border border-border">
                 <iframe
                   title="RIVET COMPANY office location in Addis Ababa (interactive map)"
                   src={mapSrc}
@@ -108,7 +111,7 @@ export default async function ContactPage() {
                   allowFullScreen
                   referrerPolicy="no-referrer-when-downgrade"
                 />
-              </div>
+              </MapFrame>
               <a
                 href={directionsHref}
                 target="_blank"
