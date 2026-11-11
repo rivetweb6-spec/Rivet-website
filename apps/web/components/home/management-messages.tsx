@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { Container, Eyebrow, Section } from '@/components/ui/container';
+import { Container, Section, toneClass, type SectionTone } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { buildPersonAltText } from '@/lib/seo';
 import { FadeUp } from '@/components/motion/reveal';
@@ -78,7 +78,13 @@ function MessageCard({ person }: { person: Message }) {
   );
 }
 
-export function ManagementMessages({ content }: { content?: ManagementMessagesContent | null }) {
+export function ManagementMessages({
+  content,
+  tone = 'canvas',
+}: {
+  content?: ManagementMessagesContent | null;
+  tone?: SectionTone;
+}) {
   const generalManager: Message = {
     name: content?.gmName?.trim() || defaults.gmName,
     position: content?.gmPosition?.trim() || defaults.gmPosition,
@@ -93,12 +99,11 @@ export function ManagementMessages({ content }: { content?: ManagementMessagesCo
   };
 
   return (
-    <Section>
+    <Section className={toneClass(tone)}>
       <Container>
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-12">
           <div className="max-w-2xl">
-            <Eyebrow>Leadership</Eyebrow>
-            <h2 className="headline-display mt-3 text-4xl sm:text-6xl">A message from our management</h2>
+            <h2 className="headline-display text-4xl sm:text-6xl">A message from our management</h2>
             <p className="mt-4 leading-relaxed text-muted">
               How RIVET COMPANY approaches every supply, installation and client relationship.
             </p>

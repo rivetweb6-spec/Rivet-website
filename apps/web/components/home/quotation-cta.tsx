@@ -10,10 +10,9 @@ export function QuotationCta() {
       <Container>
         <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
-            <p className="eyebrow text-gold">Quotations</p>
             <h2
               id="quotation-cta-title"
-              className="headline-display mt-3 text-4xl text-white sm:text-5xl"
+              className="headline-display text-4xl text-white sm:text-5xl"
             >
               Request a quotation for your project.
             </h2>

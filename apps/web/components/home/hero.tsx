@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button-variants';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { RequestQuotationButton } from '@/components/quotation/request-quotation-button';
@@ -63,7 +62,8 @@ export function Hero({ content }: { content?: HeroContent | null }) {
         aria-hidden="true"
       />
 
-      <div className="mx-auto w-full max-w-[1280px] px-5 py-16 sm:px-6 md:py-20 lg:px-10">
+      {/* Extra bottom space: the department directory overlaps the hero edge. */}
+      <div className="mx-auto w-full max-w-[1280px] px-5 pt-16 pb-24 sm:px-6 md:pt-20 md:pb-32 lg:px-10">
         <div className="max-w-2xl">
           <p className="rivet-line eyebrow text-gold">{eyebrow}</p>
           <h1
@@ -81,13 +81,6 @@ export function Hero({ content }: { content?: HeroContent | null }) {
             <RequestQuotationButton />
             <Link href="/products" className={buttonVariants({ variant: 'ghost', size: 'lg' })}>
               Explore products
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center gap-1.5 py-2 text-sm sm:ml-1 sm:py-0 font-semibold text-white/90 underline-offset-[6px] hover:text-white hover:underline"
-            >
-              Contact us
-              <ArrowRight size={16} aria-hidden="true" />
             </Link>
           </div>
         </div>

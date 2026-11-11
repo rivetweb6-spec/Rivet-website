@@ -12,6 +12,7 @@ import { RequestQuotationButton } from '@/components/quotation/request-quotation
 import { buildProductAltText } from '@/lib/seo';
 import type { Category, Product } from '@/lib/api';
 import { buttonVariants } from '@/components/ui/button-variants';
+import { countSubtreeProducts, type CategoryTreeNode } from '@/lib/category-tree';
 
 export type CategoryItemData = {
   id: string;
@@ -22,49 +23,8 @@ export type CategoryItemData = {
   _count?: { products: number; children?: number };
 };
 
-export type CategoryTreeNode = Category & {
-  children: CategoryTreeNode[];
-};
-
-/** Build a complete arbitrary-depth category tree from flat API list */
-export function buildCategoryTree(allCategories: Category[]): CategoryTreeNode[] {
-  const map = new Map<string, CategoryTreeNode>();
-  for (const c of allCategories) {
-    map.set(c.id, {
-      ...c,
-      children: [],
-    });
-  }
-
-  const roots: CategoryTreeNode[] = [];
-  for (const c of allCategories) {
-    const node = map.get(c.id)!;
-    if (c.parentId && map.has(c.parentId)) {
-      map.get(c.parentId)!.children.push(node);
-    } else {
-      roots.push(node);
-    }
-  }
-
-  const sortNodes = (nodes: CategoryTreeNode[]) => {
-    nodes.sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.name.localeCompare(b.name));
-    for (const node of nodes) {
-      if (node.children.length > 0) {
-        sortNodes(node.children);
-      }
-    }
-  };
-
-  sortNodes(roots);
-  return roots;
-}
-
-/** Total published products in a category and all of its descendants. */
-export function countSubtreeProducts(node: CategoryTreeNode): number {
-  let total = node._count?.products ?? 0;
-  for (const child of node.children) total += countSubtreeProducts(child);
-  return total;
-}
+// Tree helpers live in lib/ so Server Components can use them too.
+export { buildCategoryTree, countSubtreeProducts, type CategoryTreeNode } from '@/lib/category-tree';
 
 function productCountLabel(count: number | undefined): string {
   if (count === undefined) return 'View range';

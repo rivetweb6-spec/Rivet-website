@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import * as Icons from 'lucide-react';
-import { Container, Eyebrow, Section } from '@/components/ui/container';
+import { Container, Section, toneClass, type SectionTone } from '@/components/ui/container';
 import { Stagger, StaggerItem } from '@/components/motion/reveal';
 import { services as fallbackServices } from '@/lib/data/content';
 
@@ -11,19 +11,24 @@ export type ServiceCard = {
   icon: string | null;
 };
 
-export function Services({ items }: { items?: ServiceCard[] }) {
+export function Services({
+  items,
+  tone = 'canvas',
+}: {
+  items?: ServiceCard[];
+  tone?: SectionTone;
+}) {
   // `undefined` = API unreachable (dev fallback OK). `[]` = API empty — do not invent links.
   const list = items === undefined ? fallbackServices : items;
 
   if (list.length === 0) return null;
 
   return (
-    <Section>
+    <Section className={toneClass(tone)}>
       <Container>
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-12">
           <div className="max-w-2xl">
-            <Eyebrow>Services</Eyebrow>
-            <h2 className="headline-display mt-3 text-4xl sm:text-6xl">Supply, installation and maintenance</h2>
+            <h2 className="headline-display text-4xl sm:text-6xl">Supply, installation and maintenance</h2>
             <p className="mt-4 leading-relaxed text-muted">
               Product import, elevator installation and maintenance, granite and building material
               supply, and construction consultation — coordinated by one team.

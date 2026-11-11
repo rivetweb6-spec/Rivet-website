@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { Container, Eyebrow, Section } from '@/components/ui/container';
+import { Container, Section, toneClass, type SectionTone } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { ImagePlaceholder } from '@/components/ui/image-placeholder';
 import { Stagger, StaggerItem } from '@/components/motion/reveal';
@@ -17,19 +17,24 @@ export type FeaturedProductCard = {
 };
 
 /** Featured products — same card language as the catalog. */
-export function Featured({ products }: { products?: FeaturedProductCard[] }) {
+export function Featured({
+  products,
+  tone = 'surface',
+}: {
+  products?: FeaturedProductCard[];
+  tone?: SectionTone;
+}) {
   // `undefined` = API unreachable (dev fallback OK). `[]` = API empty — do not invent links.
   const list = products === undefined ? fallbackProducts : products;
 
   if (list.length === 0) return null;
 
   return (
-    <Section className="bg-surface">
+    <Section className={toneClass(tone)}>
       <Container>
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-12">
           <div className="max-w-2xl">
-            <Eyebrow>Catalog</Eyebrow>
-            <h2 className="headline-display mt-3 text-4xl sm:text-6xl">Featured products</h2>
+            <h2 className="headline-display text-4xl sm:text-6xl">Featured products</h2>
           </div>
           <Link
             href="/products?view=all"

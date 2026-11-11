@@ -19,6 +19,15 @@ export function Eyebrow({ className, ...props }: React.HTMLAttributes<HTMLSpanEl
   return <span className={cn('eyebrow text-navy-400 dark:text-gold', className)} {...props} />;
 }
 
+/**
+ * Section background. Pages that hide sections when data is missing assign
+ * tones from the sections actually shown, so neighbours never share a colour.
+ */
+export type SectionTone = 'canvas' | 'surface';
+export function toneClass(tone: SectionTone) {
+  return tone === 'surface' ? 'bg-surface' : 'bg-canvas';
+}
+
 /** Vertical rhythm for page sections: 64px mobile, 96px desktop. */
 export function Section({
   className,

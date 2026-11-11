@@ -410,6 +410,25 @@
   }
 }
 
+/*
+ * The homepage's single entrance moment: the department directory rises
+ * into place over the hero's edge. (Reduced motion: the global rule below
+ * makes it instant.)
+ */
+@keyframes directoryIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.directory-in {
+  animation: directoryIn 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
+}
+
 /* Slow "Ken Burns" push-in for the active home hero slide. */
 @keyframes heroZoom {
   from {

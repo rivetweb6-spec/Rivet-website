@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Container, Eyebrow, Section } from '@/components/ui/container';
+import { Container, Section, toneClass, type SectionTone } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { ArrowRight } from 'lucide-react';
 import { Stagger, StaggerItem } from '@/components/motion/reveal';
@@ -15,17 +15,22 @@ function formatDate(iso: string | null) {
   });
 }
 
-export function News({ articles }: { articles: NewsArticle[] }) {
+export function News({
+  articles,
+  tone = 'surface',
+}: {
+  articles: NewsArticle[];
+  tone?: SectionTone;
+}) {
   // Hide the whole section until at least one article is published.
   if (articles.length === 0) return null;
 
   return (
-    <Section className="bg-surface">
+    <Section className={toneClass(tone)}>
       <Container>
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-12">
           <div>
-            <Eyebrow>News</Eyebrow>
-            <h2 className="headline-display mt-3 text-4xl sm:text-6xl">Latest news</h2>
+            <h2 className="headline-display text-4xl sm:text-6xl">Latest news</h2>
           </div>
           <Link
             href="/news"
