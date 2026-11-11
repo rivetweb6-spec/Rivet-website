@@ -161,7 +161,7 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
               {product.category && (
                 <Link
                   href={`/products/${product.category.slug}`}
-                  className="inline-block rounded-[4px] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+                  className="inline-block rounded-sm underline-offset-4 hover:underline "
                 >
                   <Eyebrow>
                     {[
@@ -171,24 +171,24 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                   </Eyebrow>
                 </Link>
               )}
-              <h1 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem] lg:text-[2.75rem]">{product.name}</h1>
+              <h1 className="headline-display mt-3 text-4xl sm:text-6xl lg:text-7xl">{product.name}</h1>
               {product.shortDescription && (
-                <p className="mt-4 text-[1.125rem] leading-relaxed text-muted">
+                <p className="mt-4 text-lg leading-relaxed text-muted">
                   {product.shortDescription}
                 </p>
               )}
 
               {(product.brand || product.countryOfOrigin) && (
-                <dl className="mt-6 flex flex-wrap gap-x-10 gap-y-3 border-y border-border py-4 text-[0.9375rem]">
+                <dl className="mt-6 flex flex-wrap gap-x-10 gap-y-3 border-y border-border py-4 text-sm">
                   {product.brand && (
                     <div>
-                      <dt className="text-[0.8125rem] text-muted">Brand</dt>
+                      <dt className="text-2xs text-muted">Brand</dt>
                       <dd className="mt-0.5 font-semibold text-ink">{product.brand}</dd>
                     </div>
                   )}
                   {product.countryOfOrigin && (
                     <div>
-                      <dt className="text-[0.8125rem] text-muted">Origin</dt>
+                      <dt className="text-2xs text-muted">Origin</dt>
                       <dd className="mt-0.5 font-semibold text-ink">{product.countryOfOrigin}</dd>
                     </div>
                   )}
@@ -198,9 +198,9 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
               {features.length > 0 && (
                 <ul className="mt-8 space-y-3">
                   {features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-[0.9375rem] text-ink">
+                    <li key={f} className="flex items-start gap-3 text-sm text-ink">
                       <span
-                        className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-[4px] bg-bg text-navy"
+                        className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-sm bg-bg text-navy"
                         aria-hidden="true"
                       >
                         <Check size={13} strokeWidth={2.5} />
@@ -226,7 +226,7 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                   Contact us
                 </Link>
               </div>
-              <p className="mt-4 text-[0.875rem] text-muted">
+              <p className="mt-4 text-xs text-muted">
                 Prefer a full page?{' '}
                 <Link
                   href="/request-quotation"
@@ -246,18 +246,18 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
               {product.description && (
                 <div>
-                  <h2 className="headline-display text-[1.5rem] sm:text-[1.75rem]">Description</h2>
-                  <p className="mt-4 whitespace-pre-line text-[1.0625rem] leading-relaxed text-muted">{product.description}</p>
+                  <h2 className="headline-display text-2xl sm:text-3xl">Description</h2>
+                  <p className="mt-4 whitespace-pre-line text-md leading-relaxed text-muted">{product.description}</p>
                 </div>
               )}
               {specs.length > 0 && (
                 <div>
-                  <h2 className="headline-display text-[1.5rem] sm:text-[1.75rem]">Specifications</h2>
+                  <h2 className="headline-display text-2xl sm:text-3xl">Specifications</h2>
                   <dl className="mt-4 divide-y divide-divider border-y border-divider">
                     {specs.map((s) => (
                       <div
                         key={s.label}
-                        className="flex justify-between gap-6 py-3.5 text-[0.9375rem]"
+                        className="flex justify-between gap-6 py-3.5 text-sm"
                       >
                         <dt className="text-muted">{s.label}</dt>
                         <dd className="text-right font-medium text-ink">{s.value}</dd>
@@ -275,16 +275,16 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
         <Section className="bg-surface">
           <Container>
             <Eyebrow>Services</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.25rem]">Relevant services</h2>
+            <h2 className="headline-display mt-3 text-4xl sm:text-5xl">Relevant services</h2>
             <ul className="mt-8 grid gap-5 md:grid-cols-3">
               {relatedServices.map((s) => (
                 <li key={s.id}>
                   <Link
                     href={`/services/${s.slug}`}
-                    className="luxury-card group block h-full rounded-[8px] bg-canvas p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+                    className="luxury-card group block h-full rounded-lg bg-canvas p-6 "
                   >
-                    <h3 className="text-[1.125rem] group-hover:underline group-hover:underline-offset-4">{s.title}</h3>
-                    <p className="mt-2 line-clamp-3 text-[0.9375rem] leading-relaxed text-muted">{s.narrative}</p>
+                    <h3 className="text-lg group-hover:underline group-focus-visible:underline group-hover:underline-offset-4">{s.title}</h3>
+                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted">{s.narrative}</p>
                   </Link>
                 </li>
               ))}
@@ -297,7 +297,7 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
         <Section>
           <Container>
             <Eyebrow>Continue exploring</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.25rem]">Related products</h2>
+            <h2 className="headline-display mt-3 text-4xl sm:text-5xl">Related products</h2>
             {product.category && (
               <p className="mt-2 text-muted">
                 More from{' '}

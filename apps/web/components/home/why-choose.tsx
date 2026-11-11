@@ -10,7 +10,7 @@ export function WhyChoose() {
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.6fr)] lg:gap-16">
           <div>
             <Eyebrow>Why RIVET COMPANY</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">
+            <h2 className="headline-display mt-3 text-4xl sm:text-6xl">
               A dependable partner from specification to handover.
             </h2>
             <p className="mt-4 leading-relaxed text-muted">
@@ -25,12 +25,12 @@ export function WhyChoose() {
               return (
                 <StaggerItem key={a.title}>
                   <div className="flex gap-4 border-b border-border py-5">
-                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[6px] bg-bg text-navy">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-bg text-navy">
                       <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
                     </span>
                     <div>
-                      <h3 className="text-[1rem] font-semibold text-ink">{a.title}</h3>
-                      <p className="mt-1 text-[0.9375rem] leading-relaxed text-muted">{a.description}</p>
+                      <h3 className="text-base font-semibold text-ink">{a.title}</h3>
+                      <p className="mt-1 text-sm leading-relaxed text-muted">{a.description}</p>
                     </div>
                   </div>
                 </StaggerItem>

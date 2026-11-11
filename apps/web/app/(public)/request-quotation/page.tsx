@@ -35,8 +35,8 @@ export default async function RequestQuotationPage() {
         <Container>
           <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-[0.85fr_1.15fr]">
             <div>
-              <h2 className="headline-display text-[1.5rem] sm:text-[1.75rem]">How it works</h2>
-              <ol className="mt-6 space-y-4 text-[0.9375rem] leading-relaxed text-muted">
+              <h2 className="headline-display text-2xl sm:text-3xl">How it works</h2>
+              <ol className="mt-6 space-y-4 text-sm leading-relaxed text-muted">
                 <li>
                   <strong className="text-ink">1. Share your needs</strong> — product category,
                   quantity, and project details.
@@ -50,7 +50,7 @@ export default async function RequestQuotationPage() {
                   next steps for your project.
                 </li>
               </ol>
-              <p className="mt-8 text-[0.9375rem] text-muted">
+              <p className="mt-8 text-sm text-muted">
                 Prefer to browse first?{' '}
                 <Link href="/products" className="text-navy font-semibold underline-offset-4 hover:underline">
                   Explore products

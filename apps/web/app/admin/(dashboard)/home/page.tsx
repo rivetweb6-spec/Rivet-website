@@ -103,7 +103,7 @@ export default function AdminHomePage() {
           title="Homepage"
           description="Edit the public home page hero, intro, and management messages."
         />
-        <p className="text-[0.875rem] text-muted">Loading…</p>
+        <p className="text-xs text-muted">Loading…</p>
       </div>
     );
   }
@@ -116,7 +116,7 @@ export default function AdminHomePage() {
       />
       <form onSubmit={save} className="space-y-6">
         <AdminCard>
-          <h3 className="mb-4 text-[1rem] font-semibold text-ink">Hero section</h3>
+          <h3 className="mb-4 text-base font-semibold text-ink">Hero section</h3>
           <div className="space-y-4">
             <AdminInput
               label="Eyebrow"
@@ -151,7 +151,7 @@ export default function AdminHomePage() {
         </AdminCard>
 
         <AdminCard>
-          <h3 className="mb-4 text-[1rem] font-semibold text-ink">Intro section</h3>
+          <h3 className="mb-4 text-base font-semibold text-ink">Intro section</h3>
           <div className="space-y-4">
             <AdminInput
               label="Eyebrow"
@@ -185,8 +185,8 @@ export default function AdminHomePage() {
         </AdminCard>
 
         <AdminCard>
-          <h3 className="mb-1 text-[1rem] font-semibold text-ink">General Manager</h3>
-          <p className="mb-4 text-[0.8125rem] text-muted">
+          <h3 className="mb-1 text-base font-semibold text-ink">General Manager</h3>
+          <p className="mb-4 text-2xs text-muted">
             Appears on the public home page. Keep the message to two or three short sentences.
           </p>
           <div className="space-y-4">
@@ -218,8 +218,8 @@ export default function AdminHomePage() {
         </AdminCard>
 
         <AdminCard>
-          <h3 className="mb-1 text-[1rem] font-semibold text-ink">Engineering Manager</h3>
-          <p className="mb-4 text-[0.8125rem] text-muted">
+          <h3 className="mb-1 text-base font-semibold text-ink">Engineering Manager</h3>
+          <p className="mb-4 text-2xs text-muted">
             Appears on the public home page. Keep the message to two or three short sentences.
           </p>
           <div className="space-y-4">
@@ -250,8 +250,8 @@ export default function AdminHomePage() {
           </div>
         </AdminCard>
 
-        {message && <p className="text-[0.875rem] text-success">{message}</p>}
-        {error && <p role="alert" className="text-[0.875rem] text-error">{error}</p>}
+        {message && <p className="text-xs text-success">{message}</p>}
+        {error && <p role="alert" className="text-xs text-error">{error}</p>}
         <AdminButton type="submit" disabled={saving}>
           {saving ? 'Saving…' : 'Save homepage'}
         </AdminButton>

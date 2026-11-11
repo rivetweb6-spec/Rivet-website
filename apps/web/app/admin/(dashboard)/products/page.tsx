@@ -142,14 +142,14 @@ export default function AdminProductsPage() {
         actions={<AdminButton onClick={startCreate}>Add product</AdminButton>}
       />
       {error && (
-        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+        <p role="alert" className="mb-4 text-xs text-error">
           {error}
         </p>
       )}
 
       <AdminCard className="overflow-x-auto p-0">
-        <table className="w-full min-w-[720px] text-left text-[0.875rem]">
-          <thead className="border-b border-divider bg-bg/80 text-[0.75rem] uppercase tracking-wider text-muted">
+        <table className="w-full min-w-[720px] text-left text-xs">
+          <thead className="border-b border-divider bg-bg/80 text-3xs uppercase tracking-wider text-muted">
             <tr>
               <th className="px-5 py-3 font-medium">Name</th>
               <th className="px-5 py-3 font-medium">Category</th>
@@ -214,7 +214,7 @@ export default function AdminProductsPage() {
 
       <AdminModal open={open} onClose={() => setOpen(false)} error={error} className="max-w-2xl">
         <form onSubmit={save}>
-          <h2 className="text-[1.25rem] text-navy">
+          <h2 className="text-xl text-navy">
             {editingId ? 'Edit product' : 'New product'}
           </h2>
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -273,7 +273,7 @@ export default function AdminProductsPage() {
               <option value="PUBLISHED">Published</option>
               <option value="DRAFT">Draft</option>
             </AdminSelect>
-            <label className="flex items-end gap-2 pb-3 text-[0.875rem]">
+            <label className="flex items-end gap-2 pb-3 text-xs">
               <input
                 type="checkbox"
                 checked={!!form.featured}

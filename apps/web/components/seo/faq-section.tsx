@@ -19,14 +19,14 @@ export function FaqSection({
       <Section className="bg-surface">
         <Container>
           <Eyebrow>{eyebrow}</Eyebrow>
-          <h2 className="mt-3 max-w-2xl text-[1.75rem] sm:text-[2rem]">{title}</h2>
+          <h2 className="mt-3 max-w-2xl text-3xl sm:text-4xl">{title}</h2>
           <dl className="mt-10 max-w-3xl space-y-8">
             {faqs.map((faq) => (
               <div key={faq.question}>
                 <dt>
-                  <h3 className="text-[1.0625rem] font-medium text-ink">{faq.question}</h3>
+                  <h3 className="text-md font-medium text-ink">{faq.question}</h3>
                 </dt>
-                <dd className="mt-2 text-[0.9375rem] leading-relaxed text-muted">{faq.answer}</dd>
+                <dd className="mt-2 text-sm leading-relaxed text-muted">{faq.answer}</dd>
               </div>
             ))}
           </dl>

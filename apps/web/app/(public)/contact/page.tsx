@@ -43,9 +43,9 @@ export default async function ContactPage() {
           <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr]">
             <div>
               <Eyebrow>Contact details</Eyebrow>
-              <h2 className="headline-display mt-3 text-[2rem]">Get in touch</h2>
+              <h2 className="headline-display mt-3 text-4xl">Get in touch</h2>
               {!hasChannels && (
-                <p className="mt-6 rounded-[8px] border border-border bg-surface px-5 py-4 text-[0.9375rem] leading-relaxed text-muted">
+                <p className="mt-6 rounded-lg border border-border bg-surface px-5 py-4 text-sm leading-relaxed text-muted">
                   Our direct phone and email details are being updated. The quickest way to reach
                   our team is the{' '}
                   <a href="#contact-form" className="font-medium text-navy underline underline-offset-4 hover:no-underline">
@@ -54,7 +54,7 @@ export default async function ContactPage() {
                   — a member of our team will get back to you.
                 </p>
               )}
-              <ul className="mt-8 space-y-5 text-[0.9375rem]">
+              <ul className="mt-8 space-y-5 text-sm">
                 {info?.address && (
                   <li className="flex items-start gap-3">
                     <MapPin size={18} className="mt-0.5 shrink-0 text-navy dark:text-gold" aria-hidden="true" />
@@ -90,7 +90,7 @@ export default async function ContactPage() {
                         target="_blank"
                         rel="noreferrer"
                         aria-label={s.label}
-                        className="grid h-11 w-11 place-items-center rounded-[6px] border border-border text-navy transition-colors hover:border-navy hover:bg-bg dark:hover:border-gold"
+                        className="grid h-11 w-11 place-items-center rounded-md border border-border text-navy transition-colors hover:border-navy hover:bg-bg dark:hover:border-gold"
                       >
                         <Icon size={18} />
                       </a>
@@ -99,7 +99,7 @@ export default async function ContactPage() {
                 </div>
               )}
 
-              <div className="mt-10 overflow-hidden rounded-[8px] border border-border">
+              <div className="mt-10 overflow-hidden rounded-lg border border-border">
                 <iframe
                   title="RIVET COMPANY office location in Addis Ababa (interactive map)"
                   src={mapSrc}
@@ -113,7 +113,7 @@ export default async function ContactPage() {
                 href={directionsHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-4 inline-flex items-center gap-2 py-1.5 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+                className="mt-4 inline-flex items-center gap-2 py-1.5 text-sm font-semibold text-navy underline-offset-4 hover:underline "
               >
                 <Navigation size={16} aria-hidden="true" />
                 Get directions

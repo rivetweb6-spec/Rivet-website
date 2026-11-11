@@ -43,7 +43,7 @@ export default function AdminLoginPage() {
       <AdminCard className="relative z-10 w-full max-w-md p-8">
         <div className="mb-8 text-center">
           <AdminLogo className="mx-auto h-10 sm:h-12" />
-          <p className="mt-3 text-[0.875rem] text-muted">Sign in to the control room</p>
+          <p className="mt-3 text-xs text-muted">Sign in to the control room</p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
           <AdminInput
@@ -67,7 +67,7 @@ export default function AdminLoginPage() {
             aria-describedby={error ? 'login-error' : undefined}
           />
           {error && (
-            <p id="login-error" role="alert" className="text-[0.8125rem] text-error">
+            <p id="login-error" role="alert" className="text-2xs text-error">
               {error}
             </p>
           )}

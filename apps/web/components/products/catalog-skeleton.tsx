@@ -19,7 +19,7 @@ export function CatalogSkeleton() {
       </div>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         {Array.from({ length: 3 }, (_, i) => (
-          <div key={i} className="overflow-hidden rounded-[8px] border border-border">
+          <div key={i} className="overflow-hidden rounded-lg border border-border">
             <Skeleton className="aspect-[16/10] rounded-none" />
             <div className="space-y-3 p-6">
               <Skeleton className="h-5 w-1/2" />

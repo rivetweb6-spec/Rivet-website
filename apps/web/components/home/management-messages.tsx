@@ -47,8 +47,8 @@ function initials(name: string) {
 
 function MessageCard({ person }: { person: Message }) {
   return (
-    <figure className="flex h-full flex-col rounded-[8px] border border-border bg-canvas p-6 sm:flex-row sm:gap-6 md:p-7">
-      <div className="relative mb-5 aspect-square w-24 shrink-0 overflow-hidden rounded-[6px] bg-bg sm:mb-0 sm:w-28">
+    <figure className="flex h-full flex-col rounded-lg border border-border bg-canvas p-6 sm:flex-row sm:gap-6 md:p-7">
+      <div className="relative mb-5 aspect-square w-24 shrink-0 overflow-hidden rounded-md bg-bg sm:mb-0 sm:w-28">
         {person.photo ? (
           <RivetImage
             src={person.photo}
@@ -58,19 +58,19 @@ function MessageCard({ person }: { person: Message }) {
             className="object-cover object-top"
           />
         ) : (
-          <div className="grid h-full place-items-center bg-navy text-[1.5rem] font-bold text-gold">
+          <div className="grid h-full place-items-center bg-navy text-2xl font-bold text-gold">
             {initials(person.name) || '—'}
           </div>
         )}
       </div>
       <div className="flex flex-1 flex-col">
-        <blockquote className="text-[1.0625rem] leading-relaxed text-ink">
+        <blockquote className="text-md leading-relaxed text-ink">
           <p>&ldquo;{person.message}&rdquo;</p>
         </blockquote>
         <figcaption className="mt-auto pt-5">
           <span className="block font-semibold text-navy">{person.name}</span>
           {person.position !== person.name && (
-            <span className="block text-[0.875rem] text-muted">{person.position}</span>
+            <span className="block text-xs text-muted">{person.position}</span>
           )}
         </figcaption>
       </div>
@@ -98,14 +98,14 @@ export function ManagementMessages({ content }: { content?: ManagementMessagesCo
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-12">
           <div className="max-w-2xl">
             <Eyebrow>Leadership</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">A message from our management</h2>
+            <h2 className="headline-display mt-3 text-4xl sm:text-6xl">A message from our management</h2>
             <p className="mt-4 leading-relaxed text-muted">
               How RIVET COMPANY approaches every supply, installation and client relationship.
             </p>
           </div>
           <Link
             href="/company/team"
-            className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-navy underline-offset-4 hover:underline"
           >
             Meet our team
             <ArrowRight size={16} aria-hidden="true" />

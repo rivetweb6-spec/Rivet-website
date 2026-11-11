@@ -3,7 +3,11 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState, useTransition, type ReactNode } from 'react';
-import { ArrowLeft, ArrowRight, Search } from 'lucide-react';
+import { ArrowLeft, ArrowRight, PackageOpen, Search, SearchX } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button-variants';
+import { StateMessage } from '@/components/ui/state-message';
+import { RequestQuotationButton } from '@/components/quotation/request-quotation-button';
 import type { Category, Product, Pagination } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import {
@@ -93,13 +97,13 @@ export function ProductsCatalog({
       {/* Search */}
       <div className="mb-12 flex flex-col gap-4 md:mb-14 lg:flex-row lg:items-center lg:justify-between">
         {mode === 'overview' ? (
-          <p className="text-[0.9375rem] text-muted">
+          <p className="text-sm text-muted">
             Browse by department, or search the full catalog by product name, brand or category.
           </p>
         ) : (
           <Link
             href="/products"
-            className="inline-flex items-center gap-1.5 py-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 hover:underline"
+            className="inline-flex items-center gap-1.5 py-1.5 text-xs font-semibold text-navy underline-offset-4 hover:underline"
           >
             <ArrowLeft size={15} aria-hidden="true" />
             Browse by department
@@ -129,7 +133,7 @@ export function ProductsCatalog({
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             placeholder="Search by name, brand, category…"
-            className="h-12 w-full rounded-[6px] border border-border bg-canvas pl-11 pr-4 text-[0.9375rem] text-ink placeholder:text-muted outline-none transition-colors hover:border-navy/40 focus:border-navy focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:bg-surface dark:focus:border-gold"
+            className="h-12 w-full rounded-md border border-border bg-canvas pl-11 pr-4 text-sm text-ink placeholder:text-muted transition-colors hover:border-navy/40 focus:border-navy dark:bg-surface dark:focus:border-gold"
           />
         </form>
       </div>
@@ -160,7 +164,7 @@ export function ProductsCatalog({
                 action={
                   <Link
                     href="/products?view=all"
-                    className="inline-flex items-center gap-1.5 py-1.5 text-[0.875rem] font-semibold text-navy underline-offset-4 hover:underline"
+                    className="inline-flex items-center gap-1.5 py-1.5 text-xs font-semibold text-navy underline-offset-4 hover:underline"
                   >
                     View all products
                     <ArrowRight size={15} aria-hidden="true" />
@@ -180,13 +184,27 @@ export function ProductsCatalog({
             eyebrow="Catalog"
             title="All products"
             action={
-              <span className="text-[0.875rem] text-muted">
+              <span className="text-xs text-muted">
                 {pagination.total} product{pagination.total === 1 ? '' : 's'}
               </span>
             }
           />
           {products.length === 0 ? (
-            <p className="py-16 text-center text-muted">No products have been published yet.</p>
+            <StateMessage
+              icon={PackageOpen}
+              title="No products are listed yet"
+              actions={
+                <>
+                  <RequestQuotationButton size="md" />
+                  <Link href="/contact" className={buttonVariants({ variant: 'outline', size: 'md' })}>
+                    Contact our team
+                  </Link>
+                </>
+              }
+            >
+              The online catalog is still being filled. We supply elevators, escalators and building
+              materials to order, so send us your requirements for a quotation.
+            </StateMessage>
           ) : (
             <ProductGrid products={products} />
           )}
@@ -200,7 +218,7 @@ export function ProductsCatalog({
             disabled={pagination.page <= 1}
             label="Previous"
           />
-          <span className="px-2 text-[0.875rem] text-muted" aria-current="page">
+          <span className="px-2 text-xs text-muted" aria-current="page">
             Page {pagination.page} of {pagination.pages}
           </span>
           <PagerLink
@@ -231,7 +249,7 @@ function SectionHeader({
         <span className="eyebrow text-navy-400 dark:text-gold">
           {eyebrow}
         </span>
-        <h2 id={id} className="headline-display mt-2 text-[1.75rem] sm:text-[2rem]">
+        <h2 id={id} className="headline-display mt-2 text-3xl sm:text-4xl">
           {title}
         </h2>
       </div>
@@ -269,15 +287,25 @@ function SearchResults({
   departments: Category[];
   onClear: () => void;
 }) {
+  // Announce the outcome of each search to screen readers (results swap in
+  // without a page load).
+  const announcement =
+    products.length > 0
+      ? `${total} result${total === 1 ? '' : 's'} for ${search}`
+      : `No products found for ${search}`;
+
   if (products.length > 0) {
     return (
       <section aria-labelledby="search-heading">
+        <p className="sr-only" role="status">
+          {announcement}
+        </p>
         <SectionHeader
           id="search-heading"
           eyebrow="Search"
           title={`Results for “${search}”`}
           action={
-            <span className="text-[0.875rem] text-muted">
+            <span className="text-xs text-muted">
               {total} result{total === 1 ? '' : 's'}
             </span>
           }
@@ -288,30 +316,42 @@ function SearchResults({
   }
 
   return (
-    <div className="py-16 text-center">
-      <p className="text-[1.125rem] text-ink">No products found for &ldquo;{search}&rdquo;.</p>
-      <p className="mt-2 text-[0.9375rem] text-muted">
-        Check the spelling, try a shorter keyword, or browse a department.
+    <>
+      <p className="sr-only" role="status">
+        {announcement}
       </p>
-      <div className="mt-8 flex flex-wrap justify-center gap-2">
-        {departments.map((c) => (
-          <Link
-            key={c.slug}
-            href={`/products/${c.slug}`}
-            className="rounded-[6px] border px-4 py-2 text-[0.875rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 border-border bg-canvas text-ink hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold"
-          >
-            {c.name}
-          </Link>
-        ))}
-      </div>
-      <button
-        type="button"
-        onClick={onClear}
-        className="mt-8 text-[0.9375rem] font-semibold text-navy underline underline-offset-4 hover:no-underline"
+      <StateMessage
+        icon={SearchX}
+        title={<>No products match &ldquo;{search}&rdquo;</>}
+        actions={
+          <>
+            <Button variant="outline" size="md" onClick={onClear}>
+              Clear search
+            </Button>
+            <RequestQuotationButton size="md" label="Ask us to source it" message={`Looking for: ${search}`} />
+          </>
+        }
       >
-        Clear search
-      </button>
-    </div>
+        <p>
+          Check the spelling or try a shorter word, such as a brand or product type. You can also
+          browse a department:
+        </p>
+        {departments.length > 0 && (
+          <ul className="mt-4 flex flex-wrap gap-2" aria-label="Departments">
+            {departments.map((c) => (
+              <li key={c.slug}>
+                <Link
+                  href={`/products/${c.slug}`}
+                  className="inline-flex rounded-md border border-border bg-canvas px-3.5 py-1.5 text-xs font-medium text-ink transition-colors hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold"
+                >
+                  {c.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </StateMessage>
+    </>
   );
 }
 
@@ -325,7 +365,7 @@ function PagerLink({
   disabled: boolean;
 }) {
   const className =
-    'inline-flex h-10 items-center rounded-[6px] border border-border bg-canvas px-4 text-[0.875rem] font-medium text-ink transition-colors hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold';
+    'inline-flex h-10 items-center rounded-md border border-border bg-canvas px-4 text-xs font-medium text-ink transition-colors hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold';
   if (disabled) {
     return (
       <span className={cn(className, 'pointer-events-none opacity-40')} aria-disabled="true">

@@ -80,7 +80,7 @@ export function Navbar() {
             href="/"
             aria-label="RIVET COMPANY home"
             // Mobile/tablet: logo sits on the right; desktop restores it to the left.
-            className="order-last flex h-11 shrink-0 items-center rounded-[4px] focus-visible:outline-offset-4 lg:order-none"
+            className="order-last flex h-11 shrink-0 items-center rounded-sm focus-visible:outline-offset-4 lg:order-none"
           >
             <Logo className="h-8 sm:h-9" />
           </Link>
@@ -95,7 +95,7 @@ export function Navbar() {
                   href={l.href}
                   aria-current={isActivePath(pathname, l.href) ? 'page' : undefined}
                   className={cn(
-                    'gold-underline whitespace-nowrap text-[0.875rem] font-medium transition-colors xl:text-[0.9375rem]',
+                    'gold-underline whitespace-nowrap text-xs font-medium transition-colors xl:text-sm',
                     isActivePath(pathname, l.href)
                       ? 'text-navy'
                       : 'text-ink/75 hover:text-navy',
@@ -115,7 +115,7 @@ export function Navbar() {
               type="button"
               onClick={() => setSearchOpen(true)}
               aria-label="Search products"
-              className="grid h-10 w-10 place-items-center rounded-[6px] text-ink/75 transition-colors hover:bg-bg hover:text-navy"
+              className="grid h-10 w-10 place-items-center rounded-md text-ink/75 transition-colors hover:bg-bg hover:text-navy"
             >
               <Search size={18} strokeWidth={1.75} aria-hidden="true" />
             </button>
@@ -129,7 +129,7 @@ export function Navbar() {
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
-              className="order-first grid h-10 w-10 place-items-center rounded-[6px] text-navy transition-colors hover:bg-bg lg:hidden"
+              className="order-first grid h-10 w-10 place-items-center rounded-md text-navy transition-colors hover:bg-bg lg:hidden"
             >
               {menuOpen ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
             </button>
@@ -179,7 +179,7 @@ export function Navbar() {
                     onClick={() => setMenuOpen(false)}
                     aria-current={isActivePath(pathname, l.href) ? 'page' : undefined}
                     className={cn(
-                      'flex min-h-12 items-center border-b border-border text-[1rem] font-medium transition-colors',
+                      'flex min-h-12 items-center border-b border-border text-base font-medium transition-colors',
                       isActivePath(pathname, l.href) ? 'text-navy' : 'text-ink hover:text-navy',
                     )}
                   >
@@ -316,7 +316,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
             aria-hidden="true"
           />
           <motion.div
-            className="relative z-10 w-full max-w-2xl rounded-[10px] border border-border bg-canvas p-5 shadow-[var(--shadow-bloom)] sm:p-6"
+            className="relative z-10 w-full max-w-2xl rounded-lg border border-border bg-canvas p-5 shadow-[var(--shadow-bloom)] sm:p-6"
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -20, opacity: 0 }}
@@ -331,13 +331,13 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
                   placeholder="Search products by name, brand, category…"
                   aria-label="Search products"
                   autoComplete="off"
-                  className="w-full bg-transparent text-[1.125rem] font-medium text-ink placeholder:text-muted/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-navy-deep sm:text-[2rem]"
+                  className="w-full bg-transparent text-lg font-medium text-ink placeholder:text-muted/80 sm:text-4xl"
                 />
                 <button
                   type="button"
                   onClick={onClose}
                   aria-label="Close search"
-                  className="grid h-10 w-10 shrink-0 place-items-center rounded-[6px] text-muted transition-colors hover:bg-bg hover:text-navy"
+                  className="grid h-10 w-10 shrink-0 place-items-center rounded-md text-muted transition-colors hover:bg-bg hover:text-navy"
                 >
                   <X size={22} />
                 </button>
@@ -345,19 +345,19 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
             </form>
 
             {loading && (
-              <p className="mt-4 text-[0.875rem] text-muted" role="status">
+              <p className="mt-4 text-xs text-muted" role="status">
                 Searching…
               </p>
             )}
 
             {error && (
-              <p className="mt-4 text-[0.875rem] text-error-ink" role="alert">
+              <p className="mt-4 text-xs text-error-ink" role="alert">
                 {error}
               </p>
             )}
 
             {products.length > 0 && (
-              <ul className="mt-4 overflow-hidden rounded-[8px] border border-border">
+              <ul className="mt-4 overflow-hidden rounded-lg border border-border">
                 {products.map((p) => (
                   <li key={p.id}>
                     <button
@@ -365,15 +365,15 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
                       onClick={() => go(`/products/${p.slug}`)}
                       className="flex w-full items-center gap-4 px-4 py-3 text-left transition-colors hover:bg-bg"
                     >
-                      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-[6px] bg-bg">
+                      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-md bg-bg">
                         {p.image && (
                           <RivetImage src={p.image} alt={p.name} fill sizes="44px" className="object-cover" />
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[0.9375rem] font-medium text-ink">{p.name}</p>
+                        <p className="truncate text-sm font-medium text-ink">{p.name}</p>
                         {p.category && (
-                          <p className="text-[0.8125rem] text-muted">{p.category}</p>
+                          <p className="text-2xs text-muted">{p.category}</p>
                         )}
                       </div>
                       <ArrowUpRight size={16} className="shrink-0 text-muted" aria-hidden="true" />
@@ -384,7 +384,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
                   <button
                     type="button"
                     onClick={() => submit()}
-                    className="w-full px-4 py-3 text-left text-[0.875rem] font-semibold text-navy transition-colors hover:bg-bg"
+                    className="w-full px-4 py-3 text-left text-xs font-semibold text-navy transition-colors hover:bg-bg"
                   >
                     See all results for “{query.trim()}”
                   </button>
@@ -393,13 +393,13 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
             )}
 
             {showNoResults && (
-              <div className="mt-4 rounded-[8px] border border-border bg-bg px-5 py-6">
-                <p className="text-[0.9375rem] text-ink">
+              <div className="mt-4 rounded-lg border border-border bg-bg px-5 py-6">
+                <p className="text-sm text-ink">
                   No products found for “{query.trim()}”.
                 </p>
                 {categories.length > 0 ? (
                   <>
-                    <p className="mt-3 text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-muted">
+                    <p className="mt-3 text-3xs font-semibold uppercase tracking-[0.12em] text-muted">
                       Try these categories
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -408,7 +408,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
                           key={c.slug}
                           type="button"
                           onClick={() => go(`/products/${c.slug}`)}
-                          className="rounded-[6px] border border-border bg-canvas px-3.5 py-1.5 text-[0.875rem] text-ink transition-colors hover:border-navy hover:text-navy"
+                          className="rounded-md border border-border bg-canvas px-3.5 py-1.5 text-xs text-ink transition-colors hover:border-navy hover:text-navy"
                         >
                           {c.name}
                         </button>
@@ -419,7 +419,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
                   <button
                     type="button"
                     onClick={() => go('/products')}
-                    className="mt-3 text-[0.875rem] font-semibold text-navy hover:underline"
+                    className="mt-3 text-xs font-semibold text-navy hover:underline"
                   >
                     Browse all products
                   </button>
@@ -428,7 +428,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
             )}
 
             {!searched && !loading && !error && (
-              <p className="mt-4 text-[0.875rem] text-muted">
+              <p className="mt-4 text-xs text-muted">
                 Start typing for suggestions, or press Enter to search. Esc to close.
               </p>
             )}

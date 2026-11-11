@@ -26,7 +26,7 @@ export function RichTextEditor({
     editorProps: {
       attributes: {
         class:
-          'min-h-40 px-3 py-2.5 text-[0.9375rem] outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold prose prose-sm max-w-none',
+          'min-h-40 px-3 py-2.5 text-sm focus-visible:outline-offset-[-2px] prose prose-sm max-w-none',
         role: 'textbox',
         'aria-multiline': 'true',
         'aria-label': label,
@@ -42,7 +42,7 @@ export function RichTextEditor({
 
   if (!editor) {
     return (
-      <div role="status" className="h-40 animate-pulse rounded-[12px] border border-border bg-bg">
+      <div role="status" className="h-40 animate-pulse rounded-xl border border-border bg-bg">
         <span className="sr-only">Loading editor…</span>
       </div>
     );
@@ -57,7 +57,7 @@ export function RichTextEditor({
   ];
 
   return (
-    <div className={cn('overflow-hidden rounded-[12px] border border-border bg-surface', className)}>
+    <div className={cn('overflow-hidden rounded-xl border border-border bg-surface', className)}>
       <div
         role="toolbar"
         aria-label={`${label} formatting`}
@@ -72,7 +72,7 @@ export function RichTextEditor({
             aria-pressed={active}
             title={name}
             className={cn(
-              'grid h-8 w-8 place-items-center rounded-[8px] text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold',
+              'grid h-8 w-8 place-items-center rounded-lg text-navy ',
               active ? 'bg-gold/20 text-navy' : 'hover:bg-surface',
             )}
           >

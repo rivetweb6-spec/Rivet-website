@@ -35,7 +35,7 @@ export function Intro({ content }: { content?: IntroContent | null }) {
       <Container>
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <FadeUp>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] bg-bg">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-bg">
               <RivetImage
                 src={image}
                 alt="Engineer reviewing architectural drawings for a building project"
@@ -47,12 +47,12 @@ export function Intro({ content }: { content?: IntroContent | null }) {
           </FadeUp>
           <FadeUp delay={0.08}>
             <Eyebrow>{eyebrow}</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">{title}</h2>
-            <p className="mt-6 text-[1.0625rem] leading-relaxed text-ink/85">{body}</p>
+            <h2 className="headline-display mt-3 text-4xl sm:text-6xl">{title}</h2>
+            <p className="mt-6 text-md leading-relaxed text-ink/85">{body}</p>
             <p className="mt-4 leading-relaxed text-muted">{bodySecondary}</p>
             <Link
               href="/company"
-              className="mt-8 inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline"
+              className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-navy underline-offset-4 hover:underline"
             >
               More about RIVET COMPANY
               <ArrowRight size={16} aria-hidden="true" />

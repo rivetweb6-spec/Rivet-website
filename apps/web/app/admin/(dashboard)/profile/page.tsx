@@ -70,7 +70,7 @@ export default function AdminProfilePage() {
       <AdminPageHeader title="Profile" description="Your admin account details." />
       <div className="grid gap-6 lg:grid-cols-2">
         <AdminCard>
-          <h2 className="mb-4 text-[1.125rem] text-navy">Account</h2>
+          <h2 className="mb-4 text-lg text-navy">Account</h2>
           <form onSubmit={saveProfile} className="space-y-4">
             <AdminInput label="Name" value={name} onChange={(e) => setName(e.target.value)} required />
             <AdminInput
@@ -86,13 +86,13 @@ export default function AdminProfilePage() {
               onChange={setAvatarUrl}
               onError={setError}
             />
-            <p className="text-[0.8125rem] text-muted">Role: {user?.role}</p>
+            <p className="text-2xs text-muted">Role: {user?.role}</p>
             <AdminButton type="submit">Save profile</AdminButton>
           </form>
         </AdminCard>
 
         <AdminCard>
-          <h2 className="mb-4 text-[1.125rem] text-navy">Change password</h2>
+          <h2 className="mb-4 text-lg text-navy">Change password</h2>
           <form onSubmit={savePassword} className="space-y-4">
             <AdminInput
               label="Current password"
@@ -118,11 +118,11 @@ export default function AdminProfilePage() {
         </AdminCard>
       </div>
       {/* Status messages are announced to screen readers. */}
-      <p role="status" className="mt-4 text-[0.875rem] text-success empty:hidden">
+      <p role="status" className="mt-4 text-xs text-success empty:hidden">
         {message ?? ''}
       </p>
       {error && (
-        <p role="alert" className="mt-4 text-[0.875rem] text-error">
+        <p role="alert" className="mt-4 text-xs text-error">
           {error}
         </p>
       )}

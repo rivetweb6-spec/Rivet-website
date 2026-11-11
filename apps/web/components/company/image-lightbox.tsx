@@ -58,7 +58,7 @@ export function ImageLightbox({
   const content = (
     <div
       ref={dialogRef}
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-navy/92 p-4 md:p-10"
+      className="on-dark fixed inset-0 z-[80] flex items-center justify-center bg-navy/92 p-4 md:p-10"
       role="dialog"
       aria-modal="true"
       aria-labelledby={labelledBy}
@@ -72,7 +72,7 @@ export function ImageLightbox({
         onClick={onClose}
       />
       <div className="relative z-10 flex max-h-full w-full max-w-5xl flex-col">
-        <div className="relative h-[70vh] w-full overflow-hidden rounded-[8px] bg-white">
+        <div className="relative h-[70vh] w-full overflow-hidden rounded-lg bg-white">
           <RivetImage
             src={item.src}
             alt={item.title}
@@ -83,14 +83,14 @@ export function ImageLightbox({
         </div>
         <div className="mt-5 flex items-start justify-between gap-4 text-white">
           <div>
-            <h3 id={labelledBy} className="text-[1.25rem]">
+            <h3 id={labelledBy} className="text-xl">
               {item.title}
             </h3>
             {item.description && (
-              <p className="mt-1 max-w-2xl text-[0.9375rem] text-white/70">{item.description}</p>
+              <p className="mt-1 max-w-2xl text-sm text-white/70">{item.description}</p>
             )}
           </div>
-          <p className="shrink-0 text-[0.75rem] uppercase tracking-[0.16em] text-gold">
+          <p className="shrink-0 text-3xs uppercase tracking-[0.16em] text-gold">
             {index + 1} / {items.length}
           </p>
         </div>
@@ -100,7 +100,7 @@ export function ImageLightbox({
         ref={closeRef}
         type="button"
         onClick={onClose}
-        className="absolute top-4 right-4 grid h-11 w-11 place-items-center rounded-[6px] border border-white/25 bg-navy-deep/60 text-white transition-colors hover:bg-white/10"
+        className="absolute top-4 right-4 grid h-11 w-11 place-items-center rounded-md border border-white/25 bg-navy-deep/60 text-white transition-colors hover:bg-white/10"
         aria-label="Close"
       >
         <X size={18} />
@@ -111,7 +111,7 @@ export function ImageLightbox({
           <button
             type="button"
             onClick={() => onIndexChange((index - 1 + items.length) % items.length)}
-            className="absolute top-1/2 left-3 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-[6px] border border-white/25 bg-navy-deep/60 text-white transition-colors hover:bg-white/10 md:left-6"
+            className="absolute top-1/2 left-3 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-md border border-white/25 bg-navy-deep/60 text-white transition-colors hover:bg-white/10 md:left-6"
             aria-label="Previous image"
           >
             <ChevronLeft size={20} />
@@ -119,7 +119,7 @@ export function ImageLightbox({
           <button
             type="button"
             onClick={() => onIndexChange((index + 1) % items.length)}
-            className="absolute top-1/2 right-3 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-[6px] border border-white/25 bg-navy-deep/60 text-white transition-colors hover:bg-white/10 md:right-6"
+            className="absolute top-1/2 right-3 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-md border border-white/25 bg-navy-deep/60 text-white transition-colors hover:bg-white/10 md:right-6"
             aria-label="Next image"
           >
             <ChevronRight size={20} />

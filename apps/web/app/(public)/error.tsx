@@ -35,11 +35,11 @@ export default function PublicError({
             id="error-title"
             ref={headingRef}
             tabIndex={-1}
-            className="headline-display text-[2.25rem] outline-none sm:text-[2.75rem]"
+            className="headline-display text-5xl outline-none sm:text-7xl"
           >
             This page didn&rsquo;t load
           </h1>
-          <p className="mt-4 text-[1.0625rem] leading-relaxed text-ink/85">
+          <p className="mt-4 text-md leading-relaxed text-ink/85">
             Our product catalog didn&rsquo;t respond. This is usually temporary, so try again in a
             moment. If it keeps happening,{' '}
             <Link href="/contact" className="font-semibold text-navy underline underline-offset-4 hover:no-underline">
@@ -57,7 +57,7 @@ export default function PublicError({
             </Link>
           </div>
           {error.digest && (
-            <p className="mt-8 text-[0.8125rem] text-muted">
+            <p className="mt-8 text-2xs text-muted">
               Reference for our team: <span className="font-medium text-ink">{error.digest}</span>
             </p>
           )}

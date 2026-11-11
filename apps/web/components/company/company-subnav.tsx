@@ -27,7 +27,7 @@ export function CompanySubnav() {
                 href={link.href}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'shrink-0 border-b-2 py-4 text-[0.9375rem] font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-inset',
+                  'shrink-0 border-b-2 py-4 text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-offset-[-2px]',
                   active
                     ? 'border-gold text-navy'
                     : 'border-transparent text-muted hover:border-border hover:text-navy',

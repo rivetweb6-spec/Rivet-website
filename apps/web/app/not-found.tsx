@@ -18,8 +18,8 @@ export default function NotFound() {
     <section className="flex min-h-[70vh] items-center bg-bg pt-28 pb-16">
       <Container>
         <p className="eyebrow text-gold-ink">Error 404</p>
-        <h1 className="headline-display mt-3 max-w-xl text-[2.5rem] sm:text-[3rem]">Page not found</h1>
-        <p className="mt-4 max-w-lg text-[1.0625rem] leading-relaxed text-muted">
+        <h1 className="headline-display mt-3 max-w-xl text-6xl sm:text-7xl">Page not found</h1>
+        <p className="mt-4 max-w-lg text-md leading-relaxed text-muted">
           The page you are looking for may have moved or no longer exists. Browse our products,
           services, or request a quotation for your project in Ethiopia.
         </p>

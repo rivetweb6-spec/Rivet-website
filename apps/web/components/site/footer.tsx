@@ -57,14 +57,14 @@ export function Footer({
   const hasContact = Boolean(contact?.address || contact?.phone || contact?.email);
 
   return (
-    <footer className="border-t-4 border-gold bg-navy-deep text-white/70">
+    <footer className="on-dark border-t-4 border-gold bg-navy-deep text-white/70">
       {/* Extra bottom space below lg so the mobile action bar never covers the copyright line. */}
       <Container className="pt-14 pb-32 md:pt-20 lg:pb-20">
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-14">
           {/* Brand spans the full row on phones so the link columns sit two-up. */}
           <div className="col-span-2 sm:col-span-1">
             <Logo light />
-            <p className="mt-5 max-w-xs text-[0.9375rem] leading-relaxed">
+            <p className="mt-5 max-w-xs text-sm leading-relaxed">
               RIVET COMPANY supplies elevators, escalators, granite, doors, furniture, sanitary goods
               and building materials for residential and commercial projects in Ethiopia.
             </p>
@@ -79,7 +79,7 @@ export function Footer({
                       target="_blank"
                       rel="noreferrer"
                       aria-label={s.label}
-                      className="grid h-10 w-10 place-items-center rounded-[6px] border border-white/15 text-white/75 transition-colors hover:border-gold hover:text-gold"
+                      className="grid h-10 w-10 place-items-center rounded-md border border-white/15 text-white/75 transition-colors hover:border-gold hover:text-gold"
                     >
                       <Icon size={16} strokeWidth={1.5} />
                     </a>
@@ -91,10 +91,10 @@ export function Footer({
 
           {columns.map((col) => (
             <div key={col.title}>
-              <h2 className="text-[0.75rem] font-semibold uppercase tracking-[0.14em] text-gold">
+              <h2 className="text-3xs font-semibold uppercase tracking-[0.14em] text-gold">
                 {col.title}
               </h2>
-              <ul className="mt-4 space-y-1 text-[0.9375rem]">
+              <ul className="mt-4 space-y-1 text-sm">
                 {col.links.map((l) => (
                   <li key={l.label}>
                     <Link
@@ -111,7 +111,7 @@ export function Footer({
         </div>
 
         {hasContact && (
-          <div className="mt-12 grid gap-4 border-t border-white/10 pt-8 text-[0.9375rem] sm:grid-cols-3">
+          <div className="mt-12 grid gap-4 border-t border-white/10 pt-8 text-sm sm:grid-cols-3">
             {contact?.address && (
               <span className="inline-flex items-center gap-2.5">
                 <MapPin size={15} className="text-gold" strokeWidth={1.5} /> {contact.address}
@@ -136,7 +136,7 @@ export function Footer({
           </div>
         )}
 
-        <div className="mt-8 border-t border-white/10 pt-6 text-[0.8125rem] text-white/60">
+        <div className="mt-8 border-t border-white/10 pt-6 text-2xs text-white/60">
           <span>© {new Date().getFullYear()} RIVET COMPANY. All rights reserved.</span>
         </div>
       </Container>

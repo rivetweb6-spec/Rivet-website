@@ -152,7 +152,7 @@ export default function AdminCertificatesPage() {
             key={tab.id}
             type="button"
             onClick={() => setKind(tab.id)}
-            className={`rounded-full px-4 py-2 text-[0.875rem] transition-colors ${
+            className={`rounded-full px-4 py-2 text-xs transition-colors ${
               kind === tab.id ? 'bg-navy text-white' : 'bg-surface text-ink hover:bg-bg'
             }`}
           >
@@ -162,7 +162,7 @@ export default function AdminCertificatesPage() {
       </div>
 
       {error && (
-        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+        <p role="alert" className="mb-4 text-xs text-error">
           {error}
         </p>
       )}
@@ -179,21 +179,21 @@ export default function AdminCertificatesPage() {
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {items.map((c, index) => (
             <AdminCard key={c.id} className="flex flex-col">
-              <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-[12px] border border-border bg-bg">
+              <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-xl border border-border bg-bg">
                 {c.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={c.image} alt="" className="h-full w-full object-contain p-3" />
                 ) : (
-                  <div className="grid h-full place-items-center text-[0.8125rem] text-muted">
+                  <div className="grid h-full place-items-center text-2xs text-muted">
                     No image
                   </div>
                 )}
               </div>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <h3 className="text-[1.0625rem] text-navy">{c.title}</h3>
+                  <h3 className="text-md text-navy">{c.title}</h3>
                   {c.description && (
-                    <p className="mt-1 line-clamp-2 text-[0.875rem] text-muted">{c.description}</p>
+                    <p className="mt-1 line-clamp-2 text-xs text-muted">{c.description}</p>
                   )}
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     <StatusBadge status={c.status} />
@@ -202,7 +202,7 @@ export default function AdminCertificatesPage() {
                         href={c.pdf}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[0.75rem] text-navy hover:text-gold"
+                        className="inline-flex items-center gap-1 text-3xs text-navy hover:text-gold"
                       >
                         <FileText size={14} /> PDF
                       </a>
@@ -213,7 +213,7 @@ export default function AdminCertificatesPage() {
                   <div className="flex gap-1">
                     <button
                       type="button"
-                      className="grid h-8 w-8 place-items-center rounded-[8px] text-navy hover:bg-bg disabled:opacity-30"
+                      className="grid h-8 w-8 place-items-center rounded-lg text-navy hover:bg-bg disabled:opacity-30"
                       aria-label="Move up"
                       disabled={index === 0}
                       onClick={() => void move(index, -1)}
@@ -222,7 +222,7 @@ export default function AdminCertificatesPage() {
                     </button>
                     <button
                       type="button"
-                      className="grid h-8 w-8 place-items-center rounded-[8px] text-navy hover:bg-bg disabled:opacity-30"
+                      className="grid h-8 w-8 place-items-center rounded-lg text-navy hover:bg-bg disabled:opacity-30"
                       aria-label="Move down"
                       disabled={index === items.length - 1}
                       onClick={() => void move(index, 1)}
@@ -230,7 +230,7 @@ export default function AdminCertificatesPage() {
                       <ChevronDown size={16} />
                     </button>
                   </div>
-                  <div className="mt-1 text-[0.8125rem]">
+                  <div className="mt-1 text-2xs">
                     <button
                       type="button"
                       className="mr-3 py-1.5 text-navy hover:text-gold"
@@ -264,7 +264,7 @@ export default function AdminCertificatesPage() {
 
       <AdminModal open={open} onClose={() => setOpen(false)} error={error} className="max-w-2xl">
         <form onSubmit={(e) => void save(e)} className="space-y-4">
-          <h2 className="text-[1.25rem] text-navy">
+          <h2 className="text-xl text-navy">
             {editingId ? `Edit ${noun}` : `New ${noun}`}
           </h2>
           <AdminInput

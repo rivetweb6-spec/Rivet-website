@@ -27,7 +27,7 @@ export function ThemeToggle({
       aria-label={label}
       title={label}
       className={cn(
-        'grid h-10 w-10 place-items-center rounded-[6px] transition-colors duration-200',
+        'grid h-10 w-10 place-items-center rounded-md transition-colors duration-200',
         light
           ? 'text-white/75 hover:bg-white/10 hover:text-white'
           : 'text-ink/75 hover:bg-bg hover:text-navy',

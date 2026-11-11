@@ -180,7 +180,7 @@ export function QuotationModal({
             aria-labelledby="quotation-modal-title"
             data-lenis-prevent
             onWheel={(e) => e.stopPropagation()}
-            className="relative z-10 max-h-[92dvh] w-full max-w-lg overflow-y-auto overflow-x-hidden overscroll-contain rounded-[8px] bg-surface shadow-[var(--shadow-bloom)]"
+            className="relative z-10 max-h-[92dvh] w-full max-w-lg overflow-y-auto overflow-x-hidden overscroll-contain rounded-lg bg-surface shadow-[var(--shadow-bloom)]"
             initial={{ opacity: 0, y: 24, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -204,14 +204,14 @@ export function QuotationModal({
                   animate={{ opacity: 1, y: 0 }}
                 >
                   <motion.div
-                    className="grid h-16 w-16 place-items-center rounded-[8px] bg-bg text-success-ink"
+                    className="grid h-16 w-16 place-items-center rounded-lg bg-bg text-success-ink"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: 'spring', stiffness: 220, damping: 16 }}
                   >
                     <Check size={30} />
                   </motion.div>
-                  <h3 id="quotation-modal-title" className="mt-6 text-[1.75rem]">
+                  <h3 id="quotation-modal-title" className="mt-6 text-3xl">
                     Request received
                   </h3>
                   <p className="mt-3 max-w-sm text-muted">
@@ -224,17 +224,17 @@ export function QuotationModal({
               ) : (
                 <motion.div key="form" className="px-8 py-8" exit={{ opacity: 0 }}>
                   <p className="eyebrow text-navy">Quotations</p>
-                  <h3 id="quotation-modal-title" className="mt-2 text-[1.75rem]">
+                  <h3 id="quotation-modal-title" className="mt-2 text-3xl">
                     Request a Quotation
                   </h3>
-                  <p className="mt-2 text-[0.875rem] text-muted">
+                  <p className="mt-2 text-xs text-muted">
                     Tell us what you need. We will prepare a tailored quotation for your project.
                   </p>
 
                   {prefilledProduct && (
-                    <div className="mt-5 flex items-center gap-4 rounded-[6px] border border-border bg-bg p-3">
+                    <div className="mt-5 flex items-center gap-4 rounded-md border border-border bg-bg p-3">
                       {options.productImage && (
-                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-[6px]">
+                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md">
                           <RivetImage
                             src={options.productImage}
                             alt={options.productName ?? 'Selected product'}
@@ -245,11 +245,11 @@ export function QuotationModal({
                         </div>
                       )}
                       <div className="min-w-0">
-                        <p className="truncate text-[0.9375rem] font-medium text-ink">
+                        <p className="truncate text-sm font-medium text-ink">
                           {options.productName}
                         </p>
                         {options.productInterest && (
-                          <p className="text-[0.75rem] text-muted">{options.productInterest}</p>
+                          <p className="text-3xs text-muted">{options.productInterest}</p>
                         )}
                       </div>
                     </div>
@@ -328,7 +328,7 @@ export function QuotationModal({
                     <div>
                       <label
                         htmlFor="quotation-message"
-                        className="mb-1.5 block text-[0.875rem] font-medium text-ink"
+                        className="mb-1.5 block text-xs font-medium text-ink"
                       >
                         Message / Additional Requirements
                       </label>
@@ -338,7 +338,7 @@ export function QuotationModal({
                         maxLength={5000}
                         value={fields.message}
                         onChange={(e) => set('message', e.target.value)}
-                        className="w-full rounded-[6px] border border-border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg py-3 text-[1rem] outline-none transition-colors focus:border-navy focus:ring-2 focus:ring-navy/15 dark:focus:border-gold dark:focus:ring-gold/25"
+                        className="w-full rounded-md border border-border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg py-3 text-base transition-colors focus:border-navy dark:focus:border-gold"
                       />
                     </div>
 
@@ -352,7 +352,7 @@ export function QuotationModal({
                       {status === 'submitting' ? 'Sending…' : 'Submit Quotation Request'}
                     </Button>
                     {submitError && (
-                      <p className="text-center text-[0.875rem] text-error-ink" role="alert">
+                      <p className="text-center text-xs text-error-ink" role="alert">
                         {submitError}
                       </p>
                     )}
@@ -392,7 +392,7 @@ function Field({
   const errorId = `${id}-error`;
   return (
     <div>
-      <label htmlFor={id} className="mb-1.5 block text-[0.875rem] font-medium text-ink">
+      <label htmlFor={id} className="mb-1.5 block text-xs font-medium text-ink">
         {label} {required && <span className="text-gold-ink">*</span>}
       </label>
       <input
@@ -407,7 +407,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={cn(
-          'h-12 w-full rounded-[6px] border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg text-[1rem] outline-none transition-colors placeholder:text-muted focus:border-navy focus:ring-2 focus:ring-navy/15 dark:focus:border-gold dark:focus:ring-gold/25',
+          'h-12 w-full rounded-md border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg text-base transition-colors placeholder:text-muted focus:border-navy dark:focus:border-gold',
           error ? 'border-error-ink' : 'border-border',
         )}
       />
@@ -418,7 +418,7 @@ function Field({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-1.5 text-[0.8125rem] text-error-ink"
+            className="mt-1.5 text-2xs text-error-ink"
           >
             {error}
           </motion.p>

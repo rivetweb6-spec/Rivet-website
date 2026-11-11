@@ -75,7 +75,7 @@ export function CategoryPageView({
             >
               <Link
                 href="/products"
-                className="shrink-0 whitespace-nowrap rounded-[6px] border px-4 py-2 text-[0.875rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 border-border bg-canvas text-ink hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold"
+                className="shrink-0 whitespace-nowrap rounded-md border px-4 py-2 text-xs font-medium transition-colors border-border bg-canvas text-ink hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold"
               >
                 All
               </Link>
@@ -89,7 +89,7 @@ export function CategoryPageView({
                     href={`/products/${c.slug}`}
                     aria-current={isActive ? 'page' : undefined}
                     className={cn(
-                      'shrink-0 whitespace-nowrap rounded-[6px] border px-4 py-2 text-[0.875rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2',
+                      'shrink-0 whitespace-nowrap rounded-md border px-4 py-2 text-xs font-medium transition-colors ',
                       isActive
                         ? 'border-navy bg-navy text-white dark:border-gold dark:bg-gold dark:text-[#002f54]'
                         : 'border-border bg-canvas text-ink hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold',
@@ -109,10 +109,10 @@ export function CategoryPageView({
                   ? `Product category · ${ancestors.map((a) => a.name).join(' · ')}`
                   : 'Product category'}
               </Eyebrow>
-              <h1 className="headline-display mt-3 text-[2.25rem] sm:text-[2.75rem] lg:text-[3.25rem]">
+              <h1 className="headline-display mt-3 text-5xl sm:text-7xl lg:text-8xl">
                 {category.name}
               </h1>
-              <p className="mt-4 max-w-xl text-[1.125rem] leading-relaxed text-muted">
+              <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted">
                 {category.description ??
                   `${category.name} from RIVET COMPANY for commercial and residential projects in Ethiopia. Browse the range or request a quotation.`}
               </p>
@@ -141,7 +141,7 @@ export function CategoryPageView({
                 }))}
               />
             ) : category.image ? (
-              <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] border border-border bg-surface sm:aspect-[16/11]">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-border bg-surface sm:aspect-[16/11]">
                 <RivetImage
                   src={category.image}
                   alt={`${category.name} supplied by RIVET COMPANY in Ethiopia`}
@@ -184,7 +184,7 @@ export function CategoryPageView({
       <Section>
         <Container>
           <Eyebrow>Catalog</Eyebrow>
-          <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.25rem]">
+          <h2 className="headline-display mt-3 text-4xl sm:text-5xl">
             {products.length > 0
               ? `${category.name} products`
               : `Products in ${category.name}`}
@@ -208,16 +208,16 @@ export function CategoryPageView({
         <Section className="bg-surface">
           <Container>
             <Eyebrow>Support</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.25rem]">Relevant services</h2>
+            <h2 className="headline-display mt-3 text-4xl sm:text-5xl">Relevant services</h2>
             <ul className="mt-8 grid gap-5 md:grid-cols-3">
               {relatedServices.map((s) => (
                 <li key={s.id}>
                   <Link
                     href={`/services/${s.slug}`}
-                    className="luxury-card group block h-full rounded-[8px] bg-canvas p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+                    className="luxury-card group block h-full rounded-lg bg-canvas p-6 "
                   >
-                    <h3 className="text-[1.125rem] group-hover:underline group-hover:underline-offset-4">{s.title}</h3>
-                    <p className="mt-2 line-clamp-3 text-[0.9375rem] leading-relaxed text-muted">
+                    <h3 className="text-lg group-hover:underline group-focus-visible:underline group-hover:underline-offset-4">{s.title}</h3>
+                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted">
                       {s.narrative}
                     </p>
                   </Link>

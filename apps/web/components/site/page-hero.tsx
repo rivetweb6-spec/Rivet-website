@@ -23,11 +23,11 @@ export function PageHero({
         {lead && <div className="mb-6">{lead}</div>}
         <div className="max-w-3xl">
           <Eyebrow>{eyebrow}</Eyebrow>
-          <h1 className="headline-display mt-3 text-[2.25rem] sm:text-[2.75rem] lg:text-[3.25rem]">
+          <h1 className="headline-display mt-3 text-5xl sm:text-7xl lg:text-8xl">
             {title}
           </h1>
           {description && (
-            <p className="mt-5 max-w-2xl text-[1.0625rem] leading-relaxed text-muted md:text-[1.125rem]">
+            <p className="mt-5 max-w-2xl text-md leading-relaxed text-muted md:text-lg">
               {description}
             </p>
           )}

@@ -85,16 +85,16 @@ export function PdfUploadField({ label, value, onChange, onError, className }: P
 
   return (
     <fieldset className={cn('min-w-0 space-y-3', className)}>
-      <legend className="mb-3 block text-[0.8125rem] font-medium text-ink">{label}</legend>
+      <legend className="mb-3 block text-2xs font-medium text-ink">{label}</legend>
 
       {current && (
-        <div className="flex items-center gap-3 rounded-[12px] border border-border bg-bg px-3 py-2.5">
+        <div className="flex items-center gap-3 rounded-xl border border-border bg-bg px-3 py-2.5">
           <FileText size={20} className="shrink-0 text-navy" strokeWidth={1.5} />
           <a
             href={current}
             target="_blank"
             rel="noopener noreferrer"
-            className="min-w-0 flex-1 truncate text-[0.875rem] text-navy hover:text-gold"
+            className="min-w-0 flex-1 truncate text-xs text-navy hover:text-gold"
           >
             {fileName ?? displayName(current)}
           </a>
@@ -121,21 +121,21 @@ export function PdfUploadField({ label, value, onChange, onError, className }: P
           void handleFiles(e.dataTransfer.files);
         }}
         className={cn(
-          'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-[12px] border-2 border-dashed px-4 py-6 transition-colors',
+          'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 transition-colors',
           dragOver ? 'border-gold bg-gold/5' : 'border-border hover:border-gold/50 hover:bg-bg/50',
-          'focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2',
+          'focus-ring-within',
           uploading && 'pointer-events-none opacity-60',
         )}
       >
         <Upload size={20} className="text-muted" strokeWidth={1.5} />
-        <span className="text-[0.8125rem] text-muted">
+        <span className="text-2xs text-muted">
           {uploading
             ? 'Uploading…'
             : current
               ? 'Replace PDF from computer'
               : 'Choose PDF from computer or drop here'}
         </span>
-        <span className="text-[0.75rem] text-muted/80">PDF only · max 8 MB</span>
+        <span className="text-3xs text-muted/80">PDF only · max 8 MB</span>
         <input
           ref={inputRef}
           type="file"
@@ -146,7 +146,7 @@ export function PdfUploadField({ label, value, onChange, onError, className }: P
       </label>
 
       {localError && (
-        <p role="alert" className="text-[0.8125rem] text-error">
+        <p role="alert" className="text-2xs text-error">
           {localError}
         </p>
       )}

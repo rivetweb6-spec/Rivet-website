@@ -122,11 +122,11 @@ export function QuotationForm({
 
   if (status === 'success') {
     return (
-      <div className="rounded-[8px] border border-border bg-surface p-6 text-center sm:p-8 md:p-10">
-        <div className="mx-auto grid h-16 w-16 place-items-center rounded-[8px] bg-bg text-success-ink">
+      <div className="rounded-lg border border-border bg-surface p-6 text-center sm:p-8 md:p-10">
+        <div className="mx-auto grid h-16 w-16 place-items-center rounded-lg bg-bg text-success-ink">
           <Check size={30} />
         </div>
-        <h2 className="mt-6 text-[1.75rem]">Request received</h2>
+        <h2 className="mt-6 text-3xl">Request received</h2>
         <p className="mt-3 text-muted">
           Thank you. A RIVET COMPANY specialist will contact you shortly with your quotation.
         </p>
@@ -138,7 +138,7 @@ export function QuotationForm({
     <form
       onSubmit={submit}
       noValidate
-      className="space-y-4 rounded-[8px] border border-border bg-surface p-5 sm:p-6 md:p-8"
+      className="space-y-4 rounded-lg border border-border bg-surface p-5 sm:p-6 md:p-8"
     >
       <Field
         label="Full Name"
@@ -205,7 +205,7 @@ export function QuotationForm({
         error={touched.productInterest ? errors.productInterest : undefined}
       />
       <div>
-        <label htmlFor="page-quotation-message" className="mb-1.5 block text-[0.875rem] font-medium">
+        <label htmlFor="page-quotation-message" className="mb-1.5 block text-xs font-medium">
           Message / Additional Requirements
         </label>
         <textarea
@@ -214,14 +214,14 @@ export function QuotationForm({
           maxLength={5000}
           value={fields.message}
           onChange={(e) => set('message', e.target.value)}
-          className="w-full rounded-[6px] border border-border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg py-3 text-[1rem] outline-none focus:border-navy focus:ring-2 focus:ring-navy/15 dark:focus:border-gold dark:focus:ring-gold/25"
+          className="w-full rounded-md border border-border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg py-3 text-base focus:border-navy dark:focus:border-gold"
         />
       </div>
       <Button type="submit" variant="primary" size="lg" className="w-full" disabled={status === 'submitting'}>
         {status === 'submitting' ? 'Sending…' : 'Submit Quotation Request'}
       </Button>
       {submitError && (
-        <p className="text-center text-[0.875rem] text-error-ink" role="alert">
+        <p className="text-center text-xs text-error-ink" role="alert">
           {submitError}
         </p>
       )}
@@ -254,7 +254,7 @@ function Field({
   const errorId = `${id}-error`;
   return (
     <div>
-      <label htmlFor={id} className="mb-1.5 block text-[0.875rem] font-medium text-ink">
+      <label htmlFor={id} className="mb-1.5 block text-xs font-medium text-ink">
         {label} {required && <span className="text-gold-ink">*</span>}
       </label>
       <input
@@ -268,12 +268,12 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={cn(
-          'h-12 w-full rounded-[6px] border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg text-[1rem] outline-none placeholder:text-muted focus:border-navy focus:ring-2 focus:ring-navy/15 dark:focus:border-gold dark:focus:ring-gold/25',
+          'h-12 w-full rounded-md border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg text-base placeholder:text-muted focus:border-navy dark:focus:border-gold',
           error ? 'border-error-ink' : 'border-border',
         )}
       />
       {error && (
-        <p id={errorId} className="mt-1.5 text-[0.8125rem] text-error-ink">
+        <p id={errorId} className="mt-1.5 text-2xs text-error-ink">
           {error}
         </p>
       )}

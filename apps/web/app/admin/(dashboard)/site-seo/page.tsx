@@ -85,8 +85,8 @@ export default function AdminSiteSeoPage() {
         title="Site SEO"
         description="Override titles, descriptions, and social metadata for static public pages."
       />
-      {error && <p role="alert" className="mb-4 text-[0.875rem] text-error">{error}</p>}
-      {saved && <p className="mb-4 text-[0.875rem] text-navy">SEO settings saved.</p>}
+      {error && <p role="alert" className="mb-4 text-xs text-error">{error}</p>}
+      {saved && <p className="mb-4 text-xs text-navy">SEO settings saved.</p>}
 
       <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
         <AdminCard className="h-fit p-2">
@@ -96,7 +96,7 @@ export default function AdminSiteSeoPage() {
                 key={p.key}
                 type="button"
                 onClick={() => setActiveKey(p.key)}
-                className={`block w-full rounded-[10px] px-3 py-2.5 text-left text-[0.875rem] transition-colors ${
+                className={`block w-full rounded-lg px-3 py-2.5 text-left text-xs transition-colors ${
                   activeKey === p.key
                     ? 'bg-navy text-white'
                     : 'text-ink hover:bg-bg'
@@ -113,8 +113,8 @@ export default function AdminSiteSeoPage() {
             <EmptyState message="Select a page." />
           ) : (
             <form onSubmit={save}>
-              <h2 className="text-[1.25rem] text-navy">{meta.label}</h2>
-              <p className="mt-1 text-[0.875rem] text-muted">Public path: {meta.path}</p>
+              <h2 className="text-xl text-navy">{meta.label}</h2>
+              <p className="mt-1 text-xs text-muted">Public path: {meta.path}</p>
               <SeoFieldsPanel
                 value={form}
                 onChange={setForm}

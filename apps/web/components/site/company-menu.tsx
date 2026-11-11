@@ -31,7 +31,7 @@ function MobileCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
         aria-expanded={open}
         aria-controls="company-mobile-submenu"
         onClick={() => setOpen((v) => !v)}
-        className="flex min-h-12 w-full items-center justify-between border-b border-border text-[1rem] font-medium text-ink transition-colors hover:text-navy"
+        className="flex min-h-12 w-full items-center justify-between border-b border-border text-base font-medium text-ink transition-colors hover:text-navy"
       >
         Company
         <ChevronDown
@@ -47,7 +47,7 @@ function MobileCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
               key={link.href}
               href={link.href}
               onClick={onNavigate}
-              className="flex min-h-11 items-center py-2.5 text-[0.9375rem] text-muted transition-colors hover:text-navy"
+              className="flex min-h-11 items-center py-2.5 text-sm text-muted transition-colors hover:text-navy"
             >
               {link.label}
             </Link>
@@ -94,7 +94,7 @@ function DesktopCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
         aria-controls="company-desktop-menu"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'gold-underline inline-flex items-center gap-1.5 whitespace-nowrap text-[0.875rem] font-medium transition-colors xl:text-[0.9375rem]',
+          'gold-underline inline-flex items-center gap-1.5 whitespace-nowrap text-xs font-medium transition-colors xl:text-sm',
           active ? 'text-navy' : 'text-ink/75 hover:text-navy',
         )}
       >
@@ -116,7 +116,7 @@ function DesktopCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
             transition={{ duration: 0.18 }}
             className="absolute top-full left-1/2 z-50 w-72 -translate-x-1/2 pt-4"
           >
-            <div className="overflow-hidden rounded-[8px] border border-border bg-canvas py-2 shadow-[var(--shadow-lg)]">
+            <div className="overflow-hidden rounded-lg border border-border bg-canvas py-2 shadow-[var(--shadow-lg)]">
               {companyNavLinks.map((link) => {
                 const isActive =
                   'exact' in link && link.exact
@@ -132,7 +132,7 @@ function DesktopCompanyMenu({ onNavigate }: { onNavigate?: () => void }) {
                       onNavigate?.();
                     }}
                     className={cn(
-                      'block px-5 py-2.5 text-[0.9375rem] transition-colors',
+                      'block px-5 py-2.5 text-sm transition-colors',
                       isActive ? 'bg-bg font-medium text-navy' : 'text-ink hover:bg-bg hover:text-navy',
                     )}
                   >

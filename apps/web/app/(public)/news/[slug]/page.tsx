@@ -80,15 +80,15 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
             />
           </div>
           {article.category && <Eyebrow className="mt-8 block">{article.category}</Eyebrow>}
-          <h1 className="headline-display mt-3 text-[2.25rem] sm:text-[2.75rem]">{article.title}</h1>
-          <time className="mt-5 block text-[0.9375rem] text-muted">
+          <h1 className="headline-display mt-3 text-5xl sm:text-7xl">{article.title}</h1>
+          <time className="mt-5 block text-sm text-muted">
             {formatDate(article.publishedAt)}
           </time>
         </Container>
       </section>
 
       <div className="relative mx-auto -mt-16 max-w-[860px] px-5 sm:px-6">
-        <div className="relative aspect-[16/9] overflow-hidden rounded-[8px] border border-border bg-bg">
+        <div className="relative aspect-[16/9] overflow-hidden rounded-lg border border-border bg-bg">
           <RivetImage
             src={cover}
             alt={`${article.title} — RIVET COMPANY news`}
@@ -103,14 +103,14 @@ export default async function NewsArticlePage({ params }: { params: Params }) {
       <Section>
         <Container className="max-w-3xl">
           {article.excerpt && (
-            <p className="text-[1.25rem] leading-relaxed text-muted">{article.excerpt}</p>
+            <p className="text-xl leading-relaxed text-muted">{article.excerpt}</p>
           )}
           <RichText
             className="prose prose-lg mt-8 max-w-none text-ink prose-headings:font-display prose-headings:text-navy prose-a:text-navy dark:prose-invert dark:prose-headings:text-ink dark:prose-a:text-gold prose-a:underline prose-a:decoration-gold prose-a:underline-offset-4"
             html={article.body}
           />
           <p className="mt-12">
-            <Link href="/news" className="text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline">
+            <Link href="/news" className="text-sm font-medium text-navy underline-offset-4 hover:underline">
               ← All news
             </Link>
           </p>

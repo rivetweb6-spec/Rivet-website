@@ -59,7 +59,7 @@ export function ProductGallery({
         id={panelId}
         role={hasTabs ? 'tabpanel' : undefined}
         aria-labelledby={hasTabs ? tabId(active) : undefined}
-        className={cn('relative overflow-hidden rounded-[8px] border border-border bg-bg', aspectClassName)}
+        className={cn('relative overflow-hidden rounded-lg border border-border bg-bg', aspectClassName)}
       >
         {current ? (
           <RivetImage
@@ -97,7 +97,7 @@ export function ProductGallery({
               onClick={() => setActive(i)}
               onKeyDown={(e) => onKeyDown(e, i)}
               className={cn(
-                'relative h-20 w-20 shrink-0 overflow-hidden rounded-[6px] border-2 bg-bg transition-[border-color,opacity] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2',
+                'relative h-20 w-20 shrink-0 overflow-hidden rounded-md border-2 bg-bg transition-[border-color,opacity] ',
                 i === active ? 'border-navy dark:border-gold' : 'border-border opacity-75 hover:opacity-100',
               )}
             >

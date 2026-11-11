@@ -40,8 +40,8 @@ export default function AdminDashboardPage() {
     return (
       <div>
         {header}
-        <div role="alert" className="rounded-[16px] border border-error/20 bg-error/10 p-5">
-          <p className="text-[0.9375rem] text-error">Could not load the dashboard: {error}</p>
+        <div role="alert" className="rounded-2xl border border-error/20 bg-error/10 p-5">
+          <p className="text-sm text-error">Could not load the dashboard: {error}</p>
           <button
             type="button"
             onClick={() => {
@@ -49,7 +49,7 @@ export default function AdminDashboardPage() {
               setData(null);
               load();
             }}
-            className="mt-3 inline-flex h-10 items-center rounded-[12px] bg-navy px-4 text-[0.875rem] font-medium text-white hover:bg-navy-600"
+            className="mt-3 inline-flex h-10 items-center rounded-xl bg-navy px-4 text-xs font-medium text-white hover:bg-navy-600"
           >
             Try again
           </button>
@@ -67,7 +67,7 @@ export default function AdminDashboardPage() {
             <div
               key={i}
               aria-hidden="true"
-              className="h-28 animate-pulse rounded-[16px] bg-surface shadow-[var(--shadow-sm)]"
+              className="h-28 animate-pulse rounded-2xl bg-surface shadow-[var(--shadow-sm)]"
             />
           ))}
         </div>
@@ -102,8 +102,8 @@ export default function AdminDashboardPage() {
         {cards.map((c) => (
           <Link key={c.label} href={c.href}>
             <AdminCard className="transition-shadow hover:shadow-[var(--shadow-md)]">
-              <p className="text-[0.8125rem] text-muted">{c.label}</p>
-              <p className="mt-2 font-display text-[2rem] text-navy">{c.value}</p>
+              <p className="text-2xs text-muted">{c.label}</p>
+              <p className="mt-2 font-display text-4xl text-navy">{c.value}</p>
             </AdminCard>
           </Link>
         ))}
@@ -111,11 +111,11 @@ export default function AdminDashboardPage() {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-5">
         <AdminCard className="lg:col-span-3">
-          <h2 className="text-[1.125rem] text-navy">Quotation requests by status</h2>
+          <h2 className="text-lg text-navy">Quotation requests by status</h2>
           {/* Visual only: the status list below carries the same numbers for assistive tech. */}
           <div className="mt-4 h-64" aria-hidden={chartData.length > 0 ? true : undefined}>
             {chartData.length === 0 ? (
-              <p className="text-[0.875rem] text-muted">No quotation requests yet.</p>
+              <p className="text-xs text-muted">No quotation requests yet.</p>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData}>
@@ -130,7 +130,7 @@ export default function AdminDashboardPage() {
           </div>
           <ul className="mt-2 flex flex-wrap gap-3" aria-label="Quotation requests by status">
             {data.quotationsByStatus.map((row) => (
-              <li key={row.status} className="flex items-center gap-2 text-[0.8125rem]">
+              <li key={row.status} className="flex items-center gap-2 text-2xs">
                 <StatusBadge status={row.status} />
                 <span className="font-medium text-ink">{row._count}</span>
               </li>
@@ -140,23 +140,23 @@ export default function AdminDashboardPage() {
 
         <AdminCard className="lg:col-span-2">
           <div className="flex items-center justify-between">
-            <h2 className="text-[1.125rem] text-navy">Recent quotation requests</h2>
+            <h2 className="text-lg text-navy">Recent quotation requests</h2>
             <Link
               href="/admin/quotation-requests"
-              className="inline-block py-1.5 text-[0.8125rem] font-medium text-navy underline-offset-4 hover:text-gold hover:underline"
+              className="inline-block py-1.5 text-2xs font-medium text-navy underline-offset-4 hover:text-gold hover:underline"
             >
               View all<span className="sr-only"> quotation requests</span>
             </Link>
           </div>
           <ul className="mt-4 divide-y divide-divider">
             {data.recentQuotations.length === 0 && (
-              <li className="py-4 text-[0.875rem] text-muted">No recent requests.</li>
+              <li className="py-4 text-xs text-muted">No recent requests.</li>
             )}
             {data.recentQuotations.map((d) => (
               <li key={d.id} className="flex items-start justify-between gap-3 py-3">
                 <div>
-                  <p className="text-[0.875rem] font-medium text-ink">{d.fullName}</p>
-                  <p className="text-[0.75rem] text-muted">
+                  <p className="text-xs font-medium text-ink">{d.fullName}</p>
+                  <p className="text-3xs text-muted">
                     {d.productName ?? d.productInterest} · {new Date(d.createdAt).toLocaleDateString()}
                   </p>
                 </div>

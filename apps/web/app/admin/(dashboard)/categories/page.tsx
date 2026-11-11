@@ -422,7 +422,7 @@ export default function AdminCategoriesPage() {
       {pageError && (
         <div
           role="alert"
-          className="mb-4 rounded-[10px] border border-error/20 bg-error/10 p-3 text-[0.875rem] text-error"
+          className="mb-4 rounded-lg border border-error/20 bg-error/10 p-3 text-xs text-error"
         >
           {pageError}
         </div>
@@ -438,22 +438,22 @@ export default function AdminCategoriesPage() {
           onClick={() => setAttentionOnly((v) => !v)}
           aria-pressed={attentionOnly}
           className={cn(
-            'rounded-[14px] border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold',
+            'rounded-2xl border p-4 text-left transition-colors ',
             attentionOnly
               ? 'border-warning bg-warning/10'
               : 'border-border bg-surface hover:border-warning/60',
           )}
         >
-          <span className="block text-[0.75rem] font-medium uppercase tracking-wider text-muted">
+          <span className="block text-3xs font-medium uppercase tracking-wider text-muted">
             Need attention
           </span>
-          <span className="mt-1 flex items-center gap-2 text-[1.5rem] font-semibold text-navy">
+          <span className="mt-1 flex items-center gap-2 text-2xl font-semibold text-navy">
             {attentionCount}
             {attentionCount > 0 && (
               <AlertTriangle size={18} className="text-warning" aria-hidden="true" />
             )}
           </span>
-          <span className="block text-[0.75rem] text-muted">
+          <span className="block text-3xs text-muted">
             {attentionOnly ? 'Showing only these · click to show all' : 'Missing image or description'}
           </span>
         </button>
@@ -473,7 +473,7 @@ export default function AdminCategoriesPage() {
             placeholder="Search by name or URL…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-10 w-full rounded-[10px] border border-border bg-surface pl-9 pr-3 text-[0.875rem] text-ink placeholder:text-muted/70 focus:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+            className="h-10 w-full rounded-lg border border-border bg-surface pl-9 pr-3 text-xs text-ink placeholder:text-muted/70 focus:border-gold "
           />
         </label>
         {expandableIds.length > 0 && (
@@ -492,8 +492,8 @@ export default function AdminCategoriesPage() {
       </div>
 
       <AdminCard className="overflow-x-auto p-0">
-        <table className="w-full min-w-[720px] text-left text-[0.875rem]">
-          <thead className="border-b border-border bg-bg/80 text-[0.75rem] uppercase tracking-wider text-muted">
+        <table className="w-full min-w-[720px] text-left text-xs">
+          <thead className="border-b border-border bg-bg/80 text-3xs uppercase tracking-wider text-muted">
             <tr>
               <th scope="col" className="px-5 py-3 font-medium">
                 Category
@@ -548,7 +548,7 @@ export default function AdminCategoriesPage() {
                           onClick={() => toggleCollapse(node.id)}
                           aria-expanded={!isCollapsed}
                           aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${node.name}`}
-                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[6px] text-muted hover:bg-black/5 hover:text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted hover:bg-black/5 hover:text-navy "
                         >
                           {isCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
                         </button>
@@ -564,24 +564,24 @@ export default function AdminCategoriesPage() {
                             type="button"
                             onClick={() => openEdit(node)}
                             className={cn(
-                              'py-1 text-left text-navy transition-colors hover:text-gold focus-visible:outline-none focus-visible:underline',
-                              isRoot ? 'text-[0.9375rem] font-semibold' : 'font-medium',
+                              'py-1 text-left text-navy transition-colors hover:text-gold focus-visible:underline',
+                              isRoot ? 'text-sm font-semibold' : 'font-medium',
                             )}
                           >
                             {node.name}
                           </button>
                           {isRoot && (
-                            <span className="rounded-full bg-navy/10 px-2 py-0.5 text-[0.6875rem] font-medium text-navy">
+                            <span className="rounded-full bg-navy/10 px-2 py-0.5 text-3xs font-medium text-navy">
                               Department
                             </span>
                           )}
                           {hasChildren && (
-                            <span className="text-[0.75rem] text-muted">
+                            <span className="text-3xs text-muted">
                               {plural(node.childrenNodes.length, 'subcategory', 'subcategories')}
                             </span>
                           )}
                         </div>
-                        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.75rem] text-muted">
+                        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-3xs text-muted">
                           <span className="font-mono">/products/{node.slug}</span>
                           {node.issues.map((issue) => (
                             <span
@@ -657,7 +657,7 @@ export default function AdminCategoriesPage() {
       </AdminCard>
 
       {(search || attentionOnly) && visibleRows.length > 0 && (
-        <p className="mt-3 text-[0.8125rem] text-muted">
+        <p className="mt-3 text-2xs text-muted">
           Reordering is turned off while a search or filter is active.
         </p>
       )}
@@ -666,10 +666,10 @@ export default function AdminCategoriesPage() {
       <AdminModal open={open} onClose={closeForm} className="max-w-2xl" labelledBy="category-form-title">
         <form onSubmit={save} className="space-y-5">
           <div>
-            <h2 id="category-form-title" className="text-[1.25rem] font-semibold text-navy">
+            <h2 id="category-form-title" className="text-xl font-semibold text-navy">
               {formTitle}
             </h2>
-            <p className="mt-1 text-[0.8125rem] text-muted">
+            <p className="mt-1 text-2xs text-muted">
               {form.parentId
                 ? 'Subcategories appear as cards on their parent’s page.'
                 : 'Departments appear in the Products menu and on the Products page.'}
@@ -679,7 +679,7 @@ export default function AdminCategoriesPage() {
           {formError && (
             <div
               role="alert"
-              className="rounded-[10px] border border-error/20 bg-error/10 p-3 text-[0.875rem] text-error"
+              className="rounded-lg border border-error/20 bg-error/10 p-3 text-xs text-error"
             >
               {formError}
             </div>
@@ -715,7 +715,7 @@ export default function AdminCategoriesPage() {
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               placeholder="One or two sentences describing what customers will find here."
             />
-            <p className="mt-1 text-[0.75rem] text-muted">
+            <p className="mt-1 text-3xs text-muted">
               Shown on the category card and at the top of its page.
             </p>
           </div>
@@ -728,7 +728,7 @@ export default function AdminCategoriesPage() {
               onChange={(image) => setForm({ ...form, image })}
               onError={setFormError}
             />
-            <p className="mt-1 text-[0.75rem] text-muted">
+            <p className="mt-1 text-3xs text-muted">
               Add as many photos as you like. The first image is the cover (category card and page
               header); the others appear in a gallery on the category page. Use landscape photos at
               least 1600px wide.
@@ -743,7 +743,7 @@ export default function AdminCategoriesPage() {
               onChange={(e) => setForm({ ...form, faqsText: e.target.value })}
               placeholder={'Do you install panoramic elevators?\nYes — our team handles supply, installation and maintenance.\n\nHow long does installation take?\nTypically 4–8 weeks depending on the building.'}
             />
-            <p className="mt-1 text-[0.75rem] text-muted">
+            <p className="mt-1 text-3xs text-muted">
               Question on the first line, answer below it. Leave a blank line between questions.
             </p>
           </Disclosure>
@@ -781,18 +781,18 @@ export default function AdminCategoriesPage() {
         labelledBy="delete-category-title"
       >
         <div className="space-y-4">
-          <h2 id="delete-category-title" className="text-[1.25rem] font-semibold text-navy">
+          <h2 id="delete-category-title" className="text-xl font-semibold text-navy">
             Delete {deleting?.name}
           </h2>
 
           {deleteError && (
-            <p role="alert" className="text-[0.875rem] text-error">
+            <p role="alert" className="text-xs text-error">
               {deleteError}
             </p>
           )}
 
           {hasSubcategoryBlocker && (
-            <div className="rounded-[10px] border border-warning/30 bg-warning/10 p-3.5 text-[0.875rem] text-ink">
+            <div className="rounded-lg border border-warning/30 bg-warning/10 p-3.5 text-xs text-ink">
               <p className="mb-1 font-semibold">Remove its subcategories first</p>
               <p>
                 {deleting?.name} still contains{' '}
@@ -807,13 +807,13 @@ export default function AdminCategoriesPage() {
 
           {!hasSubcategoryBlocker && deleting && deletingProductCount > 0 && (
             <>
-              <p className="rounded-[10px] border border-warning/30 bg-warning/10 p-3 text-[0.875rem] text-ink">
+              <p className="rounded-lg border border-warning/30 bg-warning/10 p-3 text-xs text-ink">
                 {plural(deletingProductCount, 'product is', 'products are')} in{' '}
                 <span className="font-medium">{deleting.name}</span>. Choose where to move{' '}
                 {deletingProductCount === 1 ? 'it' : 'them'} — no products will be deleted.
               </p>
               {reassignOptions.length === 0 ? (
-                <p className="text-[0.875rem] text-muted">
+                <p className="text-xs text-muted">
                   Create another category first, then move these products to it.
                 </p>
               ) : (
@@ -835,7 +835,7 @@ export default function AdminCategoriesPage() {
           )}
 
           {!hasSubcategoryBlocker && deleting && deletingProductCount === 0 && (
-            <p className="text-[0.9375rem] text-muted">
+            <p className="text-sm text-muted">
               Its page will be removed from the website. This cannot be undone.
             </p>
           )}
@@ -863,11 +863,11 @@ export default function AdminCategoriesPage() {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-[14px] border border-border bg-surface p-4">
-      <span className="block text-[0.75rem] font-medium uppercase tracking-wider text-muted">
+    <div className="rounded-2xl border border-border bg-surface p-4">
+      <span className="block text-3xs font-medium uppercase tracking-wider text-muted">
         {label}
       </span>
-      <span className="mt-1 block text-[1.5rem] font-semibold text-navy">{value}</span>
+      <span className="mt-1 block text-2xl font-semibold text-navy">{value}</span>
     </div>
   );
 }
@@ -907,7 +907,7 @@ function Thumb({ src }: { src: string | null }) {
   if (!src || failed) {
     return (
       <span
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] border border-dashed border-border bg-bg text-muted/60"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-dashed border-border bg-bg text-muted/60"
         title={src ? 'Image could not be loaded' : 'No image'}
       >
         <ImageIcon size={16} aria-hidden="true" />
@@ -922,7 +922,7 @@ function Thumb({ src }: { src: string | null }) {
       loading="lazy"
       decoding="async"
       onError={() => setFailed(true)}
-      className="h-10 w-10 shrink-0 rounded-[8px] border border-border bg-pearl object-cover"
+      className="h-10 w-10 shrink-0 rounded-lg border border-border bg-pearl object-cover"
     />
   );
 }
@@ -943,7 +943,7 @@ function IconAction({
   children: React.ReactNode;
 }) {
   const className = cn(
-    'inline-flex h-8 w-8 items-center justify-center rounded-[8px] text-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold disabled:pointer-events-none disabled:opacity-30',
+    'inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors disabled:pointer-events-none disabled:opacity-30',
     tone === 'danger' ? 'hover:bg-error/10 hover:text-error' : 'hover:bg-pearl hover:text-navy',
   );
   if (href) {
@@ -984,11 +984,11 @@ function Disclosure({
   children: React.ReactNode;
 }) {
   return (
-    <details className="group rounded-[12px] border border-border">
+    <details className="group rounded-xl border border-border">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
         <span>
-          <span className="block text-[0.875rem] font-semibold text-navy">{title}</span>
-          <span className="block text-[0.75rem] text-muted">{hint}</span>
+          <span className="block text-xs font-semibold text-navy">{title}</span>
+          <span className="block text-3xs text-muted">{hint}</span>
         </span>
         <ChevronDown
           size={16}

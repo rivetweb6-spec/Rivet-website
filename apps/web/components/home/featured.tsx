@@ -29,11 +29,11 @@ export function Featured({ products }: { products?: FeaturedProductCard[] }) {
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-12">
           <div className="max-w-2xl">
             <Eyebrow>Catalog</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem]">Featured products</h2>
+            <h2 className="headline-display mt-3 text-4xl sm:text-6xl">Featured products</h2>
           </div>
           <Link
             href="/products?view=all"
-            className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-navy underline-offset-4 hover:underline"
           >
             View all products
             <ArrowRight size={16} aria-hidden="true" />
@@ -56,7 +56,7 @@ function ProductCard({ slug, name, category, description, image }: FeaturedProdu
   return (
     <Link
       href={`/products/${slug}`}
-      className="luxury-card group flex h-full flex-col overflow-hidden rounded-[8px] bg-canvas"
+      className="luxury-card group flex h-full flex-col overflow-hidden rounded-lg bg-canvas"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-bg">
         {image ? (
@@ -73,11 +73,11 @@ function ProductCard({ slug, name, category, description, image }: FeaturedProdu
       </div>
       <div className="flex flex-1 flex-col p-5 md:p-6">
         <span className="eyebrow text-gold-ink">{category}</span>
-        <h3 className="mt-2 text-[1.1875rem]">{name}</h3>
+        <h3 className="mt-2 text-xl">{name}</h3>
         {description && (
-          <p className="mt-2 line-clamp-2 text-[0.9375rem] leading-relaxed text-muted">{description}</p>
+          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted">{description}</p>
         )}
-        <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[0.9375rem] font-semibold text-navy">
+        <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-semibold text-navy">
           View product
           <ArrowRight
             size={16}

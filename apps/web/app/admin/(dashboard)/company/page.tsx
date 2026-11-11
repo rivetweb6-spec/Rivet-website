@@ -128,7 +128,7 @@ export default function AdminCompanyPage() {
             value={form.certifications}
             onChange={(e) => setForm({ ...form, certifications: e.target.value })}
           />
-          <p className="text-[0.8125rem] text-muted">
+          <p className="text-2xs text-muted">
             Certificate images, titles, and portfolio projects are managed in{' '}
             <Link href="/admin/certificates" className="font-medium text-navy underline-offset-4 hover:text-gold hover:underline">
               Certificates & Portfolio
@@ -148,10 +148,10 @@ export default function AdminCompanyPage() {
             rows={8}
             value={form.timelineJson}
             onChange={(e) => setForm({ ...form, timelineJson: e.target.value })}
-            className="font-mono text-[0.8125rem]"
+            className="font-mono text-2xs"
           />
-          {message && <p className="text-[0.875rem] text-success">{message}</p>}
-          {error && <p role="alert" className="text-[0.875rem] text-error">{error}</p>}
+          {message && <p className="text-xs text-success">{message}</p>}
+          {error && <p role="alert" className="text-xs text-error">{error}</p>}
           <AdminButton type="submit" disabled={saving}>
             {saving ? 'Saving…' : 'Save company info'}
           </AdminButton>

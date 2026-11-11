@@ -68,14 +68,14 @@ export function ContactForm() {
   if (status === 'success') {
     return (
       <motion.div
-        className="flex flex-col items-center rounded-[8px] border border-border bg-surface px-5 py-12 text-center sm:px-8 sm:py-16"
+        className="flex flex-col items-center rounded-lg border border-border bg-surface px-5 py-12 text-center sm:px-8 sm:py-16"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <div className="grid h-14 w-14 place-items-center rounded-[8px] bg-bg text-success-ink">
+        <div className="grid h-14 w-14 place-items-center rounded-lg bg-bg text-success-ink">
           <Check size={26} />
         </div>
-        <h3 className="mt-5 text-[1.5rem]">Message sent</h3>
+        <h3 className="mt-5 text-2xl">Message sent</h3>
         <p className="mt-2 max-w-sm text-muted">
           Thank you. A RIVET COMPANY specialist will reply shortly.
         </p>
@@ -88,7 +88,7 @@ export function ContactForm() {
       id="contact-form"
       onSubmit={submit}
       noValidate
-      className="scroll-mt-28 space-y-4 rounded-[8px] border border-border bg-surface p-5 sm:p-8"
+      className="scroll-mt-28 space-y-4 rounded-lg border border-border bg-surface p-5 sm:p-8"
     >
       <Field
         label="Full Name"
@@ -127,7 +127,7 @@ export function ContactForm() {
       <div>
         <label
           htmlFor="contact-message"
-          className="mb-1.5 block text-[0.875rem] font-medium text-ink"
+          className="mb-1.5 block text-xs font-medium text-ink"
         >
           Message <span className="text-gold-ink">*</span>
         </label>
@@ -145,7 +145,7 @@ export function ContactForm() {
             setErrors(validate(fields));
           }}
           className={cn(
-            'w-full rounded-[6px] border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg py-3 text-[1rem] outline-none transition-colors focus:border-navy focus:ring-2 focus:ring-navy/15 dark:focus:border-gold dark:focus:ring-gold/25',
+            'w-full rounded-md border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg py-3 text-base transition-colors focus:border-navy dark:focus:border-gold',
             touched.message && errors.message ? 'border-error-ink' : 'border-border',
           )}
         />
@@ -156,7 +156,7 @@ export function ContactForm() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="mt-1.5 text-[0.8125rem] text-error-ink"
+              className="mt-1.5 text-2xs text-error-ink"
             >
               {errors.message}
             </motion.p>
@@ -167,7 +167,7 @@ export function ContactForm() {
         {status === 'submitting' ? 'Sending…' : 'Send message'}
       </Button>
       {submitError && (
-        <p className="text-center text-[0.875rem] text-error-ink" role="alert">
+        <p className="text-center text-xs text-error-ink" role="alert">
           {submitError}
         </p>
       )}
@@ -198,7 +198,7 @@ function Field({
   const errorId = `${id}-error`;
   return (
     <div>
-      <label htmlFor={id} className="mb-1.5 block text-[0.875rem] font-medium text-ink">
+      <label htmlFor={id} className="mb-1.5 block text-xs font-medium text-ink">
         {label} {required && <span className="text-gold-ink">*</span>}
       </label>
       <input
@@ -211,12 +211,12 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         className={cn(
-          'h-12 w-full rounded-[6px] border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg text-[1rem] outline-none transition-colors focus:border-navy focus:ring-2 focus:ring-navy/15 dark:focus:border-gold dark:focus:ring-gold/25',
+          'h-12 w-full rounded-md border bg-canvas px-4 text-ink hover:border-navy/40 dark:bg-bg text-base transition-colors focus:border-navy dark:focus:border-gold',
           error ? 'border-error-ink' : 'border-border',
         )}
       />
       {error && (
-        <p id={errorId} className="mt-1.5 text-[0.8125rem] text-error-ink">
+        <p id={errorId} className="mt-1.5 text-2xs text-error-ink">
           {error}
         </p>
       )}

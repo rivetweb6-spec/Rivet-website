@@ -17,8 +17,8 @@ export function AdminPageHeader({
   return (
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 className="text-[1.75rem] text-navy md:text-[2rem]">{title}</h1>
-        {description && <p className="mt-1 text-[0.9375rem] text-muted">{description}</p>}
+        <h1 className="text-3xl text-navy md:text-4xl">{title}</h1>
+        {description && <p className="mt-1 text-sm text-muted">{description}</p>}
       </div>
       {actions}
     </div>
@@ -35,7 +35,7 @@ export function AdminCard({
   return (
     <div
       className={cn(
-        'relative rounded-[16px] border border-border bg-surface p-5 shadow-[var(--shadow-sm)]',
+        'relative rounded-2xl border border-border bg-surface p-5 shadow-[var(--shadow-sm)]',
         className,
       )}
     >
@@ -57,7 +57,7 @@ export function AdminButton({
     <button
       type={type}
       className={cn(
-        'inline-flex h-10 items-center justify-center gap-2 rounded-[12px] px-4 text-[0.875rem] font-medium transition-colors disabled:opacity-50',
+        'inline-flex h-10 items-center justify-center gap-2 rounded-xl px-4 text-xs font-medium transition-colors disabled:opacity-50',
         variant === 'primary' && 'bg-gold text-navy hover:brightness-105',
         variant === 'secondary' && 'bg-navy text-white hover:bg-navy-600',
         variant === 'danger' && 'bg-error text-white hover:brightness-110',
@@ -176,7 +176,7 @@ function ModalFrame({
       <div
         ref={panelRef}
         className={cn(
-          'relative z-10 max-h-[90dvh] w-full overflow-y-auto rounded-[20px] bg-surface p-6 shadow-[var(--shadow-bloom)]',
+          'relative z-10 max-h-[90dvh] w-full overflow-y-auto rounded-2xl bg-surface p-6 shadow-[var(--shadow-bloom)]',
           className,
         )}
         onClick={(e) => e.stopPropagation()}
@@ -184,7 +184,7 @@ function ModalFrame({
         {error && (
           <div
             role="alert"
-            className="mb-4 rounded-[10px] border border-error/25 bg-error/10 px-3.5 py-3 text-[0.875rem] text-error"
+            className="mb-4 rounded-lg border border-error/25 bg-error/10 px-3.5 py-3 text-xs text-error"
           >
             {error}
           </div>
@@ -202,10 +202,10 @@ export function AdminInput({
 }: React.InputHTMLAttributes<HTMLInputElement> & { label?: string }) {
   return (
     <label className="block">
-      {label && <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">{label}</span>}
+      {label && <span className="mb-1.5 block text-2xs font-medium text-ink">{label}</span>}
       <input
         className={cn(
-          'h-11 w-full rounded-[12px] border border-border bg-surface px-3 text-[0.9375rem] outline-none focus:border-navy focus-visible:ring-2 focus-visible:ring-gold/60',
+          'h-11 w-full rounded-xl border border-border bg-surface px-3 text-sm focus:border-navy ',
           className,
         )}
         {...props}
@@ -221,10 +221,10 @@ export function AdminTextarea({
 }: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label?: string }) {
   return (
     <label className="block">
-      {label && <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">{label}</span>}
+      {label && <span className="mb-1.5 block text-2xs font-medium text-ink">{label}</span>}
       <textarea
         className={cn(
-          'w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-[0.9375rem] outline-none focus:border-navy focus-visible:ring-2 focus-visible:ring-gold/60',
+          'w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm focus:border-navy ',
           className,
         )}
         {...props}
@@ -241,10 +241,10 @@ export function AdminSelect({
 }: React.SelectHTMLAttributes<HTMLSelectElement> & { label?: string }) {
   return (
     <label className="block">
-      {label && <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">{label}</span>}
+      {label && <span className="mb-1.5 block text-2xs font-medium text-ink">{label}</span>}
       <select
         className={cn(
-          'h-11 w-full rounded-[12px] border border-border bg-surface px-3 text-[0.9375rem] outline-none focus:border-navy focus-visible:ring-2 focus-visible:ring-gold/60',
+          'h-11 w-full rounded-xl border border-border bg-surface px-3 text-sm focus:border-navy ',
           className,
         )}
         {...props}
@@ -284,7 +284,7 @@ export function StatusBadge({ status }: { status: string }) {
   return (
     <span
       className={cn(
-        'inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-[0.75rem] font-medium',
+        'inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-3xs font-medium',
         map[status] ?? 'bg-bg text-ink',
       )}
     >
@@ -300,10 +300,10 @@ export function StatusBadge({ status }: { status: string }) {
 export function EmptyState({ message, loading = false }: { message: string; loading?: boolean }) {
   if (loading) {
     return (
-      <p role="status" className="py-12 text-center text-[0.9375rem] text-muted">
+      <p role="status" className="py-12 text-center text-sm text-muted">
         Loading…
       </p>
     );
   }
-  return <p className="py-12 text-center text-[0.9375rem] text-muted">{message}</p>;
+  return <p className="py-12 text-center text-sm text-muted">{message}</p>;
 }
