@@ -4,7 +4,7 @@ import { useId, useRef, useState, type KeyboardEvent } from 'react';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { cn } from '@/lib/utils';
 import type { ProductImage } from '@/lib/api';
-import { assets } from '@/lib/assets';
+import { ImagePlaceholder } from '@/components/ui/image-placeholder';
 
 /**
  * Product image gallery using the WAI-ARIA tabs pattern: thumbnails are tabs,
@@ -23,11 +23,10 @@ export function ProductGallery({
   aspectClassName?: string;
   sizes?: string;
 }) {
-  const list = images.length
-    ? images
-    : [{ id: 'fallback', url: assets.products.p1, alt: name, publicId: null, order: 0 }];
+  // No photos → a neutral placeholder, never an unrelated stock image.
+  const list = images;
   const [active, setActive] = useState(0);
-  const current = list[active] ?? list[0]!;
+  const current = list[active] ?? list[0];
   const baseId = useId();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const tabId = (i: number) => `${baseId}-tab-${i}`;
@@ -60,17 +59,21 @@ export function ProductGallery({
         id={panelId}
         role={hasTabs ? 'tabpanel' : undefined}
         aria-labelledby={hasTabs ? tabId(active) : undefined}
-        className={cn('relative overflow-hidden rounded-[8px] border border-border bg-bg', aspectClassName)}
+        className={cn('relative overflow-hidden rounded-lg border border-border bg-bg', aspectClassName)}
       >
-        <RivetImage
-          key={current.id}
-          src={current.url}
-          alt={current.alt ?? name}
-          fill
-          priority
-          sizes={sizes}
-          className="object-cover"
-        />
+        {current ? (
+          <RivetImage
+            key={current.id}
+            src={current.url}
+            alt={current.alt ?? name}
+            fill
+            priority
+            sizes={sizes}
+            className="object-cover"
+          />
+        ) : (
+          <ImagePlaceholder label={`No photo of ${name} yet`} />
+        )}
       </div>
       {hasTabs && (
         <div
@@ -94,7 +97,7 @@ export function ProductGallery({
               onClick={() => setActive(i)}
               onKeyDown={(e) => onKeyDown(e, i)}
               className={cn(
-                'relative h-20 w-20 shrink-0 overflow-hidden rounded-[6px] border-2 bg-bg transition-[border-color,opacity] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2',
+                'relative h-20 w-20 shrink-0 overflow-hidden rounded-md border-2 bg-bg transition-[border-color,opacity] ',
                 i === active ? 'border-navy dark:border-gold' : 'border-border opacity-75 hover:opacity-100',
               )}
             >

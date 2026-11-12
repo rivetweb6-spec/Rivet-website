@@ -97,7 +97,7 @@ export default function AdminContactPage() {
       />
       <div className="grid gap-6 lg:grid-cols-2">
         <AdminCard>
-          <h2 className="mb-4 text-[1.125rem] text-navy">Contact information</h2>
+          <h2 className="mb-4 text-lg text-navy">Contact information</h2>
           <form onSubmit={save} className="space-y-4">
             <AdminInput
               label="Address"
@@ -147,8 +147,8 @@ export default function AdminContactPage() {
                 onChange={(e) => setForm({ ...form, mapLng: e.target.value })}
               />
             </div>
-            {message && <p className="text-[0.875rem] text-success">{message}</p>}
-            {error && <p role="alert" className="text-[0.875rem] text-error">{error}</p>}
+            {message && <p className="text-xs text-success">{message}</p>}
+            {error && <p role="alert" className="text-xs text-error">{error}</p>}
             <AdminButton type="submit" disabled={saving}>
               {saving ? 'Saving…' : 'Save'}
             </AdminButton>
@@ -156,24 +156,24 @@ export default function AdminContactPage() {
         </AdminCard>
 
         <AdminCard>
-          <h2 className="mb-4 text-[1.125rem] text-navy">Inbound messages</h2>
+          <h2 className="mb-4 text-lg text-navy">Inbound messages</h2>
           {messages.length === 0 ? (
             <EmptyState loading={!loaded} message="No contact messages yet." />
           ) : (
             <ul className="max-h-[32rem] space-y-4 overflow-y-auto">
               {messages.map((m) => (
-                <li key={m.id} className="rounded-[12px] border border-border p-4">
+                <li key={m.id} className="rounded-lg border border-border p-4">
                   <div className="flex justify-between gap-2">
                     <p className="font-medium text-ink">{m.name}</p>
-                    <time className="text-[0.75rem] text-muted">
+                    <time className="text-3xs text-muted">
                       {new Date(m.createdAt).toLocaleDateString()}
                     </time>
                   </div>
-                  <p className="mt-1 text-[0.8125rem] text-muted">
+                  <p className="mt-1 text-2xs text-muted">
                     {m.email}
                     {m.phone ? ` · ${m.phone}` : ''}
                   </p>
-                  <p className="mt-2 text-[0.875rem]">{m.message}</p>
+                  <p className="mt-2 text-xs">{m.message}</p>
                 </li>
               ))}
             </ul>

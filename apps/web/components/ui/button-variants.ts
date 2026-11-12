@@ -8,7 +8,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
  * - ghost: for use on dark imagery / navy bands
  */
 export const buttonVariants = cva(
-  'relative inline-flex items-center justify-center gap-2 rounded-[6px] font-semibold whitespace-nowrap transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:pointer-events-none disabled:opacity-50',
+  'relative inline-flex items-center justify-center gap-2 rounded-md font-semibold whitespace-nowrap transition-colors duration-200 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
@@ -21,9 +21,9 @@ export const buttonVariants = cva(
           'border border-border bg-canvas text-navy hover:border-navy dark:bg-transparent dark:hover:border-gold',
       },
       size: {
-        sm: 'h-10 px-4 text-[0.875rem]',
-        md: 'h-11 px-5 text-[0.9375rem]',
-        lg: 'h-12 px-6 text-[0.9375rem]',
+        sm: 'h-10 px-4 text-xs',
+        md: 'h-11 px-5 text-sm',
+        lg: 'h-12 px-6 text-sm',
       },
     },
     defaultVariants: {

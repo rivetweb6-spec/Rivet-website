@@ -10,6 +10,10 @@ import {
   WEBSITE_ID,
 } from '@/lib/seo';
 import { isProfileUrl } from '@/lib/contact';
+import { toAbsoluteMediaUrl } from '@/lib/media';
+
+/** Structured-data images must be public absolute URLs (never a private upload host). */
+const mediaUrl = (src: string) => toAbsoluteMediaUrl(src, SITE_URL);
 
 /** What RIVET COMPANY supplies — helps search engines understand the business. */
 const KNOWS_ABOUT = [
@@ -197,7 +201,7 @@ export function ProductJsonLd({
   productId?: string | null;
   specs?: { label: string; value: string }[] | null;
 }) {
-  const imageList = images?.length ? images : image ? [image] : undefined;
+  const imageList = (images?.length ? images : image ? [image] : undefined)?.map(mediaUrl);
   const additionalProperty =
     Array.isArray(specs) && specs.length
       ? specs.map((s) => ({
@@ -253,12 +257,12 @@ export function ProductGroupJsonLd({
         name,
         description: description ?? undefined,
         url: `${SITE_URL}/products/${slug}`,
-        image: image ? [image] : undefined,
+        image: image ? [mediaUrl(image)] : undefined,
         hasVariant: products.map((p) => ({
           '@type': 'Product',
           name: p.name,
           url: `${SITE_URL}/products/${p.slug}`,
-          image: p.image ? [p.image] : undefined,
+          image: p.image ? [mediaUrl(p.image)] : undefined,
         })),
       }}
     />
@@ -284,7 +288,7 @@ export function ServiceJsonLd({
         name: title,
         description: description ?? undefined,
         url: `${SITE_URL}/services/${slug}`,
-        image: image ? [image] : undefined,
+        image: image ? [mediaUrl(image)] : undefined,
         provider: {
           '@type': 'Organization',
           name: SITE_NAME,
@@ -367,7 +371,7 @@ export function ArticleJsonLd({
         '@type': 'NewsArticle',
         headline: title,
         description: description ?? undefined,
-        image: image ? [image] : undefined,
+        image: image ? [mediaUrl(image)] : undefined,
         datePublished: publishedAt ?? undefined,
         dateModified: updatedAt ?? publishedAt ?? undefined,
         author: { '@type': 'Organization', name: SITE_NAME },

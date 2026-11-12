@@ -24,42 +24,42 @@ export function SeoPreview({
   return (
     <div className="space-y-4 border-t border-divider pt-4">
       <div>
-        <p className="mb-2 text-[0.75rem] font-medium uppercase tracking-wider text-muted">
+        <p className="mb-2 text-3xs font-medium uppercase tracking-wider text-muted">
           Google preview
         </p>
-        <div className="rounded-[8px] border border-border bg-white p-4">
-          <p className="truncate text-[0.8125rem] text-[#202124]">
+        <div className="rounded-lg border border-border bg-white p-4">
+          <p className="truncate text-2xs text-[#202124]">
             {SITE_HOST}
             {urlPath}
           </p>
-          <p className="mt-1 text-[1.125rem] leading-snug text-[#1a0dab]">{displayTitle || 'Page title'}</p>
-          <p className="mt-1 text-[0.875rem] leading-snug text-[#4d5156]">
+          <p className="mt-1 text-lg leading-snug text-[#1a0dab]">{displayTitle || 'Page title'}</p>
+          <p className="mt-1 text-xs leading-snug text-[#4d5156]">
             {displayDesc || 'Meta description will appear here.'}
           </p>
         </div>
       </div>
 
       <div>
-        <p className="mb-2 text-[0.75rem] font-medium uppercase tracking-wider text-muted">
+        <p className="mb-2 text-3xs font-medium uppercase tracking-wider text-muted">
           Social preview
         </p>
-        <div className="overflow-hidden rounded-[8px] border border-border bg-white">
+        <div className="overflow-hidden rounded-lg border border-border bg-white">
           <div
             className="aspect-[1.91/1] bg-bg bg-cover bg-center"
             style={image ? { backgroundImage: `url(${image})` } : undefined}
           >
             {!image && (
-              <div className="grid h-full place-items-center text-[0.8125rem] text-muted">
+              <div className="grid h-full place-items-center text-2xs text-muted">
                 Social image
               </div>
             )}
           </div>
           <div className="border-t border-border p-3">
-            <p className="text-[0.6875rem] uppercase tracking-wider text-muted">{SITE_HOST}</p>
-            <p className="mt-1 line-clamp-2 text-[0.9375rem] font-semibold text-ink">
+            <p className="text-3xs uppercase tracking-wider text-muted">{SITE_HOST}</p>
+            <p className="mt-1 line-clamp-2 text-sm font-semibold text-ink">
               {ogTitle || 'Share title'}
             </p>
-            <p className="mt-1 line-clamp-2 text-[0.8125rem] text-muted">
+            <p className="mt-1 line-clamp-2 text-2xs text-muted">
               {ogDescription || 'Share description'}
             </p>
           </div>

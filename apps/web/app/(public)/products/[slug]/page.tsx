@@ -1,17 +1,18 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { ArrowRight, Check } from 'lucide-react';
-import { Container, Eyebrow, Section } from '@/components/ui/container';
+import { Check } from 'lucide-react';
+import { Container, Section } from '@/components/ui/container';
 import { ProductGallery } from '@/components/products/gallery';
 import { CategoryPageView } from '@/components/products/category-page';
 import { RequestQuotationButton } from '@/components/quotation/request-quotation-button';
 import { Breadcrumbs } from '@/components/seo/breadcrumbs';
 import { ProductJsonLd } from '@/components/seo/json-ld';
-import { ProductCard } from '@/components/products/category-group';
+import { ProductGrid } from '@/components/products/category-group';
 import { buttonVariants } from '@/components/ui/button-variants';
-import { productInterests } from '@/lib/data/content';
-import { api } from '@/lib/api';
+import { api, ApiError } from '@/lib/api';
+import { matchProductInterest } from '@/lib/product-interest';
+import { relatedServices as findRelatedServices } from '@/lib/related-services';
 import {
   buildProductAltText,
   categoryMetadata,
@@ -21,6 +22,8 @@ import {
 } from '@/lib/seo';
 
 type Params = Promise<{ slug: string }>;
+
+const isNotFound = (error: unknown) => error instanceof ApiError && error.status === 404;
 
 export const revalidate = 60;
 /** Allow CMS slugs added after build (empty generateStaticParams at Vercel build is OK). */
@@ -68,67 +71,53 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
 
   // Category-first resolver (shared /products/[slug] namespace). Fetch data
   // first so JSX is not returned from inside try/catch.
-  let categoryPage: {
-    category: Awaited<ReturnType<typeof api.categories.bySlug>>['category'];
-    allCategories: Awaited<ReturnType<typeof api.categories.list>>['categories'];
-    products: Awaited<ReturnType<typeof api.products.list>>['products'];
-    services: Awaited<ReturnType<typeof api.services.list>>['services'];
-  } | null = null;
-  try {
-    const [{ category }, { categories }, { products }, { services }] = await Promise.all([
-      api.categories.bySlug(slug),
-      api.categories.list(),
-      api.products.list({ category: slug, pageSize: 48 }),
-      api.services.list(),
-    ]);
-    categoryPage = { category, allCategories: categories, products, services };
-  } catch {
-    /* Not a category slug — resolve as a product instead. */
-  }
+  // Only a 404 means "this slug is not a category". Any other failure (API
+  // down, 5xx) is rethrown so the error boundary says the catalog is
+  // unavailable instead of wrongly reporting "not found".
+  const [categoryRes, categoriesRes, productsRes, servicesRes] = await Promise.allSettled([
+    api.categories.bySlug(slug),
+    api.categories.list(),
+    api.products.list({ category: slug, pageSize: 48 }),
+    api.services.list(),
+  ]);
 
-  if (categoryPage) {
+  if (categoryRes.status === 'fulfilled') {
+    // Products are the point of the page, so their failure is an error; the
+    // department filter and related services are optional extras.
+    if (productsRes.status === 'rejected') throw productsRes.reason;
     return (
       <CategoryPageView
-        category={categoryPage.category}
-        allCategories={categoryPage.allCategories}
-        products={categoryPage.products}
-        services={categoryPage.services}
+        category={categoryRes.value.category}
+        allCategories={categoriesRes.status === 'fulfilled' ? categoriesRes.value.categories : []}
+        products={productsRes.value.products}
+        services={servicesRes.status === 'fulfilled' ? servicesRes.value.services : []}
       />
     );
   }
+  if (!isNotFound(categoryRes.reason)) throw categoryRes.reason;
 
   let data;
   try {
     data = await api.products.bySlug(slug);
-  } catch {
-    notFound();
+  } catch (error) {
+    if (isNotFound(error)) notFound();
+    throw error;
   }
 
   const { product, related } = data;
   const specs = Array.isArray(product.specs) ? product.specs : [];
   const features = Array.isArray(product.features) ? product.features : [];
   const primaryImage = product.images[0]?.url ?? null;
-  const candidateCategoryNames = [
+  // Most specific first: the product's category, then its ancestors.
+  const categoryLineage = [
     product.category?.name,
     ...getCategoryAncestors(product.category?.parent).map((a) => a.name).reverse(),
-  ].filter(Boolean) as string[];
+  ];
+  const productInterest = matchProductInterest(categoryLineage);
 
-  const matchedInterest = candidateCategoryNames.find((catName) =>
-    productInterests.some((interest) => interest.toLowerCase() === catName.toLowerCase()),
-  );
-
-  const productInterest =
-    productInterests.find(
-      (interest) => interest.toLowerCase() === matchedInterest?.toLowerCase(),
-    ) ?? (product.category?.name ? 'Other' : undefined);
-
-  let services: Awaited<ReturnType<typeof api.services.list>>['services'] = [];
-  try {
-    ({ services } = await api.services.list());
-  } catch {
-    /* optional */
-  }
-  const relatedServices = services.slice(0, 3);
+  // Services were fetched alongside the category lookup above (optional).
+  const services = servicesRes.status === 'fulfilled' ? servicesRes.value.services : [];
+  const relatedServices = findRelatedServices(services, categoryLineage);
 
   const galleryImages = product.images.map((img) => ({
     ...img,
@@ -169,37 +158,33 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
             <ProductGallery images={galleryImages} name={product.name} />
 
             <div>
+              {/* The breadcrumb shows the full lineage; this links to the nearest category. */}
               {product.category && (
                 <Link
                   href={`/products/${product.category.slug}`}
-                  className="inline-block rounded-[4px] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+                  className="inline-block rounded-sm text-xs font-semibold text-navy-400 underline-offset-4 hover:underline dark:text-gold"
                 >
-                  <Eyebrow>
-                    {[
-                      ...getCategoryAncestors(product.category.parent).map((a) => a.name),
-                      product.category.name,
-                    ].join(' · ')}
-                  </Eyebrow>
+                  {product.category.name}
                 </Link>
               )}
-              <h1 className="headline-display mt-3 text-[2rem] sm:text-[2.5rem] lg:text-[2.75rem]">{product.name}</h1>
+              <h1 className="headline-display mt-2 text-4xl sm:text-6xl lg:text-7xl">{product.name}</h1>
               {product.shortDescription && (
-                <p className="mt-4 text-[1.125rem] leading-relaxed text-muted">
+                <p className="mt-4 text-lg leading-relaxed text-muted">
                   {product.shortDescription}
                 </p>
               )}
 
               {(product.brand || product.countryOfOrigin) && (
-                <dl className="mt-6 flex flex-wrap gap-x-10 gap-y-3 border-y border-border py-4 text-[0.9375rem]">
+                <dl className="mt-6 flex flex-wrap gap-x-10 gap-y-3 border-y border-border py-4 text-sm">
                   {product.brand && (
                     <div>
-                      <dt className="text-[0.8125rem] text-muted">Brand</dt>
+                      <dt className="text-2xs text-muted">Brand</dt>
                       <dd className="mt-0.5 font-semibold text-ink">{product.brand}</dd>
                     </div>
                   )}
                   {product.countryOfOrigin && (
                     <div>
-                      <dt className="text-[0.8125rem] text-muted">Origin</dt>
+                      <dt className="text-2xs text-muted">Origin</dt>
                       <dd className="mt-0.5 font-semibold text-ink">{product.countryOfOrigin}</dd>
                     </div>
                   )}
@@ -209,9 +194,9 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
               {features.length > 0 && (
                 <ul className="mt-8 space-y-3">
                   {features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-[0.9375rem] text-ink">
+                    <li key={f} className="flex items-start gap-3 text-sm text-ink">
                       <span
-                        className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-[4px] bg-bg text-navy"
+                        className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-sm bg-bg text-navy"
                         aria-hidden="true"
                       >
                         <Check size={13} strokeWidth={2.5} />
@@ -231,19 +216,21 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                   productImage={primaryImage ?? undefined}
                 />
                 <Link
-                  href="/request-quotation"
+                  href="/contact"
                   className={buttonVariants({ variant: 'outline', size: 'lg' })}
                 >
-                  Open full quotation form
-                </Link>
-                <Link
-                  href="/contact"
-                  className="inline-flex h-12 items-center gap-1.5 rounded-[6px] px-2 text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
-                >
                   Contact us
-                  <ArrowRight size={16} aria-hidden="true" />
                 </Link>
               </div>
+              <p className="mt-4 text-xs text-muted">
+                Prefer a full page?{' '}
+                <Link
+                  href="/request-quotation"
+                  className="font-semibold text-navy underline underline-offset-4 hover:no-underline"
+                >
+                  Use the quotation form
+                </Link>
+              </p>
             </div>
           </div>
         </Container>
@@ -255,18 +242,19 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
               {product.description && (
                 <div>
-                  <h2 className="headline-display text-[1.5rem] sm:text-[1.75rem]">Description</h2>
-                  <p className="mt-4 whitespace-pre-line text-[1.0625rem] leading-relaxed text-muted">{product.description}</p>
+                  <h2 className="headline-display text-2xl sm:text-3xl">Description</h2>
+                  {/* Main reading text: ink, not the secondary grey used for summaries. */}
+                  <p className="mt-4 max-w-prose whitespace-pre-line text-md leading-relaxed text-ink/85">{product.description}</p>
                 </div>
               )}
               {specs.length > 0 && (
                 <div>
-                  <h2 className="headline-display text-[1.5rem] sm:text-[1.75rem]">Specifications</h2>
+                  <h2 className="headline-display text-2xl sm:text-3xl">Specifications</h2>
                   <dl className="mt-4 divide-y divide-divider border-y border-divider">
                     {specs.map((s) => (
                       <div
                         key={s.label}
-                        className="flex justify-between gap-6 py-3.5 text-[0.9375rem]"
+                        className="flex justify-between gap-6 py-3.5 text-sm"
                       >
                         <dt className="text-muted">{s.label}</dt>
                         <dd className="text-right font-medium text-ink">{s.value}</dd>
@@ -283,17 +271,16 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
       {relatedServices.length > 0 && (
         <Section className="bg-surface">
           <Container>
-            <Eyebrow>Services</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.25rem]">Relevant services</h2>
+            <h2 className="headline-display text-4xl sm:text-5xl">Related services</h2>
             <ul className="mt-8 grid gap-5 md:grid-cols-3">
               {relatedServices.map((s) => (
                 <li key={s.id}>
                   <Link
                     href={`/services/${s.slug}`}
-                    className="luxury-card group block h-full rounded-[8px] bg-canvas p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+                    className="card-frame group block h-full rounded-lg bg-canvas p-6"
                   >
-                    <h3 className="text-[1.125rem] group-hover:underline group-hover:underline-offset-4">{s.title}</h3>
-                    <p className="mt-2 line-clamp-3 text-[0.9375rem] leading-relaxed text-muted">{s.narrative}</p>
+                    <h3 className="text-lg group-hover:underline group-focus-visible:underline group-hover:underline-offset-4">{s.title}</h3>
+                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted">{s.narrative}</p>
                   </Link>
                 </li>
               ))}
@@ -305,8 +292,7 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
       {related.length > 0 && (
         <Section>
           <Container>
-            <Eyebrow>Continue exploring</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] sm:text-[2.25rem]">Related products</h2>
+            <h2 className="headline-display text-4xl sm:text-5xl">Related products</h2>
             {product.category && (
               <p className="mt-2 text-muted">
                 More from{' '}
@@ -318,10 +304,8 @@ export default async function ProductOrCategoryPage({ params }: { params: Params
                 </Link>
               </p>
             )}
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:gap-6">
-              {related.slice(0, 3).map((p) => (
-                <ProductCard key={p.id} product={p} categoryName={product.category?.name} />
-              ))}
+            <div className="mt-8 md:mt-10">
+              <ProductGrid products={related.slice(0, 3)} categoryName={product.category?.name} />
             </div>
           </Container>
         </Section>

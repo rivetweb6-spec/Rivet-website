@@ -73,20 +73,20 @@ export default async function VacancyPage({ params }: { params: Params }) {
                 {vacancy.location && <span>{vacancy.location}</span>}
                 {vacancy.employmentType && <span>{vacancy.employmentType}</span>}
               </div>
-              <h1 className="headline-display mt-3 text-[2.25rem] sm:text-[2.75rem] lg:text-[3.25rem]">{vacancy.title}</h1>
+              <h1 className="headline-display mt-3 text-5xl sm:text-7xl lg:text-8xl">{vacancy.title}</h1>
             </div>
-            <div className="rounded-[8px] border border-border bg-canvas px-5 py-4 text-ink lg:min-w-[12rem]">
+            <div className="rounded-lg border border-border bg-canvas px-5 py-4 text-ink lg:min-w-[12rem]">
               <p className="eyebrow text-gold-ink">
                 Close
               </p>
-              <p className="mt-1 font-display text-[1.25rem] font-bold">{formatDeadline(vacancy.deadline)}</p>
+              <p className="mt-1 font-display text-xl font-bold">{formatDeadline(vacancy.deadline)}</p>
               {accepting && remaining >= 0 && remaining <= 14 && (
-                <p className="mt-1 text-[0.8125rem] text-muted">
+                <p className="mt-1 text-2xs text-muted">
                   {remaining === 0 ? 'Closes today' : `${remaining} day${remaining === 1 ? '' : 's'} left`}
                 </p>
               )}
               {!accepting && (
-                <p className="mt-1 text-[0.8125rem] text-muted">No longer accepting applications</p>
+                <p className="mt-1 text-2xs text-muted">No longer accepting applications</p>
               )}
             </div>
           </div>
@@ -97,18 +97,18 @@ export default async function VacancyPage({ params }: { params: Params }) {
         <Container>
           <div className="grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
             <div>
-              <h2 className="headline-display text-[1.5rem] sm:text-[1.75rem]">The role</h2>
+              <h2 className="headline-display text-2xl sm:text-3xl">The role</h2>
               <RichText
                 className="prose prose-lg mt-5 max-w-none text-ink prose-headings:font-display prose-headings:text-navy prose-a:text-navy dark:prose-invert dark:prose-headings:text-ink dark:prose-a:text-gold prose-li:marker:text-gold"
                 html={vacancy.description}
               />
-              <h2 className="headline-display mt-12 text-[1.5rem] sm:text-[1.75rem]">Requirements</h2>
+              <h2 className="headline-display mt-12 text-2xl sm:text-3xl">Requirements</h2>
               <RichText
                 className="prose prose-lg mt-5 max-w-none text-ink prose-headings:font-display prose-headings:text-navy prose-a:text-navy dark:prose-invert dark:prose-headings:text-ink dark:prose-a:text-gold prose-li:marker:text-gold"
                 html={vacancy.requirements}
               />
               <p className="mt-12">
-                <Link href="/careers" className="text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline">
+                <Link href="/careers" className="text-sm font-medium text-navy underline-offset-4 hover:underline">
                   ← All vacancies
                 </Link>
               </p>
@@ -117,15 +117,15 @@ export default async function VacancyPage({ params }: { params: Params }) {
               {accepting ? (
                 <ApplicationForm slug={vacancy.slug} title={vacancy.title} />
               ) : (
-                <div className="rounded-[8px] border border-border bg-surface p-8">
-                  <h2 className="text-[1.5rem]">Applications closed</h2>
+                <div className="rounded-lg border border-border bg-surface p-8">
+                  <h2 className="text-2xl">Applications closed</h2>
                   <p className="mt-3 text-muted">
                     This vacancy is no longer accepting CVs. See other open roles, or check back
                     when a new listing is posted.
                   </p>
                   <Link
                     href="/careers"
-                    className="mt-6 inline-flex text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline"
+                    className="mt-6 inline-flex text-sm font-medium text-navy underline-offset-4 hover:underline"
                   >
                     View open vacancies →
                   </Link>

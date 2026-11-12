@@ -1310,3 +1310,80 @@ Recharts bar chart is not keyboard/AT accessible; a sibling list helps, but the 
 
 ### Status
 Completed
+
+---
+
+# Known issues and follow-ups (corporate refresh, Nov 2026)
+
+Recorded during the `ui/corporate-refresh` review. Items marked *Open* need a decision or content from the RIVET team; they are not code defects on this branch.
+
+---
+
+## KI-01 — Dev-only React warning on 404 pages: "Encountered a script tag while rendering React component"
+
+### Priority
+Low (development console only)
+
+### Problem
+Visiting any unknown URL (e.g. `/products/does-not-exist`) logs this warning in the browser console during `next dev`. The three `<script type="application/ld+json">` blocks rendered by `app/(public)/layout.tsx` (WebSite, Organization, LocalBusiness JSON-LD) are re-created by React on the client when Next renders the not-found boundary, and React warns about any client-rendered `<script>`.
+
+### Impact
+None for visitors or SEO. JSON-LD is inert data (it never needs to execute); the server-rendered HTML that crawlers read contains it, and the 404 status is correct. Verified on the commit before the refresh (`6fdc55f`): the warning was already there, so it is pre-existing and unrelated to the UI work.
+
+### Possible fix (not applied)
+Render the layout JSON-LD outside client re-render paths (for example from page-level Server Components only). Deferred: it touches SEO markup unrelated to this cleanup.
+
+### Status
+Open — documented, no code change
+
+---
+
+## KI-02 — Upload URLs stored with the admin's host
+
+### Priority
+Medium
+
+### Problem
+`apps/api/src/config/storage.ts` (`publicApiBase`) builds upload URLs from the request host unless `PUBLIC_API_URL` is set, so uploads made while the dashboard is opened on `localhost` or a LAN IP are stored as `http://localhost:4000/…` or `http://192.168.x.x:3000/…`. Visitors' browsers cannot load those.
+
+### Fix
+Web (this branch): `apps/web/lib/media.ts` maps uploads on loopback / private-network hosts to the same-origin `/api/uploads/files/…` path when rendering, and to the public site origin for Open Graph, JSON-LD and the sitemap. Deployment: keep `PUBLIC_API_URL` set in production (already documented in `Deployment-VPS.md`). API logic unchanged.
+
+### Status
+Completed (web) — keep `PUBLIC_API_URL` configured
+
+---
+
+## KI-03 — Server-rendered pages share one API rate-limit budget
+
+### Priority
+Medium (traffic-dependent)
+
+### Problem
+The API allows each client 300 requests per minute (`apps/api/src/app.ts`). Server-rendered pages call the API from the web server's single IP, so every visitor shares that budget. Next's data cache (60 s revalidate) absorbs most calls, but a traffic spike or many uncached search pages can return 429 and show the error page. (GET requests now retry once on dropped connections and 502/503/504, but deliberately not on 429.)
+
+### Possible fix (not applied)
+Exempt or raise the limit for the web server, e.g. a shared-secret header sent by Next, or a separate limit for its IP. Requires an API change, so it was not made in this cleanup.
+
+### Status
+Open — needs an API decision
+
+---
+
+## KI-04 — Catalogue photos removed or still needed
+
+### Priority
+Medium (content)
+
+### Problem
+Several placeholder photos did not show the item. Removed through the admin (the card then uses its parent range's photo or a neutral "Photo coming soon" placeholder):
+- Ranges: Standard Passenger Elevators (construction site), Premium Passenger Elevators (building exterior). Also set to `null` in `seed-content.ts` and `seed-elevator-subcategories.ts`.
+- Department: Granite (living room). Its seed entry is unchanged because the top-level seed code requires an image, so a fresh seed restores it until a real photo is supplied.
+- Demo products (dev seed only): Obsidian Granite Slab, Atlas Structural Glass, Meridian Passenger Elevator. Their unrelated photos were replaced with free Unsplash photos that show the product type (brushed-steel elevator cabin and doors, black granite, glass façade and canopy), in the admin and in `seed.ts`. These are stand-ins, not RIVET's own products.
+- Test range `ex` under Escalators: deleted in the admin. Its upload file remains orphaned in the git-ignored `apps/api/uploads/`.
+
+### Expected Fix
+Upload real RIVET photos for these items in the admin. Repeat the removals in the production admin if those records exist there.
+
+### Status
+Open — awaiting RIVET photos

@@ -34,7 +34,7 @@ export function MobileActionBar({
   if (pathname.startsWith('/request-quotation')) return null;
 
   const iconLink =
-    'grid h-12 w-12 shrink-0 place-items-center rounded-[6px] border border-border text-navy transition-colors hover:border-navy hover:bg-bg dark:hover:border-gold';
+    'grid h-12 w-12 shrink-0 place-items-center rounded-md border border-border text-navy transition-colors hover:border-navy hover:bg-bg dark:hover:border-gold';
 
   return (
     <div

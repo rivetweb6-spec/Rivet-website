@@ -3,7 +3,7 @@ import { assets } from '@/lib/assets';
 import { cn } from '@/lib/utils';
 
 const ALT = 'RIVET COMPANY';
-const SIZE = { width: 525, height: 132 } as const;
+const SIZE = { width: 760, height: 168 } as const;
 
 /**
  * Official RIVET logo — replace `/public/logo.png` (and `/public/logo-light.png`

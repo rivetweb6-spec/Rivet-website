@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation';
 import { PageHero } from '@/components/site/page-hero';
 import { Container, Section } from '@/components/ui/container';
 import { ProductsCatalog, type CatalogMode } from '@/components/products/catalog';
+import { CatalogSkeleton } from '@/components/products/catalog-skeleton';
+import { CatalogSearch } from '@/components/products/catalog-search';
 import { api } from '@/lib/api';
 import { pageMetadata } from '@/lib/seo';
 import { metadataForStaticPage } from '@/lib/page-seo';
@@ -79,6 +81,33 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
     redirect(`/products/${sp.category}`);
   }
 
+  return (
+    <>
+      <PageHero
+        eyebrow="Products"
+        title="Elevators, escalators & building materials"
+        description="Browse elevators, passenger lifts, escalators, granite, doors, office furniture, sanitary goods and building materials supplied by RIVET COMPANY in Ethiopia."
+      >
+        {/* Finding a product is the page's main task, so search sits in the header. */}
+        <Suspense fallback={<div className="h-14 w-full max-w-xl rounded-md border border-border bg-canvas" />}>
+          <CatalogSearch />
+        </Suspense>
+      </PageHero>
+      <Section className="pt-12 md:pt-16">
+        <Container>
+          {/* The header shows at once; the catalog streams in behind a skeleton.
+              (A route-level loading.tsx is avoided on purpose: it would make
+              /products/[slug] answer 200 instead of 404 for unknown slugs.) */}
+          <Suspense fallback={<CatalogSkeleton />}>
+            <CatalogSection sp={sp} />
+          </Suspense>
+        </Container>
+      </Section>
+    </>
+  );
+}
+
+async function CatalogSection({ sp }: { sp: Awaited<SearchParams> }) {
   const page = Number(sp.page ?? 1) || 1;
   const mode = catalogMode(sp);
 
@@ -98,26 +127,16 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
   }
 
   return (
-    <>
-      <PageHero
-        eyebrow="Products"
-        title="Elevators, escalators & building materials"
-        description="Browse elevators, passenger lifts, escalators, granite, doors, office furniture, sanitary goods and building materials supplied by RIVET COMPANY in Ethiopia."
+    // ProductsCatalog reads search params on the client, which needs its own boundary.
+    <Suspense fallback={<CatalogSkeleton />}>
+      <ProductsCatalog
+        mode={mode}
+        products={products}
+        categories={categories}
+        pagination={pagination}
+        search={sp.search}
+        productsHeading={productsHeading}
       />
-      <Section className="pt-14 md:pt-20">
-        <Container>
-          <Suspense fallback={<p className="text-muted">Loading catalog…</p>}>
-            <ProductsCatalog
-              mode={mode}
-              products={products}
-              categories={categories}
-              pagination={pagination}
-              search={sp.search}
-              productsHeading={productsHeading}
-            />
-          </Suspense>
-        </Container>
-      </Section>
-    </>
+    </Suspense>
   );
 }

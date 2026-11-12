@@ -109,14 +109,14 @@ export default function AdminNewsPage() {
         }
       />
       {error && (
-        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+        <p role="alert" className="mb-4 text-xs text-error">
           {error}
         </p>
       )}
 
       <AdminCard className="overflow-x-auto p-0">
-        <table className="w-full min-w-[640px] text-left text-[0.875rem]">
-          <thead className="border-b border-divider bg-bg/80 text-[0.75rem] uppercase tracking-wider text-muted">
+        <table className="w-full min-w-[640px] text-left text-xs">
+          <thead className="border-b border-divider bg-bg/80 text-3xs uppercase tracking-wider text-muted">
             <tr>
               <th className="px-5 py-3 font-medium">Title</th>
               <th className="px-5 py-3 font-medium">Category</th>
@@ -173,7 +173,7 @@ export default function AdminNewsPage() {
 
       <AdminModal open={open} onClose={() => setOpen(false)} error={error} className="max-w-2xl">
         <form onSubmit={save} className="space-y-4">
-          <h2 className="text-[1.25rem] text-navy">
+          <h2 className="text-xl text-navy">
             {editingId ? 'Edit article' : 'New article'}
           </h2>
           <AdminInput
@@ -212,7 +212,7 @@ export default function AdminNewsPage() {
             onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
           />
           <div>
-            <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">Body</span>
+            <span className="mb-1.5 block text-2xs font-medium text-ink">Body</span>
             <RichTextEditor
               key={editingId ?? 'new'}
               label="Body"

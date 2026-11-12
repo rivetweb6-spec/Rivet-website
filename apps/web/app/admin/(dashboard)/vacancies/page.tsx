@@ -271,7 +271,7 @@ export default function AdminVacanciesPage() {
         }
       />
       {error && (
-        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+        <p role="alert" className="mb-4 text-xs text-error">
           {error}
         </p>
       )}
@@ -285,7 +285,7 @@ export default function AdminVacanciesPage() {
             aria-pressed={tab === value}
             onClick={() => setTab(value)}
             className={cn(
-              'rounded-[12px] px-4 py-2 text-[0.875rem] font-medium',
+              'rounded-md px-4 py-2 text-xs font-medium',
               tab === value ? 'bg-navy text-white' : 'bg-surface text-ink hover:bg-bg',
             )}
           >
@@ -296,8 +296,8 @@ export default function AdminVacanciesPage() {
 
       {tab === 'vacancies' ? (
         <AdminCard className="overflow-x-auto p-0">
-          <table className="w-full min-w-[800px] text-left text-[0.875rem]">
-            <thead className="border-b border-divider bg-bg/80 text-[0.75rem] uppercase tracking-wider text-muted">
+          <table className="w-full min-w-[800px] text-left text-xs">
+            <thead className="border-b border-divider bg-bg/80 text-3xs uppercase tracking-wider text-muted">
               <tr>
                 <th className="px-5 py-3 font-medium">Title</th>
                 <th className="px-5 py-3 font-medium">Department</th>
@@ -407,8 +407,8 @@ export default function AdminVacanciesPage() {
             </AdminSelect>
           </div>
           <AdminCard className="overflow-x-auto p-0">
-            <table className="w-full min-w-[900px] text-left text-[0.875rem]">
-              <thead className="border-b border-divider bg-bg/80 text-[0.75rem] uppercase tracking-wider text-muted">
+            <table className="w-full min-w-[900px] text-left text-xs">
+              <thead className="border-b border-divider bg-bg/80 text-3xs uppercase tracking-wider text-muted">
                 <tr>
                   <th className="px-5 py-3 font-medium">Applicant</th>
                   <th className="px-5 py-3 font-medium">Vacancy</th>
@@ -446,7 +446,7 @@ export default function AdminVacanciesPage() {
                         )}
                         {a.fullName}
                       </p>
-                      <p className="text-[0.75rem] text-muted">{a.cvOriginalName}</p>
+                      <p className="text-3xs text-muted">{a.cvOriginalName}</p>
                     </td>
                     <td className="px-5 py-3 text-muted">{a.vacancy?.title ?? '—'}</td>
                     <td className="px-5 py-3 text-muted">
@@ -487,7 +487,7 @@ export default function AdminVacanciesPage() {
 
       <AdminModal open={open} onClose={() => setOpen(false)} error={error} className="max-w-2xl">
         <form onSubmit={saveVacancy} className="space-y-4">
-          <h2 className="text-[1.25rem] text-navy">
+          <h2 className="text-xl text-navy">
             {editingId ? 'Edit vacancy' : 'New vacancy'}
           </h2>
           <AdminInput
@@ -540,7 +540,7 @@ export default function AdminVacanciesPage() {
             ))}
           </AdminSelect>
           <div>
-            <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">Description</span>
+            <span className="mb-1.5 block text-2xs font-medium text-ink">Description</span>
             <RichTextEditor
               key={`${editingId ?? 'new'}-desc`}
               label="Description"
@@ -549,7 +549,7 @@ export default function AdminVacanciesPage() {
             />
           </div>
           <div>
-            <span className="mb-1.5 block text-[0.8125rem] font-medium text-ink">
+            <span className="mb-1.5 block text-2xs font-medium text-ink">
               Requirements / qualifications
             </span>
             <RichTextEditor
@@ -586,16 +586,16 @@ export default function AdminVacanciesPage() {
         {selected && (
           <>
             <div>
-              <h2 className="text-[1.25rem] text-navy">{selected.fullName}</h2>
-              <p className="text-[0.8125rem] text-muted">
+              <h2 className="text-xl text-navy">{selected.fullName}</h2>
+              <p className="text-2xs text-muted">
                 {selected.email} · {selected.phone}
               </p>
-              <p className="mt-1 text-[0.8125rem] text-muted">
+              <p className="mt-1 text-2xs text-muted">
                 Applied for {selected.vacancy?.title ?? 'this vacancy'}
               </p>
             </div>
             {selected.coverLetter && (
-              <p className="rounded-[12px] bg-bg p-3 text-[0.875rem] text-muted whitespace-pre-wrap">
+              <p className="rounded-lg bg-bg p-3 text-xs text-muted whitespace-pre-wrap">
                 {selected.coverLetter}
               </p>
             )}

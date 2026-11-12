@@ -14,7 +14,7 @@ function PdfLink({ href, label, className }: { href: string; label: string; clas
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-flex items-center gap-1.5 text-[0.8125rem] font-semibold text-navy hover:text-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${className ?? ''}`}
+      className={`inline-flex items-center gap-1.5 text-2xs font-semibold text-navy hover:text-gold ${className ?? ''}`}
     >
       <FileText size={16} strokeWidth={1.75} aria-hidden="true" />
       {label}
@@ -42,8 +42,8 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
         <Container>
           <FadeUp>
             <Eyebrow>Credentials</Eyebrow>
-            <h2 className="mt-3 max-w-xl text-[2rem] md:text-[2.5rem]">Certificates</h2>
-            <p className="mt-4 max-w-2xl text-[1.0625rem] leading-relaxed text-muted">
+            <h2 className="mt-3 max-w-xl text-4xl md:text-6xl">Certificates</h2>
+            <p className="mt-4 max-w-2xl text-md leading-relaxed text-muted">
               Certificates and credentials published by RIVET COMPANY. Select a certificate to view
               it in full.
             </p>
@@ -54,7 +54,7 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
               const index = items.indexOf(cert);
               const body = (
                 <>
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] bg-white">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-white">
                     <span
                       className="pointer-events-none absolute inset-2 z-10 border border-gold/25"
                       aria-hidden="true"
@@ -73,9 +73,9 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
                       </div>
                     )}
                   </div>
-                  <h3 className="mt-5 text-[1.125rem] text-navy">{cert.title}</h3>
+                  <h3 className="mt-5 text-lg text-navy">{cert.title}</h3>
                   {cert.description && (
-                    <p className="mt-2 line-clamp-3 text-[0.9375rem] leading-relaxed text-muted">
+                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted">
                       {cert.description}
                     </p>
                   )}
@@ -83,15 +83,15 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
               );
               return (
                 <StaggerItem key={cert.id}>
-                  <div className="luxury-card group flex h-full w-full flex-col rounded-[8px] bg-canvas p-4">
+                  <div className="luxury-card group flex h-full w-full flex-col rounded-lg bg-canvas p-4">
                     {cert.image ? (
                       <button
                         type="button"
                         onClick={() => setActive(index)}
-                        className="flex flex-1 flex-col text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                        className="flex flex-1 flex-col text-left "
                       >
                         {body}
-                        <span className="mt-4 text-[0.8125rem] font-semibold text-navy sm:opacity-0 sm:transition-opacity sm:duration-300 sm:group-hover:opacity-100">
+                        <span className="mt-4 text-2xs font-semibold text-navy sm:opacity-0 sm:transition-opacity sm:duration-300 sm:group-hover:opacity-100">
                           View certificate
                         </span>
                       </button>
@@ -100,7 +100,7 @@ export function CertificateGallery({ certificates }: { certificates: Certificate
                         href={cert.pdf!}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex flex-1 flex-col text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                        className="flex flex-1 flex-col text-left "
                       >
                         {body}
                       </a>
@@ -148,8 +148,8 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
         <Container>
           <FadeUp>
             <Eyebrow>Work</Eyebrow>
-            <h2 className="mt-3 max-w-xl text-[2rem] md:text-[2.5rem]">Portfolio</h2>
-            <p className="mt-4 max-w-2xl text-[1.0625rem] leading-relaxed text-muted">
+            <h2 className="mt-3 max-w-xl text-4xl md:text-6xl">Portfolio</h2>
+            <p className="mt-4 max-w-2xl text-md leading-relaxed text-muted">
               Selected projects and installations completed by RIVET COMPANY.
             </p>
           </FadeUp>
@@ -159,7 +159,7 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
               const images = allItemImages(project);
               return (
                 <StaggerItem key={project.id}>
-                  <article className="luxury-card group overflow-hidden rounded-[8px] bg-canvas">
+                  <article className="luxury-card group overflow-hidden rounded-lg bg-canvas">
                     <button
                       type="button"
                       onClick={() => setActive({ project: projectIndex, image: 0 })}
@@ -173,15 +173,15 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
                         className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"
                       />
                       {images.length > 1 && (
-                        <span className="absolute right-4 bottom-4 rounded-[4px] bg-navy px-2.5 py-1 text-[0.75rem] font-medium text-white">
+                        <span className="absolute right-4 bottom-4 rounded-sm bg-navy px-2.5 py-1 text-3xs font-medium text-white">
                           {images.length} images
                         </span>
                       )}
                     </button>
                     <div className="p-6 md:p-8">
-                      <h3 className="text-[1.375rem] text-navy">{project.title}</h3>
+                      <h3 className="text-2xl text-navy">{project.title}</h3>
                       {project.description && (
-                        <p className="mt-3 text-[1rem] leading-relaxed text-muted">
+                        <p className="mt-3 text-base leading-relaxed text-muted">
                           {project.description}
                         </p>
                       )}
@@ -197,7 +197,7 @@ export function PortfolioGallery({ items }: { items: Certificate[] }) {
                               onClick={() =>
                                 setActive({ project: projectIndex, image: imageIndex + 1 })
                               }
-                              className="relative h-16 w-20 shrink-0 overflow-hidden rounded-[6px] border border-border"
+                              className="relative h-16 w-20 shrink-0 overflow-hidden rounded-md border border-border"
                             >
                               <RivetImage
                                 src={src}

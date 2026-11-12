@@ -143,7 +143,7 @@ export default function AdminGalleryPage() {
         }
       />
       {error && (
-        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+        <p role="alert" className="mb-4 text-xs text-error">
           {error}
         </p>
       )}
@@ -154,18 +154,18 @@ export default function AdminGalleryPage() {
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {images.map((item, index) => (
             <AdminCard key={item.id} className="flex flex-col">
-              <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-[12px] border border-border bg-bg">
+              <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-lg border border-border bg-bg">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={item.image} alt="" className="h-full w-full object-cover" />
               </div>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <h3 className="text-[1.0625rem] text-navy">{item.title}</h3>
-                  <p className="mt-1 text-[0.75rem] uppercase tracking-[0.12em] text-muted">
+                  <h3 className="text-md text-navy">{item.title}</h3>
+                  <p className="mt-1 text-3xs uppercase tracking-[0.12em] text-muted">
                     {CATEGORIES.find((c) => c.id === item.category)?.label ?? item.category}
                   </p>
                   {item.description && (
-                    <p className="mt-1 line-clamp-2 text-[0.875rem] text-muted">{item.description}</p>
+                    <p className="mt-1 line-clamp-2 text-xs text-muted">{item.description}</p>
                   )}
                   <div className="mt-3">
                     <StatusBadge status={item.status} />
@@ -175,7 +175,7 @@ export default function AdminGalleryPage() {
                   <div className="flex gap-1">
                     <button
                       type="button"
-                      className="grid h-8 w-8 place-items-center rounded-[8px] text-navy hover:bg-bg disabled:opacity-30"
+                      className="grid h-8 w-8 place-items-center rounded-md text-navy hover:bg-bg disabled:opacity-30"
                       aria-label="Move up"
                       disabled={index === 0}
                       onClick={() => void move(index, -1)}
@@ -184,7 +184,7 @@ export default function AdminGalleryPage() {
                     </button>
                     <button
                       type="button"
-                      className="grid h-8 w-8 place-items-center rounded-[8px] text-navy hover:bg-bg disabled:opacity-30"
+                      className="grid h-8 w-8 place-items-center rounded-md text-navy hover:bg-bg disabled:opacity-30"
                       aria-label="Move down"
                       disabled={index === images.length - 1}
                       onClick={() => void move(index, 1)}
@@ -192,7 +192,7 @@ export default function AdminGalleryPage() {
                       <ChevronDown size={16} />
                     </button>
                   </div>
-                  <div className="mt-1 text-[0.8125rem]">
+                  <div className="mt-1 text-2xs">
                     <button
                       type="button"
                       className="mr-3 py-1.5 text-navy hover:text-gold"
@@ -224,7 +224,7 @@ export default function AdminGalleryPage() {
 
       <AdminModal open={open} onClose={() => setOpen(false)} error={error} className="max-w-2xl">
         <form onSubmit={(e) => void save(e)} className="space-y-4">
-          <h2 className="text-[1.25rem] text-navy">{editingId ? 'Edit image' : 'New gallery image'}</h2>
+          <h2 className="text-xl text-navy">{editingId ? 'Edit image' : 'New gallery image'}</h2>
           <AdminInput
             label="Title"
             required

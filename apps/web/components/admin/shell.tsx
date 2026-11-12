@@ -31,22 +31,49 @@ import { useQuotationNotifications } from './notifications';
 import { cn } from '@/lib/utils';
 import { useFocusTrap } from '@/lib/use-focus-trap';
 
-const nav = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-  { href: '/admin/home', label: 'Homepage', icon: Home },
-  { href: '/admin/products', label: 'Products', icon: Package },
-  { href: '/admin/categories', label: 'Categories', icon: Tags },
-  { href: '/admin/services', label: 'Services', icon: Wrench },
-  { href: '/admin/certificates', label: 'Certificates & Portfolio', icon: Award },
-  { href: '/admin/news', label: 'News', icon: FileText },
-  { href: '/admin/site-seo', label: 'Site SEO', icon: Search },
-  { href: '/admin/quotation-requests', label: 'Quotation Requests', icon: Inbox },
-  { href: '/admin/vacancies', label: 'Vacancies', icon: Briefcase },
-  { href: '/admin/company', label: 'Company', icon: Building2 },
-  { href: '/admin/team', label: 'Team', icon: Users },
-  { href: '/admin/gallery', label: 'Gallery', icon: Images },
-  { href: '/admin/contact', label: 'Contact', icon: Phone },
-  { href: '/admin/profile', label: 'Profile', icon: User },
+type NavItem = { href: string; label: string; icon: typeof Home; exact?: boolean };
+
+/**
+ * Grouped by job. Leads come first: answering quotation requests and job
+ * applications is the daily task; the rest is occasional content upkeep.
+ * (Same 15 destinations as before — only order and grouping changed.)
+ */
+const navGroups: { label: string; items: NavItem[] }[] = [
+  {
+    label: 'Leads',
+    items: [
+      { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+      { href: '/admin/quotation-requests', label: 'Quotation Requests', icon: Inbox },
+      { href: '/admin/vacancies', label: 'Vacancies', icon: Briefcase },
+    ],
+  },
+  {
+    label: 'Catalog',
+    items: [
+      { href: '/admin/products', label: 'Products', icon: Package },
+      { href: '/admin/categories', label: 'Categories', icon: Tags },
+      { href: '/admin/services', label: 'Services', icon: Wrench },
+    ],
+  },
+  {
+    label: 'Website content',
+    items: [
+      { href: '/admin/home', label: 'Homepage', icon: Home },
+      { href: '/admin/news', label: 'News', icon: FileText },
+      { href: '/admin/certificates', label: 'Certificates & Portfolio', icon: Award },
+      { href: '/admin/gallery', label: 'Gallery', icon: Images },
+      { href: '/admin/team', label: 'Team', icon: Users },
+    ],
+  },
+  {
+    label: 'Settings',
+    items: [
+      { href: '/admin/company', label: 'Company', icon: Building2 },
+      { href: '/admin/contact', label: 'Contact', icon: Phone },
+      { href: '/admin/site-seo', label: 'Site SEO', icon: Search },
+      { href: '/admin/profile', label: 'Profile', icon: User },
+    ],
+  },
 ];
 
 function plural(n: number, one: string, many: string) {
@@ -55,7 +82,7 @@ function plural(n: number, one: string, many: string) {
 
 function CountBadge({ count, what }: { count: number; what: string }) {
   return (
-    <span className="grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1.5 text-[0.6875rem] font-semibold text-navy">
+    <span className="grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1.5 text-3xs font-semibold text-navy">
       {count}
       <span className="sr-only"> {what}</span>
     </span>
@@ -78,67 +105,80 @@ function AdminSidebar({
   const { user, logout } = useAdminAuth();
 
   return (
-    <aside className="flex h-full w-64 flex-col bg-navy text-white">
+    <aside className="on-dark flex h-full w-64 flex-col bg-navy text-white">
       <div className="flex h-16 items-center gap-3 border-b border-white/10 px-5">
         <AdminLogo light className="h-7" />
-        <span className="text-[0.6875rem] uppercase tracking-[0.18em] text-white/70">Admin</span>
+        <span className="text-3xs uppercase tracking-[0.18em] text-white/70">Admin</span>
         {onClose && (
           <button
             type="button"
             onClick={onClose}
             aria-label="Close menu"
-            className="ml-auto grid h-10 w-10 place-items-center rounded-[12px] text-white/80 hover:bg-white/10 hover:text-white"
+            className="ml-auto grid h-10 w-10 place-items-center rounded-md text-white/80 hover:bg-white/10 hover:text-white"
           >
             <X size={20} aria-hidden="true" />
           </button>
         )}
       </div>
-      <nav aria-label="Admin" className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        {nav.map((item) => {
-          const active = item.exact
-            ? pathname === item.href
-            : pathname === item.href || pathname.startsWith(`${item.href}/`);
-          const Icon = item.icon;
-          const isQuotations = item.href === '/admin/quotation-requests';
-          const isVacancies = item.href === '/admin/vacancies';
+      <nav aria-label="Admin" className="flex-1 space-y-5 overflow-y-auto px-3 py-4">
+        {navGroups.map((group) => {
+          const groupId = `admin-nav-${group.label.toLowerCase().replace(/\W+/g, '-')}${onClose ? '-drawer' : ''}`;
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onNavigate}
-              aria-current={active ? 'page' : undefined}
-              className={cn(
-                'relative flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-[0.875rem] transition-colors',
-                active
-                  ? 'bg-white/10 text-white'
-                  : 'text-white/75 hover:bg-white/5 hover:text-white',
-              )}
-            >
-              {active && (
-                <span
-                  className="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r bg-gold"
-                  aria-hidden="true"
-                />
-              )}
-              <Icon size={18} strokeWidth={1.75} aria-hidden="true" />
-              <span className="flex-1">{item.label}</span>
-              {isQuotations && unreadCount > 0 && !active && (
-                <CountBadge count={unreadCount} what="unread" />
-              )}
-              {isVacancies && applicationUnread > 0 && !active && (
-                <CountBadge count={applicationUnread} what="new applications" />
-              )}
-            </Link>
+            <div key={group.label}>
+              <p id={groupId} className="px-3 pb-1.5 text-2xs font-medium text-white/65">
+                {group.label}
+              </p>
+              <ul aria-labelledby={groupId} className="space-y-0.5">
+                {group.items.map((item) => {
+                  const active = item.exact
+                    ? pathname === item.href
+                    : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  const Icon = item.icon;
+                  const isQuotations = item.href === '/admin/quotation-requests';
+                  const isVacancies = item.href === '/admin/vacancies';
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        onClick={onNavigate}
+                        aria-current={active ? 'page' : undefined}
+                        className={cn(
+                          'relative flex items-center gap-3 rounded-md px-3 py-2.5 text-xs transition-colors',
+                          active
+                            ? 'bg-white/10 font-medium text-white'
+                            : 'text-white/75 hover:bg-white/5 hover:text-white',
+                        )}
+                      >
+                        {active && (
+                          <span
+                            className="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r bg-gold"
+                            aria-hidden="true"
+                          />
+                        )}
+                        <Icon size={18} strokeWidth={1.75} aria-hidden="true" />
+                        <span className="flex-1">{item.label}</span>
+                        {isQuotations && unreadCount > 0 && !active && (
+                          <CountBadge count={unreadCount} what="unread" />
+                        )}
+                        {isVacancies && applicationUnread > 0 && !active && (
+                          <CountBadge count={applicationUnread} what="new applications" />
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           );
         })}
       </nav>
       <div className="border-t border-white/10 p-4">
-        <p className="truncate text-[0.8125rem] text-white/85">{user?.name}</p>
-        <p className="truncate text-[0.75rem] text-white/70">{user?.email}</p>
+        <p className="truncate text-2xs text-white/85">{user?.name}</p>
+        <p className="truncate text-3xs text-white/70">{user?.email}</p>
         <button
           type="button"
           onClick={() => logout()}
-          className="mt-3 inline-flex items-center gap-2 text-[0.8125rem] text-white/75 transition-colors hover:text-gold"
+          className="mt-3 inline-flex items-center gap-2 text-2xs text-white/75 transition-colors hover:text-gold"
         >
           <LogOut size={15} aria-hidden="true" /> Sign out
         </button>
@@ -226,7 +266,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-surface/90 px-4 backdrop-blur md:px-8">
           <button
             type="button"
-            className="grid h-10 w-10 place-items-center rounded-[12px] text-navy lg:hidden"
+            className="grid h-10 w-10 place-items-center rounded-md text-navy lg:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
@@ -234,7 +274,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           >
             {open ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
           </button>
-          <div className="hidden text-[0.875rem] text-muted lg:block">Control room</div>
+          <div className="hidden text-xs text-muted lg:block">Control room</div>
           <div className="flex items-center gap-1">
             <ThemeToggle />
             <Link

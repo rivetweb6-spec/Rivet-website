@@ -46,17 +46,43 @@
   --color-warning: #f59e0b;
   --color-error: #dc2626;
 
-  /* Type scale (px → rem) */
-  --text-2xs: 0.75rem;   /* 12 */
-  --text-xs: 0.875rem;   /* 14 */
-  --text-base: 1rem;     /* 16 */
-  --text-lg: 1.25rem;    /* 20 */
-  --text-2xl: 1.75rem;   /* 28 */
-  --text-4xl: 2.5rem;    /* 40 */
-  --text-6xl: 3.5rem;    /* 56 */
-  --text-7xl: 4.5rem;    /* 72 */
+  /*
+   * Type scale — the only font sizes used in the UI (px → rem). Tailwind's
+   * defaults are reset so every `text-*` utility comes from this list. No
+   * `--text-*--line-height` is defined on purpose: utilities then set only
+   * font-size, and line-height stays with the element (headings, leading-*).
+   *
+   *  3xs 12  badges, fine print        md  17  intro / long-form body
+   *  2xs 13  meta, captions            lg  18  lead paragraphs
+   *  xs  14  secondary UI text         xl  20  card titles
+   *  sm  15  links, buttons, UI        2xl–4xl 24–32  section titles (mobile→desktop)
+   *  base 16 body                      5xl–8xl 36–52  page titles
+   *                                    9xl 64  home hero
+   */
+  --text-*: initial;
+  --text-3xs: 0.75rem;
+  --text-2xs: 0.8125rem;
+  --text-xs: 0.875rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.75rem;
+  --text-4xl: 2rem;
+  --text-5xl: 2.25rem;
+  --text-6xl: 2.5rem;
+  --text-7xl: 2.75rem;
+  --text-8xl: 3.25rem;
+  --text-9xl: 4rem;
 
-  /* Radius scale — restrained, engineered corners */
+  /*
+   * Radius scale — restrained, engineered corners.
+   * sm 4 badges · md 6 controls/buttons · lg 8 cards/panels · xl 12 dialogs
+   * (2xl 16 = Tailwind default, large admin modals only)
+   */
+  --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
   --radius-xl: 12px;
@@ -76,6 +102,9 @@
 @layer base {
   * {
     border-color: var(--color-border);
+    /* Pre-set so focusing only turns the outline on: `transition-colors`
+       also animates outline-color, which made rings fade in from the text colour. */
+    outline-color: var(--focus-ring);
   }
 
   html {
@@ -118,20 +147,24 @@
     text-wrap: pretty;
   }
 
-  /* Visible keyboard focus — gold ring on navy offset (AA UI contrast). */
-  :focus-visible {
-    outline: 2px solid var(--color-gold);
-    outline-offset: 3px;
+  /*
+   * Visible keyboard focus — ONE style for the whole site: a 2px outline with
+   * a 2px gap. Its colour follows the surface so it always clears WCAG 1.4.11
+   * (3:1): navy on light surfaces (12–14:1; gold there is only 2.2–2.5:1),
+   * gold on navy bands and in dark mode (5.5–7.4:1). Dark containers opt in
+   * with `.on-dark`. Components should not add their own focus rings.
+   */
+  :root {
+    --focus-ring: var(--color-navy);
+  }
+  .dark,
+  .on-dark {
+    --focus-ring: var(--color-gold);
   }
 
-  a:focus-visible,
-  button:focus-visible,
-  input:focus-visible,
-  textarea:focus-visible,
-  select:focus-visible,
-  summary:focus-visible {
-    outline: 2px solid var(--color-gold);
-    outline-offset: 3px;
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
   }
 
   /* Main landmark can receive skip-link focus without a visible ring flash. */
@@ -139,7 +172,7 @@
     outline: none;
   }
   #main-content:focus-visible {
-    outline: 2px solid var(--color-gold);
+    outline: 2px solid var(--focus-ring);
     outline-offset: 4px;
   }
 
@@ -232,10 +265,27 @@
     outline-offset: 2px;
   }
 
+  /*
+   * Focus shown on a container: `.focus-ring-within` when anything inside it
+   * has keyboard focus (e.g. upload drop zones with a hidden input);
+   * `.focus-ring-card` + `.card-link` for cards whose stretched link carries
+   * the focus (other links inside the card keep their own outline).
+   * `.peer-focus-ring` styles a label after a visually hidden `.peer` input.
+   */
+  .focus-ring-within:has(:focus-visible),
+  .focus-ring-card:has(.card-link:focus-visible),
+  .peer:focus-visible ~ .peer-focus-ring {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+  .card-link:focus-visible {
+    outline: none;
+  }
+
   /* Eyebrow label — small caps kicker above section titles */
   .eyebrow {
     font-family: var(--font-sans);
-    font-size: var(--text-2xs);
+    font-size: var(--text-3xs);
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -307,20 +357,25 @@
     color: var(--color-gold);
   }
 
-  /* Card frame — quiet lift and border tint on hover */
+  /*
+   * Card frame — the border darkens on hover; no lift or shadow bloom (a
+   * moving card on every hover reads as decoration, not feedback).
+   * `.card-frame` is the current name; `.luxury-card` is kept as an alias.
+   */
+  .card-frame,
   .luxury-card {
     position: relative;
     overflow: hidden;
     border: 1px solid var(--color-border);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    transition: border-color 0.2s ease;
   }
+  .card-frame:hover,
   .luxury-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-    border-color: color-mix(in srgb, var(--color-navy) 25%, var(--color-border));
+    border-color: color-mix(in srgb, var(--color-navy) 45%, var(--color-border));
   }
+  .dark .card-frame:hover,
   .dark .luxury-card:hover {
-    border-color: color-mix(in srgb, var(--color-gold) 35%, var(--color-border));
+    border-color: color-mix(in srgb, var(--color-gold) 45%, var(--color-border));
   }
 
   /* Image frame — formerly an offset gold outline; now a plain image block */
@@ -358,6 +413,25 @@
   50% {
     opacity: 1;
   }
+}
+
+/*
+ * The homepage's single entrance moment: the department directory rises
+ * into place over the hero's edge. (Reduced motion: the global rule below
+ * makes it instant.)
+ */
+@keyframes directoryIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.directory-in {
+  animation: directoryIn 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
 }
 
 /* Slow "Ken Burns" push-in for the active home hero slide. */

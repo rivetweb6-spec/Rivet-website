@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 import { FadeUp, Stagger, StaggerItem } from '@/components/motion/reveal';
+import { Images } from 'lucide-react';
+import { StateMessage } from '@/components/ui/state-message';
 import { Container, Eyebrow, Section } from '@/components/ui/container';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { ImageLightbox } from '@/components/company/image-lightbox';
@@ -50,8 +52,8 @@ export function CompanyGalleryGrid({ images }: { images: GalleryImage[] }) {
         <Container>
           <FadeUp>
             <Eyebrow>Gallery</Eyebrow>
-            <h2 className="headline-display mt-3 text-[2rem] md:text-[2.5rem]">Projects and company life</h2>
-            <p className="mt-4 max-w-2xl text-[1.0625rem] leading-relaxed text-muted">
+            <h2 className="headline-display mt-3 text-4xl md:text-6xl">Projects and company life</h2>
+            <p className="mt-4 max-w-2xl text-md leading-relaxed text-muted">
               Selected photos from project sites, installations and company activities.
             </p>
           </FadeUp>
@@ -68,7 +70,7 @@ export function CompanyGalleryGrid({ images }: { images: GalleryImage[] }) {
                     setActive(null);
                   }}
                   className={cn(
-                    'rounded-[6px] border px-4 py-2 text-[0.875rem] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2',
+                    'rounded-md border px-4 py-2 text-xs font-medium transition-colors ',
                     filter === f.id
                       ? 'border-navy bg-navy text-white dark:border-gold dark:bg-gold dark:text-[#002f54]'
                       : 'border-border bg-canvas text-ink hover:border-navy hover:text-navy dark:bg-transparent dark:hover:border-gold dark:hover:text-gold',
@@ -81,7 +83,9 @@ export function CompanyGalleryGrid({ images }: { images: GalleryImage[] }) {
           )}
 
           {visible.length === 0 ? (
-            <p className="mt-12 text-muted">No images in this category yet.</p>
+            <StateMessage icon={Images} title="No photos in this category yet" className="mt-12">
+              Choose another category above to see more of our work.
+            </StateMessage>
           ) : (
             <Stagger className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {visible.map((item, index) => (
@@ -89,7 +93,7 @@ export function CompanyGalleryGrid({ images }: { images: GalleryImage[] }) {
                   <button
                     type="button"
                     onClick={() => setActive(index)}
-                    className="group relative block w-full overflow-hidden rounded-[8px] text-left"
+                    className="group relative block w-full overflow-hidden rounded-lg text-left"
                   >
                     <div className="relative aspect-[4/5] overflow-hidden">
                       <RivetImage
@@ -101,9 +105,9 @@ export function CompanyGalleryGrid({ images }: { images: GalleryImage[] }) {
                       />
                     </div>
                     <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy/80 to-transparent px-5 py-4 pt-16">
-                      <span className="block text-[1rem] text-white">{item.title}</span>
+                      <span className="block text-base text-white">{item.title}</span>
                       {item.description && (
-                        <span className="mt-1 line-clamp-2 block text-[0.8125rem] text-white/70">
+                        <span className="mt-1 line-clamp-2 block text-2xs text-white/70">
                           {item.description}
                         </span>
                       )}

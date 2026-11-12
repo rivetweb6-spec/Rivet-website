@@ -145,7 +145,7 @@ export default function AdminTeamPage() {
         }
       />
       {error && (
-        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+        <p role="alert" className="mb-4 text-xs text-error">
           {error}
         </p>
       )}
@@ -159,30 +159,30 @@ export default function AdminTeamPage() {
             if (group.length === 0) return null;
             return (
               <section key={section.id}>
-                <h2 className="mb-4 text-[1.125rem] text-navy">{section.label}</h2>
+                <h2 className="mb-4 text-lg text-navy">{section.label}</h2>
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                   {group.map((m, index) => (
                     <AdminCard key={m.id} className="flex gap-4">
-                      <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-[10px] bg-bg">
+                      <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-lg bg-bg">
                         {m.photo ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={m.photo} alt="" className="h-full w-full object-cover" />
                         ) : (
-                          <div className="grid h-full place-items-center text-[0.75rem] text-muted">
+                          <div className="grid h-full place-items-center text-3xs text-muted">
                             No photo
                           </div>
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-[1.0625rem] text-navy">{m.fullName}</h3>
-                        <p className="text-[0.8125rem] text-muted">{m.position}</p>
+                        <h3 className="text-md text-navy">{m.fullName}</h3>
+                        <p className="text-2xs text-muted">{m.position}</p>
                         <div className="mt-2">
                           <StatusBadge status={m.status} />
                         </div>
-                        <div className="mt-3 flex items-center gap-2 text-[0.8125rem]">
+                        <div className="mt-3 flex items-center gap-2 text-2xs">
                           <button
                             type="button"
-                            className="grid h-7 w-7 place-items-center rounded-[8px] text-navy hover:bg-bg disabled:opacity-30"
+                            className="grid h-7 w-7 place-items-center rounded-md text-navy hover:bg-bg disabled:opacity-30"
                             aria-label="Move up"
                             disabled={index === 0}
                             onClick={() => void move(section.id, index, -1)}
@@ -191,7 +191,7 @@ export default function AdminTeamPage() {
                           </button>
                           <button
                             type="button"
-                            className="grid h-7 w-7 place-items-center rounded-[8px] text-navy hover:bg-bg disabled:opacity-30"
+                            className="grid h-7 w-7 place-items-center rounded-md text-navy hover:bg-bg disabled:opacity-30"
                             aria-label="Move down"
                             disabled={index === group.length - 1}
                             onClick={() => void move(section.id, index, 1)}
@@ -236,7 +236,7 @@ export default function AdminTeamPage() {
 
       <AdminModal open={open} onClose={() => setOpen(false)} error={error} className="max-w-2xl">
         <form onSubmit={(e) => void save(e)} className="space-y-4">
-          <h2 className="text-[1.25rem] text-navy">
+          <h2 className="text-xl text-navy">
             {editingId ? 'Edit team member' : 'New team member'}
           </h2>
           <div className="grid gap-4 md:grid-cols-2">

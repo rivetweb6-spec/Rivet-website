@@ -109,7 +109,7 @@ export function ImageUploadField({
 
   return (
     <fieldset className={cn('min-w-0 space-y-3', className)}>
-      <legend className="mb-3 block text-[0.8125rem] font-medium text-ink">{label}</legend>
+      <legend className="mb-3 block text-2xs font-medium text-ink">{label}</legend>
 
       {previews.length > 0 && (
         <div className={cn('flex flex-wrap gap-2', multiple && 'mb-1')}>
@@ -117,7 +117,7 @@ export function ImageUploadField({
             <div
               key={url}
               className={cn(
-                'relative overflow-hidden rounded-[8px] border border-border bg-bg',
+                'relative overflow-hidden rounded-lg border border-border bg-bg',
                 multiple ? 'h-20 w-20' : 'h-36 w-full max-w-xs',
               )}
             >
@@ -150,22 +150,22 @@ export function ImageUploadField({
           void handleFiles(e.dataTransfer.files);
         }}
         className={cn(
-          'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-[12px] border-2 border-dashed px-4 py-6 transition-colors',
+          'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed px-4 py-6 transition-colors',
           dragOver ? 'border-gold bg-gold/5' : 'border-border hover:border-gold/50 hover:bg-bg/50',
           // The real file input is visually hidden; show its keyboard focus on the drop zone.
-          'focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2',
+          'focus-ring-within',
           uploading && 'pointer-events-none opacity-60',
         )}
       >
         <Upload size={20} className="text-muted" strokeWidth={1.5} />
-        <span className="text-[0.8125rem] text-muted">
+        <span className="text-2xs text-muted">
           {uploading
             ? 'Uploading…'
             : stored.length > 0 && !multiple
               ? 'Replace image from computer'
               : 'Choose image from computer or drop here'}
         </span>
-        <span className="text-[0.75rem] text-muted/80">JPEG, PNG, WebP, GIF, AVIF · max 8 MB</span>
+        <span className="text-3xs text-muted/80">JPEG, PNG, WebP, GIF, AVIF · max 8 MB</span>
         <input
           ref={inputRef}
           type="file"
@@ -177,13 +177,13 @@ export function ImageUploadField({
       </label>
 
       {localError && (
-        <p role="alert" className="text-[0.8125rem] text-error">
+        <p role="alert" className="text-2xs text-error">
           {localError}
         </p>
       )}
 
       <label className="block">
-        <span className="mb-1.5 block text-[0.75rem] text-muted">
+        <span className="mb-1.5 block text-3xs text-muted">
           {urlLabel ?? (multiple ? 'Or paste image URLs (one per line)' : 'Or paste image URL')}
         </span>
         {multiple ? (
@@ -192,7 +192,7 @@ export function ImageUploadField({
             value={value}
             placeholder={urlPlaceholder ?? 'https://…'}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-[0.9375rem] outline-none focus:border-navy focus-visible:ring-2 focus-visible:ring-gold/60"
+            className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-sm focus:border-navy "
           />
         ) : (
           <input
@@ -201,7 +201,7 @@ export function ImageUploadField({
             value={value}
             placeholder={urlPlaceholder ?? 'https://…'}
             onChange={(e) => onChange(e.target.value)}
-            className="h-11 w-full rounded-[12px] border border-border bg-surface px-3 text-[0.9375rem] outline-none focus:border-navy focus-visible:ring-2 focus-visible:ring-gold/60"
+            className="h-11 w-full rounded-md border border-border bg-surface px-3 text-sm focus:border-navy "
           />
         )}
       </label>

@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button-variants';
 import { RivetImage } from '@/components/ui/rivet-image';
 import { RequestQuotationButton } from '@/components/quotation/request-quotation-button';
@@ -39,7 +38,7 @@ export function Hero({ content }: { content?: HeroContent | null }) {
   return (
     <section
       aria-labelledby="hero-title"
-      className="relative isolate flex min-h-[560px] items-center overflow-hidden bg-navy-deep pt-[4.5rem] md:min-h-[min(85vh,760px)]"
+      className="on-dark relative isolate flex min-h-[560px] items-center overflow-hidden bg-navy-deep pt-[4.5rem] md:min-h-[min(85vh,760px)]"
     >
       {/* Full-bleed on mobile/tablet; on desktop the photo is anchored right and its
           left edge fades into the navy so the elevator sits beside the text. */}
@@ -63,16 +62,17 @@ export function Hero({ content }: { content?: HeroContent | null }) {
         aria-hidden="true"
       />
 
-      <div className="mx-auto w-full max-w-[1280px] px-5 py-16 sm:px-6 md:py-20 lg:px-10">
+      {/* Extra bottom space: the department directory overlaps the hero edge. */}
+      <div className="mx-auto w-full max-w-[1280px] px-5 pt-16 pb-24 sm:px-6 md:pt-20 md:pb-32 lg:px-10">
         <div className="max-w-2xl">
           <p className="rivet-line eyebrow text-gold">{eyebrow}</p>
           <h1
             id="hero-title"
-            className="headline-display mt-6 text-[2.5rem] text-white sm:text-[3.25rem] lg:text-[4rem]"
+            className="headline-display mt-6 text-6xl text-white sm:text-8xl lg:text-9xl"
           >
             {headline} <span className="text-gold">{headlineAccent}</span>
           </h1>
-          <p className="mt-6 max-w-xl text-[1.0625rem] leading-relaxed text-white/85 md:text-[1.1875rem]">
+          <p className="mt-6 max-w-xl text-md leading-relaxed text-white/85 md:text-xl">
             {subheadline}
           </p>
 
@@ -81,13 +81,6 @@ export function Hero({ content }: { content?: HeroContent | null }) {
             <RequestQuotationButton />
             <Link href="/products" className={buttonVariants({ variant: 'ghost', size: 'lg' })}>
               Explore products
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center gap-1.5 py-2 text-[0.9375rem] sm:ml-1 sm:py-0 font-semibold text-white/90 underline-offset-[6px] hover:text-white hover:underline"
-            >
-              Contact us
-              <ArrowRight size={16} aria-hidden="true" />
             </Link>
           </div>
         </div>

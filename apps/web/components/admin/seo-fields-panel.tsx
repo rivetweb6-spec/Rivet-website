@@ -78,10 +78,10 @@ export function SeoFieldsPanel({
     onChange({ ...fields, [key]: v });
 
   return (
-    <div className="mt-6 space-y-4 rounded-[12px] border border-border bg-bg/50 p-4">
+    <div className="mt-6 space-y-4 rounded-lg border border-border bg-bg/50 p-4">
       <div>
-        <h3 className="text-[0.9375rem] font-semibold text-navy">SEO & social sharing</h3>
-        <p className="mt-1 text-[0.8125rem] text-muted">
+        <h3 className="text-sm font-semibold text-navy">SEO & social sharing</h3>
+        <p className="mt-1 text-2xs text-muted">
           Leave fields blank to auto-generate from page content.
         </p>
       </div>
@@ -138,7 +138,7 @@ export function SeoFieldsPanel({
         onChange={(e) => set('canonicalUrl', e.target.value)}
         placeholder={`Auto: ${pathPreview}`}
       />
-      <label className="flex items-center gap-2 text-[0.875rem] text-ink">
+      <label className="flex items-center gap-2 text-xs text-ink">
         <input
           type="checkbox"
           checked={Boolean(fields.noIndex)}

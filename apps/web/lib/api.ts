@@ -43,7 +43,32 @@ type RequestOptions = RequestInit & {
   tags?: string[];
 };
 
+/** Gateway statuses that mean "try again shortly", not "this resource is wrong". */
+const TRANSIENT_STATUS = new Set([502, 503, 504]);
+const GET_RETRY_DELAY_MS = 300;
+
+/**
+ * Reads (GET) are idempotent, so a single retry after a short pause is safe.
+ * It covers a dropped connection (status 0) or a gateway hiccup (502/503/504),
+ * which otherwise turns a whole page into the error screen. Every other
+ * response, including 404 (detail pages rely on it) and 429 (rate limit: a
+ * retry would only add load), is returned at once. Writes never go through
+ * here twice; see `requestWithWakeRetry` for their separate, safer rule.
+ */
 async function request<T>(path: string, init?: RequestOptions): Promise<T> {
+  const method = (init?.method ?? 'GET').toUpperCase();
+  if (method !== 'GET') return requestOnce<T>(path, init);
+  try {
+    return await requestOnce<T>(path, init);
+  } catch (err) {
+    const transient = err instanceof ApiError && (err.status === 0 || TRANSIENT_STATUS.has(err.status));
+    if (!transient) throw err;
+    await new Promise((resolve) => setTimeout(resolve, GET_RETRY_DELAY_MS));
+    return requestOnce<T>(path, init);
+  }
+}
+
+async function requestOnce<T>(path: string, init?: RequestOptions): Promise<T> {
   const { revalidate, tags, ...rest } = init ?? {};
   const isServer = typeof window === 'undefined';
 

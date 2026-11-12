@@ -72,12 +72,12 @@ export default async function ServiceDetailPage({ params }: { params: Params }) 
         <Container>
           <div className="grid gap-12 lg:grid-cols-[1fr_0.9fr] lg:items-start">
             <div>
-              <span className="grid h-12 w-12 place-items-center rounded-[6px] bg-bg text-navy">
+              <span className="grid h-12 w-12 place-items-center rounded-md bg-bg text-navy">
                 <Icon size={26} strokeWidth={1.5} />
               </span>
               <Eyebrow className="mt-6">Service</Eyebrow>
-              <h1 className="headline-display mt-3 text-[2.25rem] sm:text-[2.75rem]">{service.title}</h1>
-              <p className="mt-5 text-[1.125rem] leading-relaxed text-muted">{service.narrative}</p>
+              <h1 className="headline-display mt-3 text-5xl sm:text-7xl">{service.title}</h1>
+              <p className="mt-5 text-lg leading-relaxed text-muted">{service.narrative}</p>
               <div className="mt-10 flex flex-wrap gap-3">
                 <RequestQuotationButton />
                 <Link
@@ -95,7 +95,7 @@ export default async function ServiceDetailPage({ params }: { params: Params }) 
               </div>
             </div>
             {service.image && (
-              <div className="relative aspect-[4/3] overflow-hidden rounded-[8px] border border-border bg-surface">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-border bg-surface">
                 <RivetImage
                   src={service.image}
                   alt={`${service.title} — RIVET COMPANY services in Ethiopia`}

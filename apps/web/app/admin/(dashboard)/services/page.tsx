@@ -125,7 +125,7 @@ export default function AdminServicesPage() {
         }
       />
       {error && (
-        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+        <p role="alert" className="mb-4 text-xs text-error">
           {error}
         </p>
       )}
@@ -136,13 +136,13 @@ export default function AdminServicesPage() {
           <AdminCard key={s.id}>
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-[1.0625rem] text-navy">{s.title}</h3>
-                <p className="mt-2 text-[0.875rem] text-muted line-clamp-3">{s.narrative}</p>
+                <h3 className="text-md text-navy">{s.title}</h3>
+                <p className="mt-2 text-xs text-muted line-clamp-3">{s.narrative}</p>
                 <div className="mt-3">
                   <StatusBadge status={s.status} />
                 </div>
               </div>
-              <div className="shrink-0 text-[0.8125rem]">
+              <div className="shrink-0 text-2xs">
                 <button
                   type="button"
                   className="mr-3 py-1.5 text-navy hover:text-gold"
@@ -174,7 +174,7 @@ export default function AdminServicesPage() {
 
       <AdminModal open={open} onClose={() => setOpen(false)} error={error} className="max-w-2xl">
         <form onSubmit={save} className="space-y-4">
-          <h2 className="text-[1.25rem] text-navy">
+          <h2 className="text-xl text-navy">
             {editingId ? 'Edit service' : 'New service'}
           </h2>
           <AdminInput

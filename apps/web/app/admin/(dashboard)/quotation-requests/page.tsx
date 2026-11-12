@@ -123,7 +123,7 @@ export default function AdminQuotationRequestsPage() {
         }
       />
       {error && (
-        <p role="alert" className="mb-4 text-[0.875rem] text-error">
+        <p role="alert" className="mb-4 text-xs text-error">
           {error}
         </p>
       )}
@@ -144,8 +144,8 @@ export default function AdminQuotationRequestsPage() {
       </div>
 
       <AdminCard className="overflow-x-auto p-0">
-        <table className="w-full min-w-[900px] text-left text-[0.875rem]">
-          <thead className="border-b border-divider bg-bg/80 text-[0.75rem] uppercase tracking-wider text-muted">
+        <table className="w-full min-w-[900px] text-left text-xs">
+          <thead className="border-b border-divider bg-bg/80 text-3xs uppercase tracking-wider text-muted">
             <tr>
               <th className="px-5 py-3 font-medium">Name</th>
               <th className="px-5 py-3 font-medium">Product</th>
@@ -184,11 +184,11 @@ export default function AdminQuotationRequestsPage() {
                     )}
                     {r.fullName}
                   </p>
-                  {r.company && <p className="text-[0.75rem] text-muted">{r.company}</p>}
+                  {r.company && <p className="text-3xs text-muted">{r.company}</p>}
                 </td>
                 <td className="px-5 py-3">
                   <p className="text-ink">{r.productName ?? '—'}</p>
-                  <p className="text-[0.75rem] text-muted">{r.productInterest}</p>
+                  <p className="text-3xs text-muted">{r.productInterest}</p>
                 </td>
                 <td className="px-5 py-3 text-muted">{r.quantity ?? '—'}</td>
                 <td className="px-5 py-3 text-muted">
@@ -225,23 +225,23 @@ export default function AdminQuotationRequestsPage() {
         {selected && (
           <>
             <div>
-              <h2 className="text-[1.25rem] text-navy">{selected.fullName}</h2>
-              <p className="text-[0.8125rem] text-muted">
+              <h2 className="text-xl text-navy">{selected.fullName}</h2>
+              <p className="text-2xs text-muted">
                 {selected.company ? `${selected.company} · ` : ''}
                 {selected.email} · {selected.phone}
               </p>
             </div>
 
-            <div className="flex items-center gap-4 rounded-[12px] border border-border bg-bg p-3">
+            <div className="flex items-center gap-4 rounded-lg border border-border bg-bg p-3">
               {selected.productImage && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={selected.productImage}
                   alt={selected.productName ?? 'Requested product'}
-                  className="h-14 w-14 shrink-0 rounded-[8px] object-cover"
+                  className="h-14 w-14 shrink-0 rounded-lg object-cover"
                 />
               )}
-              <div className="min-w-0 text-[0.875rem]">
+              <div className="min-w-0 text-xs">
                 <p className="font-medium text-ink">{selected.productName ?? selected.productInterest}</p>
                 <p className="text-muted">
                   {selected.productInterest}
@@ -251,7 +251,7 @@ export default function AdminQuotationRequestsPage() {
             </div>
 
             {selected.message && (
-              <p className="rounded-[12px] bg-bg p-3 text-[0.875rem] text-muted">
+              <p className="rounded-lg bg-bg p-3 text-xs text-muted">
                 {selected.message}
               </p>
             )}
