@@ -2,7 +2,8 @@ import type { MetadataRoute } from 'next';
 import { DEFAULT_DESCRIPTION, SITE_NAME } from '@/lib/seo';
 
 /**
- * Web app manifest: the icons Android and installed-app shortcuts use.
+ * Web app manifest: the icons Android and installed-app shortcuts use (the
+ * RIVET wordmark, white with the orange E, on black).
  * Browser-tab icons come from the app/ file conventions (favicon.ico,
  * icon1.png = 16 px, icon2.png = 32 px, apple-icon.png = 180 px).
  */
