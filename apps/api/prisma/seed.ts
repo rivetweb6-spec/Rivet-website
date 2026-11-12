@@ -46,8 +46,8 @@ const products: SeedProduct[] = [
     ],
     features: ['Regenerative drive', 'Destination dispatch', 'Emergency battery lowering'],
     featured: true,
-    // Previous photos showed a technician and a building exterior, not the elevator. Add real product photos in the admin.
-    images: [],
+    // Stock photos of a brushed-steel cabin and landing doors; replace with RIVET photos in the admin.
+    images: [u('photo-1631248979010-6775b0c88180'), u('photo-1592256410394-51c948ec13d5')],
   },
   {
     name: 'Obsidian Granite Slab',
@@ -64,8 +64,8 @@ const products: SeedProduct[] = [
     ],
     features: ['Sealed surface', 'Custom cut-to-size'],
     featured: true,
-    // Previous photo showed a living room, not granite. Add real product photos in the admin.
-    images: [],
+    // Stock photo of black granite; replace with RIVET photos in the admin.
+    images: [u('photo-1778235296112-a9ea74fff37a')],
   },
   {
     name: 'Atrium Glass Door System',
@@ -167,8 +167,8 @@ const products: SeedProduct[] = [
     ],
     features: ['CE marked', 'Custom sizes'],
     featured: false,
-    // Previous photo showed a construction site, not structural glass. Add real product photos in the admin.
-    images: [],
+    // Stock photos of a glass façade and canopy; replace with RIVET photos in the admin.
+    images: [u('photo-1523477593243-78bbf626fd3b'), u('photo-1509024368907-57294758cfc5')],
   },
 ];
 

@@ -1379,7 +1379,7 @@ Medium (content)
 Several placeholder photos did not show the item. Removed through the admin (the card then uses its parent range's photo or a neutral "Photo coming soon" placeholder):
 - Ranges: Standard Passenger Elevators (construction site), Premium Passenger Elevators (building exterior). Also set to `null` in `seed-content.ts` and `seed-elevator-subcategories.ts`.
 - Department: Granite (living room). Its seed entry is unchanged because the top-level seed code requires an image, so a fresh seed restores it until a real photo is supplied.
-- Demo products (dev seed only): Obsidian Granite Slab, Atlas Structural Glass, Meridian Passenger Elevator.
+- Demo products (dev seed only): Obsidian Granite Slab, Atlas Structural Glass, Meridian Passenger Elevator. Their unrelated photos were replaced with free Unsplash photos that show the product type (brushed-steel elevator cabin and doors, black granite, glass façade and canopy), in the admin and in `seed.ts`. These are stand-ins, not RIVET's own products.
 - Test range `ex` under Escalators: deleted in the admin. Its upload file remains orphaned in the git-ignored `apps/api/uploads/`.
 
 ### Expected Fix
