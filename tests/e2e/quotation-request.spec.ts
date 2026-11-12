@@ -46,7 +46,11 @@ test.describe('Request a Quotation', () => {
 
   test('prefills product details from a product page', async ({ page }) => {
     await page.goto('/products');
-    const firstCard = page.locator('a.luxury-card[href^="/products/"]').first();
+    // A product card from the catalog's featured/latest products section,
+    // located by structure rather than by a styling class name.
+    const firstCard = page
+      .locator('section[aria-labelledby="featured-heading"] a[href^="/products/"]')
+      .first();
     await expect(firstCard).toBeVisible();
     const href = await firstCard.getAttribute('href');
     await firstCard.click();
