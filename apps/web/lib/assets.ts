@@ -18,8 +18,9 @@ export const assets = {
   logo: {
     primary: '/logo.png',
     light: '/logo-light.png',
-    admin: '/logo-admin.png',
-    adminLight: '/logo-admin-light.png',
+    // Admin uses the same logo as the public site.
+    admin: '/logo.png',
+    adminLight: '/logo-light.png',
   },
   hero: {
     // Replace with client hero video/image sequence of flagship installations.

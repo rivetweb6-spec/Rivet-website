@@ -17,8 +17,8 @@ export function AdminLogo({
     <Image
       src={light ? assets.logo.adminLight : assets.logo.admin}
       alt="RIVET COMPANY"
-      width={797}
-      height={179}
+      width={760}
+      height={168}
       priority
       unoptimized
       className={cn('h-8 w-auto', className)}
